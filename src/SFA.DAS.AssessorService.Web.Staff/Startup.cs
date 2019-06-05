@@ -41,7 +41,7 @@ namespace SFA.DAS.AssessorService.Web.Staff
     {
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AssessorService";
+        private const string ServiceName = "SFA.DAS.AdminService";
         private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
