@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Dapper;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 
 namespace SFA.DAS.AssessorService.Data

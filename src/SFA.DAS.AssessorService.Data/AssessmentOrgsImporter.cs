@@ -1,10 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.RetryPolicies;
-using OfficeOpenXml;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.DTOs;
 using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
 using SFA.DAS.AssessorService.Settings;
@@ -18,6 +14,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.AspNetCore.Hosting;
 using SFA.DAS.AssessorService.Domain.Entities;
+using OfficeOpenXml;
 
 namespace SFA.DAS.AssessorService.Data
 {

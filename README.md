@@ -27,7 +27,8 @@
 
 - Open Visual studio as an administrator
 - Open the solution
-- Set following as startup projects:
-	- SFA.DAS.AssessorService.Web.Staff
-	- SFA.DAS.AssessorService.Application.Api
+- Set the startup project:
+	- SFA.DAS.AdminService.Web
 - Running the solution will launch the API and UI in your browser at address https://localhost:44347/
+
+You will need to have the SFA.DAS.AssessorService.Application.Api and SFA.DAS.RoATPService.Application.Api projects running, from the das-assessor-service and das-roatp-service projects respectively to use EAPO and RoATP admin functionality.

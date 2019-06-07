@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Collections.Generic;
 using System.Data;

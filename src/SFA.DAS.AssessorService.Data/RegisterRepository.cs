@@ -1,5 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AssessorService.Settings;
 using System;
 using System.Collections.Generic;
