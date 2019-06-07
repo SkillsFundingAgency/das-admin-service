@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Settings;
+﻿using SFA.DAS.AdminService.Settings;
 using System;
 using System.Globalization;
 using System.Security.Cryptography;

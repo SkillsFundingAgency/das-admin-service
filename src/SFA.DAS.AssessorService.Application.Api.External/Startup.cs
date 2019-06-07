@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.Application.Api.External.Infrastructure;
 using SFA.DAS.AssessorService.Application.Api.External.Middleware;
 using SFA.DAS.AssessorService.Application.Api.External.StartupConfiguration;
 using SFA.DAS.AssessorService.Application.Api.External.SwaggerHelpers;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AdminService.Settings;
 using StructureMap;
 using Swashbuckle.AspNetCore.Examples;
 using Swashbuckle.AspNetCore.Swagger;

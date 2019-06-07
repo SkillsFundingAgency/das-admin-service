@@ -36,13 +36,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AdminService.Data\SFA.DAS.AdminService.Data.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AdminService.Session\SFA.DAS.AdminService.Session.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Data\SFA.DAS.AssessorService.Data.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Settings\SFA.DAS.AssessorService.Settings.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Web.Extensions\SFA.DAS.AssessorService.Web.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

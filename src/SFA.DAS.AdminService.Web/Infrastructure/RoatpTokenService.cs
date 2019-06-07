@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AdminService.Settings;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {

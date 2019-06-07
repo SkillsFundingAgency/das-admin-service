@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
+    using System;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using Infrastructure;
     using Microsoft.Extensions.Logging;
@@ -11,7 +12,6 @@
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc;
     using ViewModels.Roatp;
-    using System;
     using System.Security.Claims;
     using Microsoft.AspNetCore.Http;
     using SFA.DAS.AdminService.Web.Resources;

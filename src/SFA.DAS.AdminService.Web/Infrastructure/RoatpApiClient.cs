@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using SFA.DAS.AssessorService.Settings;
+    using SFA.DAS.AdminService.Settings;
     using Microsoft.Extensions.Logging;
     using System.Net.Http;
     using System.Net.Http.Headers;

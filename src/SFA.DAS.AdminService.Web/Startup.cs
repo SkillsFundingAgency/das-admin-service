@@ -20,8 +20,8 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
-using SFA.DAS.AssessorService.Settings;
-using SFA.DAS.AssessorService.Web.Extensions;
+using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
@@ -30,7 +30,7 @@ using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionF
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
-using SFA.DAS.AssessorService.Data;
+using SFA.DAS.AdminService.Data;
 using SFA.DAS.AdminService.Web.Services;
 
 namespace SFA.DAS.AdminService.Web

@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
     using System.Threading.Tasks;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using Infrastructure;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;

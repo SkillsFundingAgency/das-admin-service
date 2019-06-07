@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace SFA.DAS.AdminService.Web.Controllers.Roatp
+﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
     using System;
     using Infrastructure;

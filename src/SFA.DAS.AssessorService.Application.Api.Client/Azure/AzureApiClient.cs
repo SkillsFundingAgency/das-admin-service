@@ -8,7 +8,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AssessorService.Settings;
+using SFA.DAS.AdminService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
