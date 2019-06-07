@@ -51,7 +51,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'src/das-admin-service/das-admin-service.csproj'
+    projects: 'src/**/*.csproj'
     arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build'
 
 - task: CopyFiles@2
