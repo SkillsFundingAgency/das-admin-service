@@ -51,8 +51,8 @@ steps:
   inputs:
     command: publish
     publishWebProjects: false
-    projects: 'src/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build --framework  netstandard2.0 '
+    projects: 'src/SFA.DAS.AdminService.Web.sln'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
