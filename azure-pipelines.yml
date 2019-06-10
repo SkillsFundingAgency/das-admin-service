@@ -30,9 +30,10 @@ steps:
   displayName: 'dotnet restore'
   inputs:
     command: restore
-    projects: 'src/**/*.csproj'
+    projects: 'src/SFA.DAS.AdminService.Application.Interfaces/SFA.DAS.AdminService.Application.Interfaces.csproj;src/SFA.DAS.AdminService.Data/SFA.DAS.AdminService.Data.csproj;src/SFA.DAS.AdminService.Session/SFA.DAS.AdminService.Session.csproj;src/SFA.DAS.AdminService.Settings/SFA.DAS.AdminService.Settings.csproj
+;src/SFA.DAS.AdminService.Web.Extensions/SFA.DAS.AdminService.Web.Extensions.csproj;src/SFA.DAS.AdminService.Web/SFA.DAS.AdminService.Web.csproj;src/SFA.DAS.AssessorService.Api.Types/SFA.DAS.AssessorService.Api.Types.csproj;src/SFA.DAS.AssessorService.Application.Api.Client/SFA.DAS.AssessorService.Application.Api.Client.csproj;src/SFA.DAS.AssessorService.Application.Api.External/SFA.DAS.AssessorService.Application.Api.External.csproj;src/SFA.DAS.AssessorService.ApplyTypes/SFA.DAS.AssessorService.ApplyTypes.csproj;src/SFA.DAS.AssessorService.Domain/SFA.DAS.AssessorService.Domain.csproj;src/SFA.DAS.AssessorService.ExternalApis/SFA.DAS.AssessorService.ExternalApis.csproj;src/SFA.DAS.AssessorService.NLog.Targets.Redis/SFA.DAS.AssessorService.NLog.Targets.Redis.csproj'
     noCache: true
-    
+
 - task: DotNetCoreCLI@2
   displayName: dotnet build
   inputs:
