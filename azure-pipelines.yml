@@ -34,12 +34,10 @@ steps:
     noCache: true
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet custom'
+  displayName: dotnet build
   inputs:
-    command: custom
     projects: 'src/**/*.csproj'
-    custom: msbuild
-    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)"'
+    arguments: '--configuration $(buildConfiguration)  --no-restore'
 
 - task: DotNetCoreCLI@2
   displayName: dotnet test
