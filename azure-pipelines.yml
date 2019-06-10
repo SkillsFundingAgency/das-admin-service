@@ -37,34 +37,20 @@ steps:
   displayName: 'dotnet custom'
   inputs:
     command: custom
-    projects: 'src/**/*.csproj'
+    projects: 'src/SFA.DAS.AdminService.Web.sln'
     custom: msbuild
-    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)"'
+    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
 
-- task: DotNetCoreCLI@2
-  displayName: dotnet test
-  inputs:
-    command: test
-    projects: '**/*.UnitTests.csproj'
-    arguments: '--configuration $(buildConfiguration) --no-build'
-
-- task: DotNetCoreCLI@2
-  displayName: 'Publish Internal API'
-  inputs:
-    command: publish
-    publishWebProjects: false
-    projects: 'src/**/*.csproj'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
     Contents: |
      azure\**
-    TargetFolder: '$(build.artifactstagingdirectory)/publish'
+    TargetFolder: '$(build.artifactstagingdirectory)'
     OverWrite: true
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)/publish'
+    PathtoPublish: '$(build.artifactstagingdirectory)'
