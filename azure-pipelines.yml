@@ -52,7 +52,7 @@ steps:
     command: publish
     publishWebProjects: false
     projects: 'src/SFA.DAS.AdminService.Web.sln'
-    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build --framework netcoreapp2.2'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory)/publish --no-restore  --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
