@@ -26,20 +26,21 @@ steps:
   inputs:
     updateAssemblyInfo: true
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
   inputs:
-    command: 'restore'
-    restoreSolution: 'src/**/*.csproj'
-    feedsToUse: 'select'
+    command: restore
+    projects: 'src/**/*.csproj'
+    noCache: true
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet custom'
   inputs:
-    solution: 'src/**/*.csproj'
-    platform: '$(BuildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
-    clean: true
-    
+    command: custom
+    projects: 'src/**/*.csproj'
+    custom: msbuild
+    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)"'
+
 - task: DotNetCoreCLI@2
   displayName: dotnet test
   inputs:
