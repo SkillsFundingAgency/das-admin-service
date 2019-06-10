@@ -26,18 +26,20 @@ steps:
   inputs:
     updateAssemblyInfo: true
 
-- task: DotNetCoreCLI@2
-  displayName: dot restore
+- task: NuGetCommand@2
   inputs:
-    command: restore
-    projects: 'src/**/*.csproj'
-    noCache: true
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+    feedsToUse: 'select'
 
-- task: DotNetCoreCLI@2
-  displayName: dotnet build
+
+- task: VSBuild@1
   inputs:
-    projects: 'src/SFA.DAS.AdminService.Web.sln'
-    arguments: '--configuration $(buildConfiguration)  --no-restore'
+    solution: 'src/SFA.DAS.AdminService.Web.sln'
+    platform: '$(BuildPlatform)'
+    configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
+    clean: true
     
 - task: DotNetCoreCLI@2
   displayName: dotnet test
