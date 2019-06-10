@@ -29,13 +29,12 @@ steps:
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
-    restoreSolution: '**/*.sln'
+    restoreSolution: 'src/**/*.csproj'
     feedsToUse: 'select'
-
 
 - task: VSBuild@1
   inputs:
-    solution: 'src/SFA.DAS.AdminService.Web.sln'
+    solution: 'src/**/*.csproj'
     platform: '$(BuildPlatform)'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
