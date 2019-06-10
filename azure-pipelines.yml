@@ -30,7 +30,7 @@ steps:
   displayName: dot restore
   inputs:
     command: restore
-    projects: 'src/SFA.DAS.AdminService.Web.sln'
+    projects: 'src/**/*.csproj'
     noCache: true
 
 - task: DotNetCoreCLI@2
