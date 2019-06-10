@@ -39,7 +39,7 @@ steps:
     command: custom
     projects: 'src/SFA.DAS.AdminService.Web.sln'
     custom: msbuild
-    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)"'
+    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
 
 
 - task: CopyFiles@2
