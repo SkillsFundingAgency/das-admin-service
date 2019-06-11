@@ -42,6 +42,10 @@
         "aspInstances": {
             "type": "int",
             "defaultValue": 1
+        },
+        "location" : {
+            "type": "string",
+            "defaultValue": "West Europe"
         }
     },
     "variables": {
@@ -66,7 +70,7 @@
                         "value": "[variables('appServicePlanName')]"
                     },
                     "aspLocation": {
-                        "value": "[resourceGroup().location]"
+                        "value": "[parameters('location')]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
