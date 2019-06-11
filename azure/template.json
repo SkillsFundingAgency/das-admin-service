@@ -66,7 +66,7 @@
                         "value": "[variables('appServicePlanName')]"
                     },
                     "aspLocation": {
-                        "value": "[resourceGroup().location] "
+                        "value": "[resourceGroup().location]"
                     },
                     "aspSize": {
                         "value": "[parameters('aspSize')]"
