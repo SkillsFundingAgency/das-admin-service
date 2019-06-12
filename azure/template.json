@@ -149,6 +149,19 @@
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "EnvironmentName",
+                                "value": "[toUpper(parameters('environmentName'))]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
                             }
                         ]
                     },
