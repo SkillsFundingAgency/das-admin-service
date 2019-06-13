@@ -10,6 +10,7 @@ namespace SFA.DAS.AdminService.Web.Services
     public interface IAnswerService
     {
         Task<string> GetAnswer(Guid applicationId, string questionTag);
+        Task<string> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId);
         Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId);
     }

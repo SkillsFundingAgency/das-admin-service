@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Commands;
+﻿using Newtonsoft.Json.Linq;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using System;
 using System.Linq;
@@ -34,11 +35,25 @@ namespace SFA.DAS.AdminService.Web.Services
             var contactName = await GetAnswer(application.Id, "contact-name");
             var contactGivenName = await GetAnswer(application.Id, "contact-given-name");
             var contactFamilyName = await GetAnswer(application.Id, "contact-family-name");
-            var contactAddress1 = await GetAnswer(application.Id, "contact-address") ?? await GetAnswer(application.Id, "contact-address1");
-            var contactAddress2 = await GetAnswer(application.Id, "contact-address2");
-            var contactAddress3 = await GetAnswer(application.Id, "contact-address3");
-            var contactAddress4 = await GetAnswer(application.Id, "contact-address4");
-            var contactPostcode = await GetAnswer(application.Id, "contact-postcode");
+
+            // get a contact address which is a single question with multiple answers
+            JProperty contactAddress = null;
+
+            var contactAddressJsonAnswer = await GetJsonAnswer(application.Id, "contact-address");
+            if (contactAddressJsonAnswer != null)
+            {
+                contactAddress = JObject.Parse(contactAddressJsonAnswer).First is JProperty
+                    ? JObject.Parse(contactAddressJsonAnswer).First as JProperty
+                    : null;
+            }
+
+            // handle both a contact address which is a single question with multiple answers or multiple questions with a single answer 
+            var contactAddress1 = contactAddress?.Value["AddressLine1"].ToString() ?? await GetAnswer(application.Id, "contact-address1");
+            var contactAddress2 = contactAddress?.Value["AddressLine2"].ToString() ?? await GetAnswer(application.Id, "contact-address2");
+            var contactAddress3 = contactAddress?.Value["TownOrCity"].ToString() ?? await GetAnswer(application.Id, "contact-address3");
+            var contactAddress4 = contactAddress?.Value["County"].ToString() ?? await GetAnswer(application.Id, "contact-address4");
+            var contactPostcode = contactAddress?.Value["Postcode"].ToString() ?? await GetAnswer(application.Id, "contact-postcode");
+
             var contactEmail = await GetAnswer(application.Id, "contact-email");
             var contactPhoneNumber = await GetAnswer(application.Id, "contact-phone-number");
             var companyUkprn = await GetAnswer(application.Id, "company-ukprn");
@@ -129,6 +144,12 @@ namespace SFA.DAS.AdminService.Web.Services
         {
            var response= await _applyApiClient.GetAnswer(applicationId, questionTag);
            return response.Answer;
+        }
+
+        public async Task<string> GetJsonAnswer(Guid applicationId, string questionTag)
+        {
+            var response = await _applyApiClient.GetJsonAnswer(applicationId, questionTag);
+            return response.Answer;
         }
     }
 }

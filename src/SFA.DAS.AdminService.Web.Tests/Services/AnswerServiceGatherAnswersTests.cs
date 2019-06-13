@@ -10,19 +10,18 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
     [TestFixture]
     public class AnswerServiceGatherAnswersTests
     {
-
         private AnswerService _answerService;
         private Mock<IApplyApiClient> _mockApplyApiClient;
         private Mock<IApiClient> _mockAssessorApiClient;
 
         private Guid _applicationId;
-
 
         [SetUp]
         public void Arrange()
@@ -35,7 +34,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 _mockAssessorApiClient.Object
             );
         }
-
 
         [Test,TestCaseSource(nameof(CommandTestCases))]
         public void WhenGatheringAnswersForAnApplication(CommandTest commandTestSetup)
@@ -53,11 +51,27 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 OrganisationUkprn = commandTestSetup.OrganisationUkprn,
                 OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
                 ContactName = commandTestSetup.ContactName,
-                ContactAddress1 = commandTestSetup.ContactAddress ?? commandTestSetup.ContactAddress1,
-                ContactAddress2 = commandTestSetup.ContactAddress2,
-                ContactAddress3 = commandTestSetup.ContactAddress3,
-                ContactAddress4 = commandTestSetup.ContactAddress4,
-                ContactPostcode = commandTestSetup.ContactPostcode,
+
+                ContactAddress1 = commandTestSetup.ContactAddress != null
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine1")
+                    : commandTestSetup.ContactAddress1,
+
+                ContactAddress2 = commandTestSetup.ContactAddress != null
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine2")
+                    : commandTestSetup.ContactAddress2,
+
+                ContactAddress3 = commandTestSetup.ContactAddress != null
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "TownOrCity")
+                    : commandTestSetup.ContactAddress3,
+
+                ContactAddress4 = commandTestSetup.ContactAddress != null
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "County")
+                    : commandTestSetup.ContactAddress4,
+
+                ContactPostcode = commandTestSetup.ContactAddress != null
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "Postcode")
+                    : commandTestSetup.ContactPostcode,
+
                 ContactEmail = commandTestSetup.ContactEmail,
                 ContactPhoneNumber = commandTestSetup.ContactPhoneNumber,
                 CompanyUkprn = commandTestSetup.CompanyUkprn,
@@ -120,6 +134,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                     .Returns(Task.FromResult(new GetAnswersResponse { Answer = answerPair.Answer }));
             }
 
+            foreach (var answerPair in commandTestSetup.JsonAnswerPairs)
+            {
+                _mockApplyApiClient.Setup(x => x.GetJsonAnswer(_applicationId, answerPair.QuestionTag))
+                    .Returns(Task.FromResult(new GetAnswersResponse { Answer = answerPair.Answer }));
+            }
+
             _mockApplyApiClient.Setup(x => x.GetOrganisationForApplication(_applicationId))
                 .Returns(Task.FromResult(applicationOrganisation));
 
@@ -127,7 +147,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
    
             Assert.AreEqual(JsonConvert.SerializeObject(expectedCommand), JsonConvert.SerializeObject(actualCommand));
         }
-
 
         protected static IEnumerable<CommandTest> CommandTestCases
         {
@@ -138,10 +157,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
                 yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
                 yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "address line 1", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'Q3_1' : { 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'TownOrCity': 'address 3', 'County': 'address 4', 'Postcode': 'CV1' } }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
-
 
         public class CommandTest
         {
@@ -172,6 +190,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public bool? IsFinancialExempt { get; set; }
 
             public List<GetAnswerPair> AnswerPairs { get; set; }
+            public List<GetAnswerPair> JsonAnswerPairs { get; set; }
             public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
                , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
                , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
@@ -218,6 +237,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                     new GetAnswerPair("standard-website",standardWebsite),
                     new GetAnswerPair("contact-address",contactAddress)
                 };
+
+                JsonAnswerPairs = new List<GetAnswerPair>
+                {
+                    new GetAnswerPair("contact-address",contactAddress)
+                };
+            }
+
+            public string GetJsonValue(string json, string jsonKey)
+            {
+                JProperty contactAddress = JObject.Parse(json).First is JProperty
+                    ? JObject.Parse(json).First as JProperty
+                    : null;
+
+                return contactAddress.Value[jsonKey].ToString();
             }
         }
 
@@ -232,7 +265,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 Answer = answer;
             }
         }
-
 
         [Test, TestCaseSource(nameof(StandardCommandTestCases))]
         public void WhenGatheringAnswersForAnOrganisationStandard(StandardCommandTest commandTestSetup)
