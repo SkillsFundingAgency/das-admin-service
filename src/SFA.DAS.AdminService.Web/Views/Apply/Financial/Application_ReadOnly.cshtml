@@ -140,7 +140,7 @@
                         {
                             <tr>
                                 <td>@question.Label</td>
-                                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+                                <td>@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
                             </tr>
                         }
                     }
