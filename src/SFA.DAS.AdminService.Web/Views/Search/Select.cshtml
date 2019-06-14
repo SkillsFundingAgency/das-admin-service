@@ -51,6 +51,13 @@
                     <td class="bold">Funding model</td>
                     <td>@Model.Learner.FundingModel</td>
                 </tr>
+                @if(Model.Learner.IsPrivatelyFunded)
+                {
+                <tr>
+                    <td class="bold">Funding type</td>
+                    <td>Private</td>
+                </tr>
+                }
             </tbody>
         </table>
     </div>
