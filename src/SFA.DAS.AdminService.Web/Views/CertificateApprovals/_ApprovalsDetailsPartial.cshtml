@@ -73,11 +73,11 @@
                             {
 
                                 <div class="multiple-choice">
-                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" class="js-expand-table-row-for-radio js-first-option" data-expand-id="@approvalresults[i].IsApproved">
+                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" data-clear-on-uncheck="true" class="js-expand-table-row-for-radio js-first-option" data-expand-id="@approvalresults[i].IsApproved">
                                     <label asp-for=@approvalresults[i].IsApproved>Send</label>
                                 </div>
                                 <div class="multiple-choice">
-                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="Draft" class="js-expand-table-row-for-radio" data-expand-id="@approvalresults[i].IsApproved">
+                                    <input asp-for=@approvalresults[i].IsApproved type="radio" value="Draft" class="js-expand-table-row-for-radio" data-clear-on-uncheck="true" data-expand-id="@approvalresults[i].IsApproved">
                                     <label asp-for=@approvalresults[i].IsApproved>Reject</label>
                                 </div>
                             }
