@@ -106,7 +106,6 @@
       },
       clearHiddenValue: function ($option) {
           if ($option.firstElementChild.getAttribute('data-clear-on-uncheck')) {
-              $option.firstElementChild.value = "";
               $("input[name='" + $option.firstElementChild.name + "'][type='hidden']").val('');
           }
       },
