@@ -1,10 +1,10 @@
 ﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
 @using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Domain.Paging
-@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel>
+@model SFA.DAS.AssessorService.Domain.Paging.PaginatedList<SFA.DAS.AdminService.Web.ViewModels.Private.CertificateDetailApprovalViewModel>
 @{
     var results = Model.Items.ToList();
-    var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AssessorService.Web.Staff.ViewModels.Private.CertificateDetailApprovalViewModel[];
+    var approvalresults = ViewData["ApprovalResults"] as SFA.DAS.AdminService.Web.ViewModels.Private.CertificateDetailApprovalViewModel[];
     var actionHint = ViewData["ActionHint"] as string;
     var pageIndex = ViewData["PageIndex"] as int?;
 }
