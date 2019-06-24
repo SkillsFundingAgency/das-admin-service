@@ -6,220 +6,262 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})" class="link-back">Back</a>
-        @if (Model.Section == null)
-        {
-            <h1 class="heading-xlarge">Section not active</h1>
-        }
-        else
-        {
-            if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="IsSectionComplete"></a></li>
-                    </ul>
-                </div>
-            }
+<a class="govuk-back-link" href="@Url.Action("Application", "Application", new {applicationId = Model.ApplicationId})">Back</a>
 
-            <h1 class="heading-xlarge">@Model.Title</h1>
-
-            @if (Model.SequenceId == 1 && Model.SectionId == 1)
-            {
-                <table class="table-spaced">
-                    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
-                    {
-                        <tr>
-                            <td class="bold-small">Application reference</td>
-                            <td>@Model.ApplicationReference</td>
-                        </tr>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
-                    {
-                        <tr>
-                            <td class="bold-small">Registered name</td>
-                            <td>@Model.LegalName</td>
-                        </tr>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
-                    {
-                        <tr>
-                            <td class="bold-small">Trading name</td>
-                            <td>@(Model.TradingName ?? Model.ProviderName)</td>
-                        </tr>
-                    }
-                    @if (Model.Ukprn.HasValue)
-                    {
-                        <tr>
-                            <td class="bold-small">Ukprn</td>
-                            <td>@Model.Ukprn</td>
-                        </tr>
-                    }
-                </table>
-
-                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (Model.Section == null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Section not active</h1>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="form-group">
-                        <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="IsSectionComplete"></a></li>
+                            </ul>
+                        </div>
                     </div>
-                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                 }
-            }
 
-            if (Model.SequenceId == 1 && Model.SectionId == 3)
-            {
-                // NOTE: The FHA Section has a read only view. See ON-1277
-                var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
-                var financialApplicationComments = financialApplication.InadequateMoreInformation;
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-                <div class="form-group">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Grade</th>
-                                <th>Date reviewed</th>
-                                <th>Comments</th>
-                                <th>Reviewer</th>
+                @if (Model.SequenceId == 1 && Model.SectionId == 1)
+                {
+                    <dl class="govuk-summary-list">
+                        @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Application reference
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.ApplicationReference
+                                </dd>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Registered name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.LegalName
+                                </dd>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Trading name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @(Model.TradingName ?? Model.ProviderName)
+                                </dd>
+                            </div>
+                        }
+                        @if (Model.Ukprn.HasValue)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Ukprn
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Ukprn
+                                </dd>
+                            </div>
+                        }
+                    </dl>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+                    {
+
+                        <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @if (Model.SequenceId == 1 && Model.SectionId == 3)
+                {
+                    // NOTE: The FHA Section has a read only view. See ON-1277
+                    var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
+                    var financialApplicationComments = financialApplication.InadequateMoreInformation;
+
+                    <table class="govuk-table table-font-xsmall">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Grade</th>
+                                <th class="govuk-table__header" scope="col">Date reviewed</th>
+                                <th class="govuk-table__header" scope="col">Comments</th>
+                                <th class="govuk-table__header" scope="col">Reviewer</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>@financialApplication.SelectedGrade</td>
-                                <td>@financialApplication.GradedDateTime.ToShortDateString()</td>
-                                <td>@financialApplicationComments</td>
-                                <td>@financialApplication.GradedBy</td>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@financialApplication.SelectedGrade</td>
+                                <td class="govuk-table__cell">@financialApplication.GradedDateTime.ToShortDateString()</td>
+                                <td class="govuk-table__cell">@financialApplicationComments</td>
+                                <td class="govuk-table__cell">@financialApplication.GradedBy</td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-            }
+                }
+            </div>
+        </div>
 
-            {
-                <dl class="govuk-check-your-answers cya-questions-short form-group">
-                    @foreach (var pg in Model.Section.QnAData.Pages.Where(p => !p.NotRequired && p.Active))
-                    {
-                        <div class="govuk-check-your-answers__contents">
-                            <dt class="cya-question heading-medium">
-                                @pg.LinkTitle
-                            </dt>
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <dl class="govuk-summary-list">
+                        @foreach (var pg in Model.Section.QnAData.Pages.Where(p => !p.NotRequired && p.Active))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @pg.LinkTitle
+                                </dt>
 
-                            <dd class="cya-answer">
-                                @foreach (var answerPage in pg.DisplayAnswerPages)
-                                {
-                                    foreach (var answer in answerPage.DisplayAnswers)
+                                <dd class="govuk-summary-list__value">
+                                    @foreach (var answerPage in pg.DisplayAnswerPages)
                                     {
-                                        <h3 class="heading-small">@answer.Label</h3>
-                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-
-                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                        foreach (var answer in answerPage.DisplayAnswers)
                                         {
-                                            <div class="form-group">
-                                                <details>
-                                                    <summary><span class="summary">View question details</span></summary>
-                                                    <div class="panel panel-border-narrow" id="question-text">
+                                            <h3 class="govuk-heading-s">@answer.Label</h3>
+                                            var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+
+                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                            {
+                                                <details class="govuk-details">
+                                                    <summary class="govuk-details__summary">
+                                                        <span class="govuk-details__summary-text">
+                                                            View question details
+                                                        </span>
+                                                    </summary>
+                                                    <div class="govuk-details__text">
                                                         @Html.Raw(question.QuestionBodyText)
                                                     </div>
                                                 </details>
-                                            </div>
-                                        }
+                                            }
 
-                                        if (answer is FileUploadDisplayAnswer)
-                                        {
-                                            var fuAnswer = answer as FileUploadDisplayAnswer;
-                                            <p>
-                                                <a href="@Url.Action("Download", "Application",
-                                                             new
-                                                             {
-                                                                 applicationId = Model.ApplicationId,
-                                                                 sequenceId = fuAnswer.SequenceId,
-                                                                 sectionId = fuAnswer.SectionId,
-                                                                 pageId = fuAnswer.PageId,
-                                                                 questionId = fuAnswer.QuestionId,
-                                                                 filename = fuAnswer.FileName
-                                                             })">@fuAnswer.FileName</a></p>
-                                        }
-                                        else
-                                        {
-                                            <p>@answer.Answer()</p>
+                                            if (answer is FileUploadDisplayAnswer)
+                                            {
+                                                var fuAnswer = answer as FileUploadDisplayAnswer;
+                                                <p class="govuk-body">
+                                                    <a class="govuk-link" href="@Url.Action("Download", "Application",
+                                                        new
+                                                        {
+                                                            applicationId = Model.ApplicationId,
+                                                            sequenceId = fuAnswer.SequenceId,
+                                                            sectionId = fuAnswer.SectionId,
+                                                            pageId = fuAnswer.PageId,
+                                                            questionId = fuAnswer.QuestionId,
+                                                            filename = fuAnswer.FileName
+                                                        })">
+                                                        @fuAnswer.FileName
+                                                    </a>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="govuk-body">@answer.Answer()</p>
+                                            }
                                         }
                                     }
-                                }
-                            </dd>
+                                </dd>
 
-                            <dd class="cya-change das-cya-change--responsive">
-                                @if (pg.HasNewFeedback)
-                                {
-                                    <div class="govuk-tag form-group">
-                                        Feedback added
-                                    </div>
-                                }
-                                @if (pg.HasCompletedFeedback)
-                                {
-                                    <div class="govuk-tag form-group">
-                                        Answer updated
-                                    </div>
-                                }
+                                <dd class="govuk-summary-list__actions">
+                                    @if (pg.HasNewFeedback)
+                                    {
+                                        <div class="govuk-tag form-group">
+                                            Feedback added
+                                        </div>
+                                    }
+                                    @if (pg.HasCompletedFeedback)
+                                    {
+                                        <div class="govuk-tag form-group">
+                                            Answer updated
+                                        </div>
+                                    }
 
-                                <p>
-                                    <a class="nowrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
-                                        @if (pg.HasNewFeedback)
-                                        {
-                                            <text>View or amend feedback</text>
-                                        }
-                                        else
-                                        {
-                                            <text>Add feedback</text>
-                                        }
-                                    </a>
-                                </p>
-                            </dd>
+                                    <p>
+                                        <a class="govuk-link das-no-wrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
+                                            @if (pg.HasNewFeedback)
+                                            {
+                                                <text>View or amend feedback</text>
+                                            }
+                                            else
+                                            {
+                                                <text>Add feedback</text>
+                                            }
+                                        </a>
+                                    </p>
+                                </dd>
 
-                        </div>
-                    }
-                </dl>
-            }
-
-            <form class="js-disable-on-submit" asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
-                <div class="form-group">
-                    <fieldset class="after-error-summary inline">
-                        <legend id="IsSectionComplete">
-                            <h1 class="heading-large">
-                                Is this section complete?
-                            </h1>
-                            <div sfa-anyvalidationerror-class="form-group-error">
-                                <span class="error-message" asp-validation-for="IsSectionComplete"></span>
                             </div>
-                        </legend>
-                        <div sfa-anyvalidationerror-class="form-group-error">
-                            <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
-                                <label for="options_yes">
-                                    Yes
-                                </label>
-                            </div>
-                            <div class="multiple-choice">
-                                <input asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
-                                <label for="options_no">
-                                    No
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
+                        }
+                    </dl>
                 </div>
-                <div class="form-group">
-                    <button class="button" type="submit">Save</button>
-                </div>
-            </form>
-
+            </div>
         }
 
-        <div class="form-group">
-            <a href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })" class="govuk-button">Return to application overview</a>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateSection" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">
+                    <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                        <fieldset class="govuk-fieldset">
+
+                            <legend id="IsSectionComplete">
+                                <h2 class="govuk-heading-l">
+                                    Is this section complete?
+                                </h2>
+                            </legend>
+
+                            <span class="govuk-error-message" asp-validation-for="IsSectionComplete"></span>
+
+                            <div class="govuk-radios govuk-radios--inline">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
+                                    <label class="govuk-label govuk-radios__label" for="options_yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" sfa-validationerror-class="form-control-error" />
+                                    <label class="govuk-label govuk-radios__label" for="options_no">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    <button class="govuk-button" type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                <a class="govuk-link" href="@Url.Action("Application", "Application", new { applicationId = Model.ApplicationId })">Return to application overview</a>
+            </p>
         </div>
     </div>
-</div>
+</main>

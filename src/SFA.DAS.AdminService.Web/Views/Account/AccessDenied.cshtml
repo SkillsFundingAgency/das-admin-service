@@ -3,16 +3,19 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-large">Access denied</h1>
-        <p>Your account does not have sufficient privileges</p>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <p>If you are experiencing difficulty accessing the area of the site you need, first contact an/the account owner to ensure you have the correct role assigned to your account.</p>
-      
-        <div class="form-group">
-            <a asp-action="Index" asp-controller="Dashboard" class="button button-start">Go back to the dashboard</a>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Access denied</h1>
+            <p class="govuk-body-l">Your account does not have sufficient privileges.</p>
+
+            <p class="govuk-body">If you are experiencing difficulty accessing the area of the site you need, first contact an/the account owner to ensure you have the correct role assigned to your account.</p>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="Index" asp-controller="Dashboard">Go back to the dashboard</a>
+            </p>
+            
         </div>
-        
     </div>
-</div>
+</main>
