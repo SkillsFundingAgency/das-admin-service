@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Web.Infrastructure
+﻿using System.Linq;
+
+namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     using System;
     using System.Collections.Generic;
@@ -10,6 +12,7 @@
     using Newtonsoft.Json;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Net;
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -70,9 +73,9 @@
             return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
         }
 
-        public async Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest)
+        public async Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest)
         {
-           HttpStatusCode result = await Post<CreateOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
+           HttpStatusCode result = await Post<CreateRoatpOrganisationRequest>($"{_baseUrl}/api/v1/organisation/create", organisationRequest);
 
            return await Task.FromResult(result == HttpStatusCode.OK);
         }
@@ -164,6 +167,21 @@
             HttpStatusCode result = await Put<UpdateOrganisationCharityNumberRequest>($"{_baseUrl}/api/v1/updateOrganisation/charityNumber", request);
 
             return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request)
+        {
+            HttpStatusCode result = await Put<UpdateOrganisationApplicationDeterminedDateRequest>($"{_baseUrl}/api/v1/updateOrganisation/applicationDeterminedDate", request);
+
+            return await Task.FromResult(result == HttpStatusCode.OK);
+        }
+
+        public async Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn)
+        {
+            var res =
+                await Get<UkprnLookupResponse>($"{_baseUrl}/api/v1/ukrlp/lookup/{ukprn}");
+
+            return res.Results;
         }
 
         private async Task<T> Get<T>(string uri)

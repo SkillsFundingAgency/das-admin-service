@@ -1,6 +1,6 @@
-@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AddOrganisationViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AddOrganisationProviderTypeViewModel
 
-@{ ViewBag.Title = "Confirm details"; }
+@{ ViewBag.Title = "Details from UKPRN"; }
 
 @{
     await Html.RenderPartialAsync("~/Views/Roatp/_StylesPartial.cshtml");
@@ -9,9 +9,7 @@
 <div class="grid-row">
     <form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
         <div class="govuk-grid-column-one-half">
-            <input type="hidden" asp-for="OrganisationId" />
-            <input type="hidden" asp-for="ProviderTypeId" />
-            <input type="hidden" name="action" value="AddApplicationDeterminedDate" />
+            <input type="hidden" name="action" value="EnterUkprn" />
             <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
         </div>
     </form>
@@ -19,7 +17,8 @@
 
 <div class="grid-row">
     <div class="column-two-thirds">
-        <h1 class="heading-xlarge roatp-heading">Confirm details</h1>
+        <h1 class="heading-xlarge roatp-heading">Organisation's details</h1>
+        <p>These are the details we found on UKRLP for @Html.Raw(Model.UKPRN).</p>
     </div>
 </div>
 <div class="govuk-width-container">
@@ -32,22 +31,6 @@
 
 
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            UKPRN
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.UKPRN)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Type of provider
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.ProviderTypes.FirstOrDefault(x => x.Id == Model.ProviderTypeId).Type)
-                        </dd>
-                    </div>
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -56,12 +39,14 @@
                         <dd class="govuk-summary-list__value_long">
                             @Html.Raw(Model.LegalName)
                         </dd>
+
                     </div>
+
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Trading name
                         </dt>
-                        <dd class="govuk-summary-list__value_long">
+                        <dd class="govuk-summary-list__value">
                             @if (!String.IsNullOrWhiteSpace(Model.TradingName))
                             {
                                 @Html.Raw(Model.TradingName)
@@ -71,7 +56,9 @@
                                 <span class='govuk-hint'>Not applicable</span>
                             }
                         </dd>
+
                     </div>
+
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Company number
@@ -86,6 +73,7 @@
                                 <span class='govuk-hint'>Not applicable</span>
                             }
                         </dd>
+
                     </div>
 
                     <div class="govuk-summary-list__row">
@@ -102,34 +90,26 @@
                                 <span class='govuk-hint'>Not applicable</span>
                             }
                         </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Type of organisation
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.OrganisationTypes.FirstOrDefault(x => x.Id == Model.OrganisationTypeId).Type)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Application determined date
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.Raw(Model.ApplicationDeterminedDate.Value.ToString("d MMM yyyy"))
-                        </dd>
-                    </div>
-                       
 
+                    </div>
                 </dl>
 
-                <form aria-activedescendantmethod="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
-                    @{
-                        await Html.RenderPartialAsync("~/Views/Roatp/_AddOrganisationFieldsPartial.cshtml");
-                    }
-                    <input type="hidden" asp-for="ApplicationDeterminedDate" />
-                    <input type="submit" class="roatp-button" value="Confirm and add organisation" />
+                @*<form method="post" asp-action="CreateOrganisation" asp-controller="AddRoatpOrganisation">
+            <input type="submit" class="roatp-button" value="Continue" />
+            <input type="button" class="roatp-button--secondary" value="Try Again" />
+        </form>*@
+                <form method="post" asp-action="AddProviderType" asp-controller="AddRoatpOrganisation">
+                    @Html.HiddenFor(m => m.LegalName)
+                    @Html.HiddenFor(m => m.TradingName)
+                    @Html.HiddenFor(m => m.CharityNumber)
+                    @Html.HiddenFor(m => m.CompanyNumber)
+                    @Html.HiddenFor(m => m.UKPRN)
+                    <input type="submit" class="roatp-button" value="Continue" />
+                    <a class="roatp-button--secondary" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                        Try Again
+                    </a>
                 </form>
+
             </div>
 
         </div>
