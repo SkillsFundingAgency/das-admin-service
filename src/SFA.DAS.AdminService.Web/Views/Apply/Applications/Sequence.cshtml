@@ -23,7 +23,7 @@
             {
                 <h1 class="govuk-heading-xl">Application overview</h1>
 
-                <dl class="govuk-summary-list">
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                     @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
                     {
                         <div class="govuk-summary-list__row">
@@ -55,7 +55,7 @@
                     @if (Model.Ukprn.HasValue)
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Ukprn</dt>
+                            <dt class="govuk-summary-list__key">UKPRN</dt>
                             <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
                         </div>
                     }
@@ -90,7 +90,7 @@
                                     @applicationSection.LinkTitle
                                 </a>
                             </h2>
-                            <span class="form-hint form-hint--margin-bottom">
+                            <span class="govuk-hint">
                                 @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
                             </span>
                             @if (applicationSection.HasNewPageFeedback)
@@ -99,12 +99,16 @@
                                     Feedback added
                                 </div>
                             }
-                            @*@if (applicationSection.HasCompletedPageFeedback)
-                                {
+
+                            @*
+                            @if (applicationSection.HasCompletedPageFeedback)
+                            {
                                 <div class="govuk-tag">
                                     Answer updated
                                 </div>
-                                }*@
+                            }
+                            *@
+
                             @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
                             {
                                 <div class="govuk-tag">

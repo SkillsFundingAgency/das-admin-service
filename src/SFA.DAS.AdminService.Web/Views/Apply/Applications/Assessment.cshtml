@@ -5,96 +5,101 @@
     ViewBag.Title = Model.Title;
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a class="link-back" asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId">Back</a>
-        <h1 class="heading-xlarge">@Model.Title</h1>
+<a class="govuk-back-link" asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId">Back</a>
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="ReturnType"></a></li>
-                </ul>
-            </div>
-        }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-        <div class="form-group">
-            <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
-                @if (!Model.HasNewFeedback)
-                {
-                    if (Model.SequenceId == 1)
-                    {
-                        <div class="form-group">
-                            <span>You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
-                        </div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There is a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li><a sfa-validation-for="ReturnType"></a></li>
+                    </ul>
+                </div>
+            }
 
-                        @if (Model.HasInadequateFhaButNoFeedbackGiven)
-                        {
-                            <div class="form-group">
-                                <div class="notice">
-                                    <i class="icon icon-important"><span class="visually-hidden">Warning</span></i>
-                                    <strong class="bold-small">You have overridden an inadequate Financial health assessment.</strong>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else if (Model.SequenceId == 2)
-                    {
-                        <div class="form-group">
-                            <span>You are about to approve the second stage of this application. You are also satisfied with the information the applicant has provided so far, and require no further information.</span>
-                        </div>
-                    }
-
+            <div class="form-group">
+                <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
                     <input type="hidden" asp-for="ReturnType" value="Approve" />
-                    <button class="button" type="submit">Approve application</button>
-                }
-                else
-                {
-                    <div class="form-group">
+                    <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
+
+                    @if (!Model.HasNewFeedback)
+                    {
                         @if (Model.SequenceId == 1)
                         {
-                            @*<span>You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</span>*@
-                            @*<span>If you reject the application, the applicant will have to start a new application.</span>*@
-                            <span>You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</span>
+                            <p class="govuk-body">You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</p>
+
+                            @if (Model.HasInadequateFhaButNoFeedbackGiven)
+                            {
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        <span class="govuk-warning-text__assistive">Warning</span>
+                                        You have overridden an inadequate Financial health assessment.
+                                    </strong>
+                                </div>
+                            }
                         }
                         else if (Model.SequenceId == 2)
                         {
-                            <span>You are about to send back the second stage of this application. This means that the applicant will have to action any comments and resubmit.</span>
+                            <p class="govuk-body">You are about to approve the second stage of this application. You are also satisfied with the information the applicant has provided so far, and require no further information.</p>
                         }
-                        <span>Before returning your assessment back to the applicant, review the comments that you added.</span>
-                    </div>
 
-                    foreach (var sec in Model.Sequence.Sections)
+                        <button class="govuk-button" type="submit">Approve application</button>
+                    }
+                    else
                     {
-                        <div class="form-group">
-                            <label class="form-label-bold">@sec.LinkTitle</label>
+                        @if (Model.SequenceId == 1)
+                        {
+                            @*<p class="govuk-body">You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</p>*@
+                            @*<p class="govuk-body">If you reject the application, the applicant will have to start a new application.</p>*@
+                            <p class="govuk-body">You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
+                        }
+                        else if (Model.SequenceId == 2)
+                        {
+                            <p class="govuk-body">You are about to send back the second stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
+                        }
+                        <p class="govuk-body">Before returning your assessment back to the applicant, review the comments that you added.</p>
+
+                        foreach (var sec in Model.Sequence.Sections)
+                        {
+
+                            <h2 class="govuk-heading-l">@sec.LinkTitle</h2>
                             @if (!sec.HasNewPageFeedback)
                             {
-                                <span>No comments.</span>
+                                <p class="govuk-body">No comments.</p>
                             }
                             else
                             {
-                                foreach (var pageWithNewFeedback in sec.QnAData.Pages.Where(p => p.HasNewFeedback))
-                                {
-                                    foreach (var newPageFeedback in pageWithNewFeedback.Feedback.Where(f => f.IsNew))
+                                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                                    @foreach (var pageWithNewFeedback in sec.QnAData.Pages.Where(p => p.HasNewFeedback))
                                     {
-                                        <p>@pageWithNewFeedback.LinkTitle : @newPageFeedback.Message</p>
+                                        @foreach (var newPageFeedback in pageWithNewFeedback.Feedback.Where(f => f.IsNew))
+                                        {
+                                            <div class="govuk-summary-list__row">
+                                                <dt class="govuk-summary-list__key">
+                                                    @pageWithNewFeedback.LinkTitle
+                                                </dt>
+                                                <dd class="govuk-summary-list__value">
+                                                    @newPageFeedback.Message
+                                                </dd>
+                                            </div>
+                                        }
                                     }
-                                }
+                                </dl>
                             }
-                        </div>
-                    }
+                        }
 
-                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        <button class="govuk-button" type="submit">Return application</button>
 
-                    <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
-                    <button class="button" type="submit">Return application</button>
-
-                    @*<div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
+                        @*
+                        <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
                             <div class="form-group">
                                 <label class="form-label-bold">
                                     Is the application approved?
@@ -120,13 +125,15 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="button" type="submit">Submit assessment</button>*@
-                }
-            </form>
-        </div>
+                        <button class="button" type="submit">Submit assessment</button>
+                        *@
+                    }
+                </form>
+            </div>
 
-        <div class="form-group">
-            <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
+            <p class="govuk-body">
+                <a asp-controller="Application" asp-action="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-link">Return to application overview</a>
+            </p>
         </div>
     </div>
-</div>
+</main>

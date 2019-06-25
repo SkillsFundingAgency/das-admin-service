@@ -6,110 +6,126 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="link-back">Back</a>
-        @if (Model.Page == null)
-        {
-            <h1 class="heading-xlarge">Page not active</h1>
-        }
-        else
-        {
-            <h1 class="heading-xlarge">@Model.Title</h1>
+<a class="govuk-back-link" href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})">Back</a>
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There is a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li>
-                            <a sfa-validation-for="FeedbackMessage"></a>
-                        </li>
-                    </ul>
-                </div>
-            }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (Model.Page == null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Page not active</h1>
+            </div>
+        </div>
 
-            @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
-            {
-                <table class="form-group">
-                    <thead>
-                        <tr>
-                            <th scope="col">Question</th>
-                            <th scope="col">Answer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var answer in pageOfAnswers.DisplayAnswers)
-                        {
-                            <tr>
-                                <td>@answer.Label</td>
-
-                                @if (answer is FileUploadDisplayAnswer)
-                                {
-                                    var fuAnswer = answer as FileUploadDisplayAnswer;
-                                    <p>
-                                        <a href="@Url.Action("Download", "Application",
-                             new
-                             {
-                                 applicationId = fuAnswer.ApplicationId,
-                                 sequenceId = fuAnswer.SequenceId,
-                                 sectionId = fuAnswer.SectionId,
-                                 pageId = fuAnswer.PageId,
-                                 questionId = fuAnswer.QuestionId,
-                                 filename = fuAnswer.FileName
-                             })">
-                                        </a>
-                                    </p>
-                                }
-                                else
-                                {
-                                    <td>@answer.Answer()</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-
-            @if (Model.Page.HasFeedback)
-            {
-                <h2 class="heading-large">Feedback</h2>
-                foreach (var feedback in Model.Page.Feedback)
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="das-feedback">
-                        <h3 class="heading-small">@feedback.From</h3>
-                        <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
-                        <p>@feedback.Message</p>
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li>
+                                    <a sfa-validation-for="FeedbackMessage"></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
+
+                @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
+                {
+                    <table class="govuk-table table-font-xsmall">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Question</th>
+                                <th class="govuk-table__header" scope="col">Answer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@answer.Label</td>
+
+                                    @if (answer is FileUploadDisplayAnswer)
+                                    {
+                                        var fuAnswer = answer as FileUploadDisplayAnswer;
+                                        <td class="govuk-table__cell">
+                                            <a class="govuk-link" href="@Url.Action("Download", "Application",
+                                                new
+                                                {
+                                                    applicationId = fuAnswer.ApplicationId,
+                                                    sequenceId = fuAnswer.SequenceId,
+                                                    sectionId = fuAnswer.SectionId,
+                                                    pageId = fuAnswer.PageId,
+                                                    questionId = fuAnswer.QuestionId,
+                                                    filename = fuAnswer.FileName
+                                                })">
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="govuk-table__cell">@answer.Answer()</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (Model.Page.HasFeedback)
+                {
+                    <h2 class="govuk-heading-l">Feedback</h2>
+
+                    foreach (var feedback in Model.Page.Feedback)
+                    {
+                        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@feedback.From</h3>
+                        <p class="govuk-body-s">@feedback.Date.ToShortDateString()</p>
+                        <p class="govuk-body">@feedback.Message</p>
                         @if (feedback.IsNew)
                         {
                             <form class="js-disable-on-submit" asp-action="DeleteFeedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
                                 <input type="hidden" name="FeedbackId" value="@feedback.Id"/>
-                                <button class="button" type="submit">Delete</button>
+                                <button class="govuk-button govuk-button--warning" type="submit">Delete</button>
                             </form>
                         }
-                    </div>
-                }
-                <hr/>
-            }
+                    }
 
-            <div class="form-group">
+                    <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
+                }
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
-                    <div class="form-group error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                        <label class="form-label-bold" for="message">
-                            Add Feedback
+                    <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                        <label class="govuk-label govuk-label--l" for="message">
+                            Add feedback
                         </label>
-                        <span class="error-message" asp-validation-for="FeedbackMessage"></span>
-                        <textarea class="form-control form-control-full" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="form-control-error" asp-for="FeedbackMessage"></textarea>
+                        <span class="govuk-error-message" asp-validation-for="FeedbackMessage"></span>
+                        <textarea class="govuk-textarea" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="govuk-textarea--error" asp-for="FeedbackMessage"></textarea>
                     </div>
-                    <button class="button" type="submit">Add feedback</button>
+                    <button class="govuk-button" type="submit">Add feedback</button>
                 </form>
             </div>
-        }
+        </div>
+    }
 
-        <div class="form-group">
-            <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-button">Return to section overview</a>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-link">Return to section overview</a>
+            </p>
         </div>
     </div>
-</div>
+</main>

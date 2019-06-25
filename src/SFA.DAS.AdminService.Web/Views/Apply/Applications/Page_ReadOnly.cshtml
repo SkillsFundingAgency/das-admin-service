@@ -6,76 +6,89 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="link-back">Back</a>
-        @if (Model.Page == null)
-        {
-            <h1 class="heading-xlarge">Page not active</h1>
-        }
-        else
-        {
-            <h1 class="heading-xlarge">@Model.Title</h1>
+<a class="govuk-back-link" href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})">Back</a>
 
-            @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
-            {
-                <table class="form-group">
-                    <thead>
-                        <tr>
-                            <th scope="col">Question</th>
-                            <th scope="col">Answer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var answer in pageOfAnswers.DisplayAnswers)
-                        {
-                            <tr>
-                                <td>@answer.Label</td>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (Model.Page == null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Page not active</h1>
+            </div>
+        </div>
 
-                                @if (answer is FileUploadDisplayAnswer)
-                                {
-                                    var fuAnswer = answer as FileUploadDisplayAnswer;
-                                    <p>
-                                        <a href="@Url.Action("Download", "Application",
-                                             new
-                                             {
-                                                 applicationId = fuAnswer.ApplicationId,
-                                                 sequenceId = fuAnswer.SequenceId,
-                                                 sectionId = fuAnswer.SectionId,
-                                                 pageId = fuAnswer.PageId,
-                                                 questionId = fuAnswer.QuestionId,
-                                                 filename = fuAnswer.FileName
-                                             })">
-                                        </a>
-                                    </p>
-                                }
-                                else
-                                {
-                                    <td>@answer.Answer()</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
 
-            @if (Model.Page.HasFeedback)
-            {
-                <h2 class="heading-large">Feedback</h2>
-                foreach (var feedback in Model.Page.Feedback)
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
+
+                @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
                 {
-                    <div class="das-feedback">
-                        <h3 class="heading-small">@feedback.From</h3>
-                        <p class="font-xsmall">@feedback.Date.ToShortDateString()</p>
-                        <p>@feedback.Message</p>
-                    </div>
-                }
-                <hr />
-            }
-        }
+                    <table class="govuk-table table-font-xsmall">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Question</th>
+                                <th class="govuk-table__header" scope="col">Answer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@answer.Label</td>
 
-        <div class="form-group">
-            <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-button">Return to section overview</a>
+                                    @if (answer is FileUploadDisplayAnswer)
+                                    {
+                                        var fuAnswer = answer as FileUploadDisplayAnswer;
+                                        <td class="govuk-table__cell">
+                                            <a class="govuk-link" href="@Url.Action("Download", "Application",
+                                                new
+                                                {
+                                                    applicationId = fuAnswer.ApplicationId,
+                                                    sequenceId = fuAnswer.SequenceId,
+                                                    sectionId = fuAnswer.SectionId,
+                                                    pageId = fuAnswer.PageId,
+                                                    questionId = fuAnswer.QuestionId,
+                                                    filename = fuAnswer.FileName
+                                                })">
+                                            </a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="govuk-table__cell">@answer.Answer()</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                @if (Model.Page.HasFeedback)
+                {
+                    <h2 class="govuk-heading-l">Feedback</h2>
+
+                    foreach (var feedback in Model.Page.Feedback)
+                    {
+                        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@feedback.From</h3>
+                        <p class="govuk-body-s">@feedback.Date.ToShortDateString()</p>
+                        <p class="govuk-body">@feedback.Message</p>
+                    }
+
+                    <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-6">
+                }
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body">
+                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-link">Return to section overview</a>
+            </p>
         </div>
     </div>
-</div>
+</main>

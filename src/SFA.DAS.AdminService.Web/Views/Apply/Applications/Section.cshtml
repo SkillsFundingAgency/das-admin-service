@@ -77,7 +77,7 @@
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    Ukprn
+                                    UKPRN
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     @Model.Ukprn
@@ -96,35 +96,51 @@
             </div>
         </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                @if (Model.SequenceId == 1 && Model.SectionId == 3)
-                {
-                    // NOTE: The FHA Section has a read only view. See ON-1277
-                    var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
-                    var financialApplicationComments = financialApplication.InadequateMoreInformation;
+        @if (Model.SequenceId == 1 && Model.SectionId == 3)
+        {
+            // NOTE: The FHA Section has a read only view. See ON-1277
+            var financialApplication = Model.Section.QnAData?.FinancialApplicationGrade;
+            var financialApplicationComments = financialApplication.InadequateMoreInformation;
 
-                    <table class="govuk-table table-font-xsmall">
-                        <thead class="govuk-table__head">
-                            <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Grade</th>
-                                <th class="govuk-table__header" scope="col">Date reviewed</th>
-                                <th class="govuk-table__header" scope="col">Comments</th>
-                                <th class="govuk-table__header" scope="col">Reviewer</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@financialApplication.SelectedGrade</td>
-                                <td class="govuk-table__cell">@financialApplication.GradedDateTime.ToShortDateString()</td>
-                                <td class="govuk-table__cell">@financialApplicationComments</td>
-                                <td class="govuk-table__cell">@financialApplication.GradedBy</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                }
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Grade
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @financialApplication.SelectedGrade
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Date reviewed
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @financialApplication.GradedDateTime.ToShortDateString()
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Comments
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @financialApplicationComments
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Reviewer
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @financialApplication.GradedBy
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
             </div>
-        </div>
+        }
 
         {
             <div class="govuk-grid-row">
@@ -134,7 +150,22 @@
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    @pg.LinkTitle
+                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
+                                        @pg.LinkTitle
+                                    </h3>
+
+                                    @if (pg.HasNewFeedback)
+                                    {
+                                        <div class="govuk-tag">
+                                            Feedback added
+                                        </div>
+                                    }
+                                    @if (pg.HasCompletedFeedback)
+                                    {
+                                        <div class="govuk-tag">
+                                            Answer updated
+                                        </div>
+                                    }
                                 </dt>
 
                                 <dd class="govuk-summary-list__value">
@@ -142,7 +173,7 @@
                                     {
                                         foreach (var answer in answerPage.DisplayAnswers)
                                         {
-                                            <h3 class="govuk-heading-s">@answer.Label</h3>
+                                            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@answer.Label</h3>
                                             var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
 
                                             if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
@@ -186,21 +217,8 @@
                                 </dd>
 
                                 <dd class="govuk-summary-list__actions">
-                                    @if (pg.HasNewFeedback)
-                                    {
-                                        <div class="govuk-tag form-group">
-                                            Feedback added
-                                        </div>
-                                    }
-                                    @if (pg.HasCompletedFeedback)
-                                    {
-                                        <div class="govuk-tag form-group">
-                                            Answer updated
-                                        </div>
-                                    }
-
-                                    <p>
-                                        <a class="govuk-link das-no-wrap" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
+                                    <p class="govuk-body">
+                                        <a class="govuk-link" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId})">
                                             @if (pg.HasNewFeedback)
                                             {
                                                 <text>View or amend feedback</text>
