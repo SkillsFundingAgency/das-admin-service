@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.WsFederation" Version="2.2.0" />
@@ -166,7 +167,7 @@
     <Content Update="Views\Roatp\AddOrganisationType.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Roatp\UpdateApplicationDeterminedDateViewModel.cshtml">
+    <Content Update="Views\Roatp\UpdateOrganisationApplicationDeterminedDate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Roatp\UkprnPreview.cshtml">
