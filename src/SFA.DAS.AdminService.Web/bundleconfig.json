@@ -6,7 +6,7 @@
   {
     "outputFileName": "wwwroot/javascripts/application.min.js",
     "inputFiles": [
-      "wwwroot/javascripts/govuk-frontend-2.5.1.min.js",
+      "wwwroot/javascripts/govuk-frontend-2.13.0.min.js",
       "wwwroot/javascripts/lib/jquery/jquery-1.12.4.js",
       "wwwroot/javascripts/das-expandable-table.js",
       "wwwroot/javascripts/das-cookie-banner.js",
@@ -16,13 +16,5 @@
       "renameLocals": true
     },
     "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/css/roatp.min.css",
-    "inputFiles": [ "wwwroot/css/roatp.css" ]
-  },
-  {
-    "outputFileName": "wwwroot/js/roatp-ui.min.js",
-    "inputFiles": [ "wwwroot/js/roatp-ui.js" ]
   }
 ]
