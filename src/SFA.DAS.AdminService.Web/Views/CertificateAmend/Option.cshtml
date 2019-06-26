@@ -5,128 +5,110 @@
     Layout = "_Layout";
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">     
-        @if (Model.FromApproval)
-        {
-            <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
-        }
-        else
-        {
-            <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
-        }
+@if (Model.FromApproval)
+{
+    <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval = "true" asp-route-certificateId=@Model.Id>Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+}
 
-        <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
-            @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(c => c.FromApproval)
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">     
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    <text>There is a problem</text>
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.FromApproval)
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="error-summary-list">
-                    <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
-                    <li><a sfa-validation-for="Option"></a></li>
-                    @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
-                    <li><a sfa-validation-for="ReasonForChange"></a></li>
-                </ul>
-            </div>
-            }
-
-            <div sfa-anyvalidationerror-class="after-error-summary">
-                <div id="HasAdditionalLearningOption">
-                    <h1 class="heading-medium">
-                        Did the apprentice take a learning option?
-                    </h1>
-                    <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                    <p>The option will appear on the certificate.</p>
-                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="govuk-form-group--error">
-                        <span class="govuk-error-message" asp-validation-for="HasAdditionalLearningOption"></span>
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
                     </div>
                 </div>
 
                 @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                            There's a problem
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
                         </h2>
-                        <ul class="error-summary-list">
-                            <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
-                            <li><a sfa-validation-for="Option"></a></li>
-                            @*<li><a href="#Pass">You need to specify an achievement grade for this apprentice</a></li>*@
-                            <li><a sfa-validation-for="ReasonForChange"></a></li>
-                        </ul>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
+                                <li><a sfa-validation-for="Option"></a></li>
+                                <li><a sfa-validation-for="ReasonForChange"></a></li>
+                            </ul>
+                        </div>
                     </div>
                 }
 
-                <div sfa-anyvalidationerror-class="after-error-summary">
-                    <div id="HasAdditionalLearningOption">
-                        <h1 class="heading-medium">
-                            Did the apprentice take a learning option?
-                        </h1>
-                        <p>You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                        <p>The option will appear on the certificate.</p>
-                        <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption" sfa-validationerror-class="govuk-form-group--error">
+                <h1 class="govuk-heading-xl">
+                    Did the apprentice take a learning option?
+                </h1>
+
+                <p class="govuk-body">You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
+                <p class="govuk-body">The option will appear on the certificate.</p>
+
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
                             <span class="govuk-error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                        </div>
+                        }
                     </div>
-                    <div class="govuk-form-group" sfa-anyvalidationerror-class="form-group-error">
-                        <div class="multiple-choice" data-target="show-option-input">
-                            <input asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
-                            <label for="options_yes">
+
+                    <div class="govuk-radios">
+                        <div class="govuk-radios__item" data-target="show-option-input">
+                            <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
+                            <label class="govuk-label govuk-radios__label" for="options_yes">
                                 Yes
                             </label>
                         </div>
                         <div class="panel panel-border-narrow js-hidden" id="show-option-input">
-                            <label class="form-label" for="surname">
-                                <span class="form-label">What was the option?</span>
-                                <span class="govuk-error-message" asp-validation-for="Option"></span>
+                            <label class="govuk-label" for="surname">
+                                What was the option?
                             </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="Option"></span>
+                            }
                             <input class="govuk-input" sfa-validation-for="Option" sfa-validationerror-class="govuk-input--error" asp-for="Option" type="text" />
                         </div>
 
-                        <div class="multiple-choice">
-                            <input asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
-                            <label for="options_no">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
+                            <label class="govuk-label govuk-radios__label" for="options_no">
                                 No
                             </label>
                         </div>
                     </div>
-                    <div class="govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error">
-                        <label class="govuk-label govuk-label--m" for="ReasonForChange">
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+                <div class="govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForChange">
                         Reason for change
                     </label>
                     <span class="govuk-hint">Provide more detail as to why this change is required.</span>
-                    <span class="govuk-error-message" asp-validation-for="ReasonForChange"></span>
-                        <textarea class="govuk-textarea" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-input--error" asp-for="ReasonForChange"></textarea>
-                    </div>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="ReasonForChange"></span>
+                    }
+                    <textarea class="govuk-textarea" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-textarea--error" asp-for="ReasonForChange"></textarea>
                 </div>
 
-                <details>
-                    <summary><span class="summary">What's a learning option?</span></summary>
-                    <div class="panel panel-border-narrow" id="what-is-a-learning-option">
-                        <p>
-                            For some standards, an apprentice can take different learning options. For example, the standard for professional accounting taxation technician has a tax option. If it applies, enter the option the apprentice achieved.
-                        </p>
-                    </div>
-                </details>
-
                 <button type="submit" class="govuk-button">Continue</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
+</main>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_OptionScriptsPartial.cshtml"); }

@@ -140,7 +140,7 @@
                                     <span class="govuk-hint">Can you provide more detail as to why this certificate is rejected.</span>
                                     <span id="more-detail-hint" class="govuk-error-message" asp-validation-for="@approvalresults[i].ReasonForChange"></span>
 
-                                    <textarea class="govuk-textarea" id="more-detail" rows="6" sfa-validation-for="@approvalresults[i].ReasonForChange" sfa-validationerror-class="form-control-error" asp-for=@approvalresults[i].ReasonForChange></textarea>
+                                    <textarea class="govuk-textarea" id="more-detail" rows="6" sfa-validation-for="@approvalresults[i].ReasonForChange" sfa-validationerror-class="govuk-textarea--error" asp-for=@approvalresults[i].ReasonForChange></textarea>
                                 </div>
                             </div>
                         </td>

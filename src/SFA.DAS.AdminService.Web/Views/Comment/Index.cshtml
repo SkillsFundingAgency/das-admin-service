@@ -5,29 +5,55 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.BackToCheckPage)
-        {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
-        }
+@if (Model.BackToCheckPage)
+{
+    <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
+}
+else
+{
+    <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+}
 
-        <h1 class="heading-large">Confirmation</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <p class="lede text">
-            Thank you for confirming the certificate changes for Certificate for
-         
-            <div class="bold-medium"><span>Name:</span> @Model.FullName</div>
-            <div class="bold-medium">Uln: @Model.Uln</div>            
-            <div class="bold-medium">Certificate Reference: @Model.CertificateReference</div>
-        </p>
+            <h1 class="govuk-heading-xl">Confirmation</h1>
 
-        <div>
-            <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+            <p class="govuk-body-l">
+                Thank you for confirming the certificate changes for certificate for:
+            </p>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FullName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        ULN
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Uln
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Certificate reference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificateReference
+                    </dd>
+                </div>
+            </dl>
+            
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
+            </p>
         </div>
     </div>
-</div>
+</main>
