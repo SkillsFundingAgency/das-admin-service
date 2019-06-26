@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SFA.DAS.AssessorService.Web.Staff.Tests": {
+    "SFA.DAS.AdminService.Web.Tests": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
