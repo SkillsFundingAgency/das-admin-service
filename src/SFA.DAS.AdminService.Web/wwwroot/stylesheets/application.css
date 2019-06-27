@@ -1239,66 +1239,262 @@ TODO: change to 'das-page-navigation' and BEM
 /* Scrollable Table */
 
 .scrollable-table-scroll-container {
-    display: block;
-    width: calc(100% + 20px);
-    margin: 0 -20px;
-    overflow-x: auto;
-    padding-top: 30px;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
-    mask-image: -webkit-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    mask-image: -moz-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    -webkit-mask-image: -webkit-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    -webkit-mask-image: -moz-linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20px,
-      white 97%,
-      transparent
-    );
+  display: block;
+  width: calc(100% + 20px);
+  margin: 0 -20px;
+  overflow-x: auto;
+  padding-top: 30px;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  mask-image: -webkit-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: -moz-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: -webkit-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: -moz-linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    white 20px,
+    white 97%,
+    transparent
+  );
+}
+
+.scrollable-table-container {
+  display: inline-block;
+  position: relative;
+  margin: 0 20px;
+}
+
+/* Responsive tables */
+
+.das-table--responsive thead {
+  display: none;
+}
+
+.das-table--responsive tr {
+  border: 1px solid #bfc1c3;
+  margin-bottom: 10px;
+  display: block;
+  float: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.das-table--responsive tr td {
+  display: block;
+  text-align: right;
+  clear: left;
+  float: left;
+  width: 100%;
+  padding: 10px 10px 8px;
+  box-sizing: border-box;
+  border-bottom: 1px dotted #bfc1c3;
+}
+
+.das-table--responsive tr td .govuk-tag {
+  margin-right: 8px;
+}
+
+.das-table--responsive tr td:before {
+  content: attr(data-label);
+  float: left;
+  font-weight: bold;
+  padding-right: 10px;
+}
+
+.das-table--responsive tr td:last-child {
+  border-bottom: none;
+}
+
+.das-table--responsive tr.total {
+  border: 2px solid #000;
+}
+
+@media (min-width: 40.0625em) {
+
+  .das-table--responsive thead {
+    display: table-header-group;
   }
-  
-  .scrollable-table-container {
-    display: inline-block;
-    position: relative;
-    margin: 0 20px;
+
+  .das-table--responsive tr {
+    display: table-row;
+    border: none;
+    float: none;
+    margin: 0;
   }
+
+  .das-table--responsive tr th,
+  .das-table--responsive tr td {
+      display: table-cell;
+      text-align: left;
+      float: none;
+      clear: none;
+      padding: 10px 20px 10px 0;
+      border-bottom-style: solid;
+      width: auto;
+  }
+
+  .das-table--responsive tr th:first-child,
+  .das-table--responsive tr td:first-child {
+    padding-left: 0;
+  }
+
+  .das-table--responsive tr th:last-child,
+  .das-table--responsive tr td:last-child {
+    padding-right: 0;
+  }
+
+  .das-table--responsive tr th:before,
+  .das-table--responsive tr td:before {
+    display: none;
+  }
+
+  .das-table--responsive tr th.govuk-table__header--numeric,
+  .das-table--responsive tr td.govuk-table__cell--numeric {
+    text-align: right;
+  }
+
+  .das-table--responsive tr th.colgroup,
+  .das-table--responsive tr td.colgroup {
+    text-align: center;
+  }
+
+  .das-table--responsive tr th:last-child,
+  .das-table--responsive tr td:last-child {
+    border-bottom: 1px solid #bfc1c3;
+  }
+
+  .das-table--responsive tr th.link-right:last-child,
+  .das-table--responsive tr td.link-right:last-child {
+    text-align: right;
+  }
+
+  .das-table--responsive tr.total {
+    border: none;
+  }
+
+  .das-table--responsive tr.total td {
+    border-bottom: none;
+  }
+
+  .das-table--responsive tr.total td.total {
+    border-bottom: 2px solid #000;
+  }
+
+  .das-table--responsive tr th.tw-5 {
+    width: 5%;
+  }
+
+  .das-table--responsive tr th.tw-10 {
+    width: 10%;
+  }
+
+  .das-table--responsive tr th.tw-15 {
+    width: 15%;
+  }
+
+  .das-table--responsive tr th.tw-20 {
+    width: 20%;
+  }
+
+  .das-table--responsive tr th.tw-25 {
+    width: 25%;
+  }
+
+  .das-table--responsive tr th.tw-30 {
+    width: 30%;
+  }
+
+  .das-table--responsive tr th.tw-35 {
+    width: 35%;
+  }
+
+  .das-table--responsive tr th.tw-40 {
+    width: 40%;
+  }
+
+  .das-table--responsive tr th.tw-45 {
+    width: 45%;
+  }
+
+  .das-table--responsive tr th.tw-50 {
+    width: 50%;
+  }
+
+  .das-table--responsive tr th.tw-55 {
+    width: 55%;
+  }
+
+  .das-table--responsive tr th.tw-60 {
+    width: 60%;
+  }
+
+  .das-table--responsive tr th.tw-65 {
+    width: 65%;
+  }
+
+  .das-table--responsive tr th.tw-70 {
+    width: 70%;
+  }
+
+  .expandble-cell-content {
+    border-left-style: solid;
+    border-color: #bfc1c3;
+    border-left-width: 5px;
+  }
+
+  .das-table--responsive tr td:empty {
+    display: table-cell;
+  }
+
+  .das-table--responsive tr td .govuk-tag {
+    margin-right: 0;
+  }
+}
+
+/* Small tables */
+
+@media (min-width: 40.0625em) {
+  .govuk-table--s th,
+  .govuk-table--s td {
+    font-size: 16px;
+  }
+}
