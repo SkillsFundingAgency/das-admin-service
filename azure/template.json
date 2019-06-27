@@ -134,7 +134,7 @@
                     },
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
-                      },
+                     },
                     "appServiceAppSettings": {
                         "value": [
                             {
