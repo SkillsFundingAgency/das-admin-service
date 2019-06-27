@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.Web.Staff.Controllers
+﻿namespace SFA.DAS.AdminService.Web.Controllers
 {
     using Domain;
     using Helpers;

@@ -19,7 +19,7 @@
 
             @if (@Model.TotalRecordCount > 0)
             {
-                <table class="govuk-table table-font-xsmall">
+                <table class="govuk-table govuk-table--s das-table--responsive">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Ukprn</th>
@@ -45,22 +45,20 @@
             }
             else
             {
-                <div class="form-group">
-                    <span class="bold">No Users present</span>
-                </div>
+                <p class="govuk-body">No Users present</p>
             }
         </div>
     </div>
 
     @if (Model.HasPreviousPage || Model.HasNextPage)
     {
-        <div class="grid-row">
-            <div class="column-full">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
                 <div class="page-navigation">
 
                     @if (Model.HasPreviousPage)
                     {
-                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="previous">
+                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex - 1)" class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
                             <span class="description">Previous <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="prevPage">@(Model.PageIndex - 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
@@ -69,7 +67,7 @@
 
                     @if (Model.HasNextPage)
                     {
-                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="next">
+                        <a asp-action="Index" asp-controller="ExternalApi" asp-route-page="@(Model.PageIndex + 1)" class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
                             <span class="description">Next <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="nextPage">@(Model.PageIndex + 1)</span> of <span class="totalPage">@(Model.TotalPages)</span></span>
