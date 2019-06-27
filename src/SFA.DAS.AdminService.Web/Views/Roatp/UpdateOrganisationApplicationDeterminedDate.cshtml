@@ -3,7 +3,8 @@
 @using SFA.DAS.AdminService.Web
 @using SFA.DAS.AdminService.Web.Domain
 @{
-    ViewBag.Title = "Enter details";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Change application determined date";
+
     var isError = Model.IsError ? "form-group-error" : "";
     var isErrorDay = Model.IsErrorDay ? "form-control-error" : "";
     var isErrorMonth = Model.IsErrorMonth ? "form-control-error" : "";
