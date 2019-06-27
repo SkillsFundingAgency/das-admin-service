@@ -47,14 +47,10 @@
             "type": "string",
             "defaultValue": "West Europe"
         },
-        "wafOutboundIpAddresses": {
+        "appServiceAllowedIPs": {
             "type": "array",
             "defaultValue": []
-         },
-         "dfeOutboundIpAddresses": {
-            "type": "array",
-            "defaultValue": []
-         }
+          }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
@@ -137,8 +133,8 @@
                         "value": true
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[concat(parameters('wafOutboundIpAddresses'), parameters('dfeOutboundIpAddresses'))]"
-                    },
+                        "value": "[parameters('appServiceAllowedIPs')]"
+                      },
                     "appServiceAppSettings": {
                         "value": [
                             {
