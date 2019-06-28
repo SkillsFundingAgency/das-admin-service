@@ -38,7 +38,7 @@
                                 <a href="/results-found?index=@Html.Raw(index)#results" class="govuk-link">
                                     @Html.Raw(Model.SearchResults[index].LegalName) 
 
-                                    @if (Model.SearchResults[index].OrganisationStatus.Id != 0)
+                                    @if (Model.SearchResults[index].OrganisationStatus.Id == 0)
                                     {
                                         <text>(Removed)</text>
                                     }

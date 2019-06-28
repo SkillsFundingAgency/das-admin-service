@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                     UKPRN = model.UKPRN.Trim()
                 });
                 var fullProviderDetails = await _apiClient
-                    .GetUkrlpProviderDetails(model.UKPRN.Trim()); // _ukrlpClient.Get(model.UKPRN.Trim());
+                    .GetUkrlpProviderDetails(model.UKPRN.Trim()); 
 
                 details = _ukrlpProcessingService.ProcessDetails(fullProviderDetails.ToList());
             }
