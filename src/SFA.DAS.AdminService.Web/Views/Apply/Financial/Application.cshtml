@@ -1,6 +1,5 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.FinancialApplicationViewModel
-
 @{
     ViewBag.Title = "Financial health evaluation";
     Layout = "_Layout";
@@ -182,6 +181,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <div class="govuk-radios__item" data-target="good-more-info">
                             <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
@@ -218,6 +218,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="satisfactory" data-aria-controls="satisfactory-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />

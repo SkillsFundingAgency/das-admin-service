@@ -95,11 +95,14 @@ namespace SFA.DAS.AdminService.Web
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
-            
-            services.AddDistributedRedisCache(options =>
+
+            if (!_env.IsDevelopment())
             {
-                options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-            });
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
+                });
+            }
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
 

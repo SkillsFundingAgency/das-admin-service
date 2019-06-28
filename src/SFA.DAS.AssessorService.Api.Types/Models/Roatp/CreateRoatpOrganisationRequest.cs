@@ -4,7 +4,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
 {
     using MediatR;
 
-    public class CreateOrganisationRequest : IRequest<bool>
+    public class CreateRoatpOrganisationRequest : IRequest<bool>
     {
         public int ProviderTypeId { get; set; }
         public int OrganisationTypeId { get; set; }
@@ -19,5 +19,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Roatp
         public bool NonLevyContract { get; set; }
 
         public string Username { get; set; }
+        public bool? SourceIsUKRLP { get; set; }
+
+        public DateTime? ApplicationDeterminedDate { get; set; }
     }
 }
