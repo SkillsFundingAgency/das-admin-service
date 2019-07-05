@@ -9,8 +9,7 @@
 
     public class RoatpOrganisationValidator : IRoatpOrganisationValidator
     {
-        private const string CompaniesHouseNumberRegexWithPrefix = "[A-Z]{2}[0-9]{6}";
-        private const string CompaniesHouseNumberRegexNumeric = "[0-9]{8}";
+        private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{5}[A-Za-z0-9]{1}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
         public List<ValidationErrorDetail> IsValidLegalName(string legalName)
@@ -57,6 +56,10 @@
                 errorMessages.Add(new ValidationErrorDetail("UKPRN", RoatpOrganisationValidation.UKPRNFormat));
             }
 
+            // TODO MFCMFC Remove this before branch UKRLP_etc gets remerged
+            if (ukprnValue == 111111111111)
+                return errorMessages;
+
             if (ukprnValue < 10000000 || ukprnValue > 99999999)
             {
                 errorMessages.Add(new ValidationErrorDetail("UKPRN", RoatpOrganisationValidation.UKPRNLength));
@@ -98,8 +101,7 @@
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberLength));
             }
 
-            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexWithPrefix)
-                && (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexNumeric)))
+            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegex))
             {
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberFormat));
             }

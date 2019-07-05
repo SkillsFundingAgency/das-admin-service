@@ -46,6 +46,10 @@
         "location" : {
             "type": "string",
             "defaultValue": "West Europe"
+        },
+        "appServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": []
         }
     },
     "variables": {
@@ -127,6 +131,9 @@
                     },
                     "deployStagingSlot": {
                         "value": true
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     },
                     "appServiceAppSettings": {
                         "value": [

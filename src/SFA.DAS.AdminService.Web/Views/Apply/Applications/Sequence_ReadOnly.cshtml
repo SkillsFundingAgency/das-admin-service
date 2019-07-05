@@ -6,107 +6,111 @@
 
 @{
     ViewBag.Title = "Application overview";
-
     var OpenStatusList = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
     var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Sequence?.Status, Model.SequenceId);
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a class="link-back" asp-controller="Application" asp-action="@BackAction">Back</a>
-        @if (Model.Sequence == null)
-        {
-            <h1 class="heading-xlarge">Sequence not active</h1>
-        }
-        else
-        {
-            <h1 class="heading-xlarge">Application overview</h1>
+<a class="govuk-back-link" asp-controller="Application" asp-action="@BackAction">Back</a>
 
-            <table class="table-spaced">
-                @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
-                {
-                    <tr>
-                        <td class="bold-small">Application reference</td>
-                        <td>@Model.ApplicationReference</td>
-                    </tr>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
-                {
-                    <tr>
-                        <td class="bold-small">Standard</td>
-                        <td>@Model.Standard</td>
-                    </tr>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.LegalName))
-                {
-                    <tr>
-                        <td class="bold-small">Registered name</td>
-                        <td>@Model.LegalName</td>
-                    </tr>
-                }
-                @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
-                {
-                    <tr>
-                        <td class="bold-small">Trading name</td>
-                        <td>@(Model.TradingName ?? Model.ProviderName)</td>
-                    </tr>
-                }
-                @if (Model.Ukprn.HasValue)
-                {
-                    <tr>
-                        <td class="bold-small">Ukprn</td>
-                        <td>@Model.Ukprn</td>
-                    </tr>
-                }
-                @if (Model.FinancialDueDate.HasValue)
-                {
-                    <tr>
-                        <td class="bold-small">Financial due date</td>
-                        <td>@Model.FinancialDueDate.ToSfaShortDateString()</td>
-                    </tr>
-                }
-            </table>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+            @if (Model.Sequence == null)
             {
-                <div class="form-group">
-                    <a target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
-                </div>
-                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                <h1 class="govuk-heading-xl">Sequence not active</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Application overview</h1>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Application reference</dt>
+                            <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Standard</dt>
+                            <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Registered name</dt>
+                            <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Trading name</dt>
+                            <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
+                        </div>
+                    }
+                    @if (Model.Ukprn.HasValue)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">UKPRN</dt>
+                            <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
+                        </div>
+                    }
+                    @if (Model.FinancialDueDate.HasValue)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Financial due date</dt>
+                            <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
+                        </div>
+                    }
+                </dl>
+
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                    </p>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+
+                <ul class="govuk-list">
+                    @foreach (var applicationSection in Model.Sequence.Sections.OrderBy(s => s.SectionId))
+                    {
+                        <li>
+                            <h2 class="govuk-heading-m">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
+                                    @applicationSection.LinkTitle
+                                </a>
+                            </h2>
+                            <span class="govuk-hint">
+                                @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                            </span>
+                            @if (applicationSection.HasNewPageFeedback)
+                            {
+                                <div class="govuk-tag">
+                                    Feedback added
+                                </div>
+                            }
+                            @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
+                            {
+                                <div class="govuk-tag">
+                                    Evaluated
+                                </div>
+                            }
+                            
+                            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        </li>
+                    }
+                </ul>
             }
 
-            <ul class="govuk-list">
-                @foreach (var applicationSection in Model.Sequence.Sections.OrderBy(s => s.SectionId))
-                {
-                    <li>
-                        @if (applicationSection.HasNewPageFeedback)
-                        {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Feedback added
-                            </div>
-                        }
-                        @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
-                        {
-                            <div class="govuk-tag govuk-tag--float-right">
-                                Evaluated
-                            </div>
-                        }
-                        <h2 class="heading-medium heading-medium--small-margin-bottom">
-                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
-                                @applicationSection.LinkTitle
-                            </a>
-                        </h2>
-                        <span class="form-hint form-hint--margin-bottom">
-                            @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
-                        </span>
-                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                    </li>
-                }
-            </ul>
-        }
-
-        <div class="form-group">
-            <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
+            <div class="form-group">
+                <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
+            </div>
         </div>
     </div>
-</div>
+</main>
