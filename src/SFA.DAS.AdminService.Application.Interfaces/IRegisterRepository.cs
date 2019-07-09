@@ -18,5 +18,6 @@ namespace SFA.DAS.AdminService.Application.Interfaces
         Task<string> AssociateOrganisationWithContact(Guid id, EpaOrganisation org, string status, string actionChoice);
         Task<string> AssociateDefaultRoleWithContact(EpaContact contact);
         Task<string> AssociateAllPrivilegesWithContact(EpaContact contact);
+        Task<string> AssociateDefaultPrivilegesWithContact(EpaContact contact);
     }
 }
