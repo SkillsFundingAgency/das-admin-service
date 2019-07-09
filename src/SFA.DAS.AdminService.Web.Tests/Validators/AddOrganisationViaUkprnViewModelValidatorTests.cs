@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             _roatpOrganisationValidator.Setup(x => x.IsValidUKPRN(It.IsAny<string>())).Returns(errors);
             _viewModel = new AddOrganisationViaUkprnViewModel { UKPRN = "11112222" };
 
-            var validator = new AddOrganisatioViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
+            var validator = new AddOrganisationViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);
 
             Assert.AreEqual(0, validationResult.Errors.Count);
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             _roatpOrganisationValidator.Setup(x => x.IsValidUKPRN(It.IsAny<string>())).Returns(errors);
             _viewModel = new AddOrganisationViaUkprnViewModel { UKPRN = "111222" };
 
-            var validator = new AddOrganisatioViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
+            var validator = new AddOrganisationViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);
 
             Assert.AreEqual(1, validationResult.Errors.Count);
