@@ -18,16 +18,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         private readonly HttpClient _client;
         private readonly ILogger<ApplyApiClient> _logger;
-        private readonly ITokenService _tokenService;
+        private readonly IApplyTokenService _tokenService;
 
-        public ApplyApiClient(HttpClient client, ILogger<ApplyApiClient> logger, ITokenService tokenService)
+        public ApplyApiClient(HttpClient client, ILogger<ApplyApiClient> logger, IApplyTokenService tokenService)
         {
             _client = client;
             _logger = logger;
             _tokenService = tokenService;
         }
 
-        public ApplyApiClient(string baseUri, ILogger<ApplyApiClient> logger, ITokenService tokenService)
+        public ApplyApiClient(string baseUri, ILogger<ApplyApiClient> logger, IApplyTokenService tokenService)
         {
             _client = new HttpClient { BaseAddress = new Uri(baseUri) };
             _logger = logger;
