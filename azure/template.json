@@ -121,7 +121,7 @@
                         "value": "[parameters('keyVaultResourceGroup')]"
                     },
                     "serverFarmId": {
-                        "value": "[resourceId ('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+                        "value": "[resourceId (resourceGroup().name,'Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
                     }
                 }
             }
