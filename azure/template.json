@@ -46,6 +46,18 @@
         "location" : {
             "type": "string",
             "defaultValue": "West Europe"
+        },
+        "appServiceAllowedIPs": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "aseResourceGroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -77,6 +89,12 @@
                     },
                     "aspInstances": {
                         "value": "[parameters('aspInstances')]"
+                    },
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
                     }
                 }
             }
@@ -127,6 +145,9 @@
                     },
                     "deployStagingSlot": {
                         "value": true
+                    },
+                    "ipSecurityRestrictions": {
+                        "value": "[parameters('appServiceAllowedIPs')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
