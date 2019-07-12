@@ -31,14 +31,21 @@ steps:
   displayName: 'dotnet build'
   inputs:
     projects: 'src/**/*.csproj'
-    arguments: '/p:Configuration=$(BuildConfiguration) --no-restore'
+    arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish'
   inputs:
     command: publish
     publishWebProjects: true
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
