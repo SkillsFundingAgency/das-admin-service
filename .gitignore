@@ -287,3 +287,5 @@ src/SFA.DAS.AssessorService.Web.Staff/wwwroot/js/*.min.js
 
 #Redundant specflow project
 src/SFA.DAS.AssessorService.Application.Api.Specflow.Tests/**/*.*
+/src/SFA.DAS.AdminService.Web/wwwroot/javascripts/application.min.js
+/src/SFA.DAS.AdminService.Web/wwwroot/stylesheets/application.min.css
