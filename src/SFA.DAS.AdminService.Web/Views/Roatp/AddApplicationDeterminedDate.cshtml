@@ -1,0 +1,109 @@
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AddApplicationDeterminedDateViewModel
+
+@using SFA.DAS.AdminService.Web
+@using SFA.DAS.AdminService.Web.Domain
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Choose an application determined date";
+
+    var isError = Model.IsError ? "govuk-form-group--error" : "";
+    var isErrorDay = Model.IsErrorDay ? "govuk-input--error" : "";
+    var isErrorMonth = Model.IsErrorMonth ? "govuk-input--error" : "";
+    var isErrorYear = Model.IsErrorYear ? "govuk-input--error" : "";
+}
+
+<form asp-controller="AddRoatpOrganisation" asp-action="Back" method="post" name="backForm">
+    <input type="hidden" asp-for="OrganisationId"/>
+    <input type="hidden" name="action" value="AddOrganisationType"/>
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                </div>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="ApplicationDeterminedDate"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <h1 class="govuk-heading-xl">What is the application determined date for this organisation?</h1>
+
+            <form method="post" asp-action="ConfirmOrganisationDetails" asp-controller="AddRoatpOrganisation">
+                @Html.HiddenFor(x=>x.LegalName)
+                
+                <div class="govuk-form-group @isError" sfa-validation-for="ApplicationDeterminedDate" sfa-validationerror-class="govuk-form-group--error">
+                    <p class="govuk-body" id="appdd-message-text">
+                        This is the date of when feedback was given to the training provider.
+                    </p>
+
+                    <span class="govuk-hint" id="dob-hint">
+                        For example, 24 04 2019
+                    </span>
+
+                    <span class="govuk-error-message" asp-validation-for="ApplicationDeterminedDate"></span>
+        
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Day">Day</label>
+                                <input 
+                                    value="@Model.Day"
+                                    class="govuk-input govuk-date-input__input govuk-input--width-2 @isErrorDay"
+                                    id="Day"
+                                    name="Day"
+                                    type="number"
+                                    pattern="[0-9]*" 
+                                />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Month">Month</label>
+                                <input 
+                                    value="@Model.Month"
+                                    class="govuk-input govuk-date-input__input govuk-input--width-2 @isErrorMonth"
+                                    id="Month"
+                                    name="Month"
+                                    type="number"
+                                    pattern="[0-9]*" 
+                                />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="Year">Year</label>
+                                <input 
+                                    value="@Model.Year"
+                                    class="govuk-input govuk-date-input__input govuk-input--width-4 @isErrorYear"
+                                    id="Year"
+                                    name="Year"
+                                    type="number"
+                                    pattern="[0-9]*" 
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" class="govuk-button" value="Continue" />
+            </form>
+        </div>
+    </div>
+</main>

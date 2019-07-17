@@ -5,91 +5,107 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        @if (Model.FromApproval)
-        {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
-        }
-        else
-        {
-            <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
-        }
+@if (Model.FromApproval)
+{
+    <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-fromapproval="true" asp-route-certificateId=@Model.Id>Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+}
 
-        <form class="apprentice-recipient-form" type="post" asp-controller="CertificateRecipient" asp-method="Recipient">
-            @Html.HiddenFor(c => c.Id)
-            @Html.HiddenFor(c => c.FromApproval)
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-            @* hidden with css by default *@
-            <div class="js-error-summary error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                    There is a problem
-                </h2>
-                <ul class="js-error-summary-list error-summary-list"></ul>
-            </div>
+            <form class="apprentice-recipient-form" type="post" asp-controller="CertificateRecipient" asp-method="Recipient">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.FromApproval)
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="Name"></a></li>
-                        <li><a sfa-validation-for="ReasonForChange"></a></li>
-                    </ul>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
                 </div>
-            }
 
-            <fieldset sfa-anyvalidationerror-class="after-error-summary">
-                <legend id="Name">
-                    <h1 class="heading-large">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Name"></a></li>
+                                <li><a sfa-validation-for="ReasonForChange"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                    <h1 class="govuk-fieldset__heading">
                         Who will the certificate be sent to?
                     </h1>
                 </legend>
 
-                <div class="form-group" sfa-validation-for="Name" sfa-validationerror-class="form-group-error">
-                    <label for="Name">
-                        <span class="form-label-bold">Name</span>
-                        <span class="form-hint">
-                            For example, Joanna Smith
-                        </span>
-                        <span class="error-message" asp-validation-for="Name"></span>
+                <div class="govuk-form-group" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Name">
+                        Name
                     </label>
-                    <input class="form-control" name="Name" sfa-validation-for="Name" sfa-validationerror-class="form-control-error" asp-for="Name" type="text" />
+                    <span class="govuk-hint">
+                        For example, Joanna Smith
+                    </span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="Name"></span>
+                    }
+                    <input class="govuk-input" name="Name" sfa-validation-for="Name" sfa-validationerror-class="govuk-input--error" asp-for="Name" type="text" />
                 </div>
 
-                <div class="form-group" sfa-validation-for="Dept" sfa-validationerror-class="form-group-error">
-                    <label for="Dept">
-                        <span class="form-label-bold">Department (optional)</span>
-                        <span class="form-hint">
-                            For example, human resources
-                        </span>
-                        <span class="error-message" asp-validation-for="Dept"></span>
+                <div class="govuk-form-group" sfa-validation-for="Dept" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Dept">
+                        Department (optional)
                     </label>
-                    <input class="form-control" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="form-control-error" asp-for="Dept" type="text" />
+                    <span class="govuk-hint">
+                        For example, human resources
+                    </span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="Dept"></span>
+                    }
+                    <input class="govuk-input" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="govuk-input--error" asp-for="Dept" type="text" />
                 </div>
 
-                <div class="form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-group-error">
-                    <label for="ReasonForChange">
-                        <span class="form-label-bold">Reason for change</span>
-                        <span class="form-hint">Please could you provide more detail as to why this change is required.</span>
-                        <span class="error-message" asp-validation-for="ReasonForChange"></span>
-                    </label>
-                    <textarea class="form-control form-control-3-4" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="form-control-error" asp-for="ReasonForChange"></textarea>
-                </div>
-            </fieldset>
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
 
-            <button type="submit" class="button">Continue</button>
-        </form>
-        @if (!Model.FromApproval)
-        {
-            <div>
-                <a asp-action="Index" asp-controller="Search" class="link-back">Search Again</a>
-            </div>
-        }
+                <div class="govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForChange">
+                        Reason for change
+                    </label>
+                    <span class="govuk-hint">Provide more detail as to why this change is required.</span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="ReasonForChange"></span>
+                    }
+                    <textarea class="govuk-textarea" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-textarea--error" asp-for="ReasonForChange"></textarea>
+                </div>
+
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+
+            @if (!Model.FromApproval)
+            {
+                <p class="govuk-body">
+                    <a asp-action="Index" asp-controller="Search" class="govuk-link">Search again</a>
+                </p>
+            }
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
