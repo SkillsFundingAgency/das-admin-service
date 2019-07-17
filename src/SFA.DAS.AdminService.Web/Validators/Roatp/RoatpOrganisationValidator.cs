@@ -9,9 +9,9 @@
 
     public class RoatpOrganisationValidator : IRoatpOrganisationValidator
     {
-        private const string CompaniesHouseNumberRegex = "[A-Za-z0-9]{2}[0-9]{5}[A-Za-z0-9]{1}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
-
+        private const string CompaniesHouseNumberRegexNumeric = "[0-9]{8}";
+        private const string CompaniesHouseNumberRegexWithPrefix = "[A-Z]{2}[0-9]{5}[A-Z]{1}";
         public List<ValidationErrorDetail> IsValidLegalName(string legalName)
         {
             var errorMessages = new List<ValidationErrorDetail>();
@@ -101,7 +101,8 @@
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberLength));
             }
 
-            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegex))
+            if (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexWithPrefix)
+                && (!Regex.IsMatch(companyNumber, CompaniesHouseNumberRegexNumeric)))
             {
                 errorMessages.Add(new ValidationErrorDetail("CompanyNumber", RoatpOrganisationValidation.CompanyNumberFormat));
             }
