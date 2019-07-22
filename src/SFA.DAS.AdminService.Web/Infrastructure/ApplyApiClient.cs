@@ -36,59 +36,202 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+                throw;
+            }
+        }
+
+        private async Task<HttpResponseMessage> Get(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            try
+            {
+                var response = await _client.GetAsync(new Uri(uri, UriKind.Relative));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError($"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                }
+
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         private async Task<U> Post<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            try
             {
-                return await response.Content.ReadAsAsync<U>();
+                using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"POST: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         private async Task Post<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+            try
+            {
+                var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError($"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"POST: HTTP Error when processing request to: {uri}");
+                throw;
+            }
         }
 
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            try
             {
-                return await response.Content.ReadAsAsync<U>();
+                using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"PUT: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"PUT: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"DELETE: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: DELETE Error when processing request to: {uri}");
+                throw;
             }
         }
 
@@ -127,10 +270,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             var formDataContent = new MultipartFormDataContent();
 
             var fileContent = new StreamContent(file.OpenReadStream())
-                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
             formDataContent.Add(fileContent, file.Name, file.FileName);
 
-            await _client.PostAsync($"/Import/Workflow", formDataContent);
+            await Post($"/Import/Workflow", formDataContent);
         }
 
         public async Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId)
@@ -162,7 +305,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await Get<Page>($"Application/{applicationId}/User/null/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
-            if(page != null) page.ApplicationId = applicationId;
+            if (page != null) page.ApplicationId = applicationId;
             return page;
         }
 
@@ -187,31 +330,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            return await _client.GetAsync(new Uri($"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}", UriKind.Relative));
-        }
-        
-        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-           
-            var downloadResponse = await _client.GetAsync(
-                $"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
-            return downloadResponse;
+            // TECH DEBT?!?!
+            return await Download(applicationId, userId, sequenceId, sectionId, pageId.ToString(), questionId, filename);
         }
 
-        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
+        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            
-            var downloadResponse = await (await _client.GetAsync(
-                $"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}")).Content.ReadAsAsync<FileInfoResponse>();
-            return downloadResponse;
+            return await Get($"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
+        }
+
+        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        {
+            return await Get<FileInfoResponse>($"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
         }
 
 
@@ -222,7 +352,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task StartFinancialReview(Guid applicationId)
         {
-            await Post($"/Financial/{applicationId}/StartReview",new {applicationId}); 
+            await Post($"/Financial/{applicationId}/StartReview", new { applicationId });
         }
 
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
@@ -250,7 +380,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Contact>($"/Account/Contact/{contactId}");
         }
 
-        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId,Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
+        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
         {
             await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }

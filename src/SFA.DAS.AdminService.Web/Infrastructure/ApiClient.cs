@@ -42,59 +42,172 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         private async Task<U> Post<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            try
             {
-                return await response.Content.ReadAsAsync<U>();
+                using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"POST: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         private async Task Post<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+            try
+            {
+                var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError($"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"POST: HTTP Error when processing request to: {uri}");
+                throw;
+            }
         }
 
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            try
             {
-                return await response.Content.ReadAsAsync<U>();
+                using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"PUT: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"PUT: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"DELETE: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: DELETE Error when processing request to: {uri}");
+                throw;
             }
         }
 
