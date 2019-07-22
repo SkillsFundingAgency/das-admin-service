@@ -66,7 +66,7 @@ namespace SFA.DAS.AdminService.Web
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
+
             services.AddHttpClient<ApplyApiClient>("ApplyApiClient", config =>
                 {
                     config.BaseAddress = new Uri(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
@@ -74,8 +74,16 @@ namespace SFA.DAS.AdminService.Web
                 })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
-            
+
+            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.RoatpApiClientBaseUrl);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
+
+
             AddAuthentication(services);
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -125,6 +133,8 @@ namespace SFA.DAS.AdminService.Web
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
                 config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
                 config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>().Ctor<string>().Is(ApplicationConfiguration.RoatpApiClientBaseUrl);
                 config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
                 config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
 
@@ -173,7 +183,7 @@ namespace SFA.DAS.AdminService.Web
         }
 
 
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
