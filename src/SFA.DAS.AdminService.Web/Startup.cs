@@ -128,6 +128,7 @@ namespace SFA.DAS.AdminService.Web
                     _.WithDefaultConventions();
                 });
                 config.For<ITokenService>().Use<TokenService>();
+                config.For<IRoatpTokenService>().Use<RoatpTokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
