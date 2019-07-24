@@ -76,7 +76,7 @@
                                         {
 
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input js-expand-table-row-for-radio" asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
+                                                <input class="govuk-radios__input js-expand-table-row-for-radio js-first-option" asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
                                                 <label class="govuk-label govuk-radios__label" asp-for=@approvalresults[i].IsApproved>Send</label>
                                             </div>
                                             <div class="govuk-radios__item">
@@ -87,7 +87,7 @@
                                         else if (results[i].PrivatelyFundedStatus == CertificateStatus.SentForApproval)
                                         {
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input js-expand-table-row-for-radio" asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
+                                                <input class="govuk-radios__input js-expand-table-row-for-radio js-first-option" asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
                                                 <label class="govuk-label govuk-radios__label" asp-for=@approvalresults[i].IsApproved>Approve</label>
                                             </div>
                                             <div class="govuk-radios__item">

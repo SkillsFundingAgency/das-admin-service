@@ -11,12 +11,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
-    public class AddOrganisatioViaUkprnViewModelValidator : AbstractValidator<AddOrganisationViaUkprnViewModel>
+    public class AddOrganisationViaUkprnViewModelValidator : AbstractValidator<AddOrganisationViaUkprnViewModel>
     {
         private readonly IRoatpOrganisationValidator _validator;
         private readonly IRoatpApiClient _apiClient;
 
-        public AddOrganisatioViaUkprnViewModelValidator(IRoatpOrganisationValidator validator, IRoatpApiClient apiClient)
+        public AddOrganisationViaUkprnViewModelValidator(IRoatpOrganisationValidator validator, IRoatpApiClient apiClient)
         {
             _validator = validator;
             _apiClient = apiClient;
@@ -38,10 +38,6 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-
-
-            //REMOVEREMOVE this should be removed once APR-471 has been tested, probably before merging into master
-            if (vm.UKPRN == "111111111111") return validationResponse;
 
             var fieldValidationErrors = _validator.IsValidUKPRN(vm.UKPRN);
             if (fieldValidationErrors.Any())

@@ -1,4 +1,3 @@
-name: das-admin-service
 trigger:
   batch: true
   branches:
@@ -12,16 +11,12 @@ workspace:
 
 variables:
   buildConfiguration: 'release'
-  buildPlatform: 'anycpu'
 
 pool:
-  name: 'Continuous Integration 02 - SSD - 160ACU'
-  demands: 
-  - msbuild
-  - visualstudio
+  name: 'DAS - Continuous Integration'
 
 steps:
-- task: gittools.gitversion.gitversion-task.GitVersion@4
+- task: gittools.gitversion-preview.gitversion-task.GitVersion@5
   displayName: GitVersion
   inputs:
     updateAssemblyInfo: true
@@ -31,22 +26,32 @@ steps:
   inputs:
     command: restore
     projects: 'src/**/*.csproj'
-    noCache: true
 
 - task: DotNetCoreCLI@2
-  displayName: 'dotnet custom'
+  displayName: 'dotnet build'
   inputs:
-    command: custom
-    projects: 'src/SFA.DAS.AdminService.Web.sln'
-    custom: msbuild
-    arguments: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactstagingdirectory)'
+    projects: 'src/**/*.csproj'
+    arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
     Contents: |
-     azure\**
+     azure/**
     TargetFolder: '$(build.artifactstagingdirectory)'
     OverWrite: true
 
