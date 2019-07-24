@@ -11,7 +11,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <table class="govuk-table table-font-xsmall">
+        <table class="govuk-table govuk-table--s das-table--responsive">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">Apprentice</th>
@@ -76,7 +76,7 @@
                                         {
 
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input js-expand-table-row-for-radio" asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
+                                                <input class="govuk-radios__input js-expand-table-row-for-radio js-first-option" asp-for=@approvalresults[i].IsApproved type="radio" value="ToBeApproved" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
                                                 <label class="govuk-label govuk-radios__label" asp-for=@approvalresults[i].IsApproved>Send</label>
                                             </div>
                                             <div class="govuk-radios__item">
@@ -87,7 +87,7 @@
                                         else if (results[i].PrivatelyFundedStatus == CertificateStatus.SentForApproval)
                                         {
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input js-expand-table-row-for-radio" asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
+                                                <input class="govuk-radios__input js-expand-table-row-for-radio js-first-option" asp-for=@approvalresults[i].IsApproved type="radio" value="Submitted" data-hide="true" data-expand-id="@approvalresults[i].IsApproved">
                                                 <label class="govuk-label govuk-radios__label" asp-for=@approvalresults[i].IsApproved>Approve</label>
                                             </div>
                                             <div class="govuk-radios__item">
@@ -140,7 +140,7 @@
                                     <span class="govuk-hint">Can you provide more detail as to why this certificate is rejected.</span>
                                     <span id="more-detail-hint" class="govuk-error-message" asp-validation-for="@approvalresults[i].ReasonForChange"></span>
 
-                                    <textarea class="govuk-textarea" id="more-detail" rows="6" sfa-validation-for="@approvalresults[i].ReasonForChange" sfa-validationerror-class="form-control-error" asp-for=@approvalresults[i].ReasonForChange></textarea>
+                                    <textarea class="govuk-textarea" id="more-detail" rows="6" sfa-validation-for="@approvalresults[i].ReasonForChange" sfa-validationerror-class="govuk-textarea--error" asp-for=@approvalresults[i].ReasonForChange></textarea>
                                 </div>
                             </div>
                         </td>

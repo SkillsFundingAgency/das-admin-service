@@ -9,8 +9,8 @@
 
     public class RoatpOrganisationValidator : IRoatpOrganisationValidator
     {
-        private const string CompaniesHouseNumberRegexWithPrefix = "[A-Z]{2}[0-9]{6}";
         private const string CompaniesHouseNumberRegexNumeric = "[0-9]{8}";
+        private const string CompaniesHouseNumberRegexWithPrefix = "[A-Z]{2}[0-9]{5}[A-Z0-9]{1}";
         private const string CharityNumberInvalidCharactersRegex = "[^a-zA-Z0-9\\-]";
 
         public List<ValidationErrorDetail> IsValidLegalName(string legalName)

@@ -169,8 +169,8 @@
 
         [TestCase("ABC12345")]
         [TestCase("!£$%^&*(")]
-        [TestCase("A1234567")]
-        [TestCase("ab123456")]
+        [TestCase("A12345ac")]
+        [TestCase("ab1234AC")]
         public void Validator_rejects_invalid_company_number(string companyNumber)
         {
             _viewModel.CompanyNumber = companyNumber;

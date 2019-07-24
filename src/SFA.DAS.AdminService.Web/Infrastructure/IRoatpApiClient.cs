@@ -7,7 +7,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    
+    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+
     public interface IRoatpApiClient
     {
        Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister();
@@ -17,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
        Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId);
        Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId);
        Task<IEnumerable<RemovedReason>> GetRemovedReasons();
-       Task<bool> CreateOrganisation(CreateOrganisationRequest organisationRequest);
+       Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest);
        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
        Task<DuplicateCheckResponse> DuplicateCompanyNumberCheck(Guid organisationId, string companyNumber);
        Task<DuplicateCheckResponse> DuplicateCharityNumberCheck(Guid organisationId, string charityNumber);
@@ -32,5 +33,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
        Task<bool> UpdateOrganisationUkprn(UpdateOrganisationUkprnRequest request);
         Task<bool> UpdateOrganisationCompanyNumber(UpdateOrganisationCompanyNumberRequest request);
         Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request);
+        Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request);
+        //MFCMFC
+        Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn);
     }
 }

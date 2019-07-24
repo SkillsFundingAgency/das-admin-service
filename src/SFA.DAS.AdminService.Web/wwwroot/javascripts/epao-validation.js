@@ -1,4 +1,4 @@
-GOVUK.epaoValidate = function(formElement, validationRulesObject) {
+GOVUK.epaoValidate = function (formElement, validationRulesObject, forwardToForm) {
   var documentTitle = $(document).attr("title");
   var validator = formElement
     .bind("invalid-form.validate", function() {
@@ -48,11 +48,18 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
           $(element).addClass("govuk-input--error");
           $(".js-date-container").addClass("govuk-form-group--error");
           return false;
+        } else if ($(element).hasClass("govuk-textarea")) {
+          $(element)
+            .addClass("govuk-textarea--error")
+            .closest(".govuk-form-group")
+            .addClass("govuk-form-group--error");
+            return false;
         } else {
           $(element)
             .addClass("govuk-input--error")
             .closest(".govuk-form-group")
             .addClass("govuk-form-group--error");
+          return false;
         }
       },
       unhighlight: function(element) {
@@ -88,7 +95,10 @@ GOVUK.epaoValidate = function(formElement, validationRulesObject) {
         }
       },
       submitHandler: function(form) {
-        form.submit();
+          if (forwardToForm === undefined)
+              form.submit();
+          else
+              forwardToForm();
       }
     });
 

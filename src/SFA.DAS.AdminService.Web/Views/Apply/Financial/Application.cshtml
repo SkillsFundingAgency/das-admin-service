@@ -1,6 +1,5 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.FinancialApplicationViewModel
-
 @{
     ViewBag.Title = "Financial health evaluation";
     Layout = "_Layout";
@@ -99,7 +98,7 @@
     {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <table class="govuk-table table-font-xsmall">
+            <table class="govuk-table govuk-table--s">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th class="govuk-table__header" scope="col">
@@ -164,24 +163,25 @@
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Day">Day</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Day" id="Grade.OutstandingFinancialDueDate.Day" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Day" id="Grade.OutstandingFinancialDueDate.Day" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Month">Month</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Month" id="Grade.OutstandingFinancialDueDate.Month" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.OutstandingFinancialDueDate.Month" id="Grade.OutstandingFinancialDueDate.Month" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.OutstandingFinancialDueDate.Year">Year</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.OutstandingFinancialDueDate.Year" id="Grade.OutstandingFinancialDueDate.Year" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.OutstandingFinancialDueDate.Year" id="Grade.OutstandingFinancialDueDate.Year" sfa-validation-for="Grade.OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <div class="govuk-radios__item" data-target="good-more-info">
                             <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
@@ -200,24 +200,25 @@
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Day">Day</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Day" id="Grade.GoodFinancialDueDate.Day" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Day" id="Grade.GoodFinancialDueDate.Day" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Month">Month</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Month" id="Grade.GoodFinancialDueDate.Month" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.GoodFinancialDueDate.Month" id="Grade.GoodFinancialDueDate.Month" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.GoodFinancialDueDate.Year">Year</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.GoodFinancialDueDate.Year" id="Grade.GoodFinancialDueDate.Year" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.GoodFinancialDueDate.Year" id="Grade.GoodFinancialDueDate.Year" sfa-validation-for="Grade.GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="satisfactory" data-aria-controls="satisfactory-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
@@ -236,19 +237,19 @@
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Day">Day</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Day" id="Grade.SatisfactoryFinancialDueDate.Day" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Day" id="Grade.SatisfactoryFinancialDueDate.Day" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Month">Month</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Month" id="Grade.SatisfactoryFinancialDueDate.Month" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="Grade.SatisfactoryFinancialDueDate.Month" id="Grade.SatisfactoryFinancialDueDate.Month" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="Grade.SatisfactoryFinancialDueDate.Year">Year</label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.SatisfactoryFinancialDueDate.Year" id="Grade.SatisfactoryFinancialDueDate.Year" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="form-control-error" value="@Model.Grade.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="Grade.SatisfactoryFinancialDueDate.Year" id="Grade.SatisfactoryFinancialDueDate.Year" sfa-validation-for="Grade.SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.Grade.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                 </div>
@@ -263,7 +264,7 @@
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="form-control-error"></textarea>
+                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="govuk-input--error"></textarea>
                             </div>
                         </div>
 
