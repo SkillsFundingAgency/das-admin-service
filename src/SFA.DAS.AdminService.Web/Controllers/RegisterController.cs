@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 GatherOrganisationStandards(viewModel);
                 return View(viewModel);
             }
-         
+
             var updateOrganisationRequest = new UpdateEpaOrganisationRequest
             {
                 Name = viewModel.Name,
@@ -88,6 +88,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
                 TradingName = viewModel.TradingName,
+                Email = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -317,6 +319,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(viewModel);
             }
 
+            // need to do validation on this - but what validation - check apply does it need an email and a phone number if so then should have one here
+
             var addOrganisationRequest = new CreateEpaOrganisationRequest
             {
                 Name = viewModel.Name,
@@ -324,6 +328,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 OrganisationTypeId = viewModel.OrganisationTypeId,
                 LegalName = viewModel.LegalName,
                 TradingName = viewModel.TradingName,
+                Email = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber,
                 WebsiteLink = viewModel.WebsiteLink,
                 Address1 = viewModel.Address1,
                 Address2 = viewModel.Address2,
@@ -484,6 +490,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 OrganisationType = notSetDescription,
                 LegalName = organisation.OrganisationData?.LegalName,
                 TradingName = organisation.OrganisationData?.TradingName,
+                Email = organisation.OrganisationData?.Email,
+                PhoneNumber = organisation.OrganisationData?.PhoneNumber,
                 WebsiteLink = organisation.OrganisationData?.WebsiteLink,
                 Address1 = organisation.OrganisationData?.Address1,
                 Address2 = organisation.OrganisationData?.Address2,

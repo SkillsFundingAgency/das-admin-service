@@ -43,6 +43,8 @@ Layout = "_Layout";
                                 <li><a sfa-validation-for="OrganisationTypeId"></a></li>
                                 <li><a sfa-validation-for="LegalName"></a></li>
                                 <li><a sfa-validation-for="TradingName"></a></li>
+                                <li><a sfa-validation-for="Email"></a></li>
+                                <li><a sfa-validation-for="PhoneNumber"></a></li>
                                 <li><a sfa-validation-for="WebsiteLink"></a></li>
                                 <li><a sfa-validation-for="Address"></a></li>
                                 <li><a sfa-validation-for="Address1"></a></li>
@@ -93,16 +95,16 @@ Layout = "_Layout";
                         <label class="govuk-label" for="LegalName">
                             Legal name (optional)
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="LegalName"></span>
-                            <span class="govuk-hint">if different from organisation name</span>
+                        <span class="govuk-error-message" asp-validation-for="LegalName"></span>
+                        <span class="govuk-hint">if different from organisation name</span>
                         <input class="govuk-input" name="LegalName" sfa-validation-for="LegalName" sfa-validationerror-class="govuk-input-error" asp-for="LegalName" type="text" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="TradingName" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="TradingName">
                             Trading name (optional)
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="TradingName"></span>
-                            <span class="govuk-hint">if different from organisation name</span>
+                        <span class="govuk-error-message" asp-validation-for="TradingName"></span>
+                        <span class="govuk-hint">if different from organisation name</span>
                         <input class="govuk-input" name="TradingName" sfa-validation-for="TradingName" sfa-validationerror-class="govuk-input-error" asp-for="TradingName" type="text" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="CompanyNumber" sfa-validationerror-class="govuk-form-group--error">
@@ -116,14 +118,14 @@ Layout = "_Layout";
                         <label class="govuk-label" for="CharityNumber">
                             Charity number (optional)
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
+                        <span class="govuk-error-message" asp-validation-for="CharityNumber"></span>
                         <input class="govuk-input" name="CharityNumber" sfa-validation-for="CharityNumber" sfa-validationerror-class="govuk-input-error" asp-for="CharityNumber" type="text" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="Ukprn">
                             UKPRN (optional)
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
+                        <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
                         <input type="text" maxlength="8" class="govuk-input js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-input-error" asp-for="Ukprn" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="govuk-form-group--error">
@@ -141,41 +143,55 @@ Layout = "_Layout";
                             }
                         </div>
                     </div>
+                    <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="Email">
+                            Email
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="Email"></span>
+                        <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input-error" asp-for="Email" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="PhoneNumber">
+                            PhoneNumber
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="PhoneNumber"></span>
+                        <input class="govuk-input" name="PhoneNumber" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-input-error" asp-for="PhoneNumber" type="text" />
+                    </div>
                     <div class="govuk-form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="WebsiteLink">
                             Website
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="WebsiteLink"></span>
+                        <span class="govuk-error-message" asp-validation-for="WebsiteLink"></span>
                         <input class="govuk-input" name="WebsiteLink" sfa-validation-for="WebsiteLink" sfa-validationerror-class="govuk-input-error" asp-for="WebsiteLink" type="text" />
                     </div>
                     <div class="govuk-form-group-related" sfa-validation-for="Address" sfa-validationerror-class="govuk-form-group--error">
                         <div class="govuk-form-group-related" sfa-validation-for="Address1" sfa-validationerror-class="govuk-form-group--error">
-                        <span class="govuk-error-message" asp-validation-for="Address"></span>
+                            <span class="govuk-error-message" asp-validation-for="Address"></span>
                             <label class="govuk-label" for="Address1">
                                 Street address
                             </label>
-                                <span class="govuk-error-message" asp-validation-for="Address1"></span>
+                            <span class="govuk-error-message" asp-validation-for="Address1"></span>
                             <input class="govuk-input" name="Address1" sfa-validation-for="Address1" sfa-validationerror-class="govuk-input-error" asp-for="Address1" type="text" />
                         </div>
                         <div class="govuk-form-group-related" sfa-validation-for="Address2" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="Address2">
                                 <span class="form-label-bold govuk-visually-hidden">Address 2</span>
                             </label>
-                                <span class="govuk-error-message" asp-validation-for="Address2"></span>
+                            <span class="govuk-error-message" asp-validation-for="Address2"></span>
                             <input class="govuk-input" name="Address2" sfa-validation-for="Address2" sfa-validationerror-class="govuk-input-error" asp-for="Address2" type="text" />
                         </div>
                         <div class="govuk-form-group" sfa-validation-for="Address3" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="Address3">
                                 <span class="form-label-bold govuk-visually-hidden">Address 3</span>
                             </label>
-                                <span class="govuk-error-message" asp-validation-for="Address3"></span>
+                            <span class="govuk-error-message" asp-validation-for="Address3"></span>
                             <input class="govuk-input" name="Address3" sfa-validation-for="Address3" sfa-validationerror-class="govuk-input-error" asp-for="Address3" type="text" />
                         </div>
                         <div class="govuk-form-group" sfa-validation-for="Address4" sfa-validationerror-class="govuk-form-group--error">
                             <label class="govuk-label" for="Address4">
                                 City / Town
                             </label>
-                                <span class="govuk-error-message" asp-validation-for="Address4"></span>
+                            <span class="govuk-error-message" asp-validation-for="Address4"></span>
                             <input class="govuk-input" name="Address4" sfa-validation-for="Address4" sfa-validationerror-class="govuk-input-error" asp-for="Address4" type="text" />
                         </div>
                     </div>
@@ -183,7 +199,7 @@ Layout = "_Layout";
                         <label class="govuk-label" for="Postcode">
                             Postcode
                         </label>
-                            <span class="govuk-error-message" asp-validation-for="Postcode"></span>
+                        <span class="govuk-error-message" asp-validation-for="Postcode"></span>
                         <input class="govuk-input" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input-error" asp-for="Postcode" type="text" />
                     </div>
                     <div class="govuk-form-group">
