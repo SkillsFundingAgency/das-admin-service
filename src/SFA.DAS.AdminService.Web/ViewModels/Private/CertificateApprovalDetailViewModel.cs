@@ -10,6 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Private
         public int StandardCode { get; set; }
         public string CertificateReference { get; set; }
         public string RecordedBy { get; set; }
+        public string RecordedByEmail { get; set; }
         public long Uln { get; set; }
         public string FullName { get; set; }
         public string TrainingProvider { get; set; }
