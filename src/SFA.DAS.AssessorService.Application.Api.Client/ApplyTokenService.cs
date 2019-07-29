@@ -4,7 +4,7 @@ using SFA.DAS.AdminService.Settings;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client
 {
-    public class ApplyTokenService : ITokenService
+    public class ApplyTokenService : IApplyTokenService
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostingEnvironment _hostingEnvironment;
