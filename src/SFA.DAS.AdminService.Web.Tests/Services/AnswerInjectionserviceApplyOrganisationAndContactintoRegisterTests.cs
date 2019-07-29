@@ -13,6 +13,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using FHADetails = SFA.DAS.AssessorService.Api.Types.Models.AO.FHADetails;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -20,90 +23,94 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     public class AnswerInjectionServiceApplyOrganisationAndContactintoRegisterTests
     {
         private AnswerInjectionService _answerInjectionService;
-        private Mock<IRegisterQueryRepository> _mockRegisterQueryRepository;
         private IValidationService _validationService;
-        private Mock<IAssessorValidationService> _mockAssessorValidationService;
-        private Mock<IEpaOrganisationIdGenerator> _mockEpaOrganisationIdGenerator;
+        private Mock<IApiClient> _mockApiClient;
+        private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
-        private Mock<IRegisterRepository> _mockRegisterRepository;
 
         [SetUp]
         public void Setup()
         {
             var applicationId = Guid.NewGuid();
-            _mockRegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _mockRegisterQueryRepository.Setup(x => x.GetContactByContactId(Guid.Parse("00000000-0000-0000-0000-000000000000")))
-                .Returns(Task.FromResult<EpaContact>(null));
 
-            // _mockValidationService = new Mock<IValidationService>();
+            _mockApiClient = new Mock<IApiClient>();
+            _mockApiClient.Setup(x => x.GetEpaContact("00000000-0000-0000-0000-000000000000"))
+                .Returns(Task.FromResult<AssessmentOrganisationContact>(null));
+
+            _mockApiClient.Setup(x => x.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()))
+                .Returns(Task.FromResult(It.IsAny<string>()));
+
+            _mockApiClient.Setup(x => x.CreateEpaContactValidate(It.IsAny<CreateEpaContactValidationRequest>()))
+                .Returns(Task.FromResult(new ValidationResponse()));
+
+            _mockApiClient.Setup(x => x.AssociateOrganisationWithEpaContact(It.IsAny<AssociateEpaOrganisationWithEpaContactRequest>()))
+                .Returns(Task.FromResult(true));
+
             _validationService = new ValidationService();
-            _mockAssessorValidationService = new Mock<IAssessorValidationService>();
-            _mockEpaOrganisationIdGenerator = new Mock<IEpaOrganisationIdGenerator>();
+            _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
             _mockLogger = new Mock<ILogger<AnswerService>>();
+
             _mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
-            _mockRegisterRepository = new Mock<IRegisterRepository>();
-            _mockRegisterRepository.Setup(x => x.CreateEpaOrganisationContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult(It.IsAny<string>()));
-            _mockRegisterRepository.Setup(x => x.AssociateDefaultRoleWithContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult(It.IsAny<string>()));
-            _mockRegisterRepository.Setup(x => x.AssociateAllPrivilegesWithContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult(It.IsAny<string>()));
-            
+            _mockSpecialCharacterCleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
+                .Returns((string s) => s);
+
             _answerInjectionService = new AnswerInjectionService(
+                _mockApiClient.Object,
                 _validationService,
-                _mockAssessorValidationService.Object,
-                _mockRegisterQueryRepository.Object,
-                _mockRegisterRepository.Object,
-                _mockEpaOrganisationIdGenerator.Object,
+                _assessorValidationService,
                 _mockSpecialCharacterCleanserService.Object,
                 _mockLogger.Object
             );
 
-
-            var organisationType1 = new OrganisationType {Id = 1, Type = "Type 1"};
-            var organisationType2 = new OrganisationType {Id = 2, Type = "Training Provider"};
-
             var expectedOrganisationTypes = new List<OrganisationType>
             {
-                organisationType1,
-                organisationType2
+                new OrganisationType {Id = 1, Type = "Type 1"},
+                new OrganisationType {Id = 2, Type = "Training Provider"}
             };
 
-
-            //  _mockAssessorValidationService.Setup(s => s.IsCharityNumberTaken(It.IsAny<string>())).Returns(Task.FromResult(false));
-            _mockRegisterQueryRepository.Setup(r => r.GetOrganisationTypes())
-                .Returns(Task.FromResult(expectedOrganisationTypes.AsEnumerable()));
-            _mockEpaOrganisationIdGenerator.Setup(g => g.GetNextContactUsername()).Returns("unknown-9999");
+            _mockApiClient.Setup(x => x.GetOrganisationTypes())
+                .Returns(Task.FromResult(expectedOrganisationTypes));
 
             _mockSpecialCharacterCleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
-
-            _mockRegisterRepository.Setup(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()))
-                .Returns(Task.FromResult("00000000-0000-0000-0000-000000000000"));
-
         }
 
         [Test, TestCaseSource(nameof(InjectionTestCasesHappyPath))]
         public void WhenInjectingOrganisationAndContactHappyPathForAnApplication(InjectionTestCase testCase)
         {
-            _mockAssessorValidationService.Setup(s => s.IsOrganisationNameTaken(It.IsAny<string>()))
-                .Returns(Task.FromResult(testCase.IsOrganisationNameTaken));
-            _mockAssessorValidationService.Setup(s => s.IsOrganisationUkprnTaken(It.IsAny<long>()))
-                .Returns(Task.FromResult(testCase.IsUkprnTaken));
-            _mockAssessorValidationService.Setup(s => s.IsCompanyNumberTaken(It.IsAny<string>()))
-                .Returns(Task.FromResult(testCase.IsCompanyNumberTaken));
-            _mockAssessorValidationService.Setup(s => s.IsEmailTaken(It.IsAny<string>()))
-                .Returns(Task.FromResult(testCase.IsEmailTaken));
+            List<ValidationErrorDetail> validationErrors = new List<ValidationErrorDetail>();
 
-            _mockEpaOrganisationIdGenerator.Setup(g => g.GetNextOrganisationId())
-                .Returns(testCase.ExpectedResponse.OrganisationId);
-            _mockRegisterRepository.Setup(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()))
+            if (testCase.IsOrganisationNameTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "standard taken" });
+            }
+            if (testCase.IsUkprnTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "ukprn invalid" });
+            }
+            if (testCase.IsCompanyNumberTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "company number taken" });
+            }
+            if (testCase.IsCharityNumberTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "charity number taken" });
+            }
+            if (testCase.IsEmailTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "email taken" });
+            }
+
+            _mockApiClient.Setup(r => r.CreateOrganisationValidate(It.IsAny<CreateEpaOrganisationValidationRequest>()))
+                .Returns(Task.FromResult(new ValidationResponse { Errors = validationErrors }));
+
+            _mockApiClient.Setup(r => r.CreateEpaOrganisation(It.IsAny<CreateEpaOrganisationRequest>()))
                 .Returns(Task.FromResult(testCase.ExpectedResponse.OrganisationId));
 
-            _mockRegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(It.IsAny<string>()))
+            _mockApiClient.Setup(r => r.SearchOrganisations(It.IsAny<string>()))
                 .ReturnsAsync(new List<AssessmentOrganisationSummary> { new AssessmentOrganisationSummary { Id = testCase.ExpectedResponse.EpaOrganisationId } });
-            _mockRegisterQueryRepository.Setup(r => r.GetEpaOrganisationByOrganisationId(It.IsAny<string>()))
+            _mockApiClient.Setup(r => r.GetEpaOrganisation(It.IsAny<string>()))
                 .ReturnsAsync(new EpaOrganisation {Id = testCase.ExpectedResponse.ContactId, OrganisationData = new OrganisationData { FHADetails = new FHADetails() } });
             testCase.Command.CreatedBy = "00000000-0000-0000-0000-000000000000";
             var actualResponse = _answerInjectionService
@@ -119,21 +126,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             if (actualResponse.WarningMessages.Count > 0)
             {
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+                _mockApiClient.Verify(r => r.CreateEpaOrganisation(It.IsAny<CreateEpaOrganisationRequest>()), Times.Never);
+                _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Never);
+                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
             }
             else if(testCase.Command.IsEpaoApproved.Value || testCase.ExpectedResponse.ApplySourceIsEpao)
             {
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Never);
-                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
+                _mockApiClient.Verify(r => r.CreateEpaOrganisation(It.IsAny<CreateEpaOrganisationRequest>()), Times.Never);
+                _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Never);
+                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Once);
             }
             else
             {
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Once);
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationContact(It.IsAny<EpaContact>()), Times.Once);
-                _mockRegisterRepository.Verify(r => r.UpdateEpaOrganisation(It.IsAny<EpaOrganisation>()), Times.Never);
+                _mockApiClient.Verify(r => r.CreateEpaOrganisation(It.IsAny<CreateEpaOrganisationRequest>()), Times.Once);
+                _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Once);
+                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
             }
         }
 
