@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -19,52 +22,60 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     public class AnswerInjectionServiceApplyOrganisationStandardIntoRegisterTests
     {
         private AnswerInjectionService _answerInjectionService;
-        private Mock<IRegisterQueryRepository> _mockRegisterQueryRepository;
         private IValidationService _validationService;
-        private Mock<IAssessorValidationService> _mockAssessorValidationService;
-        private Mock<IEpaOrganisationIdGenerator> _mockEpaOrganisationIdGenerator;
+        private Mock<IApiClient> _mockApiClient;
+        private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
-        private Mock<IRegisterRepository> _mockRegisterRepository;
 
         [SetUp]
         public void Setup()
         {
             var applicationId = Guid.NewGuid();
-            _mockRegisterQueryRepository = new Mock<IRegisterQueryRepository>();
-            _validationService = new ValidationService();
-            _mockAssessorValidationService = new Mock<IAssessorValidationService>();
-            _mockEpaOrganisationIdGenerator = new Mock<IEpaOrganisationIdGenerator>();
-            _mockLogger = new Mock<ILogger<AnswerService>>();
-            _mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
-            _mockRegisterRepository = new Mock<IRegisterRepository>();
-            _answerInjectionService = new AnswerInjectionService(
-                _validationService,
-                _mockAssessorValidationService.Object,
-                _mockRegisterQueryRepository.Object,
-                _mockRegisterRepository.Object,
-                _mockEpaOrganisationIdGenerator.Object,
-                _mockSpecialCharacterCleanserService.Object,
-                _mockLogger.Object
-            );
 
-            _mockRegisterQueryRepository.Setup(r => r.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(It.IsAny<string>()))
+            _mockApiClient = new Mock<IApiClient>();
+
+            _mockApiClient.Setup(r => r.SearchOrganisations(It.IsAny<string>()))
                 .ReturnsAsync(new List<AssessmentOrganisationSummary> { new AssessmentOrganisationSummary { Id = "EPA0001" } });
 
-            _mockRegisterQueryRepository.Setup(r => r.GetDeliveryAreas())
-                .ReturnsAsync(new List<DeliveryArea> { new DeliveryArea { Id = 1, Area = "East Midlands" } });
+            _mockApiClient.Setup(r => r.GetDeliveryAreas())
+               .ReturnsAsync(new List<DeliveryArea> { new DeliveryArea { Id = 1, Area = "East Midlands" } });
 
+            _validationService = new ValidationService();
+            _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
+            _mockLogger = new Mock<ILogger<AnswerService>>();
+
+            _mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
             _mockSpecialCharacterCleanserService.Setup(c => c.CleanseStringForSpecialCharacters(It.IsAny<string>()))
                 .Returns((string s) => s);
+
+            _answerInjectionService = new AnswerInjectionService(
+                _mockApiClient.Object,
+                _validationService,
+                _assessorValidationService,
+                _mockSpecialCharacterCleanserService.Object,
+                _mockLogger.Object
+            );            
         }
 
         [Test, TestCaseSource(nameof(InjectionTestCases))]
         public void WhenInjectingOrganisationAndContactHappyPathForAnApplication(InjectionTestCase testCase)
         {
-            _mockAssessorValidationService.Setup(s => s.IsOrganisationStandardTaken(It.IsAny<string>(), It.IsAny<int>()))
-                .Returns(Task.FromResult(testCase.IsOrganisationStandardTaken));
+            List<ValidationErrorDetail> validationErrors = new List<ValidationErrorDetail>();
 
-            _mockRegisterRepository.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()))
+            if(testCase.IsOrganisationStandardTaken)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "standard taken" });
+            }
+            else if(testCase.Command.StandardCode < 1)
+            {
+                validationErrors.Add(new ValidationErrorDetail { ErrorMessage = "standard invalid" });
+            }
+
+            _mockApiClient.Setup(r => r.CreateOrganisationStandardValidate(It.IsAny<CreateEpaOrganisationStandardValidationRequest>()))
+                .Returns(Task.FromResult(new ValidationResponse { Errors = validationErrors }));
+
+            _mockApiClient.Setup(r => r.CreateEpaOrganisationStandard(It.IsAny<CreateEpaOrganisationStandardRequest>()))
                 .Returns(Task.FromResult(testCase.ExpectedResponse.EpaoStandardId));
 
             var actualResponse = _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(testCase.Command).Result;
@@ -78,11 +89,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             if (actualResponse.WarningMessages.Count > 0)
             {
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()), Times.Never);
+                _mockApiClient.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<CreateEpaOrganisationStandardRequest>()), Times.Never);
             }
             else
             {
-                _mockRegisterRepository.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<EpaOrganisationStandard>(), It.IsAny<List<int>>()), Times.Once);
+                _mockApiClient.Verify(r => r.CreateEpaOrganisationStandard(It.IsAny<CreateEpaOrganisationStandardRequest>()), Times.Once);
             }
         }
 
