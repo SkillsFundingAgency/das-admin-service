@@ -13,7 +13,7 @@ using SFA.DAS.AdminService.Web.Helpers;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
-    [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+    [Authorize(Roles = Roles.OperationsTeam + "," + Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.EpaoReportsOnlyTeam)]
     public class ReportsController : ExcelAwareController
     {
         private readonly ILogger<ReportsController> _logger;
