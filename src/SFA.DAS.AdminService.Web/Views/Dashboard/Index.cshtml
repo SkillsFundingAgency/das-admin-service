@@ -38,13 +38,13 @@
             </h2>
             <p class="govuk-body">Print certificates. Create, delete and view existing print schedules.</p>
         </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam)">
+        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.EpaoReportsOnlyTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
                 <a class="govuk-link" asp-controller="Reports">Reports</a>
             </h2>
             <p class="govuk-body">On demand reporting.</p>
         </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.EpaoReportsOnlyTeam)">
+        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
                 <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">Privately funded certificate approvals</a>
             </h2>
