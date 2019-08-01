@@ -10,31 +10,27 @@ using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Resources;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
     public class AnswerInjectionService : IAnswerInjectionService
     {
+        private readonly IApiClient _apiClient;
+
         private readonly IValidationService _validationService;
         private readonly IAssessorValidationService _assessorValidationService;
 
-        private readonly IRegisterRepository _registerRepository;
-        private readonly IRegisterQueryRepository _registerQueryRepository;
-
         private readonly ILogger<AnswerService> _logger;
-        private readonly IEpaOrganisationIdGenerator _organisationIdGenerator;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerInjectionService(IValidationService validationService,
-            IAssessorValidationService assessorValidationService, IRegisterQueryRepository registerQueryRepository,
-            IRegisterRepository registerRepository, IEpaOrganisationIdGenerator organisationIdGenerator,
+        public AnswerInjectionService(IApiClient apiClient, IValidationService validationService, IAssessorValidationService assessorValidationService,
             ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
+            _apiClient = apiClient;
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
-            _registerQueryRepository = registerQueryRepository;
-            _registerRepository = registerRepository;
-            _organisationIdGenerator = organisationIdGenerator;
             _cleanser = cleanser;
             _logger = logger;
         }
@@ -65,88 +61,110 @@ namespace SFA.DAS.AdminService.Web.Services
             var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
 
-            // organisation checks ////////////////////////////////
+            // Organisation checks ////////////////////////////////
             RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
             RaiseWarningIfOrganisationNameTooShort(organisationName, warningMessages);
-            await RaiseWarningIfOrganisationNameAlreadyUsed(organisationName, warningMessages);
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
             RaiseWarningIfUkprnIsInvalid(ukprnAsLong, warningMessages);
-            await RaiseWarningIfUkprnIsAlreadyUsed(ukprnAsLong, warningMessages);
             RaiseWarningIfCompanyNumberIsInvalid(command.CompanyNumber, warningMessages);
-            await RaiseWarningIfCompanyNumberAlreadyUsed(command.CompanyNumber, warningMessages);
             RaiseWarningIfCharityNumberIsInvalid(command.CharityNumber, warningMessages);
-            await RaiseWarningIfCharityNumberAlreadyUsed(command.CharityNumber, warningMessages);
-
-            var newOrganisationId = _organisationIdGenerator.GetNextOrganisationId();
-            if (newOrganisationId == string.Empty)
-            {
-                _logger.LogError("A valid organisation Id could not be generated");
-                throw new Exception("A valid organisation Id could not be generated");
-            }
-
-            var organisation = MapCommandToOrganisation(command, newOrganisationId, organisationName, 
-                ukprnAsLong, organisationTypeId);
 
             // Contact checks //////////////////////////////// 
-            RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(command.ContactEmail, warningMessages); 
+            RaiseWarningIfEmailIsMissingOrInvalid(command.ContactEmail, warningMessages);
             //Removed since some ambiguity will exist in users having contact names in some previously started applications
             //and givename familyname in new applications
             //RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
 
-            if (warningMessages.Count == 0) 
-             {
+            var organisation = MapCommandToOrganisationRequest(command, organisationName, ukprnAsLong, organisationTypeId);
+
+            // Validate new org request before processing it
+            if (warningMessages.Count == 0)
+            {
+                var validationResponse = await _assessorValidationService.ValidateNewOrganisationRequest(organisation);
+
+                if (!validationResponse.IsValid)
+                {
+                    warningMessages.AddRange(validationResponse.Errors.Select(err => err.ErrorMessage));
+                }
+            }
+
+            // Now if everything has checked out, create it
+            if (warningMessages.Count == 0)
+            {
                 _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
-                newOrganisationId = await _registerRepository.CreateEpaOrganisation(organisation);
-              
-                var newOrganisation =
-                    await _registerQueryRepository.GetEpaOrganisationByOrganisationId(newOrganisationId);
+                var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation);
 
-                var contact = MapCommandToContact(string.Empty, command.ContactEmail,command.ContactName,
-                    newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, 
-                    command.ContactGivenName, command.ContactFamilyName, null, string.Empty);
+                var contact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenName, command.ContactFamilyName);
 
-                var assessorContact = await _registerQueryRepository.GetContactByEmail(contact.Email);
-                
-                //Does the new chosen primary contact already exist
+                var assessorContact = await _apiClient.GetEpaContactByEmail(contact.Email);
+
+                // Does the new chosen primary contact already exist?
                 if (assessorContact != null)
                 {
-                    //Update existing contact entry
-                    await _registerRepository.AssociateOrganisationWithContact(assessorContact.Id, newOrganisation,
-                        ContactStatus.Live, "MakePrimaryContact");
-
-                    // As they are now primary, give them all privileges
-                    await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                    await _registerRepository.AssociateAllPrivilegesWithContact(assessorContact);
-                }
-                //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
-                else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    //Assume same user since email match, email in aslogin uniquely identifies a user
-                    if (!string.IsNullOrEmpty(command.CreatedBy))
+                    var request = new AssociateEpaOrganisationWithEpaContactRequest
                     {
-                        _logger.LogInformation("Creating a new user contact in accessor when its the primary contact too");
-                        contact = MapCommandToContact(command.CreatedBy, command.ContactEmail, command.ContactName,
-                            newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, command.GivenNames,
-                            command.FamilyName, command.SigninId, command.SigninType);
+                        ContactId = assessorContact.Id,
+                        OrganisationId = newOrganisationId,
+                        ContactStatus = ContactStatus.Live,
+                        MakePrimaryContact = true,
+                        AddDefaultRoles = true,
+                        AddDefaultPrivileges = true
+                    };
 
-                        await _registerRepository.CreateEpaOrganisationContact(contact);
-                        await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
-                    }
+                    //Update existing contact entry
+                    await _apiClient.AssociateOrganisationWithEpaContact(request);
+
                 }
+                // NOTE: Spoke to Arshed, this is historical code as applying contacts will be within Assessor Service. However as I have made big tweaks to this file, I didn't want to lose them if there is a bug introduced.
+                //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
+                //else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
+                //{
+                //    //Assume same user since email match, email in aslogin uniquely identifies a user
+                //    if (!string.IsNullOrEmpty(command.CreatedBy))
+                //    {
+                //        _logger.LogInformation("Creating a new user contact in accessor when its the primary contact too");
+                //        contact = MapCommandToContact(command.CreatedBy, command.ContactEmail, command.ContactName,
+                //            newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, command.GivenNames,
+                //            command.FamilyName, command.SigninId, command.SigninType);
+
+                //        await _registerRepository.CreateEpaOrganisationContact(contact);
+                //        await _registerRepository.AssociateDefaultRoleWithContact(contact);
+                //        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
+                //    }
+                //}
                 else
                 {
-                    //Create a new contact in assessor table, 
-                    //Assumption is that this user will need to have an account created in aslogon too and then when he logs in 
-                    //the signinid etc wll get populated as it does for existing users
-                    _logger.LogInformation("Creating a new contact in accessor");
-                    var id = await _registerRepository.CreateEpaOrganisationContact(contact);
-                    if (!string.IsNullOrEmpty(id))
+                    _logger.LogInformation("Creating a new contact in assessor");
+
+                    var validationResponse = await _assessorValidationService.ValidateNewContactRequest(contact);
+
+                    if (!validationResponse.IsValid)
                     {
-                        _logger.LogInformation($"Contacted created successfully {id}");
-                        contact.Id = Guid.Parse(id);
-                        await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
+                        _logger.LogWarning($"Cannot create contact in assessor for {newOrganisationId}. Validation errors: {validationResponse.Errors.Select(err => err.ErrorMessage)}");
+                    }
+                    else
+                    {
+                        //Create a new contact in assessor table, 
+                        //Assumption is that this user will need to have an account created in aslogon too and then when he logs in 
+                        //the signinid etc wll get populated as it does for existing users
+                        
+                        var id = await _apiClient.CreateEpaContact(contact);
+                        if (!string.IsNullOrEmpty(id))
+                        {
+                            _logger.LogInformation($"Contact created successfully {id}");
+
+                            var request = new AssociateEpaOrganisationWithEpaContactRequest
+                            {
+                                ContactId = Guid.Parse(id),
+                                OrganisationId = newOrganisationId,
+                                ContactStatus = ContactStatus.Live,
+                                MakePrimaryContact = true,
+                                AddDefaultRoles = true,
+                                AddDefaultPrivileges = true
+                            };
+
+                            await _apiClient.AssociateOrganisationWithEpaContact(request);
+                        }
                     }
                 }
 
@@ -155,23 +173,43 @@ namespace SFA.DAS.AdminService.Web.Services
                     // For any other user who was trying to apply for the same organisation; they now need to request access
                     foreach (var otherApplyingUserEmail in command.OtherApplyingUserEmails)
                     {
-                        var otherApplyingContact = await _registerQueryRepository.GetContactByEmail(otherApplyingUserEmail);
+                        var otherApplyingContact = await _apiClient.GetEpaContactByEmail(otherApplyingUserEmail);
                         if (otherApplyingContact != null)
                         {
-                            await _registerRepository.AssociateOrganisationWithContact(otherApplyingContact.Id, newOrganisation, ContactStatus.InvitePending, "");
+                            var request = new AssociateEpaOrganisationWithEpaContactRequest
+                            {
+                                ContactId = otherApplyingContact.Id,
+                                OrganisationId = newOrganisationId,
+                                ContactStatus = ContactStatus.InvitePending,
+                                MakePrimaryContact = false,
+                                AddDefaultRoles = false,
+                                AddDefaultPrivileges = false
+                            };
+
+                            await _apiClient.AssociateOrganisationWithEpaContact(request);
                         }
                     }
                 }
 
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
                 //org before
-                var userContact = await _registerQueryRepository.GetContactBySignInId(command.SigninId.ToString());
+                var userContact = await _apiClient.GetEpaContactBySignInId(command.SigninId ?? Guid.Empty);
                 if (userContact != null && userContact.Status == ContactStatus.Applying &&
                     userContact.EndPointAssessorOrganisationId == null)
                 {
                     _logger.LogInformation("Updating newly created assessor contact with new organisation ");
-                    await _registerRepository.AssociateOrganisationWithContact(userContact.Id, newOrganisation,
-                        ContactStatus.Live,"");
+
+                    var request = new AssociateEpaOrganisationWithEpaContactRequest
+                    {
+                        ContactId = userContact.Id,
+                        OrganisationId = newOrganisationId,
+                        ContactStatus = ContactStatus.Live,
+                        MakePrimaryContact = false,
+                        AddDefaultRoles = false,
+                        AddDefaultPrivileges = false
+                    };
+
+                    await _apiClient.AssociateOrganisationWithEpaContact(request);
                 }
 
                 response.OrganisationId = newOrganisationId;
@@ -181,7 +219,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 _logger.LogWarning($"Source has invalid data. Cannot inject organisation details into register at this time. Warnings:  {string.Join(",", warningMessages)}");
             }
 
-            response.WarningMessages = warningMessages;          
+            response.WarningMessages = warningMessages;
 
             return response;
         }
@@ -193,20 +231,30 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var warningMessages = new List<string>();
 
-            // organisation checks ////////////////////////////////
+            // Organisation checks ////////////////////////////////
             RaiseWarningIfNoOrganisationId(command.OrganisationId, warningMessages);
             RaiseWarningIfOrganisationIdIsInvalid(command.OrganisationId, warningMessages);
 
             // Standard checks ///////////////////////////////////
-            RaiseWarningIfStandardInvalidOrAlreadyUsed(command.StandardCode, command.OrganisationId, warningMessages);
+            RaiseWarningIfStandardCodeIsInvalid(command.StandardCode, warningMessages);
+
+            var standard = await MapCommandToOrganisationStandardRequest(command);
+
+            // Validate new org standard request before processing it
+            if (warningMessages.Count == 0)
+            {
+                var validationResponse = await _assessorValidationService.ValidateNewOrganisationStandardRequest(standard);
+
+                if (!validationResponse.IsValid)
+                {
+                    warningMessages.AddRange(validationResponse.Errors.Select(err => err.ErrorMessage));
+                }
+            }
 
             if (warningMessages.Count == 0)
             {
-                var standard = MapCommandToOrganisationStandard(command);
-                var deliveryAreas = await MapCommandToDeliveryAreas(command);
-
                 _logger.LogInformation("Injecting new standard into register");
-                response.EpaoStandardId = await _registerRepository.CreateEpaOrganisationStandard(standard, deliveryAreas);
+                response.EpaoStandardId = await _apiClient.CreateEpaOrganisationStandard(standard);
             }
             else
             {
@@ -220,25 +268,21 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private async Task UpdateFinancialDetails(CreateOrganisationContactCommand command)
         {
-            var epaOrgs = await _registerQueryRepository.GetAssessmentOrganisationsByNameOrCharityNumberOrCompanyNumber(command.OrganisationName);
+            var epaOrgs = await _apiClient.SearchOrganisations(command.OrganisationName);
             var result = epaOrgs.FirstOrDefault();
 
             if (result != null)
             {
                 _logger.LogInformation($"Updating FHADetails for {result.Id}");
-                var org = await _registerQueryRepository.GetEpaOrganisationByOrganisationId(result.Id);
 
-                if (org?.OrganisationData != null)
+                var req = new UpdateFinancialsRequest
                 {
-                    if (org.OrganisationData.FHADetails is null)
-                    {
-                        org.OrganisationData.FHADetails = new FHADetails();
-                    }
+                    EpaOrgId = result.Id,
+                    FinancialDueDate = command.FinancialDueDate,
+                    FinancialExempt = command.IsFinancialExempt
+                };
 
-                    org.OrganisationData.FHADetails.FinancialDueDate = command.FinancialDueDate;
-                    org.OrganisationData.FHADetails.FinancialExempt = command.IsFinancialExempt;
-                    await _registerRepository.UpdateEpaOrganisation(org);
-                }
+                await _apiClient.UpdateFinancials(req);
             }
         }
 
@@ -263,7 +307,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private async Task<int?> GetOrganisationTypeIdFromDescriptor(string organisationType)
         {
-            var organisationTypes = await _registerQueryRepository.GetOrganisationTypes();
+            var organisationTypes = await _apiClient.GetOrganisationTypes();
             return organisationTypes.FirstOrDefault(x => string.Equals(x.Type.Replace(" ", ""),
                 organisationType.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))?.Id;
         }
@@ -280,12 +324,6 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationNameTooShort);
         }
 
-        private async Task RaiseWarningIfOrganisationNameAlreadyUsed(string organisationName, ICollection<string> warningMessages)
-        {
-            if (await _assessorValidationService.IsOrganisationNameTaken(organisationName))
-                warningMessages.Add(OrganisationAndContactMessages.OrganisationNameAlreadyUsed);
-        }
-
         private static void RaiseWarningOrganisationTypeNotIdentified(int? organisationTypeId, ICollection<string> warningMessages)
         {
             if (organisationTypeId == null)
@@ -295,49 +333,28 @@ namespace SFA.DAS.AdminService.Web.Services
         private void RaiseWarningIfUkprnIsInvalid(long? ukprnAsLong, ICollection<string> warningMessages)
         {
             if (ukprnAsLong.HasValue && !_validationService.UkprnIsValid(ukprnAsLong.Value.ToString()))
-            warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
-        }
-
-        private async Task RaiseWarningIfUkprnIsAlreadyUsed(long? ukprnAsLong, ICollection<string> warningMessages)
-        {
-            if (ukprnAsLong.HasValue && await _assessorValidationService.IsOrganisationUkprnTaken(ukprnAsLong.Value))
-            warningMessages.Add(OrganisationAndContactMessages.UkprnAlreadyUsed);
+                warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
         }
 
         private void RaiseWarningIfCompanyNumberIsInvalid(string companyNumber, ICollection<string> warningMessages)
         {
             if (!string.IsNullOrEmpty(companyNumber) && !_validationService.CompanyNumberIsValid(companyNumber))
-            warningMessages.Add(OrganisationAndContactMessages.CompanyNumberNotValid);
-        }
-
-        private async Task RaiseWarningIfCompanyNumberAlreadyUsed(string companyNumber, ICollection<string> warningMessages)
-        {
-            if (!string.IsNullOrEmpty(companyNumber) && await _assessorValidationService.IsCompanyNumberTaken(companyNumber))
-            warningMessages.Add(OrganisationAndContactMessages.CompanyNumberAlreadyUsed);
+                warningMessages.Add(OrganisationAndContactMessages.CompanyNumberNotValid);
         }
 
         private void RaiseWarningIfCharityNumberIsInvalid(string charityNumber, ICollection<string> warningMessages)
         {
             if (!string.IsNullOrEmpty(charityNumber) && !_validationService.CharityNumberIsValid(charityNumber))
-            warningMessages.Add(OrganisationAndContactMessages.CharityNumberNotValid);
+                warningMessages.Add(OrganisationAndContactMessages.CharityNumberNotValid);
         }
 
-        private async Task RaiseWarningIfCharityNumberAlreadyUsed(string charityNumber, ICollection<string> warningMessages)
-        {
-            if (!string.IsNullOrEmpty(charityNumber) && await _assessorValidationService.IsCharityNumberTaken(charityNumber))
-            warningMessages.Add(OrganisationAndContactMessages.CharityNumberAlreadyUsed);
-        }
-
-        private void RaiseWarningIfEmailIsMissingInvalidOrAlreadyUsed(string email, ICollection<string> warningMessagesContact)
+        private void RaiseWarningIfEmailIsMissingOrInvalid(string email, ICollection<string> warningMessagesContact)
         {
             if (!_validationService.IsNotEmpty(email))
                 warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsMissing);
 
             if (!_validationService.CheckEmailIsValid(email))
                 warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsInvalid);
-            // The check for email if been taken by another user is redundant because the user can also be a primary contact
-            //if (_assessorValidationService.IsEmailTaken(email).Result)
-              //  warningMessagesContact.Add(OrganisationAndContactMessages.EmailAlreadyUsed);
         }
 
         private void RaiseWarningIfContactNameIsMissingOrTooShort(string contactName, List<string> warningMessagesContact)
@@ -361,19 +378,15 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationIdNotValid);
         }
 
-        private void RaiseWarningIfStandardInvalidOrAlreadyUsed(int standardCode, string organisationId, List<string> warningMessagesStandard)
+        private void RaiseWarningIfStandardCodeIsInvalid(int standardCode, List<string> warningMessagesStandard)
         {
             if (standardCode < 1)
             {
                 warningMessagesStandard.Add(OrganisationAndContactMessages.StandardInvalid);
             }
-            else if (_assessorValidationService.IsOrganisationStandardTaken(organisationId, standardCode).Result)
-            {
-                warningMessagesStandard.Add(OrganisationAndContactMessages.StandardAlreadyUsed);
-            }
         }
 
-        private EpaOrganisation MapCommandToOrganisation(CreateOrganisationContactCommand command, string newOrganisationId, string organisationName, long? ukprnAsLong, int? organisationTypeId)
+        private CreateEpaOrganisationRequest MapCommandToOrganisationRequest(CreateOrganisationContactCommand command, string organisationName, long? ukprnAsLong, int? organisationTypeId)
         {
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
             var legalName = _cleanser.CleanseStringForSpecialCharacters(command.OrganisationName);
@@ -392,90 +405,62 @@ namespace SFA.DAS.AdminService.Web.Services
                 companyNumber = companyNumber.ToUpper();
             }
 
-            var organisation = new EpaOrganisation
+            return new CreateEpaOrganisationRequest
             {
                 Name = organisationName,
-                OrganisationId = newOrganisationId,
                 OrganisationTypeId = organisationTypeId,
                 Ukprn = ukprnAsLong,
-                Id = Guid.NewGuid(),
-                OrganisationData = new OrganisationData
-                {
-                    Address1 = address1,
-                    Address2 = address2,
-                    Address3 = address3,
-                    Address4 = address4,
-                    LegalName = legalName,
-                    TradingName = tradingName,
-                    Postcode = postcode,
-                    WebsiteLink = website,
-                    CompanyNumber = companyNumber,
-                    CharityNumber = charityNumber,
-                    FHADetails = new FHADetails
-                    {
-                        FinancialDueDate = command.FinancialDueDate,
-                        FinancialExempt = command.IsFinancialExempt
-                    }
-                }
+                Address1 = address1,
+                Address2 = address2,
+                Address3 = address3,
+                Address4 = address4,
+                LegalName = legalName,
+                TradingName = tradingName,
+                Postcode = postcode,
+                WebsiteLink = website,
+                CompanyNumber = companyNumber,
+                CharityNumber = charityNumber,
+                FinancialDueDate = command.FinancialDueDate,
+                FinancialExempt = command.IsFinancialExempt
             };
-
-            return organisation;
         }
 
-        private EpaContact MapCommandToContact(string id, string contactEmail,string contactName, 
-            string organisationId, string contactPhoneNumber, string username, string givenNames, string familyName,
-            Guid? signinId, string signinType)
+        private CreateEpaOrganisationContactRequest MapCommandToContactRequest(string contactEmail, string organisationId, string contactPhoneNumber, string givenNames, string familyName)
         {
-            
             contactEmail = _cleanser.CleanseStringForSpecialCharacters(contactEmail);
             contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
             givenNames = _cleanser.CleanseStringForSpecialCharacters(givenNames);
             familyName = _cleanser.CleanseStringForSpecialCharacters(familyName);
-            contactName = _cleanser.CleanseStringForSpecialCharacters(contactName);
+            // NOTE: This used to have 'contactName' as the explicit DisplayName. I've removed it as everywhere else it concatenates givenNames & familyName
 
-            return new EpaContact
+            return new CreateEpaOrganisationContactRequest
             {
-                DisplayName = !string.IsNullOrEmpty(contactName)? contactName : $"{givenNames} {familyName}",
                 Email = contactEmail,
                 EndPointAssessorOrganisationId = organisationId,
-                Id = string.IsNullOrEmpty(id) ? Guid.NewGuid() : Guid.Parse(id),
                 PhoneNumber = contactPhoneNumber,
-                Username = username,
                 FirstName = givenNames,
-                LastName = familyName,
-                SigninId = signinId,
-                SigninType = signinType
+                LastName = familyName
             };
         }
 
-        private EpaOrganisationStandard MapCommandToOrganisationStandard(CreateOrganisationStandardCommand command)
+        private async Task<CreateEpaOrganisationStandardRequest> MapCommandToOrganisationStandardRequest(CreateOrganisationStandardCommand command)
         {
-            Guid? contactId = null;
-            if (Guid.TryParse(command.CreatedBy, out var contactIdGuid))
-            {
-                contactId = contactIdGuid;
-            }
-
-            var standard = new EpaOrganisationStandard
+            return new CreateEpaOrganisationStandardRequest
             {
                 OrganisationId = command.OrganisationId,
                 StandardCode = command.StandardCode,
                 EffectiveFrom = command.EffectiveFrom,
-                ContactId = contactId,
-                OrganisationStandardData = new OrganisationStandardData
-                {
-                    DeliveryAreasComments = string.Empty
-                }
+                ContactId = command.CreatedBy,
+                DeliveryAreas = await MapCommandToDeliveryAreas(command),
+                DeliveryAreasComments = string.Empty
             };
-
-            return standard;
         }
 
         private async Task<List<int>> MapCommandToDeliveryAreas(CreateOrganisationStandardCommand command)
         {
             if (command.DeliveryAreas != null)
             {
-                var areas = await _registerQueryRepository.GetDeliveryAreas();
+                var areas = await _apiClient.GetDeliveryAreas();
                 return areas.Where(a => command.DeliveryAreas.Contains(a.Area)).Select(a => a.Id).ToList();
             }
 

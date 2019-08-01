@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -20,9 +21,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel);
         Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page);
         Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page);
-        Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);
+        Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request);
+        Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
+        Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
+        Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request);
         Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request);
-        Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request);
+        Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request);
+        Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request); 
         Task<object> CreateScheduleRun(ScheduleRun schedule);
         Task<object> DeleteScheduleRun(Guid scheduleRunId);
         Task GatherAndCollateStandards();
@@ -34,6 +39,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
         Task<List<DeliveryArea>> GetDeliveryAreas();
         Task<AssessmentOrganisationContact> GetEpaContact(string contactId);
+        Task<EpaContact> GetEpaContactBySignInId(Guid signInId);
+        Task<EpaContact> GetEpaContactByEmail(string email);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);

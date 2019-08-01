@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AdminService.Data\SFA.DAS.AdminService.Data.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Session\SFA.DAS.AdminService.Session.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj" />
