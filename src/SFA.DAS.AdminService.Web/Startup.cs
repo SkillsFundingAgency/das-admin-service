@@ -105,7 +105,7 @@ namespace SFA.DAS.AdminService.Web
             }
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
-
+            services.AddHealthChecks();
             MappingStartup.AddMappings();
             return ConfigureIoC(services);
         }
@@ -195,6 +195,7 @@ namespace SFA.DAS.AdminService.Web
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseSecurityHeaders();
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
