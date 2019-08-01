@@ -1,20 +1,13 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Application.Interfaces.Validation
 {
     public interface IAssessorValidationService
     {
-        Task<bool> IsOrganisationNameTaken(string organisationName);
-        Task<bool> IsOrganisationUkprnTaken(long ukprn);
-        Task<bool> IsCompanyNumberTaken(string companyNumber);
-        Task<bool> IsCharityNumberTaken(string charityNumber);
-
-        Task<bool> IsEmailTaken(string email);
-
-        Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email,
-            string phone, Guid? contactId);
-
-        Task<bool> IsOrganisationStandardTaken(string organisationId, int standardCode);
+        Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request);
+        Task<ValidationResponse> ValidateNewContactRequest(CreateEpaOrganisationContactRequest request);
+        Task<ValidationResponse> ValidateNewOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request);
     }
 }
