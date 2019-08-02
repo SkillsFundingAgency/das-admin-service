@@ -93,6 +93,7 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
                 var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation);
+                response.OrganisationId = newOrganisationId;
 
                 _logger.LogInformation($"Assigning the primary contact");
                 var primaryContact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenName, command.ContactFamilyName);
