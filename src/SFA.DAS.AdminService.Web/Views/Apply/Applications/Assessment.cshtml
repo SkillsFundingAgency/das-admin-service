@@ -1,4 +1,3 @@
-@using SFA.DAS.AssessorService.ApplyTypes
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationSequenceAssessmentViewModel
 
 @{
@@ -26,9 +25,6 @@
 
             <div class="form-group">
                 <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
-                    <input type="hidden" asp-for="ReturnType" value="Approve" />
-                    <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
-
                     @if (!Model.HasNewFeedback)
                     {
                         @if (Model.SequenceId == 1)
@@ -50,15 +46,14 @@
                         {
                             <p class="govuk-body">You are about to approve the second stage of this application. You are also satisfied with the information the applicant has provided so far, and require no further information.</p>
                         }
-
+                        
+                        <input type="hidden" asp-for="ReturnType" value="Approve" />
                         <button class="govuk-button" type="submit">Approve application</button>
                     }
                     else
                     {
                         @if (Model.SequenceId == 1)
                         {
-                            @*<p class="govuk-body">You are about to approve or reject the first stage of this application. If you approve the application, the applicant will be able to apply for a standard.</p>*@
-                            @*<p class="govuk-body">If you reject the application, the applicant will have to start a new application.</p>*@
                             <p class="govuk-body">You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
                         }
                         else if (Model.SequenceId == 2)
@@ -96,37 +91,8 @@
                             }
                         }
 
+                        <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
                         <button class="govuk-button" type="submit">Return application</button>
-
-                        @*
-                        <div class="error-message-container" sfa-anyvalidationerror-class="form-group-error">
-                            <div class="form-group">
-                                <label class="form-label-bold">
-                                    Is the application approved?
-                                </label>
-                                <span id="ReturnType" class="error-message" asp-validation-for="ReturnType"></span>
-                                <div class="multiple-choice">
-                                    <input name="ReturnType" id="options_feedback" type="radio" value="ReturnWithFeedback" sfa-validation-for="ReturnType" />
-                                    <label for="options_feedback">
-                                        No. Send feedback and stop
-                                    </label>
-                                </div>
-                                <div class="multiple-choice">
-                                    <input name="ReturnType" id="options_yes" type="radio" value="ApproveWithFeedback" sfa-validation-for="ReturnType" />
-                                    <label for="options_yes">
-                                        Yes. Send feedback and continue
-                                    </label>
-                                </div>
-                                <div class="multiple-choice">
-                                    <input name="ReturnType" id="options_no" type="radio" value="Reject" />
-                                    <label for="options_no">
-                                        No. Reject the application
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="button" type="submit">Submit assessment</button>
-                        *@
                     }
                 </form>
             </div>
