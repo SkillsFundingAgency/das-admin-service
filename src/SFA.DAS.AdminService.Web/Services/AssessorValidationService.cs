@@ -2,59 +2,74 @@
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
     public class AssessorValidationService : IAssessorValidationService
     {
-        private readonly IRegisterValidationRepository _registerValidationRepository;
+        private readonly IApiClient _apiClient;
 
-        public AssessorValidationService(IRegisterValidationRepository registerValidationRepository)
+        public AssessorValidationService(IApiClient apiClient)
         {
-            _registerValidationRepository = registerValidationRepository;
+            _apiClient = apiClient;
         }
 
-        public async Task<bool> CheckIfContactDetailsAlreadyPresentInSystem(string firstName, string lastName, string email, string phone, Guid? contactId)
+        public async Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request)
         {
-            return await _registerValidationRepository.ContactDetailsAlreadyExist(firstName, lastName, email, phone, contactId);
+            var validationRequest = MapToCreateEpaOrganisationValidateRequest(request);
+            return await _apiClient.CreateOrganisationValidate(validationRequest);
         }
 
-        public async Task<bool> IsCharityNumberTaken(string charityNumber)
+        public async Task<ValidationResponse> ValidateNewContactRequest(CreateEpaOrganisationContactRequest request)
         {
-            return string.IsNullOrWhiteSpace(charityNumber)
-                ? false
-                : await _registerValidationRepository.EpaOrganisationExistsWithCharityNumber(charityNumber);
+            var validationRequest = MapToCreateEpaContactValidateRequest(request);
+            return await _apiClient.CreateEpaContactValidate(validationRequest);
         }
 
-        public async Task<bool> IsCompanyNumberTaken(string companyNumber)
+        public async Task<ValidationResponse> ValidateNewOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request)
         {
-            return string.IsNullOrWhiteSpace(companyNumber)
-                ? false
-                : await _registerValidationRepository.EpaOrganisationExistsWithCompanyNumber(companyNumber);
+            var validationRequest = MapToCreateEpaOrganisationStandardValidateRequest(request);
+            return await _apiClient.CreateOrganisationStandardValidate(validationRequest);
         }
 
-        public async Task<bool> IsEmailTaken(string email)
+        private CreateEpaOrganisationValidationRequest MapToCreateEpaOrganisationValidateRequest(CreateEpaOrganisationRequest request)
         {
-            return string.IsNullOrWhiteSpace(email)
-                ? false
-                : await _registerValidationRepository.EmailAlreadyPresent(email);
+            return new CreateEpaOrganisationValidationRequest
+            {
+                Name = request?.Name,
+                Ukprn = request?.Ukprn,
+                OrganisationTypeId = request?.OrganisationTypeId,
+                CompanyNumber = request?.CompanyNumber,
+                CharityNumber = request?.CharityNumber
+            };
         }
 
-        public async Task<bool> IsOrganisationNameTaken(string organisationName)
+        private CreateEpaContactValidationRequest MapToCreateEpaContactValidateRequest(CreateEpaOrganisationContactRequest request)
         {
-            return string.IsNullOrWhiteSpace(organisationName)
-                ? false
-                : await _registerValidationRepository.EpaOrganisationAlreadyUsingName(organisationName, string.Empty);
+            return new CreateEpaContactValidationRequest
+            {
+                OrganisationId = request?.EndPointAssessorOrganisationId,
+                FirstName = request?.FirstName,
+                LastName = request?.LastName,
+                Email = request?.Email,
+                Phone = request?.PhoneNumber
+            };
         }
 
-        public async Task<bool> IsOrganisationUkprnTaken(long ukprn)
+        private CreateEpaOrganisationStandardValidationRequest MapToCreateEpaOrganisationStandardValidateRequest(CreateEpaOrganisationStandardRequest request)
         {
-            return await _registerValidationRepository.EpaOrganisationExistsWithUkprn(ukprn);
-        }
-
-        public async Task<bool> IsOrganisationStandardTaken(string organisationId, int standardCode)
-        {
-            return await _registerValidationRepository.EpaOrganisationStandardExists(organisationId, standardCode);
+            return new CreateEpaOrganisationStandardValidationRequest
+            {
+                OrganisationId = request?.OrganisationId,
+                StandardCode = request?.StandardCode ?? 0,
+                EffectiveFrom = request?.EffectiveFrom,
+                EffectiveTo = request?.EffectiveTo,
+                ContactId = request?.ContactId,
+                DeliveryAreas = request?.DeliveryAreas
+            };
         }
     }
 }

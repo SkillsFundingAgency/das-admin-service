@@ -17,6 +17,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -261,7 +262,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
         }
-        
+
+        public async Task<EpaContact> GetEpaContactBySignInId(Guid signInId)
+        {
+            return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/signInId/{signInId.ToString()}");
+        }
+
+        public async Task<EpaContact> GetEpaContactByEmail(string email)
+        {
+            return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/email/{email}");
+        }
+
         public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
         {
             return await Get<List<ContactResponse>>($"api/v1/contacts/get-all/{organisationId}");
@@ -272,12 +283,22 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<OrganisationStandardSummary>>($"/api/ao/assessment-organisations/{organisationId}/standards");
         }
 
+        public async Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
+        {
+            return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
+        }
+
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =
                 await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations",
                     request);
             return result.Details;
+        }
+
+        public async Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request)
+        {
+            return await Post<CreateEpaOrganisationStandardValidationRequest, ValidationResponse>("api/ao/assessment-organisations/standards/validate-new", request);
         }
 
         public async Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
@@ -302,6 +323,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
+        public async Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request)
+        {
+            return await Post<CreateEpaContactValidationRequest, ValidationResponse>("api/ao/assessment-organisations/contacts/validate-new", request);
+        }
+
         public async Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request)
         {
             var result = await Post<CreateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
@@ -313,7 +339,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             var result = await Put<UpdateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
             return result.Details;
         }
-        
+
+        public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request)
+        {
+            return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
+        }
+
         public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>(

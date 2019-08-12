@@ -12,7 +12,8 @@ namespace SFA.DAS.AdminService.Web.Domain
         public const string ProviderRiskAssuranceTeam = "EPR"; // FHA
         public const string RegisterViewOnlyTeam = "EPV";
         public const string RoatpGatewayTeam = "APR";
-        
+        public const string EpaoReportsOnlyTeam = "EPX";
+
         public static bool HasValidRole(this ClaimsPrincipal user)
         {
             return user.IsInRole(CertificationTeam)
@@ -20,7 +21,8 @@ namespace SFA.DAS.AdminService.Web.Domain
                    || user.IsInRole(AssessmentDeliveryTeam)
                    || user.IsInRole(ProviderRiskAssuranceTeam)
                    || user.IsInRole(RegisterViewOnlyTeam)
-                   || user.IsInRole(RoatpGatewayTeam);
+                   || user.IsInRole(RoatpGatewayTeam)
+                   || user.IsInRole(EpaoReportsOnlyTeam);
         }
 
         public static bool HasRoatpRoleOnly(this ClaimsPrincipal user)
@@ -30,7 +32,8 @@ namespace SFA.DAS.AdminService.Web.Domain
                 && !user.IsInRole(OperationsTeam)
                 && !user.IsInRole(AssessmentDeliveryTeam)
                 && !user.IsInRole(ProviderRiskAssuranceTeam)
-                && !user.IsInRole(RegisterViewOnlyTeam))
+                && !user.IsInRole(RegisterViewOnlyTeam)
+                && !user.IsInRole(EpaoReportsOnlyTeam))
             {
                 return true;
             }

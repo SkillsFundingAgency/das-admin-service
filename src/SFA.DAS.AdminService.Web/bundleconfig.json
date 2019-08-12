@@ -16,5 +16,15 @@
       "renameLocals": true
     },
     "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/epao-validation.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/epao-validation.js"
+    ],
+    "minify": {
+      "renameLocals": true
+    },
+    "sourceMap": false
   }
 ]

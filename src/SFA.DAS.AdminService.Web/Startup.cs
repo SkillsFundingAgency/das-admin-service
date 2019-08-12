@@ -30,7 +30,6 @@ using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionF
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
-using SFA.DAS.AdminService.Data;
 using SFA.DAS.AdminService.Web.Services;
 
 namespace SFA.DAS.AdminService.Web
@@ -113,7 +112,7 @@ namespace SFA.DAS.AdminService.Web
             }
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
-
+            services.AddHealthChecks();
             MappingStartup.AddMappings();
             return ConfigureIoC(services);
         }
@@ -129,6 +128,7 @@ namespace SFA.DAS.AdminService.Web
                 });
                 config.For<ITokenService>().Use<TokenService>();
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>();
+                config.For<IApplyTokenService>().Use<ApplyTokenService>();
                 config.For<IWebConfiguration>().Use(ApplicationConfiguration);
                 config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
                 config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
@@ -141,13 +141,8 @@ namespace SFA.DAS.AdminService.Web
 
                 config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
 
-                config.For<IRegisterQueryRepository>().Use<RegisterQueryRepository>();
-                config.For<IRegisterRepository>().Use<RegisterRepository>();
-
                 config.For<IValidationService>().Use<ValidationService>();
                 config.For<IAssessorValidationService>().Use<AssessorValidationService>();
-                config.For<IRegisterValidationRepository>().Use<RegisterValidationRepository>();
-                config.For<IEpaOrganisationIdGenerator>().Use<EpaOrganisationIdGenerator>();
                 config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
 
 
@@ -205,6 +200,7 @@ namespace SFA.DAS.AdminService.Web
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseSecurityHeaders();
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
