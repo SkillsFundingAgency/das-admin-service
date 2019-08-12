@@ -61,11 +61,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                     : commandTestSetup.ContactAddress2,
 
                 ContactAddress3 = commandTestSetup.ContactAddress != null
-                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "TownOrCity")
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine3")
                     : commandTestSetup.ContactAddress3,
 
                 ContactAddress4 = commandTestSetup.ContactAddress != null
-                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "County")
+                    ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine4")
                     : commandTestSetup.ContactAddress4,
 
                 ContactPostcode = commandTestSetup.ContactAddress != null
@@ -157,7 +157,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
                 yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
                 yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'Q3_1' : { 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'TownOrCity': 'address 3', 'County': 'address 4', 'Postcode': 'CV1' } }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'Q3_1' : { 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' } }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 

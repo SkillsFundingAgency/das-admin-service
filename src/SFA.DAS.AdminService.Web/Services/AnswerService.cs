@@ -50,8 +50,8 @@ namespace SFA.DAS.AdminService.Web.Services
             // handle both a contact address which is a single question with multiple answers or multiple questions with a single answer 
             var contactAddress1 = contactAddress?.Value["AddressLine1"].ToString() ?? await GetAnswer(application.Id, "contact-address1");
             var contactAddress2 = contactAddress?.Value["AddressLine2"].ToString() ?? await GetAnswer(application.Id, "contact-address2");
-            var contactAddress3 = contactAddress?.Value["TownOrCity"].ToString() ?? await GetAnswer(application.Id, "contact-address3");
-            var contactAddress4 = contactAddress?.Value["County"].ToString() ?? await GetAnswer(application.Id, "contact-address4");
+            var contactAddress3 = contactAddress?.Value["AddressLine3"].ToString() ?? await GetAnswer(application.Id, "contact-address3");
+            var contactAddress4 = contactAddress?.Value["AddressLine4"].ToString() ?? await GetAnswer(application.Id, "contact-address4");
             var contactPostcode = contactAddress?.Value["Postcode"].ToString() ?? await GetAnswer(application.Id, "contact-postcode");
 
             var contactEmail = await GetAnswer(application.Id, "contact-email");
