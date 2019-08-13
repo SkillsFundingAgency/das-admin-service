@@ -15,6 +15,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
+    /// <summary>
+    /// TODO: This class is directly using the database via a repository layer which is against the design of the application which is supposed to be using 
+    /// the internal API (in this case it should be using the Assessor internal API as the Admin service has been extracted); currently the repository layer has
+    /// been duplicated between two different source repositories (changed namespace) and is accessing a database 'owned' by a different source repository.
+    /// see Tech Debt 2128
+    /// </summary>
     public class AnswerInjectionService : IAnswerInjectionService
     {
         private readonly IApiClient _apiClient;
@@ -190,6 +196,12 @@ namespace SFA.DAS.AdminService.Web.Services
                         }
                     }
                 }
+
+                // the Email and PhoneNumber is also part of the organisation data; the information entered during apply always take precedence
+                _logger.LogInformation($"Setting epa organisation {newOrganisation?.Name} email and phonenumber");
+                newOrganisation.OrganisationData.Email = command.ContactEmail;
+                newOrganisation.OrganisationData.PhoneNumber = command.ContactPhoneNumber;
+                await _registerRepository.UpdateEpaOrganisation(newOrganisation);
 
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
                 //org before

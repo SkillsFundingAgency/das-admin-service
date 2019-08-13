@@ -42,6 +42,8 @@
                                 <li><a sfa-validation-for="Postcode"></a></li>
                                 <li><a sfa-validation-for="Ukprn"></a></li>
                                 <li><a sfa-validation-for="OrganisationTypeId"></a></li>
+                                <li><a sfa-validation-for="Email"></a></li>
+                                <li><a sfa-validation-for="PhoneNumber"></a></li>
                                 <li><a sfa-validation-for="WebsiteLink"></a></li>
                             </ul>
                         </div>
@@ -112,6 +114,20 @@
                             }
                         </div>
                     </div>
+                    <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
+                        <label class="govuk-label" for="Email">
+                            Email
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="Email"></span>
+                        <input class="govuk-input" name="Email" sfa-validation-for="Email" sfa-validationerror-class="govuk-input--error" asp-for="Email" type="text" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="PhoneNumber" sfa-validationerror-class="form-group-error">
+                        <label class="govuk-label" for="PhoneNumber">
+                            PhoneNumber
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="PhoneNumber"></span>
+                        <input class="govuk-input" name="PhoneNumber" sfa-validation-for="PhoneNumber" sfa-validationerror-class="govuk-input--error" asp-for="PhoneNumber" type="text" />
+                    </div>
                     <div class="govuk-form-group" sfa-validation-for="WebsiteLink" sfa-validationerror-class="form-group-error">
                         <label class="govuk-label" for="WebsiteLink">
                             Website
@@ -154,7 +170,7 @@
                         <span class="govuk-error-message" asp-validation-for="Postcode"></span>
                         <input class="govuk-input" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input--error" asp-for="Postcode" type="text" />
                     </div>
-                
+
                     <button class="govuk-button govuk-!-margin-right-1" type="submit">Save</button>
                     <a class="govuk-button govuk-button--secondary" asp-action="Index" asp-controller="Register">Cancel</a>
                 </div>
