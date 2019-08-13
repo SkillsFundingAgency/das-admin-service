@@ -319,8 +319,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(viewModel);
             }
 
-            // need to do validation on this - but what validation - check apply does it need an email and a phone number if so then should have one here
-
             var addOrganisationRequest = new CreateEpaOrganisationRequest
             {
                 Name = viewModel.Name,

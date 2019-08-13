@@ -197,12 +197,6 @@ namespace SFA.DAS.AdminService.Web.Services
                     }
                 }
 
-                // the Email and PhoneNumber is also part of the organisation data; the information entered during apply always take precedence
-                _logger.LogInformation($"Setting epa organisation {newOrganisation?.Name} email and phonenumber");
-                newOrganisation.OrganisationData.Email = command.ContactEmail;
-                newOrganisation.OrganisationData.PhoneNumber = command.ContactPhoneNumber;
-                await _registerRepository.UpdateEpaOrganisation(newOrganisation);
-
                 //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
                 //org before
                 var userContact = await _apiClient.GetEpaContactBySignInId(command.SigninId ?? Guid.Empty);
@@ -403,6 +397,8 @@ namespace SFA.DAS.AdminService.Web.Services
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
             var legalName = _cleanser.CleanseStringForSpecialCharacters(command.OrganisationName);
             var tradingName = _cleanser.CleanseStringForSpecialCharacters(command.TradingName);
+            var email = _cleanser.CleanseStringForSpecialCharacters(command.ContactEmail);
+            var phonenumber = _cleanser.CleanseStringForSpecialCharacters(command.ContactPhoneNumber);
             var website = _cleanser.CleanseStringForSpecialCharacters(command.StandardWebsite);
             var address1 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress1);
             var address2 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress2);
@@ -429,6 +425,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 LegalName = legalName,
                 TradingName = tradingName,
                 Postcode = postcode,
+                Email = email,
+                PhoneNumber = phonenumber,
                 WebsiteLink = website,
                 CompanyNumber = companyNumber,
                 CharityNumber = charityNumber,
