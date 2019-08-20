@@ -136,114 +136,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
             }
         }
 
-        public async Task<AzureUser> CreateUser(string ukprn, string username)
-        {
-            AzureUser user = null;
-
-            var organisation = await _organisationsApiClient.Get(ukprn);
-            var contact = await _contactsApiClient.GetByUsername(username);
-
-            IEnumerable<AzureUser> ukprnUsers = await GetUserDetailsByUkprn(ukprn, true, true);
-
-            var ukprnUsersWithSubscription = (from u in ukprnUsers
-                                              from subs in ukprnUsers.SelectMany(au => au.Subscriptions.Where(s => s.IsActive && s.ProductId == _productId))
-                                              where u.Id == subs.UserId
-                                              select u).ToList();
-
-            AzureUser emailUser = await GetUserDetailsByEmail(contact?.Email, true, true);
-            AzureUser ukprnUser = ukprnUsersWithSubscription.Where(u => u.Email.Equals(contact?.Email)).FirstOrDefault();
-            
-            if (ukprnUsersWithSubscription.Any() && ukprnUser is null)
-            {
-                throw new Exceptions.EntityAlreadyExistsException($"Access is already enabled but not for the supplied ukprn and username.");
-            }
-            else if (ukprnUser != null)
-            {
-                user = ukprnUser;
-            }
-            else if(emailUser != null)
-            {
-                user = emailUser;
-                await UpdateUserNote(user.Id, $"ukprn={ukprn}");
-            }
-            else
-            {
-                var request = new CreateAzureUserRequest
-                {
-                    FirstName = organisation.EndPointAssessorName,
-                    LastName = contact.DisplayName,
-                    Email = contact.Email,
-                    Note = $"ukprn={ukprn}"
-                };
-
-                using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/users/{Guid.NewGuid()}?api-version=2017-03-01"))
-                {
-                    user = await PostPutRequestWithResponse<CreateAzureUserRequest, AzureUser>(httpRequest, request);
-                }
-            }
-
-            if (user != null && !string.IsNullOrEmpty(user.Id))
-            {
-                if (!user.Groups.Any(g => string.Equals(g.Id, _groupId, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    await AddUserToGroup(user.Id, _groupId);
-                }
-
-                if (!user.Subscriptions.Any(s => string.Equals(s.ProductId, _productId, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    await SubscribeUserToProduct(user.Id, _productId);
-                }
-
-                await _organisationsApiClient.Update(new UpdateOrganisationRequest
-                {
-                    EndPointAssessorName = organisation.EndPointAssessorName,
-                    EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                    EndPointAssessorUkprn = organisation.EndPointAssessorUkprn,
-                    ApiEnabled = true,
-                    ApiUser = user.Id
-                });
-
-                // Note: Multiple things could have happened by this point so refresh
-                user = await GetUserDetails(user.Id, true, true);
-            }
-
-            return user;
-        }
-
-        private async Task UpdateUserNote(string userId, string note)
-        {
-            var request = new UpdateAzureUserNoteRequest { Note = note };
-            using (var httpRequest = new HttpRequestMessage(new HttpMethod("PATCH"), $"/users/{userId}?api-version=2017-03-01"))
-            {
-                httpRequest.Headers.Add("If-Match", "*");
-                await PostPutRequest(httpRequest, request);
-            }
-        }
-
-        private async Task AddUserToGroup(string userId, string groupId)
-        {
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/groups/{groupId}/users/{userId}?api-version=2017-03-01"))
-            {
-                await PostPutRequest(httpRequest);
-            }
-        }
-
         private async Task RemoveUserFromGroup(string userId, string groupId)
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/groups/{groupId}/users/{userId}?api-version=2017-03-01"))
             {
                 await PostPutRequest(httpRequest);
-            }
-        }
-
-        private async Task<AzureSubscription> SubscribeUserToProduct(string userId, string productId)
-        {
-            var subscriptionId = Guid.NewGuid();
-            var request = new CreateAzureUserSubscriptionRequest { UserId = $"/users/{userId}", ProductId = $"/products/{productId}" };
-
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/subscriptions/{subscriptionId}?api-version=2017-03-01"))
-            {
-                return await PostPutRequestWithResponse<CreateAzureUserSubscriptionRequest, AzureSubscription>(httpRequest, request);
             }
         }
 
