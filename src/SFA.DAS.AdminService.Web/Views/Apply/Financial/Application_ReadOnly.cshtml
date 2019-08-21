@@ -139,7 +139,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">@question.Label</td>
-                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value</td>
+                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
                             </tr>
                         }
                     }

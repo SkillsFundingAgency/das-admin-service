@@ -14,6 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
+        Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
