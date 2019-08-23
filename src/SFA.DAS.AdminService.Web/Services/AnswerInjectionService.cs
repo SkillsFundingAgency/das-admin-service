@@ -99,126 +99,17 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
                 var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation);
-
-                var contact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenName, command.ContactFamilyName);
-
-                var assessorContact = await _apiClient.GetEpaContactByEmail(contact.Email);
-
-                // Does the new chosen primary contact already exist?
-                if (assessorContact != null)
-                {
-                    var request = new AssociateEpaOrganisationWithEpaContactRequest
-                    {
-                        ContactId = assessorContact.Id,
-                        OrganisationId = newOrganisationId,
-                        ContactStatus = ContactStatus.Live,
-                        MakePrimaryContact = true,
-                        AddDefaultRoles = true,
-                        AddDefaultPrivileges = true
-                    };
-
-                    //Update existing contact entry
-                    await _apiClient.AssociateOrganisationWithEpaContact(request);
-
-                }
-                // NOTE: Spoke to Arshed, this is historical code as applying contacts will be within Assessor Service. However as I have made big tweaks to this file, I didn't want to lose them if there is a bug introduced.
-                //Contact does not exist in assessor but exists in apply and the user details are the same as primary contact matched by email
-                //else if (command.ContactEmail.Equals(command.UserEmail, StringComparison.CurrentCultureIgnoreCase))
-                //{
-                //    //Assume same user since email match, email in aslogin uniquely identifies a user
-                //    if (!string.IsNullOrEmpty(command.CreatedBy))
-                //    {
-                //        _logger.LogInformation("Creating a new user contact in accessor when its the primary contact too");
-                //        contact = MapCommandToContact(command.CreatedBy, command.ContactEmail, command.ContactName,
-                //            newOrganisationId, command.ContactPhoneNumber, command.ContactEmail, command.GivenNames,
-                //            command.FamilyName, command.SigninId, command.SigninType);
-
-                //        await _registerRepository.CreateEpaOrganisationContact(contact);
-                //        await _registerRepository.AssociateDefaultRoleWithContact(contact);
-                //        await _registerRepository.AssociateAllPrivilegesWithContact(contact);
-                //    }
-                //}
-                else
-                {
-                    _logger.LogInformation("Creating a new contact in assessor");
-
-                    var validationResponse = await _assessorValidationService.ValidateNewContactRequest(contact);
-
-                    if (!validationResponse.IsValid)
-                    {
-                        _logger.LogWarning($"Cannot create contact in assessor for {newOrganisationId}. Validation errors: {validationResponse.Errors.Select(err => err.ErrorMessage)}");
-                    }
-                    else
-                    {
-                        //Create a new contact in assessor table, 
-                        //Assumption is that this user will need to have an account created in aslogon too and then when he logs in 
-                        //the signinid etc wll get populated as it does for existing users
-                        
-                        var id = await _apiClient.CreateEpaContact(contact);
-                        if (!string.IsNullOrEmpty(id))
-                        {
-                            _logger.LogInformation($"Contact created successfully {id}");
-
-                            var request = new AssociateEpaOrganisationWithEpaContactRequest
-                            {
-                                ContactId = Guid.Parse(id),
-                                OrganisationId = newOrganisationId,
-                                ContactStatus = ContactStatus.Live,
-                                MakePrimaryContact = true,
-                                AddDefaultRoles = true,
-                                AddDefaultPrivileges = true
-                            };
-
-                            await _apiClient.AssociateOrganisationWithEpaContact(request);
-                        }
-                    }
-                }
-
-                if (command.OtherApplyingUserEmails != null)
-                {
-                    // For any other user who was trying to apply for the same organisation; they now need to request access
-                    foreach (var otherApplyingUserEmail in command.OtherApplyingUserEmails)
-                    {
-                        var otherApplyingContact = await _apiClient.GetEpaContactByEmail(otherApplyingUserEmail);
-                        if (otherApplyingContact != null)
-                        {
-                            var request = new AssociateEpaOrganisationWithEpaContactRequest
-                            {
-                                ContactId = otherApplyingContact.Id,
-                                OrganisationId = newOrganisationId,
-                                ContactStatus = ContactStatus.InvitePending,
-                                MakePrimaryContact = false,
-                                AddDefaultRoles = false,
-                                AddDefaultPrivileges = false
-                            };
-
-                            await _apiClient.AssociateOrganisationWithEpaContact(request);
-                        }
-                    }
-                }
-
-                //Now check if the user has a status of applying in assessor if so update its status and associate him with the organisation if he has not been associated with an
-                //org before
-                var userContact = await _apiClient.GetEpaContactBySignInId(command.SigninId ?? Guid.Empty);
-                if (userContact != null && userContact.Status == ContactStatus.Applying &&
-                    userContact.EndPointAssessorOrganisationId == null)
-                {
-                    _logger.LogInformation("Updating newly created assessor contact with new organisation ");
-
-                    var request = new AssociateEpaOrganisationWithEpaContactRequest
-                    {
-                        ContactId = userContact.Id,
-                        OrganisationId = newOrganisationId,
-                        ContactStatus = ContactStatus.Live,
-                        MakePrimaryContact = false,
-                        AddDefaultRoles = false,
-                        AddDefaultPrivileges = false
-                    };
-
-                    await _apiClient.AssociateOrganisationWithEpaContact(request);
-                }
-
                 response.OrganisationId = newOrganisationId;
+
+                _logger.LogInformation($"Assigning the primary contact");
+                var primaryContact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenName, command.ContactFamilyName);
+                await AssignPrimaryContactToOrganisation(primaryContact, newOrganisationId);
+
+                _logger.LogInformation($"Assign the applying user default permissions");
+                await AssignApplyingContactToOrganisation(command.UserEmail, newOrganisationId);
+
+                _logger.LogInformation($"Inviting other applying users");
+                await InviteOtherApplyingUsersToOrganisation(command.OtherApplyingUserEmails, newOrganisationId);
             }
             else
             {
@@ -230,6 +121,109 @@ namespace SFA.DAS.AdminService.Web.Services
             return response;
         }
 
+        private async Task AssignPrimaryContactToOrganisation(CreateEpaOrganisationContactRequest primaryContact, string organisationId)
+        {
+            if (primaryContact != null && !string.IsNullOrEmpty(organisationId))
+            {
+                var primaryContactId = Guid.Empty;
+
+                var assessorContact = await _apiClient.GetEpaContactByEmail(primaryContact.Email);
+
+                if (assessorContact is null)
+                {
+                    _logger.LogInformation($"Creating a new primary contact ({primaryContact.Email}) for {organisationId}");
+                    var validationResponse = await _assessorValidationService.ValidateNewContactRequest(primaryContact);
+
+                    if (!validationResponse.IsValid)
+                    {
+                        _logger.LogWarning($"Cannot create new primary contact in assessor for {organisationId}. Validation errors: {validationResponse.Errors.Select(err => err.ErrorMessage)}");
+                    }
+                    else
+                    {
+                        //Create a new contact in assessor table, 
+                        //Assumption is that this user will need to have an account created in aslogon too  
+                        //And then when they login the signinid etc wll get populated as it does for existing users
+                        var id = await _apiClient.CreateEpaContact(primaryContact);
+                        if (Guid.TryParse(id, out primaryContactId))
+                        {
+                            _logger.LogInformation($"Contact created successfully - {primaryContactId}");
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.LogInformation($"Primary contact ({primaryContact.Email}) already exists");
+                    primaryContactId = assessorContact.Id;
+                }
+
+                if (primaryContactId != Guid.Empty)
+                {
+                    _logger.LogInformation($"Associating primary contact ({primaryContact.Email}) to organisation {organisationId}");
+                    var request = new AssociateEpaOrganisationWithEpaContactRequest
+                    {
+                        ContactId = primaryContactId,
+                        OrganisationId = organisationId,
+                        ContactStatus = ContactStatus.Live,
+                        MakePrimaryContact = true,
+                        AddDefaultRoles = true,
+                        AddDefaultPrivileges = false
+                    };
+
+                    await _apiClient.AssociateOrganisationWithEpaContact(request);
+                }
+            }
+        }
+
+        private async Task AssignApplyingContactToOrganisation(string applyingUserEmail, string organisationId)
+        {
+            if (!string.IsNullOrEmpty(applyingUserEmail) && !string.IsNullOrEmpty(organisationId))
+            {
+                var applyingContact = await _apiClient.GetEpaContactByEmail(applyingUserEmail);
+
+                if (applyingContact != null)
+                {
+                    _logger.LogInformation($"Associating applying contact ({applyingContact.Email}) to organisation {organisationId} with default privileges ");
+                    var request = new AssociateEpaOrganisationWithEpaContactRequest
+                    {
+                        ContactId = applyingContact.Id,
+                        OrganisationId = organisationId,
+                        ContactStatus = ContactStatus.Live,
+                        MakePrimaryContact = false,
+                        AddDefaultRoles = true,
+                        AddDefaultPrivileges = true
+                    };
+
+                    await _apiClient.AssociateOrganisationWithEpaContact(request);
+                }
+            }
+        }
+
+        private async Task InviteOtherApplyingUsersToOrganisation(List<string> otherApplyingUsersEmails, string organisationId)
+        {
+            if (otherApplyingUsersEmails != null && !string.IsNullOrEmpty(organisationId))
+            {
+                // For any other user who was trying to apply for the same organisation; they now need to request access
+                foreach (var email in otherApplyingUsersEmails)
+                {
+                    var otherApplyingContact = await _apiClient.GetEpaContactByEmail(email);
+                    if (otherApplyingContact != null)
+                    {
+                        _logger.LogInformation($"Inviting contact ({otherApplyingContact.Email}) to {organisationId}");
+                        var request = new AssociateEpaOrganisationWithEpaContactRequest
+                        {
+                            ContactId = otherApplyingContact.Id,
+                            OrganisationId = organisationId,
+                            ContactStatus = ContactStatus.InvitePending,
+                            MakePrimaryContact = false,
+                            AddDefaultRoles = false,
+                            AddDefaultPrivileges = false
+                        };
+
+                        await _apiClient.AssociateOrganisationWithEpaContact(request);
+                    }
+                }
+            }
+        }
 
         public async Task<CreateOrganisationStandardFromApplyResponse> InjectApplyOrganisationStandardDetailsIntoRegister(CreateOrganisationStandardCommand command)
         {
