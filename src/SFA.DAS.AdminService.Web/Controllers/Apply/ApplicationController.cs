@@ -264,26 +264,40 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 var sequenceOne = await _applyApiClient.GetSequence(applicationId, 1);
 
+                // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required)
+                //    Inject STANDARD
                 if (sequenceOne?.NotRequired is true)
                 {
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One is NOT REQUIRED. Injecting Standard");
                     var response = await AddOrganisationStandardIntoRegister(applicationId);
                     if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                 }
+                // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
                 else
                 {
-                    var response = await AddOrganisationAndContactIntoRegister(applicationId);
-
-                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
-
-                    // only try to inject standard if no errors and initial application
-                    if (!warningMessages.Any() && !response.IsEpaoApproved && !response.ApplySourceIsEpao)
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
+                    var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.Name} RoEPAOApproved: {organisation.RoEPAOApproved}");
+                    //    If RoEPAOApproved = false
+                    if (!organisation.RoEPAOApproved)
                     {
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
+                        //        Inject Organisation
+                        var response = await AddOrganisationAndContactIntoRegister(applicationId);
+                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);    
+                        if (!warningMessages.Any())
+                        {
+                            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Updating RoEPAOApproved flag to True.");
+                            await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId, response.ContactId, response.OrganisationId, true);
+                        }
+                    }
+
+                    //    Inject Standard
+                    if (!warningMessages.Any())
+                    {
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting standard.");
                         var response2 = await AddOrganisationStandardIntoRegister(applicationId);
                         if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages);
-                    }
-                    if (!warningMessages.Any() && !response.IsEpaoApproved)
-                    {
-                        await _applyApiClient.UpdateRoEpaoApprovedFlag(applicationId, response.ContactId, response.OrganisationId, true);
                     }
                 }
             }
