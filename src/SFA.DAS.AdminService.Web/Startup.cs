@@ -125,7 +125,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<ISessionService>(x =>
                 new SessionService(x.GetService<IHttpContextAccessor>(), Configuration["EnvironmentName"]));
 
-            services.AddTransient<CertificateDateViewModelValidator,CertificateDateViewModelValidator>();
+            services.AddTransient<CertificateDateViewModelValidator>();
 
             services.AddTransient<IOrganisationsApiClient>(x =>
                     new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
@@ -173,8 +173,8 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IOrganisationsApiClient>(),
                 x.GetService<IContactsApiClient>()));
 
-            services.AddTransient<CacheService, CacheService>();
-            services.AddTransient<CertificateLearnerStartDateViewModelValidator, CertificateLearnerStartDateViewModelValidator>();
+            services.AddTransient<CacheService>();
+            services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
 
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
