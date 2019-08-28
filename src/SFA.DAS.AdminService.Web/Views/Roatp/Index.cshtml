@@ -1,6 +1,6 @@
 @using SFA.DAS.AdminService.Web.Infrastructure
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.OrganisationSearchViewModel
-@inject RoatpSessionService sessionService
+@inject IRoatpSessionService sessionService
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Search for an apprenticeship training provider";
