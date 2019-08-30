@@ -101,7 +101,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 CompanyNumber = viewModel.CompanyNumber,
                 CharityNumber = viewModel.CharityNumber,
                 FinancialDueDate = viewModel.FinancialDueDate,
-                FinancialExempt = viewModel.FinancialExempt
+                FinancialExempt = viewModel.FinancialExempt,
+                UpdatedBy = HttpContext.User.OperatorName()
             };
          
             await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -269,7 +270,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 LastName = viewAndEditModel.LastName,
                 Email = viewAndEditModel.Email,
                 PhoneNumber = viewAndEditModel.PhoneNumber,
-                ActionChoice = viewAndEditModel.ActionChoice
+                MakePrimaryContact = viewAndEditModel.ActionChoice.Equals("MakePrimaryContact"),
+                UpdatedBy = HttpContext.User.OperatorName()
             };
             await _apiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
