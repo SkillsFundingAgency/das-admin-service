@@ -75,7 +75,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                             {
                                 var displayAnswer = new DisplayAnswer
                                 {
-                                    Answer = answer.Value,
+                                    Answer = answer.ToString(),
                                     Label = question.Label,
                                     QuestionId = question.QuestionId
                                 };
@@ -92,7 +92,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
                             
                             var displayAnswer = new DisplayAnswer
                             {
-                                Answer = answer.Value,
+                                Answer = answer.ToString(),
                                 Label = furtherQuestion.Label
                             };
 

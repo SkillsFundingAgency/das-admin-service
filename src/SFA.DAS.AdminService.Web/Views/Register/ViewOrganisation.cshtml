@@ -101,6 +101,22 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
+                                Email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Email
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Phone number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.PhoneNumber
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
                                 Website
                             </dt>
                             <dd class="govuk-summary-list__value">
@@ -112,7 +128,7 @@
                                 Address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                           
+
                                 @if (@Model.Address1 != null)
                                 {
                                     @Model.Address1<br />

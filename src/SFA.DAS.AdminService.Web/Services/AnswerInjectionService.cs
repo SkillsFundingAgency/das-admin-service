@@ -15,6 +15,12 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
+    /// <summary>
+    /// TODO: This class is directly using the database via a repository layer which is against the design of the application which is supposed to be using 
+    /// the internal API (in this case it should be using the Assessor internal API as the Admin service has been extracted); currently the repository layer has
+    /// been duplicated between two different source repositories (changed namespace) and is accessing a database 'owned' by a different source repository.
+    /// see Tech Debt 2128
+    /// </summary>
     public class AnswerInjectionService : IAnswerInjectionService
     {
         private readonly IApiClient _apiClient;
@@ -385,6 +391,8 @@ namespace SFA.DAS.AdminService.Web.Services
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
             var legalName = _cleanser.CleanseStringForSpecialCharacters(command.OrganisationName);
             var tradingName = _cleanser.CleanseStringForSpecialCharacters(command.TradingName);
+            var email = _cleanser.CleanseStringForSpecialCharacters(command.ContactEmail);
+            var phonenumber = _cleanser.CleanseStringForSpecialCharacters(command.ContactPhoneNumber);
             var website = _cleanser.CleanseStringForSpecialCharacters(command.StandardWebsite);
             var address1 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress1);
             var address2 = _cleanser.CleanseStringForSpecialCharacters(command.ContactAddress2);
@@ -411,6 +419,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 LegalName = legalName,
                 TradingName = tradingName,
                 Postcode = postcode,
+                Email = email,
+                PhoneNumber = phonenumber,
                 WebsiteLink = website,
                 CompanyNumber = companyNumber,
                 CharityNumber = charityNumber,
