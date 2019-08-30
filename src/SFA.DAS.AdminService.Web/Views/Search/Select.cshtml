@@ -68,7 +68,7 @@ else
                         @Model.Learner.FundingModel
                     </dd>
                 </div>
-                @if(Model.Learner.IsPrivatelyFunded)
+                @if(Model.Learner.IsPrivatelyFunded.GetValueOrDefault())
                 {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
