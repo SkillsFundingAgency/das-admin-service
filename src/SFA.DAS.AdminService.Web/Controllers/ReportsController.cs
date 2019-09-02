@@ -72,7 +72,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     {
                         var worksheetToAdd = package.Workbook.Worksheets.Add(ws.Worksheet);
                         var data = await _apiClient.GetDataFromStoredProcedure(ws.StoredProcedure);
-                        worksheetToAdd.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(data), true);
+                        var dataTable = _dataTableHelper.ToDataTable(data);
+                        if (dataTable.Rows.Count > 0)
+                        {
+                            worksheetToAdd.Cells.LoadFromDataTable(dataTable, true);
+                        }
                     }
 
                     return File(package.GetAsByteArray(), "application/excel", $"{reportDetails.Name}.xlsx");
