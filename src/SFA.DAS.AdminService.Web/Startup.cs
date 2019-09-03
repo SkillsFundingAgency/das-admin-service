@@ -25,7 +25,6 @@ using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
-using StructureMap;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
@@ -33,7 +32,7 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 
 namespace SFA.DAS.AdminService.Web
-{
+{ 
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -49,7 +48,7 @@ namespace SFA.DAS.AdminService.Web
             Configuration = configuration;
         }
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -106,51 +105,83 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-            return ConfigureIoC(services);
+            
+            ConfigureDependencyInjection(services);           
         }
-        private IServiceProvider ConfigureIoC(IServiceCollection services)
+
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            var container = new Container();
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssemblyContainingType(typeof(Startup));
-                    _.WithDefaultConventions();
-                });
-                config.For<ITokenService>().Use<TokenService>();
-                config.For<IApplyTokenService>().Use<ApplyTokenService>();
-                config.For<IWebConfiguration>().Use(ApplicationConfiguration);
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>().Is(_env.EnvironmentName);
-                config.For<CertificateDateViewModelValidator>().Use<CertificateDateViewModelValidator>();
-                config.For<IOrganisationsApiClient>().Use<OrganisationsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<IContactsApiClient>().Use<ContactsApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<IApplyApiClient>().Use<ApplyApiClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
-                config.For<IApiClient>().Use<ApiClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-                config.For<IContactApplyClient>().Use<ContactApplyClient>().Ctor<string>().Is(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
+            services.Scan(x => x.FromCallingAssembly()
+                .AddClasses()
+                .AsImplementedInterfaces()
+                .WithTransientLifetime());
 
-                config.For<IValidationService>().Use<ValidationService>();
-                config.For<IAssessorValidationService>().Use<AssessorValidationService>();
-                config.For<ISpecialCharacterCleanserService>().Use<SpecialCharacterCleanserService>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IApplyTokenService, ApplyTokenService>();
+            services.AddTransient(x => ApplicationConfiguration);
 
+            services.AddTransient<ISessionService>(x =>
+                new SessionService(x.GetService<IHttpContextAccessor>(), Configuration["EnvironmentName"]));
 
-                config.For<IAssessmentOrgsApiClient>().Use(() => new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
-                config.For<IIfaStandardsApiClient>().Use(() => new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
-                config.For<IAzureTokenService>().Use<AzureTokenService>();
-                config.For<IAzureApiClient>().Use<AzureApiClient>().Ctor<string>().Is(ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress);
-                config.For<CacheService>().Use<CacheService>();
-                config.For<CertificateLearnerStartDateViewModelValidator>()
-                    .Use<CertificateLearnerStartDateViewModelValidator>();
-                config.For<IRegisterValidator>().Use<RegisterValidator>();
+            services.AddTransient<CertificateDateViewModelValidator>();
 
-                config.For<IStandardServiceClient>().Use<StandardServiceClient>().Ctor<string>().Is(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
-                    .Is(Configuration["EnvironmentName"]);
-                config.Populate(services);
-            });
-            return container.GetInstance<IServiceProvider>();
+            services.AddTransient<IOrganisationsApiClient>(x =>
+                    new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                        x.GetService<ITokenService>(), 
+                        x.GetService<ILogger<OrganisationsApiClient>>()));
+
+            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(), 
+                x.GetService<ILogger<ContactsApiClient>>(),
+                x.GetService<IContactApplyClient>()));
+            
+            services.AddTransient<IApplyApiClient>(x => new ApplyApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<ApplyApiClient>>(),
+                x.GetService<IApplyTokenService>()));
+
+            services.AddTransient<IApiClient>(x => new ApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<ApiClient>>(),
+                x.GetService<ITokenService>()));
+
+            services.AddTransient<IContactApplyClient>(x => new ContactApplyClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress, 
+                x.GetService<ITokenService>(), 
+                x.GetService<ILogger<ContactApplyClient>>()));
+
+            services.AddTransient<IValidationService, ValidationService>();
+            services.AddTransient<IAssessorValidationService, AssessorValidationService>();
+            services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
+            
+            services.AddTransient<IAssessmentOrgsApiClient>(x =>
+                new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
+
+            services.AddTransient<IIfaStandardsApiClient>(x =>
+                new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
+
+            services.AddTransient<IAzureTokenService, AzureTokenService>();
+
+            services.AddTransient<IAzureApiClient>(x => new AzureApiClient(
+                ApplicationConfiguration.AzureApiAuthentication.ApiBaseAddress,
+                x.GetService<IAzureTokenService>(),
+                x.GetService<ILogger<AzureApiClientBase>>(),
+                x.GetService<IWebConfiguration>(),
+                x.GetService<IOrganisationsApiClient>(),
+                x.GetService<IContactsApiClient>()));
+
+            services.AddTransient<CacheService>();
+            services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
+
+            services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<StandardServiceClient>>()));
         }
+
         private void AddAuthentication(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
@@ -166,8 +197,6 @@ namespace SFA.DAS.AdminService.Web
                 options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
             }).AddCookie();
         }
-
-
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
