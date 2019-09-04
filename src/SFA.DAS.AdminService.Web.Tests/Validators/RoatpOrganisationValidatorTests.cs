@@ -134,6 +134,18 @@
             companyNumberError.ErrorMessage.Should().Be(RoatpOrganisationValidation.CompanyNumberFormat);
         }
 
+        [TestCase("AB12345C")]
+        [TestCase("12345678")]
+        [TestCase("AB3456CD")]
+        public void Validator_accepts_valid_company_number(string companyNumber)
+        {
+            var validationErrors = _validator.IsValidCompanyNumber(companyNumber);
+
+            var companyNumberError = validationErrors.FirstOrDefault(x => x.Field == "CompanyNumber");
+
+            companyNumberError.Should().BeNull();
+        }
+
         [TestCase("1234567")]
         [TestCase("012345678")]
         [TestCase("1000$!&*^%")]
