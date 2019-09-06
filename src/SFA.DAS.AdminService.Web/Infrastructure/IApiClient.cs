@@ -13,6 +13,10 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http;
+using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -67,5 +71,42 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
+
+        //Apply
+        Task ImportWorkflow(IFormFile file);
+        Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
+        Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
+        Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
+        Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
+        Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
+        Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
+        Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
+        Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId);
+        Task<Organisation> GetOrganisationForApplication(Guid applicationId);
+        Task<Contact> GetContact(Guid contactId);
+        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
+        Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
+            bool roEpaoApprovedFlag);
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<ApplicationSummaryItem>> GetClosedApplications();
+        Task StartApplicationReview(Guid applicationId, int sequenceId);
+        Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete);
+        Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
+        Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);
+        Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
+        Task ReturnApplication(Guid applicationId, int sequenceId, string returnType);
+        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task StartFinancialReview(Guid applicationId);
+        Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
+        Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade);
+    }
+
+    public class FileInfoResponse
+    {
+        public string Filename { get; set; }
+        public string ContentType { get; set; }
     }
 }

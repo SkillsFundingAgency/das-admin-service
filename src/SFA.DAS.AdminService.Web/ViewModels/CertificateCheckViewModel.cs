@@ -11,7 +11,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public long Uln { get; set; }
         public string CertificateReference { get; set; }
         public int? Ukprn { get; set; }
-        public int Level { get; set; }
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
         public int StandardCode { get; set; }

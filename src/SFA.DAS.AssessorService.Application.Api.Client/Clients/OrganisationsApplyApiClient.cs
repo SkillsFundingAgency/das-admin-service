@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.ApplyTypes;
 using CreateOrganisationRequest = SFA.DAS.AssessorService.ApplyTypes.CreateOrganisationRequest;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients

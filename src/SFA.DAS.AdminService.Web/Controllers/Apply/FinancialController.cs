@@ -12,17 +12,18 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
-        private readonly ApplyApiClient _apiClient;
+        private readonly IApiClient _apiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApiClient _assessorApiClient;
 
-        public FinancialController(ApplyApiClient apiClient, IHttpContextAccessor contextAccessor, ApiClient assessorApiClient)
+        public FinancialController(IApiClient apiClient, IHttpContextAccessor contextAccessor, ApiClient assessorApiClient)
         {
             _apiClient = apiClient;
             _contextAccessor = contextAccessor;
@@ -135,7 +136,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
                 var compressedBytes = zipStream.ToArray();
                 
-                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.Name}.zip");
+                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.EndPointAssessorName}.zip");
             }
         }
 
@@ -155,7 +156,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
                 var org = await _apiClient.GetOrganisationForApplication(vm.ApplicationId);
                 
-                if (org.RoEPAOApproved)
+                if (org.OrganisationDataFromJson.RoEPAOApproved)
                 {
                     await _assessorApiClient.UpdateFinancials(new UpdateFinancialsRequest
                     {
@@ -189,7 +190,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private static string GetEpaOrgId(Organisation org)
         {
-            var referenceId = org.OrganisationDetails.OrganisationReferenceId;
+            var referenceId = org.EndPointAssessorOrganisationId;
             if (string.IsNullOrEmpty(referenceId) || !referenceId.Contains(","))
             {
                 return referenceId;                

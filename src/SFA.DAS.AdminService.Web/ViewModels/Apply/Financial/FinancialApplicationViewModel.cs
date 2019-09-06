@@ -39,13 +39,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                     ApplicationReference = application.ApplicationData.ReferenceNumber;
                 }
 
-                if (application.ApplyingOrganisation?.OrganisationDetails != null)
+
+                if (application.ApplyingOrganisation?.OrganisationDataFromJson != null)
                 {
-                    Ukprn = application.ApplyingOrganisation.OrganisationUkprn;
-                    LegalName = application.ApplyingOrganisation.OrganisationDetails.LegalName;
-                    TradingName = application.ApplyingOrganisation.OrganisationDetails.TradingName;
-                    ProviderName = application.ApplyingOrganisation.OrganisationDetails.ProviderName;
-                    CompanyNumber = application.ApplyingOrganisation.OrganisationDetails.CompanyNumber;
+                    Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
+                    LegalName = application.ApplyingOrganisation.OrganisationDataFromJson.LegalName;
+                    TradingName = application.ApplyingOrganisation.OrganisationDataFromJson.TradingName;
+                    ProviderName = application.ApplyingOrganisation.OrganisationDataFromJson.ProviderName;
+                    CompanyNumber = application.ApplyingOrganisation.OrganisationDataFromJson.CompanyNumber;
                 }
             }
         }

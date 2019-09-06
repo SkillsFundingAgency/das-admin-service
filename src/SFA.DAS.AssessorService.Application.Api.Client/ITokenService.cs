@@ -5,7 +5,4 @@
         string GetToken();
     }
 
-    public interface IApplyTokenService : ITokenService
-    {
-    }
 }
