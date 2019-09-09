@@ -95,6 +95,12 @@ namespace SFA.DAS.AdminService.Web
                 });
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
 
+            services.ConfigureApplicationCookie(options =>
+            {            
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.SlidingExpiration = true;               
+            });
+            
             if (!_env.IsDevelopment())
             {
                 services.AddDistributedRedisCache(options =>
@@ -164,7 +170,11 @@ namespace SFA.DAS.AdminService.Web
                 options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
                 options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
                 options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
-            }).AddCookie();
+            }).AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.SlidingExpiration = true;
+            });
         }
 
 
