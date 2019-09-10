@@ -33,13 +33,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/Midpoint")]
-        public async Task<IActionResult> MidpointApplications(int page = 1)
+        public async Task<IActionResult> MidpointApplications(int page = 1, int pageSize = 10)
         {
-            const int midpointSequenceId = 1;
-            var applications = await _applyApiClient.GetOpenApplications(midpointSequenceId);
+            var applications = await _applyApiClient.GetOpenApplications(1);
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var pageOfApplications = applications.Skip(pageSize * (page - 1)).Take(pageSize).ToList();
+            
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(pageOfApplications, applications.Count(), page, pageSize);
 
+            paginatedApplications.PageSizes = new List<int>{10,50,100};
+            
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Apply/Applications/MidpointApplications.cshtml", viewmodel);

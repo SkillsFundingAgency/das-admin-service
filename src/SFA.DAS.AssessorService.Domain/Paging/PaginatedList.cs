@@ -25,5 +25,10 @@ namespace SFA.DAS.AssessorService.Domain.Paging
  
         public bool HasPreviousPage => (PageIndex > 1);
         public bool HasNextPage => (PageIndex < TotalPages);
+
+        public int MaxPageRange => (PageSize * PageIndex) > TotalRecordCount ? TotalRecordCount : (PageSize * PageIndex);
+        public int MinPageRange => (MaxPageRange + 1) - PageSize;
+        
+        public List<int> PageSizes { get; set; }
     }
 }
