@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 organisation.OrganisationType.Type,
                 organisation.EndPointAssessorUkprn?.ToString(),
                 organisation.EndPointAssessorOrganisationId,
-                organisation.OrganisationDataFromJson.RoEPAOApproved,
+                organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
                 useTradingName,
                 contactName,
@@ -99,8 +99,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 applyingContact.GivenNames,
                 applyingContact.Email,
                 organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
-                organisation.OrganisationDataFromJson?.FhaDetails?.FinancialDueDate,
-                organisation.OrganisationDataFromJson?.FhaDetails?.FinancialExempt);
+                organisation.OrganisationData?.FHADetails?.FinancialDueDate,
+                organisation.OrganisationData?.FHADetails?.FinancialExempt);
 
 
             return command;

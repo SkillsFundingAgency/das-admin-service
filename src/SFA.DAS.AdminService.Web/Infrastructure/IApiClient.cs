@@ -17,6 +17,9 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.QnA.Api.Types.Page;
+using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
+using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -51,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
-        Task<List<Option>> GetOptions(int stdCode);
+        Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);
         Task<Organisation> GetOrganisation(Guid id);
         Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId);
         Task<List<OrganisationType>> GetOrganisationTypes();
@@ -93,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task StartApplicationReview(Guid applicationId, int sequenceId);
         Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete);
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
-        Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);
+        Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
         Task ReturnApplication(Guid applicationId, int sequenceId, string returnType);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
@@ -101,12 +104,23 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task StartFinancialReview(Guid applicationId);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
-        Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade);
+        Task UpdateFinancialGrade(Guid id, Guid orgId, FinancialGrade vmGrade);
+        Task<ApplicationResponse> GetApplicationFromAssessor(string Id);
     }
 
     public class FileInfoResponse
     {
         public string Filename { get; set; }
         public string ContentType { get; set; }
+    }
+
+    public class ApplicationResponse
+    {
+        public Guid Id { get; set; }
+        public Guid ApplicationId { get; set; }
+        public Guid OrganisationId { get; set; }
+        public FinancialGrade financialGrade { get; set; }
+        public string ApplicationStatus { get; set; }
+        public ApplyData ApplyData { get; set; }
     }
 }

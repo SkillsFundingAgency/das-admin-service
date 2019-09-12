@@ -110,6 +110,8 @@ namespace SFA.DAS.AdminService.Web
                 .WithTransientLifetime());
 
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
+
             services.AddTransient(x => ApplicationConfiguration);
 
             services.AddTransient<ISessionService>(x =>
@@ -126,6 +128,11 @@ namespace SFA.DAS.AdminService.Web
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
+
+            services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
+              ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
+              x.GetService<IQnaTokenService>(),
+              x.GetService<ILogger<QnaApiClient>>()));
 
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();

@@ -20,6 +20,9 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AdminService.Web.Services;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.QnA.Api.Types.Page;
+using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
+using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -260,9 +263,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
+        public async Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
         {
-            return await Get<List<Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
+            return await Get<List<AssessorService.Domain.Entities.Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
         }
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
@@ -417,6 +420,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<AssessorService.ApplyTypes.Application>($"/Application/{applicationId}");
         }
 
+        public async Task<ApplicationResponse> GetApplicationFromAssessor(string Id)
+        {
+            return await Get<ApplicationResponse>($"/api/v1/applications/{Id}/application");
+        }
+
         public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
         {
             return await Get<ApplicationSequence>($"/Review/Applications/{applicationId}");
@@ -441,11 +449,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await Get<Page>($"Application/{applicationId}/User/null/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
-            if (page != null) page.ApplicationId = applicationId;
+           if (page != null) page.ApplicationId = applicationId;
             return page;
         }
 
-        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
+        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback)
         {
             await Post(
                 $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
@@ -494,9 +502,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
 
-        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade vmGrade)
+        public async Task UpdateFinancialGrade(Guid id,Guid orgId,AssessorService.ApplyTypes.FinancialGrade vmGrade)
         {
-            await Post($"/Financial/{applicationId}/UpdateGrade", vmGrade);
+            await Post($"/Financial/{id}/Organisation/{orgId}/UpdateGrade", vmGrade);
         }
 
         public async Task StartFinancialReview(Guid applicationId)
@@ -539,5 +547,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }
         #endregion
+
     }
 }

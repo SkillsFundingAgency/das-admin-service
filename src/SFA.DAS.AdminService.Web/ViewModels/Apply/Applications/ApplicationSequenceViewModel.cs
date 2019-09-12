@@ -44,18 +44,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                     Standard = $"{application.ApplicationData.StandardName} ({application.ApplicationData.StandardCode})";
                 }
 
-                if (application.ApplyingOrganisation?.OrganisationDataFromJson != null)
+                if (application.ApplyingOrganisation?.OrganisationData != null)
                 {
                     Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
-                    LegalName = application.ApplyingOrganisation.OrganisationDataFromJson.LegalName;
-                    TradingName = application.ApplyingOrganisation.OrganisationDataFromJson.TradingName;
-                    ProviderName = application.ApplyingOrganisation.OrganisationDataFromJson.ProviderName;
-                    CompanyNumber = application.ApplyingOrganisation.OrganisationDataFromJson.CompanyNumber;
+                    LegalName = application.ApplyingOrganisation.OrganisationData.LegalName;
+                    TradingName = application.ApplyingOrganisation.OrganisationData.TradingName;
+                    ProviderName = application.ApplyingOrganisation.OrganisationData.ProviderName;
+                    CompanyNumber = application.ApplyingOrganisation.OrganisationData.CompanyNumber;
                 
 
                     if (!sequence.Sections.All(s => s.SectionId != 3))
                         {
-                            FinancialDueDate = application.ApplyingOrganisation.OrganisationDataFromJson.FhaDetails?.FinancialDueDate;
+                            FinancialDueDate = application.ApplyingOrganisation.OrganisationData.FHADetails?.FinancialDueDate;
                         }
                     }
             }

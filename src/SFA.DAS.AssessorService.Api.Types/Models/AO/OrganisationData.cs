@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.AssessorService.ApplyTypes;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
@@ -13,9 +15,16 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string Address4 { get; set; }
+        public string City { get; set; }
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public string ProviderName { get; set; }
+        public bool RoATPApproved { get; set; }
+        public bool RoEPAOApproved { get; set; }
+        public string OrganisationReferenceType { get; set; }
+        public string OrganisationReferenceId { get; set; }
+        public List<FinancialGrade> FinancialGrades { get; set; }
         public FHADetails FHADetails { get; set; }
     }
 
@@ -24,4 +33,5 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
     }
+   
 }
