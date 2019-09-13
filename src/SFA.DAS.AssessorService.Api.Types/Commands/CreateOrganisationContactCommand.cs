@@ -46,7 +46,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
-            string standardWebsite, string createdBy, string familyName, string givenNames, Guid? signinId, string signinType, string userEmail,
+            string standardWebsite, string createdBy, string familyName, string givenNames, string userEmail,
             List<string> otherApplyingUserEmails, DateTime? financialDueDate, bool? isFinancialExempt)
         {
             OrganisationName = organisationName;
@@ -75,8 +75,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             IsFinancialExempt = isFinancialExempt;
             FamilyName = familyName;
             GivenNames = givenNames;
-            SigninId = signinId;
-            SigninType = signinType;
             UserEmail = userEmail;
             OtherApplyingUserEmails = otherApplyingUserEmails;
         }

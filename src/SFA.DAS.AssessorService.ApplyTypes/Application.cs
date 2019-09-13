@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     {
         public string ReferenceNumber { get; set; }
         public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public List<Submission> InitSubmissions { get; set; }
         public int InitSubmissionsCount { get; set; }
@@ -173,6 +175,72 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string Name { get; set; }
         public object Value { get; set; }
         public string ErrorMessage { get; set; }
+    }
+
+    //New from assessor
+
+    public class ApplyData
+    {
+        public List<ApplySequence> Sequences { get; set; }
+        public Apply Apply { get; set; }
+    }
+
+
+    public class ApplySequence
+    {
+        public Guid SequenceId { get; set; }
+        public List<ApplySection> Sections { get; set; }
+        public string Status { get; set; }
+        public int SequenceNo { get; set; }
+        public bool IsActive { get; set; }
+        public bool NotRequired { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public string ApprovedBy { get; set; }
+
+    }
+
+    public class ApplySection
+    {
+        public Guid SectionId { get; set; }
+        public int SectionNo { get; set; }
+        public string Status { get; set; }
+        public DateTime? ReviewStartDate { get; set; }
+        public string ReviewedBy { get; set; }
+        public DateTime? EvaluatedDate { get; set; }
+        public string EvaluatedBy { get; set; }
+        public bool? RequestedFeedbackAnswered { get; set; }
+    }
+
+    public class Apply
+    {
+        public string ReferenceNumber { get; set; }
+        public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
+        public string StandardName { get; set; }
+        public List<InitSubmission> InitSubmissions { get; set; }
+        public List<StandardSubmission> StandardSubmissions { get; set; }
+        public int InitSubmissionCount { get; set; }
+        public DateTime? LatestInitSubmissionDate { get; set; }
+        public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? InitSubmissionClosedDate { get; set; }
+        public int StandardSubmissionsCount { get; set; }
+        public DateTime? LatestStandardSubmissionDate { get; set; }
+        public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
+        public DateTime? StandardSubmissionClosedDate { get; set; }
+    }
+
+    public class InitSubmission
+    {
+        public DateTime SubmittedAt { get; set; }
+        public Guid SubmittedBy { get; set; }
+        public string SubmittedByEmail { get; set; }
+    }
+
+    public class StandardSubmission
+    {
+        public DateTime SubmittedAt { get; set; }
+        public Guid SubmittedBy { get; set; }
+        public string SubmittedByEmail { get; set; }
     }
 }
 

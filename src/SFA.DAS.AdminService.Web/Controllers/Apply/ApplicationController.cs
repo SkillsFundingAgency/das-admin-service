@@ -1,30 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
+using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
     {
-        private readonly ApplyApiClient _applyApiClient;
+        private readonly IApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(ApplyApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
             _applyApiClient = applyApiClient;
             _answerService = answerService;
@@ -277,9 +276,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 {
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
                     var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.Name} RoEPAOApproved: {organisation.RoEPAOApproved}");
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
                     //    If RoEPAOApproved = false
-                    if (!organisation.RoEPAOApproved)
+                    if (!organisation.OrganisationData.RoEPAOApproved)
                     {
                         _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
                         //        Inject Organisation

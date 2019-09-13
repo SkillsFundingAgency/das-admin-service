@@ -107,7 +107,7 @@
                 </div>
             </dl>
 
-            @if (Model.Section.PagesContainingUploadQuestions.Any())
+            @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
             {
                 <p class="govuk-body">
                     <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>

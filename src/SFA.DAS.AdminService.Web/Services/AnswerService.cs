@@ -9,11 +9,11 @@ namespace SFA.DAS.AdminService.Web.Services
 {
     public class AnswerService : IAnswerService
     {
-        private readonly IApplyApiClient _applyApiClient;
+        private readonly IApiClient _applyApiClient;
         private readonly IApiClient _assessorApiClient;
 
 
-        public AnswerService(IApplyApiClient applyApiClient, IApiClient assessorApiClient)
+        public AnswerService(IApiClient applyApiClient, IApiClient assessorApiClient)
         {
             _applyApiClient = applyApiClient;
             _assessorApiClient = assessorApiClient;
@@ -73,11 +73,11 @@ namespace SFA.DAS.AdminService.Web.Services
             var standardWebsite = await GetAnswer(application.Id, "standard-website");
           
             var command = new CreateOrganisationContactCommand
-            (   organisation.Name,
-                organisation.OrganisationType,
-                organisation.OrganisationUkprn?.ToString(),
-                organisation.OrganisationDetails?.OrganisationReferenceType,
-                organisation.RoEPAOApproved,
+            (   organisation.EndPointAssessorName,
+                organisation.OrganisationType.Type,
+                organisation.EndPointAssessorUkprn?.ToString(),
+                organisation.EndPointAssessorOrganisationId,
+                organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
                 useTradingName,
                 contactName,
@@ -97,12 +97,10 @@ namespace SFA.DAS.AdminService.Web.Services
                 applyingContact.Id.ToString(),
                 applyingContact.FamilyName,
                 applyingContact.GivenNames,
-                applyingContact.SigninId,
-                applyingContact.SigninType,
                 applyingContact.Email,
                 organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
-                organisation.OrganisationDetails?.FHADetails?.FinancialDueDate,
-                organisation.OrganisationDetails?.FHADetails?.FinancialExempt);
+                organisation.OrganisationData?.FHADetails?.FinancialDueDate,
+                organisation.OrganisationData?.FHADetails?.FinancialExempt);
 
 
             return command;
@@ -115,10 +113,10 @@ namespace SFA.DAS.AdminService.Web.Services
 
             if (application is null || organisation is null) return new CreateOrganisationStandardCommand();
 
-            var assessorOrganisation = (await _assessorApiClient.SearchOrganisations(organisation.Name)).FirstOrDefault();
+            var assessorOrganisation = (await _assessorApiClient.SearchOrganisations(organisation.EndPointAssessorName)).FirstOrDefault();
 
             var organisationId = assessorOrganisation?.Id;
-            var createdBy = application.CreatedBy ?? organisation.CreatedBy;
+            var createdBy = application.CreatedBy;
             var standardCode = application.ApplicationData?.StandardCode;
 
             var effectiveFrom = DateTime.UtcNow.Date;

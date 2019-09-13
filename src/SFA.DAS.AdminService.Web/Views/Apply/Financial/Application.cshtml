@@ -85,10 +85,10 @@
                 </p>
             }
 
-            @if (Model.Section.PagesContainingUploadQuestions.Any())
+            @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
             {
                 <p class="govuk-body govuk-!-margin-bottom-8">
-                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
                 </p>
             }
         </div>
@@ -130,6 +130,8 @@
         <div class="govuk-grid-column-two-thirds">
             <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                <input type="hidden" name="Id" value="@Model.Id"/>
+                <input type="hidden" name="OrgId" value="@Model.OrgId"/>
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 

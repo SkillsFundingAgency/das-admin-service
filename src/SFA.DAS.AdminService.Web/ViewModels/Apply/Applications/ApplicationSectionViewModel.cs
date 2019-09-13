@@ -53,13 +53,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                     ApplicationReference = application.ApplicationData.ReferenceNumber;
                 }
 
-                if (application.ApplyingOrganisation?.OrganisationDetails != null)
+                if (application.ApplyingOrganisation?.OrganisationData != null)
                 {
-                    Ukprn = application.ApplyingOrganisation.OrganisationUkprn;
-                    LegalName = application.ApplyingOrganisation.OrganisationDetails.LegalName;
-                    TradingName = application.ApplyingOrganisation.OrganisationDetails.TradingName;
-                    ProviderName = application.ApplyingOrganisation.OrganisationDetails.ProviderName;
-                    CompanyNumber = application.ApplyingOrganisation.OrganisationDetails.CompanyNumber;
+                    Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
+                    LegalName = application.ApplyingOrganisation.OrganisationData.LegalName;
+                    TradingName = application.ApplyingOrganisation.OrganisationData.TradingName;
+                    ProviderName = application.ApplyingOrganisation.OrganisationData.ProviderName;
+                    CompanyNumber = application.ApplyingOrganisation.OrganisationData.CompanyNumber;
                 }
             }
         }

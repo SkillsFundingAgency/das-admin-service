@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     public class AnswerServiceGetAnswersTests
     {
         private AnswerService _answerService;
-        private Mock<IApplyApiClient> _mockApplyApiClient;
+        private Mock<IApiClient> _mockApplyApiClient;
         private Mock<IApiClient> _mockAssessorApiClient;
 
         private Guid _applicationId;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         public void Setup()
         {
             _applicationId = Guid.NewGuid();
-            _mockApplyApiClient = new Mock<IApplyApiClient>();
+            _mockApplyApiClient = new Mock<IApiClient>();
             _mockAssessorApiClient = new Mock<IApiClient>();
             _answerService = new AnswerService(
                 _mockApplyApiClient.Object,

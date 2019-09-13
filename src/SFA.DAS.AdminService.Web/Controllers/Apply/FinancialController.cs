@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Domain;
@@ -12,21 +11,25 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using AutoMapper;
+using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
-        private readonly ApplyApiClient _apiClient;
+        private readonly IApiClient _apiClient;
+        private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ApiClient _assessorApiClient;
 
-        public FinancialController(ApplyApiClient apiClient, IHttpContextAccessor contextAccessor, ApiClient assessorApiClient)
+        public FinancialController(IApiClient apiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
             _apiClient = apiClient;
             _contextAccessor = contextAccessor;
-            _assessorApiClient = assessorApiClient;
+            _qnaApiClient = qnaApiClient;
         }
         
         [HttpGet("/Financial/Open")]
@@ -66,137 +69,187 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View("~/Views/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/{applicationId}")]
-        public async Task<IActionResult> ViewApplication(Guid applicationId)
+        [HttpGet("/Financial/{Id}")]
+        public async Task<IActionResult> ViewApplication(Guid id)
         {
-            await _apiClient.StartFinancialReview(applicationId);
-            
-            var financialSectionId = 3;
-            var stage1SequenceId = 1;
-            var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
+            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
 
-            var grade = financialSection?.QnAData?.FinancialApplicationGrade;
-            var application = await _apiClient.GetApplication(applicationId);
+            var grade = applicationFromAssessor?.financialGrade;
 
-            var vm = new FinancialApplicationViewModel(applicationId, financialSection, grade, application);
-            
+            var vm = await createFinancialApplicationViewModel(id, grade);
+
             return View("~/Views/Apply/Financial/Application.cshtml", vm);
         }
-        
-        [HttpGet("/Financial/{applicationId}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
+
+
+        [HttpGet("/Financial/{Id}/Graded")]
+        public async Task<IActionResult> ViewGradedApplication(Guid Id)
         {
-            var financialSectionId = 3;
-            var stage1SequenceId = 1;
-            var financialSection = await _apiClient.GetSection(applicationId, stage1SequenceId, financialSectionId);
+            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(Id.ToString());
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationFromAssessor.ApplicationId);
+            var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, sequence.Id);
 
-            var grade = financialSection?.QnAData?.FinancialApplicationGrade;
-            var application = await _apiClient.GetApplication(applicationId);
+            var application = await _apiClient.GetApplication(applicationFromAssessor?.ApplicationId ?? Guid.Empty); 
+            var financialSection = await _qnaApiClient.GetSection(applicationFromAssessor.ApplicationId, sections.SingleOrDefault(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
 
-            var vm = new FinancialApplicationViewModel(applicationId, financialSection, grade, application);
+            var grade = applicationFromAssessor.financialGrade;
+
+            var vm = new FinancialApplicationViewModel(Id,applicationFromAssessor.Id, financialSection, grade, application);
             
             return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
-        [HttpGet("/Financial/Download/{applicationId}")]
-        public async Task<IActionResult> Download(Guid applicationId)
+        [HttpGet("/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
+        public async Task<IActionResult> Download(Guid orgId, Guid applicationId)
         {
-            var org = await _apiClient.GetOrganisationForApplication(applicationId);
-            var section = await _apiClient.GetSection(applicationId, 1, 3);
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationId);
+            var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
+
+            var org = await _apiClient.GetOrganisation(orgId);
+            var financialSection = await _qnaApiClient.GetSection(applicationId, sections.SingleOrDefault(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
 
             using (var zipStream = new MemoryStream())
             {
                 using (var zipArchive = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
                 {
-                    foreach (var uploadPage in section.PagesContainingUploadQuestions)
+                    var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
+                    foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
                     {
-                        foreach (var uploadQuestion in uploadPage.UploadQuestions)
+                        foreach (var uploadQuestion in uploadPage.Questions)
                         {
-                            foreach (var answer in section.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
+                            foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
                             {
                                 if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
-                            
+
                                 var fileDownloadName = answer.Value;
 
-                                var downloadedFile = await _apiClient.DownloadFile(applicationId, int.Parse(uploadPage.PageId), uploadQuestion.QuestionId, Guid.Empty, 1, 3, fileDownloadName);
+                                var downloadedFile = await _qnaApiClient.DownloadFile(applicationId, sections.Single(x => x.SectionNo == 3).Id, uploadPage.PageId, uploadQuestion.QuestionId, fileDownloadName);
 
                                 var zipEntry = zipArchive.CreateEntry(fileDownloadName);
                                 using (var entryStream = zipEntry.Open())
                                 {
                                     var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
                                     fileStream.CopyTo(entryStream);
-                                }   
+                                }
                             }
                         }
                     }
                 }
-                
+
                 zipStream.Position = 0;
 
                 var compressedBytes = zipStream.ToArray();
                 
-                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.Name}.zip");
+                return File(compressedBytes, "application/zip", $"FinancialDocuments_{org.EndPointAssessorName}.zip");
             }
         }
 
-        [HttpPost("/Financial/{applicationId}")]
-        public async Task<IActionResult> Grade(Guid applicationId, FinancialApplicationViewModel vm)
+        [HttpPost("/Financial")]
+        public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
             if (ModelState.IsValid)
             {
                 var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+                var org = await _apiClient.GetOrganisation(vm.OrgId);
+
+                var sequence = await _qnaApiClient.GetApplicationActiveSequence(vm.ApplicationId);
+                var sections = await _qnaApiClient.GetSections(vm.ApplicationId, sequence.Id);
+                var financialSection = await _qnaApiClient.GetSection(vm.ApplicationId, sections.Single(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
+               
 
                 vm.Grade.GradedBy = $"{givenName} {surname}";
 
                 GetFinancialDueDate(vm);
-                
-                await _apiClient.UpdateFinancialGrade(vm.ApplicationId, vm.Grade);
+                vm.Grade.ApplicationReference = vm.Id.ToString();
+                vm.Grade.GradedDateTime = DateTime.UtcNow;
+                vm.Grade.FinancialEvidences = await RetrieveFinancialEvidence(vm.OrgId, vm.ApplicationId);
 
-                var org = await _apiClient.GetOrganisationForApplication(vm.ApplicationId);
-                
-                if (org.RoEPAOApproved)
+                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate
+               && !string.IsNullOrEmpty(vm.Grade.InadequateMoreInformation))
                 {
-                    await _assessorApiClient.UpdateFinancials(new UpdateFinancialsRequest
-                    {
-                        EpaOrgId = GetEpaOrgId(org),
-                        FinancialDueDate = vm.Grade.FinancialDueDate,
-                        FinancialExempt = vm.Grade.SelectedGrade == "Exempt"
-                    });
+                    var pageId = financialSection.QnAData.Pages.First(p => p.Active).PageId;
+                    var feedback = new QnA.Api.Types.Page.Feedback { Message = vm.Grade.InadequateMoreInformation, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
+                    await _qnaApiClient.UpdateFeedback(vm.ApplicationId, financialSection.Id, pageId, feedback);
                 }
 
-                return RedirectToAction("Graded", new {vm.ApplicationId});   
+                await _apiClient.UpdateFinancialGrade(vm.Id,vm.OrgId, vm.Grade);
+
+                return RedirectToAction("Evaluated", new {vm.Id});   
             }
             else
             {
-                var financialSectionId = 3;
-                var stage1SequenceId = 1;
-                var financialSection = await _apiClient.GetSection(vm.ApplicationId, stage1SequenceId, financialSectionId);
-
-                var grade = new FinancialApplicationGrade
+                
+                var grade = new FinancialGrade
                 {
                     SelectedGrade = vm.Grade.SelectedGrade,
                     OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate,
                     GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate,
                     SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate
                 };
-                var application = await _apiClient.GetApplication(vm.ApplicationId);
 
-                var newvm = new FinancialApplicationViewModel(vm.ApplicationId, financialSection, grade, application);
+                var newvm = await createFinancialApplicationViewModel(vm.Id,grade);
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
 
-        private static string GetEpaOrgId(Organisation org)
+
+        [HttpGet("/Financial/{Id}/Evaluated")]
+        public async Task<IActionResult> Evaluated(Guid id)
         {
-            var referenceId = org.OrganisationDetails.OrganisationReferenceId;
-            if (string.IsNullOrEmpty(referenceId) || !referenceId.Contains(","))
+            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
+            return View("~/Views/Apply/Financial/Graded.cshtml", applicationFromAssessor.financialGrade);
+        }
+
+        private async  Task<FinancialApplicationViewModel> createFinancialApplicationViewModel(Guid id, FinancialGrade grade)
+        {
+            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationFromAssessor.ApplicationId);
+            var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, sequence.Id);
+            var financialSection = await _qnaApiClient.GetSection(applicationFromAssessor.ApplicationId, sections.Single(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
+
+            var orgId = applicationFromAssessor?.OrganisationId ?? Guid.Empty;
+            var organisation = await _apiClient.GetOrganisation(orgId);
+
+            var application = new AssessorService.ApplyTypes.Application();
+            var apply = applicationFromAssessor?.ApplyData.Apply;
+
+
+            if (apply != null)
+                application.ApplicationData = Mapper.Map<AssessorService.ApplyTypes.Apply, ApplicationData>(apply);
+
+            application.ApplyingOrganisation = organisation;
+            application.ApplyingOrganisationId = orgId;
+            application.ApplicationStatus = applicationFromAssessor.ApplicationStatus;
+
+            return new FinancialApplicationViewModel(id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
+        }
+
+        private async Task<List<FinancialEvidence>> RetrieveFinancialEvidence(Guid orgId, Guid applicationId)
+        {
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationId);
+            var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
+
+            var org = await _apiClient.GetOrganisation(orgId);
+            var financialSection = await _qnaApiClient.GetSection(applicationId, sections.SingleOrDefault(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
+            var listOfEvidence = new List<FinancialEvidence>();
+
+
+            var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
+            foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
             {
-                return referenceId;                
+                foreach (var uploadQuestion in uploadPage.Questions)
+                {
+                    foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
+                    {
+                        if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
+                        listOfEvidence.Add(new FinancialEvidence { Filename = answer.Value });
+                    }
+                }
+
             }
 
-            var ids = referenceId.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            return ids.First(i => i.StartsWith("EPA"));
+            return listOfEvidence;
         }
 
         private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
@@ -219,12 +272,5 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
         }
 
-        [HttpGet("/Financial/Graded")]
-        public async Task<IActionResult> Graded(Guid applicationId)
-        {
-            var section = await _apiClient.GetSection(applicationId, 1, 3);
-
-            return View("~/Views/Apply/Financial/Graded.cshtml", section);
-        }
     }
 }
