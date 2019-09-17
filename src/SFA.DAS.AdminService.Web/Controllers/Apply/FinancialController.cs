@@ -244,7 +244,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
                     {
                         if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
-                        listOfEvidence.Add(new FinancialEvidence { Filename = answer.Value });
+                        var filenameWithFullPath = $"{applicationId}/{sequence.Id}/{financialSection.Id}/{uploadPage.PageId}/{uploadQuestion.QuestionId}/{answer.Value}";
+                        listOfEvidence.Add(new FinancialEvidence { Filename = filenameWithFullPath });
                     }
                 }
 
