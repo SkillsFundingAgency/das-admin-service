@@ -153,6 +153,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
                 var org = await _apiClient.GetOrganisation(vm.OrgId);
 
+                var application = await _apiClient.GetApplicationFromAssessor(vm.Id.ToString());
                 var sequence = await _qnaApiClient.GetApplicationActiveSequence(vm.ApplicationId);
                 var sections = await _qnaApiClient.GetSections(vm.ApplicationId, sequence.Id);
                 var financialSection = await _qnaApiClient.GetSection(vm.ApplicationId, sections.Single(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
@@ -161,7 +162,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 vm.Grade.GradedBy = $"{givenName} {surname}";
 
                 GetFinancialDueDate(vm);
-                vm.Grade.ApplicationReference = vm.Id.ToString();
+                vm.Grade.ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
                 vm.Grade.GradedDateTime = DateTime.UtcNow;
                 vm.Grade.FinancialEvidences = await RetrieveFinancialEvidence(vm.OrgId, vm.ApplicationId);
 
