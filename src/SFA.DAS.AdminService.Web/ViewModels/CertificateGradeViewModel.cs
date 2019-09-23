@@ -16,6 +16,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             new SelectListItem {Text = "Merit", Value = "Merit"},
             new SelectListItem {Text = "Distinction", Value = "Distinction"},
             new SelectListItem {Text = "Pass with excellence", Value = "Pass with excellence"},
+            new SelectListItem {Text = "Outstanding", Value = "Outstanding"},
             new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
         };
         public void FromCertificate(Certificate cert)
