@@ -17,12 +17,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                     .ForMember(
                         dest => dest.IsApproved, opt => opt.MapFrom(src => src.Status)
                     );
-
-                cfg.AddProfile<CompaniesHouseSummaryProfile>();
-                cfg.AddProfile<DirectorInformationProfile>();
-                cfg.AddProfile<PersonSignificantControlInformationProfile>();
-                cfg.AddProfile<CharityCommissionSummaryProfile>();
-                cfg.AddProfile<CharityTrusteeProfile>();
             });
         }
     }
