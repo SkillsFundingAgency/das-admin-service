@@ -12,10 +12,6 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using AutoMapper;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -263,7 +259,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
-
             if (sequenceId == 2 && returnType == "Approve")
             {
                 var sequenceOne = await _applyApiClient.GetSequence(applicationId, 1);
