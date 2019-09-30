@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var organisationId = assessorOrganisation?.Id;
             var createdBy = application.CreatedBy;
-            var standardCode = application.ApplicationData?.StandardCode;
+            var standardCode = int.TryParse(application.ApplicationData?.StandardCode, out var parsedStandardCode) ? parsedStandardCode : 0;
 
             var effectiveFrom = DateTime.UtcNow.Date;
             if(DateTime.TryParse(await GetAnswer(applicationId, "effective-from"), out var effectiveFromDate))
@@ -131,7 +131,7 @@ namespace SFA.DAS.AdminService.Web.Services
             var command = new CreateOrganisationStandardCommand
             (createdBy,
                 organisationId,
-                standardCode ?? 0,
+                standardCode,
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList());
 
