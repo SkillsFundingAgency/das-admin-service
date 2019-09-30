@@ -10,9 +10,9 @@ namespace SFA.DAS.AssessorService.Api.Types.CompaniesHouse
         public string Status { get; set; }
         public string Type { get; set; }
         public Address RegisteredOfficeAddress { get; set; }
-        public IEnumerable<string> NatureOfBusiness { get; set; } // sic codes
-        public DateTime? IncorporatedOn { get; set; } // date_of_creation
-        public DateTime? DissolvedOn { get; set; } // date_of_cessation
+        public IEnumerable<string> NatureOfBusiness { get; set; }
+        public DateTime? IncorporatedOn { get; set; }
+        public DateTime? DissolvedOn { get; set; }
         public bool? IsLiquidated { get; set; }
         public IEnumerable<string> PreviousNames { get; set; }
 
