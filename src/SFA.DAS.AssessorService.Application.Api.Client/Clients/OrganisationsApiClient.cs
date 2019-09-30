@@ -10,6 +10,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     using AssessorService.Api.Types.Models;
+    using SFA.DAS.AssessorService.Api.Types.CharityCommission;
+    using SFA.DAS.AssessorService.Api.Types.CompaniesHouse;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using System.Net;
 
@@ -240,7 +242,51 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                  await PostPutRequest (request, emailAllApprovedContactsRequest);
             }
         }
-        
+
+        public async Task<Company> GetCompanyDetails(string companyNumber)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/company/{companyNumber}"))
+                {
+                    return await RequestAndDeserialiseAsync<Company>(request, $"Could not retrieve details for the organisation with a company number of {companyNumber}");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public async Task<Charity> GetCharityDetails(int charityNumber)
+        {
+            try
+            {
+                using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/search/charity/{charityNumber}"))
+                {
+                    return await RequestAndDeserialiseAsync<Charity>(request, $"Could not retrieve details for the organisation with a charity number of {charityNumber}");
+                }
+            }
+            catch (HttpRequestException err)
+            {
+                if (err.Message.Contains("204"))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
     }
 
     public interface IOrganisationsApiClient
@@ -265,5 +311,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrgApprovedUsers(EmailAllApprovedContactsRequest emailAllApprovedContactsRequest);
         Task<OrganisationResponse> GetOrganisationByName(string name);
+
+        Task<Company> GetCompanyDetails(string companyNumber);
+        Task<Charity> GetCharityDetails(int charityNumber);
     }
 }
