@@ -240,6 +240,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                  await PostPutRequest (request, emailAllApprovedContactsRequest);
             }
         }
+
     }
 
     public interface IOrganisationsApiClient

@@ -3,7 +3,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Automapper.CustomResolvers;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
-using SFA.DAS.AdminService.Web.Automapper;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
