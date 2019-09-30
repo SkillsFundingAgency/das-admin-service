@@ -22,20 +22,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
     {
-        private readonly IOrganisationsApiClient _organisationsApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
-
         private readonly IApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IOrganisationsApiClient organisationsApiClient, IQnaApiClient qnaApiClient, 
-            IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
-            _organisationsApiClient = organisationsApiClient;
-            _qnaApiClient = qnaApiClient;
-
             _applyApiClient = applyApiClient;
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
@@ -270,25 +263,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
-            if(sequenceId == 1 && returnType == "ReturnWithFeedback")
-            {
-                // ON-2262 - Get the latest company & charity details from the relevant APIs and update QnA ApplicationData
-                _logger.LogInformation($"REJECTING_MIDPOINT - ApplicationId: {applicationId} - Refreshing QnA Company and Charity information");
-                var appData = await _qnaApiClient.GetApplicationData(applicationId);
 
-                if (appData != null)
-                {
-                    var companyDetails = !string.IsNullOrWhiteSpace(appData.CompanySummary?.CompanyNumber) ? await _organisationsApiClient.GetCompanyDetails(appData.CompanySummary?.CompanyNumber) : null;
-                    var charityDetails = int.TryParse(appData.CharitySummary?.CharityNumber, out var charityNumber) ? await _organisationsApiClient.GetCharityDetails(charityNumber) : null;
-
-                    appData.CompanySummary = Mapper.Map<CompaniesHouseSummary>(companyDetails);
-                    appData.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
-
-                    await _qnaApiClient.UpdateApplicationData(applicationId, appData);
-                }
-
-            }
-            else if (sequenceId == 2 && returnType == "Approve")
+            if (sequenceId == 2 && returnType == "Approve")
             {
                 var sequenceOne = await _applyApiClient.GetSequence(applicationId, 1);
 
