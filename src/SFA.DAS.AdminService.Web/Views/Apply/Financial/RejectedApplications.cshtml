@@ -55,7 +55,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.Id">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-Id="@item.Id">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date rejected">
                                     @item.FeedbackAddedDate.ToSfaShortDateString()
