@@ -83,19 +83,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
 
         [HttpGet("/Financial/{Id}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid Id)
+        public async Task<IActionResult> ViewGradedApplication(Guid id)
         {
-            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(Id.ToString());
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationFromAssessor.ApplicationId);
-            var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, sequence.Id);
+            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
 
-            var application = await _apiClient.GetApplication(applicationFromAssessor?.ApplicationId ?? Guid.Empty); 
-            var financialSection = await _qnaApiClient.GetSection(applicationFromAssessor.ApplicationId, sections.SingleOrDefault(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
+            var grade = applicationFromAssessor?.financialGrade;
 
-            var grade = applicationFromAssessor.financialGrade;
+            var vm = await createFinancialApplicationViewModel(id, grade);
 
-            var vm = new FinancialApplicationViewModel(Id,applicationFromAssessor.Id, financialSection, grade, application);
-            
             return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
@@ -212,16 +207,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var orgId = applicationFromAssessor?.OrganisationId ?? Guid.Empty;
             var organisation = await _apiClient.GetOrganisation(orgId);
 
-            var application = new AssessorService.ApplyTypes.Application();
-            var apply = applicationFromAssessor?.ApplyData.Apply;
-
-
-            if (apply != null)
-                application.ApplicationData = Mapper.Map<AssessorService.ApplyTypes.Apply, ApplicationData>(apply);
-
-            application.ApplyingOrganisation = organisation;
-            application.ApplyingOrganisationId = orgId;
-            application.ApplicationStatus = applicationFromAssessor.ApplicationStatus;
+            var application = new AssessorService.ApplyTypes.Application 
+            { 
+                ApplicationData = new ApplicationData
+                {
+                    ReferenceNumber = applicationFromAssessor?.ApplyData.Apply.ReferenceNumber
+                },
+                ApplyingOrganisation = organisation,
+                ApplyingOrganisationId = orgId,
+                ApplicationStatus = applicationFromAssessor.ApplicationStatus
+            };
 
             return new FinancialApplicationViewModel(id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
         }

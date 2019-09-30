@@ -42,6 +42,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
+            {
+                await PostPutRequest(request, applicationData);
+            }
+        }
+
         public async Task<Sequence> GetApplicationActiveSequence(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/current"))
