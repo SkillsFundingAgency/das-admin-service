@@ -70,7 +70,7 @@
                 </p>
             }
 
-            <h2 class="govuk-heading-m">Applcation details</h2>
+            <h2 class="govuk-heading-m">Application details</h2>
 
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
@@ -110,7 +110,7 @@
             @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
             {
                 <p class="govuk-body">
-                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.Section.ApplicationId })">Download financial statements</a>
+                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
                 </p>
             }
         </div>
