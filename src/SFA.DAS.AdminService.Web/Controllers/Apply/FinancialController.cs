@@ -72,6 +72,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/{Id}")]
         public async Task<IActionResult> ViewApplication(Guid id)
         {
+            await _apiClient.StartFinancialReview(id);
             var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
 
             var grade = applicationFromAssessor?.financialGrade;
