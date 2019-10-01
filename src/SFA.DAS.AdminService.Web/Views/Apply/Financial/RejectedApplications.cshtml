@@ -67,22 +67,13 @@
                                     @{
                                         switch (item.CurrentStatus)
                                         {
-                                            case ApplicationSequenceStatus.FeedbackAdded:
+                                            case FinancialReviewStatus.Rejected:
                                                 <div class="govuk-tag govuk-tag--rejected">
                                                     rejected
                                                 </div>
                                                 break;
                                             default:
-                                                if (item.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
-                                                {
-                                                    <div class="govuk-tag govuk-tag--rejected">
-                                                        rejected
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <text>---</text>
-                                                }
+                                                <text>---</text>
                                                 break;
                                         }
                                     }

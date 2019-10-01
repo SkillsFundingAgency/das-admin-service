@@ -63,19 +63,19 @@
                                     @{
                                         switch (item.CurrentStatus)
                                         {
-                                            case ApplicationSectionStatus.Submitted:
+                                            case ApplicationStatus.Submitted:
                                                 <div class="govuk-tag govuk-tag--inactive">
                                                     unassigned
                                                 </div>
                                                 break;
-                                            case ApplicationSectionStatus.InProgress:
+                                            case FinancialReviewStatus.InProgress:
                                                 <div class="govuk-tag">
                                                     in progress
                                                 </div>
                                                 break;
-                                            case ApplicationSequenceStatus.Resubmitted:
+                                            case ApplicationStatus.Resubmitted:
                                                 <div class="govuk-tag govuk-tag--updated">
-                                                    Updated
+                                                    updated
                                                 </div>
                                                 break;
                                             default:
