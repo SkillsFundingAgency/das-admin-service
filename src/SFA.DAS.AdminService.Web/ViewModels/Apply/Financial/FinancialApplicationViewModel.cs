@@ -19,6 +19,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public Guid Id { get; set; }
         public Guid OrgId { get; set; }
 
+        public FinancialDueDate OutstandingFinancialDueDate { get; set; }
+        public FinancialDueDate GoodFinancialDueDate { get; set; }
+        public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
+
         public FinancialApplicationViewModel() { }
 
         public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)
@@ -34,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                 ApplicationId = applicationId;
             }
 
-            SetupGrade(section, grade);
+            SetupGradeAndFinancialDueDate(grade);
             OrgId = application.ApplyingOrganisationId;
 
             if (application.ApplicationData != null)
@@ -53,20 +57,47 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
         }
 
-        private void SetupGrade(Section section, FinancialGrade grade)
+        private void SetupGradeAndFinancialDueDate(FinancialGrade grade)
         {
-            if (grade != null)
-            {
-                Grade = grade;
-            }
-            else
-            {
-                Grade = new FinancialGrade();
-            }
+            Grade = grade ?? new FinancialGrade();
 
-            if (Grade.OutstandingFinancialDueDate is null) Grade.OutstandingFinancialDueDate = new FinancialDueDate();
-            if (Grade.GoodFinancialDueDate is null) Grade.GoodFinancialDueDate = new FinancialDueDate();
-            if (Grade.SatisfactoryFinancialDueDate is null) Grade.SatisfactoryFinancialDueDate = new FinancialDueDate();
+            OutstandingFinancialDueDate = new FinancialDueDate();
+            GoodFinancialDueDate = new FinancialDueDate();
+            SatisfactoryFinancialDueDate = new FinancialDueDate();
+
+            if(Grade.FinancialDueDate.HasValue)
+            {
+                var day = Grade.FinancialDueDate.Value.Day.ToString();
+                var month = Grade.FinancialDueDate.Value.Month.ToString();
+                var year = Grade.FinancialDueDate.Value.Year.ToString();
+
+                switch (Grade.SelectedGrade)
+                {
+                    case FinancialApplicationSelectedGrade.Outstanding:
+                        OutstandingFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    case FinancialApplicationSelectedGrade.Good:
+                        GoodFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    case FinancialApplicationSelectedGrade.Satisfactory:
+                        SatisfactoryFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    public class FinancialDueDate
+    {
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
+
+        public DateTime ToDateTime()
+        {
+            return new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
         }
     }
 }

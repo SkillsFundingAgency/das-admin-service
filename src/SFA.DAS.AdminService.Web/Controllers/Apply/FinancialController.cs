@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var applications = await _apiClient.GetOpenFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
             var applications = await _apiClient.GetFeedbackAddedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var applications = await _apiClient.GetClosedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -147,45 +147,37 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-                var org = await _apiClient.GetOrganisation(vm.OrgId);
 
                 var application = await _apiClient.GetApplicationFromAssessor(vm.Id.ToString());
                 var sequence = await _qnaApiClient.GetApplicationActiveSequence(vm.ApplicationId);
                 var sections = await _qnaApiClient.GetSections(vm.ApplicationId, sequence.Id);
-                var financialSection = await _qnaApiClient.GetSection(vm.ApplicationId, sections.Single(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);
-               
+                var financialSection = await _qnaApiClient.GetSection(vm.ApplicationId, sections.Single(x => x.SectionNo == 3 && x.SequenceNo == 1).Id);       
 
-                vm.Grade.GradedBy = $"{givenName} {surname}";
-
-                GetFinancialDueDate(vm);
-                vm.Grade.ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
-                vm.Grade.GradedDateTime = DateTime.UtcNow;
-                vm.Grade.FinancialEvidences = await RetrieveFinancialEvidence(vm.OrgId, vm.ApplicationId);
-
-                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate
-               && !string.IsNullOrEmpty(vm.Grade.InadequateMoreInformation))
+                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && !string.IsNullOrEmpty(vm.Grade.InadequateMoreInformation))
                 {
                     var pageId = financialSection.QnAData.Pages.First(p => p.Active).PageId;
                     var feedback = new QnA.Api.Types.Page.Feedback { Message = vm.Grade.InadequateMoreInformation, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
                     await _qnaApiClient.UpdateFeedback(vm.ApplicationId, financialSection.Id, pageId, feedback);
                 }
 
-                await _apiClient.UpdateFinancialGrade(vm.Id,vm.OrgId, vm.Grade);
+                var grade = new FinancialGrade
+                {
+                    ApplicationReference = application.ApplyData.Apply.ReferenceNumber,
+                    GradedBy = $"{givenName} {surname}",
+                    GradedDateTime = DateTime.UtcNow,
+                    SelectedGrade = vm.Grade.SelectedGrade,
+                    FinancialDueDate = GetFinancialDueDate(vm),
+                    FinancialEvidences = await RetrieveFinancialEvidence(vm.OrgId, vm.ApplicationId),
+                    InadequateMoreInformation = vm.Grade.InadequateMoreInformation
+                };
+
+                await _apiClient.UpdateFinancialGrade(vm.Id, vm.OrgId, grade);
 
                 return RedirectToAction("Evaluated", new {vm.Id});   
             }
             else
             {
-                
-                var grade = new FinancialGrade
-                {
-                    SelectedGrade = vm.Grade.SelectedGrade,
-                    OutstandingFinancialDueDate = vm.Grade.OutstandingFinancialDueDate,
-                    GoodFinancialDueDate = vm.Grade.GoodFinancialDueDate,
-                    SatisfactoryFinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate
-                };
-
-                var newvm = await createFinancialApplicationViewModel(vm.Id,grade);
+                var newvm = await createFinancialApplicationViewModel(vm.Id, vm.Grade);
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
@@ -250,23 +242,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return listOfEvidence;
         }
 
-        private static void GetFinancialDueDate(FinancialApplicationViewModel vm)
+        private static DateTime? GetFinancialDueDate(FinancialApplicationViewModel vm)
         {
-            switch (vm?.Grade?.SelectedGrade)
+            switch (vm.Grade.SelectedGrade)
             {
                 case FinancialApplicationSelectedGrade.Outstanding:
-                    vm.Grade.FinancialDueDate = vm.Grade.OutstandingFinancialDueDate.ToDateTime();
-                    break;
+                    return vm.OutstandingFinancialDueDate.ToDateTime();
                 case FinancialApplicationSelectedGrade.Good:
-                    vm.Grade.FinancialDueDate = vm.Grade.GoodFinancialDueDate.ToDateTime();
-                    break;
+                    return vm.GoodFinancialDueDate.ToDateTime();
                 case FinancialApplicationSelectedGrade.Satisfactory:
-                    vm.Grade.FinancialDueDate = vm.Grade.SatisfactoryFinancialDueDate.ToDateTime();
-                    break;
+                    return vm.SatisfactoryFinancialDueDate.ToDateTime();
                 case null:
                 default:
-                    break;
-
+                    return null;
             }
         }
 
