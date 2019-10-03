@@ -24,12 +24,12 @@ namespace SFA.DAS.AdminService.Web.Helpers
         {
             switch (financeStatus)
             {
-                case ApplicationSectionStatus.Submitted:
+                case FinancialReviewStatus.New:
                     return "Not started";
-                case ApplicationSectionStatus.InProgress:
+                case FinancialReviewStatus.InProgress:
                     return "In Progress";
-                case ApplicationSectionStatus.Graded:
-                case ApplicationSectionStatus.Evaluated:
+                case FinancialReviewStatus.Graded:
+                case FinancialReviewStatus.Closed:
                     switch(grade)
                     {
                         case FinancialApplicationSelectedGrade.Outstanding:
