@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
             return "";
         }
 
-        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceId)
+        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceNo)
         {
             switch(sequenceStatus)
             {
@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
                     return nameof(ApplicationController.ClosedApplications);
                 case null:
                 default:
-                    switch (sequenceId)
+                    switch (sequenceNo)
                     {
                         case 2:
                             return nameof(ApplicationController.StandardApplications);
