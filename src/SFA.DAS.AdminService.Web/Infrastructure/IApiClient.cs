@@ -121,6 +121,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public Guid OrganisationId { get; set; }
         public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
     }
 }
