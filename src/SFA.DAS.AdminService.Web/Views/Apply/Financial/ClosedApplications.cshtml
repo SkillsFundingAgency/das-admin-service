@@ -67,11 +67,12 @@
                                     @{
                                         switch (item.CurrentStatus)
                                         {
-                                            case FinancialReviewStatus.Closed:
+                                            case FinancialReviewStatus.Graded:
                                                 <div class="govuk-tag govuk-tag--approved">
                                                     graded
                                                 </div>
                                                 break;
+                                            case FinancialReviewStatus.Closed:
                                             case ApplicationSequenceStatus.Approved:
                                                 <div class="govuk-tag govuk-tag--approved">
                                                     accepted
