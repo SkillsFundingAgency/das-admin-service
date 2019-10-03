@@ -12,19 +12,26 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
     {
+        private readonly IApiClient _apiClient;
+        private readonly IQnaApiClient _qnaApiClient;
+
         private readonly IApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient apiClient, IQnaApiClient qnaApiClient, IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
+            _apiClient = apiClient;
+            _qnaApiClient = qnaApiClient;
+
             _applyApiClient = applyApiClient;
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
@@ -37,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             const int midpointSequenceId = 1;
             var applications = await _applyApiClient.GetOpenApplications(midpointSequenceId);
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
@@ -50,7 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             const int standardSequenceId = 2;
             var applications = await _applyApiClient.GetOpenApplications(standardSequenceId);
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
@@ -63,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             // NOTE: Rejected actually means Feedback Added
             var applications = await _applyApiClient.GetFeedbackAddedApplications();
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
@@ -75,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var applications = await _applyApiClient.GetClosedApplications();
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count(), page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
@@ -85,31 +92,41 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> Application(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
-            var sequenceVm = new ApplicationSequenceViewModel(applicationId, activeSequence?.SequenceId ?? 1, activeSequence, application);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            if (activeSequence?.Status == ApplicationSequenceStatus.Submitted)
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, sections, applyData.Sections);
+
+            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
             {
-                await _applyApiClient.StartApplicationReview(applicationId, activeSequence.SequenceId);
+                await _applyApiClient.StartApplicationReview(applicationId, sequence.SequenceNo);
             }
 
+            // TODO: Update View with new ViewModel type
             return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceId}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceId);
-            var sequenceVm = new ApplicationSequenceViewModel(applicationId, sequenceId, sequence, application);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+
+            var sequenceVm = new SequenceViewModel(sequence, application.Id, sections, applyData.Sections);
 
             if (sequence?.Status == ApplicationSequenceStatus.Submitted)
             {
+                // TODO: Update View with new ViewModel type
                 return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
             }
             else
             {
+                // TODO: Update View with new ViewModel type
                 return View("~/Views/Apply/Applications/Sequence_ReadOnly.cshtml", sequenceVm);
             }
         }
