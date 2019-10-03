@@ -376,7 +376,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         #region Apply
         public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceId={sequenceId}");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceId}");
         }
 
         public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
