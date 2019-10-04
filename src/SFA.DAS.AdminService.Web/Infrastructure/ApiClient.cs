@@ -517,9 +517,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
         }
 
-        public async Task StartApplicationReview(Guid applicationId, int sequenceId)
+        public async Task StartApplicationReview(Guid applicationId, int sequenceNo)
         {
-            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
+            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { sequenceNo });
         }
 
         public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)

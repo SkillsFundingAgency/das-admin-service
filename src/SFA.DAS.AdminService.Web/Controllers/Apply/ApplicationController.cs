@@ -92,9 +92,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> Application(Guid applicationId)
         {
-            // TODO: Implement API end point
-            //await _applyApiClient.StartApplicationReview(applicationId, sequence.SequenceNo);
-
             var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
             var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
@@ -103,6 +100,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
 
+            await _applyApiClient.StartApplicationReview(applicationId, sequence.SequenceNo);
             return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 

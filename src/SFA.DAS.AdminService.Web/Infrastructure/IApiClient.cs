@@ -93,7 +93,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task StartApplicationReview(Guid applicationId, int sequenceId);
+        Task StartApplicationReview(Guid applicationId, int sequenceNo);
         Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete);
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
