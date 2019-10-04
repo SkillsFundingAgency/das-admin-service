@@ -146,7 +146,7 @@
                                                 </div>
                                             }
                                             @* TODO: This no longer exists *@
-                                            @if (pg.HasCompletedFeedback)
+                                            @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <div class="govuk-tag">
                                                     Answer updated
@@ -154,54 +154,58 @@
                                             }
                                         </dt>
                                         @* TODO: This needs updating with new types *@
-                                        <dd class="govuk-summary-list__value">
-                                            @foreach (var answerPage in pg.DisplayAnswerPages)
+                                    <dd class="govuk-summary-list__value">
+                                        @foreach (var answerPage in pg.PageOfAnswers)
+                                        {
+                                            foreach (var answer in answerPage.Answers)
                                             {
-                                                foreach (var answer in answerPage.DisplayAnswers)
+                                                var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                                if (question != null)
                                                 {
-                                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@answer.Label</h3>
-                                                    var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
+                                                }
 
-                                                    if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                                    {
-                                                        <details class="govuk-details">
-                                                            <summary class="govuk-details__summary">
-                                                                <span class="govuk-details__summary-text">
-                                                                    View question details
-                                                                </span>
-                                                            </summary>
-                                                            <div class="govuk-details__text">
-                                                                @Html.Raw(question.QuestionBodyText)
-                                                            </div>
-                                                        </details>
-                                                    }
 
-                                                    @* TODO: update this appropriately  *@
-                                                    if (answer is FileUploadDisplayAnswer)
-                                                    {
-                                                        var fuAnswer = answer as FileUploadDisplayAnswer;
-                                                        <p class="govuk-body">
-                                                            <a class="govuk-link" href="@Url.Action("Download", "Application",
-                                                                new
-                                                                {
-                                                                    applicationId = Model.ApplicationId,
-                                                                    sequenceId = fuAnswer.SequenceId,
-                                                                    sectionId = fuAnswer.SectionId,
-                                                                    pageId = fuAnswer.PageId,
-                                                                    questionId = fuAnswer.QuestionId,
-                                                                    filename = fuAnswer.FileName
-                                                                })">
-                                                                @fuAnswer.FileName
-                                                            </a>
-                                                        </p>
-                                                    }
-                                                    else
-                                                    {
-                                                        <p class="govuk-body">@answer.Answer()</p>
-                                                    }
+                                                if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                                {
+                                                    <details class="govuk-details">
+                                                        <summary class="govuk-details__summary">
+                                                            <span class="govuk-details__summary-text">
+                                                                View question details
+                                                            </span>
+                                                        </summary>
+                                                        <div class="govuk-details__text">
+                                                            @Html.Raw(question.QuestionBodyText)
+                                                        </div>
+                                                    </details>
+                                                }
+
+                                                @* TODO: update this appropriately  *@
+                                                if (question.Input.Type == "FileUpload")
+                                                {
+                                                    // var fuAnswer = answer as FileUploadDisplayAnswer;
+                                                    <p class="govuk-body">
+                                                        <a class="govuk-link" href="@Url.Action("Download", "Application",
+                                                              new
+                                                        {
+                                                            Id = Model.ApplicationId,
+                                                            sequenceNo = Model.SequenceNo,
+                                                            sectionNo = Model.SectionNo,
+                                                            pageId = pg.PageId,
+                                                            questionId = answer.QuestionId,
+                                                            filename = answer.Value
+                                                        })">
+                                                            @answer.Value
+                                                        </a>
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="govuk-body">@answer.Value</p>
                                                 }
                                             }
-                                        </dd>
+                                        }
+                                    </dd>
 
                                         @if (pg.HasFeedback)
                                         {

@@ -161,7 +161,7 @@
                                         </div>
                                     }
                                     @* TODO: This no longer exists *@
-                                    @if (pg.HasCompletedFeedback)
+                                    @if (pg.AllFeedbackIsCompleted)
                                     {
                                         <div class="govuk-tag">
                                             Answer updated
@@ -170,12 +170,15 @@
                                 </dt>
                                 @* TODO: This needs updating with new types *@
                                 <dd class="govuk-summary-list__value">
-                                    @foreach (var answerPage in pg.DisplayAnswerPages)
+                                    @foreach (var answerPage in pg.PageOfAnswers)
                                     {
-                                        foreach (var answer in answerPage.DisplayAnswers)
+                                        foreach (var answer in answerPage.Answers)
                                         {
-                                            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@answer.Label</h3>
                                             var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                            if (question != null)
+                                            {
+                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
+                                            }
 
                                             if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
                                             {
@@ -192,27 +195,27 @@
                                             }
 
                                             @* TODO: update this appropriately  *@
-                                            if (answer is FileUploadDisplayAnswer)
+                                            if (question != null && question.Input.Type == "FileUpload")
                                             {
-                                                var fuAnswer = answer as FileUploadDisplayAnswer;
+                                               // var fuAnswer = answer as FileUploadDisplayAnswer;
                                                 <p class="govuk-body">
                                                     <a class="govuk-link" href="@Url.Action("Download", "Application",
                                                         new
                                                         {
-                                                            applicationId = Model.ApplicationId,
-                                                            sequenceId = fuAnswer.SequenceId,
-                                                            sectionId = fuAnswer.SectionId,
-                                                            pageId = fuAnswer.PageId,
-                                                            questionId = fuAnswer.QuestionId,
-                                                            filename = fuAnswer.FileName
+                                                            Id = Model.ApplicationId,
+                                                            sequenceNo = Model.SequenceNo,
+                                                            sectionNo = Model.SectionNo,
+                                                            pageId = pg.PageId,
+                                                            questionId = answer.QuestionId,
+                                                            filename = answer.Value
                                                         })">
-                                                        @fuAnswer.FileName
+                                                        @answer.Value
                                                     </a>
                                                 </p>
                                             }
                                             else
                                             {
-                                                <p class="govuk-body">@answer.Answer()</p>
+                                                <p class="govuk-body">@answer.Value</p>
                                             }
                                         }
                                     }
