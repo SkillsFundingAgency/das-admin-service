@@ -9,7 +9,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
     public class SequenceViewModel
     {
-        public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, List<Section> sections, List<ApplySection> applySection)
+        public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, List<Section> sections, List<ApplySection> applySections)
         {
             ApplicationId = application.Id;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             CompanyNumber = organisation.OrganisationData.CompanyNumber;
 
             Sections = sections;
-            ApplySections = applySection;
+            ApplySections = applySections;
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
         }
