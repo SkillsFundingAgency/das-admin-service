@@ -112,9 +112,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
+            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applySequence.Sections);
 
             if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
             {
@@ -129,17 +129,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, int sectionNo)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var section = await _applyApiClient.GetSection(applicationId, sequenceNo, sectionNo);
-            var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceNo, sectionNo, section, application);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceNo);
-            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
+            var section = sections.Single(x => x.SectionNo == sectionNo);
+            var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
+
+            var sectionVm = new SectionViewModel(application, organisation, section, applySection);
+
+            if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
             {
+                // TODO: Update page with new VM
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
             else
             {
+                // TODO: Update page with new VM
                 return View("~/Views/Apply/Applications/Section_ReadOnly.cshtml", sectionVm);
             }
         }
