@@ -101,8 +101,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task StartFinancialReview(Guid applicationId);
+        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
-        Task UpdateFinancialGrade(Guid id, Guid orgId, FinancialGrade vmGrade);
         Task<ApplicationResponse> GetApplicationFromAssessor(string Id);
     }
 

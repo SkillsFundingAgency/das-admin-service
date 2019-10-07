@@ -171,7 +171,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     InadequateMoreInformation = vm.Grade.InadequateMoreInformation
                 };
 
-                await _apiClient.UpdateFinancialGrade(vm.Id, vm.OrgId, grade);
+                await _apiClient.ReturnFinancialReview(vm.Id, grade);
 
                 return RedirectToAction("Evaluated", new {vm.Id});   
             }

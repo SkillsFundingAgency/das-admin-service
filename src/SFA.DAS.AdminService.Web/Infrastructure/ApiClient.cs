@@ -21,6 +21,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AdminService.Web.Services;
 using Microsoft.AspNetCore.Http;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
+using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -499,15 +500,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return downloadResponse;
         }
 
-
-        public async Task UpdateFinancialGrade(Guid id,Guid orgId,AssessorService.ApplyTypes.FinancialGrade vmGrade)
-        {
-            await Post($"/Financial/{id}/Organisation/{orgId}/UpdateGrade", vmGrade);
-        }
-
         public async Task StartFinancialReview(Guid applicationId)
         {
             await Post($"/Financial/{applicationId}/StartReview", new { applicationId });
+        }
+
+        public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)
+        {
+            await Post($"/Financial/{applicationId}/Return", grade);
         }
 
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
