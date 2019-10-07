@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.QnA.Api.Types.Page;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
@@ -98,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
-        Task ReturnApplication(Guid applicationId, int sequenceId, string returnType, string returnedBy);
+        Task ReturnApplicationSequence(Guid applicationId, int sequenceId, string returnType, string returnedBy);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();

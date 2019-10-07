@@ -20,9 +20,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AdminService.Web.Services;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.QnA.Api.Types.Page;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
-using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -467,7 +465,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 feedbackId);
         }
 
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType, string returnedBy)
+        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceId, string returnType, string returnedBy)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
         }

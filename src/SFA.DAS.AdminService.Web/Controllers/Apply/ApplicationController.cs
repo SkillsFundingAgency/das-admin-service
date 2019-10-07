@@ -328,7 +328,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
             var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType, $"{givenName} {surname}");
+            await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceId, returnType, $"{givenName} {surname}");
 
             return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
         }
