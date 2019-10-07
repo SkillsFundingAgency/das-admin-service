@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
                 case ApplicationSequenceStatus.FeedbackAdded:
                     return nameof(ApplicationController.RejectedApplications);
                 case ApplicationSequenceStatus.Approved:
-                case ApplicationSequenceStatus.Rejected:
+                case ApplicationSequenceStatus.Declined:
                     return nameof(ApplicationController.ClosedApplications);
                 case null:
                 default:
