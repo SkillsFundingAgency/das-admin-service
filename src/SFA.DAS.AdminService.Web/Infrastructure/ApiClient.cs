@@ -495,19 +495,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return downloadResponse;
         }
 
-        public async Task StartApplicationReview(Guid applicationId, int sequenceNo)
+        public async Task StartApplicationSequenceReview(Guid applicationId, int sequenceNo, string startedBy)
         {
-            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { sequenceNo });
+            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { startedBy });
         }
 
-        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceId, string returnType, string returnedBy)
+        public async Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceId, string returnType, string returnedBy)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
         }
 
-        public async Task StartFinancialReview(Guid applicationId)
+        public async Task StartFinancialReview(Guid applicationId, string startedBy)
         {
-            await Post($"/Financial/{applicationId}/StartReview", new { applicationId });
+            await Post($"/Financial/{applicationId}/StartReview", new { startedBy });
         }
 
         public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)

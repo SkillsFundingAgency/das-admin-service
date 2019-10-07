@@ -72,7 +72,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/{Id}")]
         public async Task<IActionResult> ViewApplication(Guid id)
         {
-            await _apiClient.StartFinancialReview(id);
+            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+
+            await _apiClient.StartFinancialReview(id, $"{givenName} {surname}");
             var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
 
             var grade = applicationFromAssessor?.financialGrade;

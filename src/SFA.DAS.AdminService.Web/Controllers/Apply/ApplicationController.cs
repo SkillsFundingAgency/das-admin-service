@@ -103,7 +103,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
 
-            await _applyApiClient.StartApplicationReview(applicationId, sequence.SequenceNo);
+            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+
+            await _applyApiClient.StartApplicationSequenceReview(applicationId, sequence.SequenceNo, $"{givenName} {surname}");
             return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 
@@ -146,12 +149,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
             {
-                // TODO: Update page with new VM
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
             else
             {
-                // TODO: Update page with new VM
                 return View("~/Views/Apply/Applications/Section_ReadOnly.cshtml", sectionVm);
             }
         }
@@ -328,7 +329,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
             var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceId, returnType, $"{givenName} {surname}");
+            await _applyApiClient.ReturnApplicationSequenceReview(applicationId, sequenceId, returnType, $"{givenName} {surname}");
 
             return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
         }
