@@ -467,9 +467,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 feedbackId);
         }
 
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
+        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType, string returnedBy)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType });
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
         }
 
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)

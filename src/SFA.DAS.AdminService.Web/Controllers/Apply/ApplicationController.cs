@@ -13,24 +13,27 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using Microsoft.AspNetCore.Http;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
-    {
+    {  
         private readonly IApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         private readonly IApiClient _applyApiClient;
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiClient apiClient, IQnaApiClient qnaApiClient, IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient apiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IApiClient applyApiClient, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
+            _contextAccessor = contextAccessor;
 
             _applyApiClient = applyApiClient;
             _answerService = answerService;
@@ -258,7 +261,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceId}/Return")]
-        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType)
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceId, string returnType, Guid userId)
         {
             var errorMessages = new Dictionary<string, string>();
 
@@ -322,7 +325,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 }
             }
 
-            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType);
+            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+
+            await _applyApiClient.ReturnApplication(applicationId, sequenceId, returnType, $"{givenName} {surname}");
 
             return RedirectToAction("Returned", new { applicationId, sequenceId, warningMessages});
         }
