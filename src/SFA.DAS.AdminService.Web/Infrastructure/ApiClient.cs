@@ -466,11 +466,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 feedbackId);
         }
 
-        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceId, string returnType, string returnedBy)
-        {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
-        }
-
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -500,6 +495,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return downloadResponse;
         }
 
+        public async Task StartApplicationReview(Guid applicationId, int sequenceNo)
+        {
+            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { sequenceNo });
+        }
+
+        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceId, string returnType, string returnedBy)
+        {
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
+        }
+
         public async Task StartFinancialReview(Guid applicationId)
         {
             await Post($"/Financial/{applicationId}/StartReview", new { applicationId });
@@ -513,11 +518,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
-        }
-
-        public async Task StartApplicationReview(Guid applicationId, int sequenceNo)
-        {
-            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { sequenceNo });
         }
 
         public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
