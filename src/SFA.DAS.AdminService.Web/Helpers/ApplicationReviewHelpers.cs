@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
                 case FinancialReviewStatus.InProgress:
                     return "In Progress";
                 case FinancialReviewStatus.Graded:
-                case FinancialReviewStatus.Closed:
+                case FinancialReviewStatus.Approved:
                     switch(grade)
                     {
                         case FinancialApplicationSelectedGrade.Outstanding:
