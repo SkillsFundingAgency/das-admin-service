@@ -1,11 +1,23 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
+    public class AddressVm
+    {
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string AddressLine3 { get; set; }
+        public string AddressLine4 { get; set; }
+        public string Postcode { get; set; }
+
+    }
     public class SectionViewModel
     {
         public string ApplicationReference { get; set; }
@@ -29,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public int SectionNo { get; }
 
         public bool? IsSectionComplete { get; set; }
-
+        public Dictionary<string, AddressVm> Addresses = new Dictionary<string, AddressVm>();
         public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection)
         {
             ApplicationId = application.Id;
@@ -54,6 +66,21 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             if (section.Status == ApplicationSectionStatus.Evaluated)
             {
                 IsSectionComplete = true;
+            }
+
+            foreach (var pg in Section.QnAData.Pages)
+            {
+                foreach (var answerPage in pg.PageOfAnswers)
+                {
+                    foreach (var answer in answerPage.Answers)
+                    {
+                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                        if (question != null && question.Input.Type == "Address")
+                        {
+                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressVm>(answer.Value));
+                        }
+                    }
+                }
             }
         }
     }
