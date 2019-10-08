@@ -174,14 +174,25 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     ModelState.AddModelError(error.Key, error.Value);
                 }
 
-                var application = await _applyApiClient.GetApplication(applicationId);
-                var section = await _applyApiClient.GetSection(applicationId, sequenceNo, sectionNo);
-                var sectionVm = new ApplicationSectionViewModel(applicationId, sequenceNo, sectionNo, section, application);
+                var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+                var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+                var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+                var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+                var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+                var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+
+                var section = sections.Single(x => x.SectionNo == sectionNo);
+                var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
+
+                var sectionVm = new SectionViewModel(application, organisation, section, applySection);
+
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
 
-            await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value);
+            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
+            await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, $"{givenName} {surname}");
             return RedirectToAction("Application", new { applicationId });
         }
 

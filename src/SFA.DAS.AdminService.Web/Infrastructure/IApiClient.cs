@@ -91,12 +91,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete);
+        Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
         Task StartApplicationSequenceReview(Guid applicationId, int sequenceNo, string startedBy);
-        Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceId, string returnType, string returnedBy);
+        Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
