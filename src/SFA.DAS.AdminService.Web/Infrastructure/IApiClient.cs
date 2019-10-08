@@ -88,7 +88,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
             bool roEpaoApprovedFlag);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);

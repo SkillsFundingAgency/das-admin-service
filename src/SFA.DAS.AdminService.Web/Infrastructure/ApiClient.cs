@@ -373,9 +373,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
         #region Apply
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceId}");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");
         }
 
         public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
@@ -500,9 +500,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/StartReview", new { startedBy });
         }
 
-        public async Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceId, string returnType, string returnedBy)
+        public async Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType, returnedBy });
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
         }
 
         public async Task StartFinancialReview(Guid applicationId, string startedBy)

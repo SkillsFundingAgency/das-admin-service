@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})">Back</a>
+<a class="govuk-back-link" href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceNo = Model.SequenceId, sectionNo = Model.SectionId})">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (Model.Page == null)
@@ -124,7 +124,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">
-                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-link">Return to section overview</a>
+                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceNo = Model.SequenceId, sectionNo = Model.SectionId})" class="govuk-link">Return to section overview</a>
             </p>
         </div>
     </div>
