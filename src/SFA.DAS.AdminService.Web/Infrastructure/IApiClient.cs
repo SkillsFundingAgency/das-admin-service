@@ -95,12 +95,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
-        Task StartApplicationSequenceReview(Guid applicationId, int sequenceNo, string startedBy);
-        Task ReturnApplicationSequenceReview(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
+        Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
+        Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task StartFinancialReview(Guid applicationId, string startedBy);
+        Task StartFinancialReview(Guid applicationId, string reviewer);
         Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
         Task<ApplicationResponse> GetApplicationFromAssessor(string Id);

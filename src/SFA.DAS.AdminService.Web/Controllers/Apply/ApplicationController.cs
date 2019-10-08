@@ -103,10 +103,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
 
-            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-
-            await _applyApiClient.StartApplicationSequenceReview(applicationId, sequence.SequenceNo, $"{givenName} {surname}");
             return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 
@@ -149,6 +145,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
             {
+                var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+                var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+
+                await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, $"{givenName} {surname}");
+
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
             else
@@ -340,7 +341,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
             var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            await _applyApiClient.ReturnApplicationSequenceReview(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
+            await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
 
             return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages});
         }
