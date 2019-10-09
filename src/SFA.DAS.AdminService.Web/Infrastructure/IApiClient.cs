@@ -75,8 +75,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         //Apply
         Task ImportWorkflow(IFormFile file);
-        Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
-        Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
         Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
@@ -102,7 +100,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task StartFinancialReview(Guid applicationId, string reviewer);
         Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
-        Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
         Task<ApplicationResponse> GetApplicationFromAssessor(string Id);
     }
 

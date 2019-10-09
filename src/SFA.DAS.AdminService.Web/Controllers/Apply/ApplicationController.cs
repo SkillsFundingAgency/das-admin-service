@@ -368,18 +368,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-        //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
-        public async Task<IActionResult> Download(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
+        public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
         {
-            var userId = Guid.NewGuid();
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
-            var fileInfo = await _applyApiClient.FileInfo(applicationId, userId, sequenceNo, sectionNo, pageId, questionId, filename);
+            var section = sections.Single(x => x.SectionNo == sectionNo);
 
-            var file = await _applyApiClient.Download(applicationId, userId, sequenceNo, sectionNo, pageId, questionId, filename);
+            var response = await _qnaApiClient.DownloadFile(application.ApplicationId, section.Id, pageId, questionId, filename);
+            var fileStream = await response.Content.ReadAsStreamAsync();
 
-            var fileStream = await file.Content.ReadAsStreamAsync();
-
-            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
         }
     }
 }

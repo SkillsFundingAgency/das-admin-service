@@ -99,9 +99,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
-        public async Task<IActionResult> Download(Guid orgId, Guid applicationId)
+        public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
         {
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(applicationId);
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(applicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == 1);
             var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
 
             var org = await _apiClient.GetOrganisation(orgId);
