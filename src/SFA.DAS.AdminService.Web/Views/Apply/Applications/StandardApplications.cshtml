@@ -76,22 +76,25 @@
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.ReviewStatus)
                                         {
-                                            case ApplicationSectionStatus.Submitted:
-                                                <div class="govuk-tag govuk-tag--inactive">
-                                                    unassigned
-                                                </div>
+                                            case ApplicationReviewStatus.New:
+                                                if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
+                                                {
+                                                    <div class="govuk-tag govuk-tag--updated">
+                                                        updated
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="govuk-tag govuk-tag--inactive">
+                                                        unassigned
+                                                    </div>
+                                                }
                                                 break;
-                                            case ApplicationSectionStatus.InProgress:
-                                            case ApplicationSectionStatus.Evaluated:
+                                            case ApplicationReviewStatus.InProgress:
                                                 <div class="govuk-tag">
                                                     in progress
-                                                </div>
-                                                break;
-                                            case ApplicationSequenceStatus.Resubmitted:
-                                                <div class="govuk-tag govuk-tag--updated">
-                                                    updated
                                                 </div>
                                                 break;
                                             default:
