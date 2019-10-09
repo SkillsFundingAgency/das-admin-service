@@ -96,10 +96,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-            var sequence = await _qnaApiClient.GetApplicationActiveSequence(application.ApplicationId);
+            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
 
