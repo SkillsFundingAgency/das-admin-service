@@ -61,22 +61,25 @@
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.FinancialStatus)
                                         {
                                             case FinancialReviewStatus.New:
-                                            case ApplicationStatus.Submitted:
-                                                <div class="govuk-tag govuk-tag--inactive">
-                                                    unassigned
-                                                </div>
+                                                if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
+                                                {
+                                                    <div class="govuk-tag govuk-tag--updated">
+                                                        updated
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="govuk-tag govuk-tag--inactive">
+                                                        unassigned
+                                                    </div>
+                                                }
                                                 break;
                                             case FinancialReviewStatus.InProgress:
                                                 <div class="govuk-tag">
                                                     in progress
-                                                </div>
-                                                break;
-                                            case ApplicationStatus.Resubmitted:
-                                                <div class="govuk-tag govuk-tag--updated">
-                                                    updated
                                                 </div>
                                                 break;
                                             default:
