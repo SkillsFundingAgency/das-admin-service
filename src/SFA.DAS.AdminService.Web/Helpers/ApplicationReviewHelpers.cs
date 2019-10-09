@@ -24,12 +24,12 @@ namespace SFA.DAS.AdminService.Web.Helpers
         {
             switch (financeStatus)
             {
-                case ApplicationSectionStatus.Submitted:
+                case FinancialReviewStatus.New:
                     return "Not started";
-                case ApplicationSectionStatus.InProgress:
+                case FinancialReviewStatus.InProgress:
                     return "In Progress";
-                case ApplicationSectionStatus.Graded:
-                case ApplicationSectionStatus.Evaluated:
+                case FinancialReviewStatus.Graded:
+                case FinancialReviewStatus.Approved:
                     switch(grade)
                     {
                         case FinancialApplicationSelectedGrade.Outstanding:
@@ -47,18 +47,18 @@ namespace SFA.DAS.AdminService.Web.Helpers
             return "";
         }
 
-        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceId)
+        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceNo)
         {
             switch(sequenceStatus)
             {
                 case ApplicationSequenceStatus.FeedbackAdded:
                     return nameof(ApplicationController.RejectedApplications);
                 case ApplicationSequenceStatus.Approved:
-                case ApplicationSequenceStatus.Rejected:
+                case ApplicationSequenceStatus.Declined:
                     return nameof(ApplicationController.ClosedApplications);
                 case null:
                 default:
-                    switch (sequenceId)
+                    switch (sequenceNo)
                     {
                         case 2:
                             return nameof(ApplicationController.StandardApplications);

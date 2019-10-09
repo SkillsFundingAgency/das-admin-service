@@ -24,10 +24,10 @@
             }
 
             <div class="form-group">
-                <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId">
+                <form class="js-disable-on-submit" asp-controller="Application" asp-action="Return" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo">
                     @if (!Model.HasNewFeedback)
                     {
-                        @if (Model.SequenceId == 1)
+                        @if (Model.SequenceNo == 1)
                         {
                             <p class="govuk-body">You are about to approve the first stage of this application. This means that the applicant will be able to apply for a standard. You are also satisfied with the information the applicant has provided so far, and require no further information.</p>
 
@@ -42,7 +42,7 @@
                                 </div>
                             }
                         }
-                        else if (Model.SequenceId == 2)
+                        else if (Model.SequenceNo == 2)
                         {
                             <p class="govuk-body">You are about to approve the second stage of this application. You are also satisfied with the information the applicant has provided so far, and require no further information.</p>
                         }
@@ -52,11 +52,11 @@
                     }
                     else
                     {
-                        @if (Model.SequenceId == 1)
+                        @if (Model.SequenceNo == 1)
                         {
                             <p class="govuk-body">You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
                         }
-                        else if (Model.SequenceId == 2)
+                        else if (Model.SequenceNo == 2)
                         {
                             <p class="govuk-body">You are about to send back the second stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
                         }

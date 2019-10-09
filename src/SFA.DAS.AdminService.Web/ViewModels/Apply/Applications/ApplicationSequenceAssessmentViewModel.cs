@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public Guid ApplicationId { get; }
 
-        public int SequenceId { get; }
+        public int SequenceNo { get; }
 
         public bool HasNewFeedback { get; }
 
@@ -25,10 +25,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             Sequence = sequence;
             Title = "Assessment summary";
             ApplicationId = sequence.ApplicationId;
-            SequenceId = sequence.SequenceId;
+            SequenceNo = sequence.SequenceId;
             HasNewFeedback = sequence.Sections.Any(s => s.HasNewPageFeedback);
 
-            var fhaSection = sequence.Sections.Where(s => s.SectionId == 3).FirstOrDefault();
+            var fhaSection = sequence.Sections.FirstOrDefault(s => s.SectionId == 3);
 
             if(fhaSection != null && !fhaSection.HasNewPageFeedback)
             {

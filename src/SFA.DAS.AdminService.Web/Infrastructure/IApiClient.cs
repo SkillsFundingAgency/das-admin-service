@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.QnA.Api.Types.Page;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
@@ -77,8 +75,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         //Apply
         Task ImportWorkflow(IFormFile file);
-        Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
-        Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
         Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
@@ -90,21 +86,20 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
             bool roEpaoApprovedFlag);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task StartApplicationReview(Guid applicationId, int sequenceId);
-        Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete);
+        Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
-        Task ReturnApplication(Guid applicationId, int sequenceId, string returnType);
+        Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
+        Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task StartFinancialReview(Guid applicationId);
-        Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename);
-        Task UpdateFinancialGrade(Guid id, Guid orgId, FinancialGrade vmGrade);
+        Task StartFinancialReview(Guid applicationId, string reviewer);
+        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
         Task<ApplicationResponse> GetApplicationFromAssessor(string Id);
     }
 
@@ -121,6 +116,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public Guid OrganisationId { get; set; }
         public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
     }
 }

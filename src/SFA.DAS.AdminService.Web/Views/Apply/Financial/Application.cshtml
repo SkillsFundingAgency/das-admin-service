@@ -88,7 +88,7 @@
             @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
             {
                 <p class="govuk-body govuk-!-margin-bottom-8">
-                    <a class="govuk-link" href="@Url.Action("Download", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
+                    <a class="govuk-link" href="@Url.Action("DownloadFiles", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
                 </p>
             }
         </div>

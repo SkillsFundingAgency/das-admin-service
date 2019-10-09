@@ -55,7 +55,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-Id="@item.Id">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date graded">
                                     @item.Grade.GradedDateTime.ToSfaShortDateString()
@@ -65,22 +65,16 @@
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.FinancialStatus)
                                         {
                                             case FinancialReviewStatus.Graded:
                                                 <div class="govuk-tag govuk-tag--approved">
                                                     graded
                                                 </div>
                                                 break;
-                                            case FinancialReviewStatus.Closed:
-                                            case ApplicationSequenceStatus.Approved:
+                                            case FinancialReviewStatus.Approved:
                                                 <div class="govuk-tag govuk-tag--approved">
                                                     accepted
-                                                </div>
-                                                break;
-                                            case ApplicationSequenceStatus.Rejected:
-                                                <div class="govuk-tag govuk-tag--rejected">
-                                                    declined
                                                 </div>
                                                 break;
                                             default:
