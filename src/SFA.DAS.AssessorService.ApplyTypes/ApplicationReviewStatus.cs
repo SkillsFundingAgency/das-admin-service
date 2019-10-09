@@ -4,7 +4,6 @@
     {
         public const string Draft = "Draft";
         public const string New = "New";
-        public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string HasFeedback = "Has Feedback";
         public const string Approved = "Approved";
