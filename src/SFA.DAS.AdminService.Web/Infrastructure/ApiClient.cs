@@ -441,7 +441,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sequenceNo}/Evaluate",
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate",
                 new { isSectionComplete, evaluatedBy });
         }
 
