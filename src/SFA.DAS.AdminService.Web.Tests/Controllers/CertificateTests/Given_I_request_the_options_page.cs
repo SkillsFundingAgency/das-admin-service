@@ -7,9 +7,9 @@ using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Tests.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels;
 
-namespace SFA.DAS.AdminService.Web.Tests
+namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
-    public class WhenUserLoadsAmendOptionPage : CertificateAmendQueryBase
+    public class Given_I_request_the_options_page : CertificateAmendQueryBase
     {     
         private IActionResult _result;
 

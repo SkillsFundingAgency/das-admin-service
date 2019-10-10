@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 
-namespace SFA.DAS.AdminService.Web.Tests.Controllers
+namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
     public class CertificateAmendQueryBase
     {        

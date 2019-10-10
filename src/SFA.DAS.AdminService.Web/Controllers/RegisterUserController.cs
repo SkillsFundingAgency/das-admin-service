@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
+    [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
     public class RegisterUserController : Controller
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;

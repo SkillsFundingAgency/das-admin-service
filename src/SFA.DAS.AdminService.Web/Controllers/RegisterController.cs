@@ -20,12 +20,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
     [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
     public class RegisterController: Controller
     {
-        private readonly ApiClient _apiClient;
+        private readonly IApiClient _apiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
 
-        public RegisterController(ApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        public RegisterController(IApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
             _apiClient = apiClient;
             _contactsApiClient = contactsApiClient;

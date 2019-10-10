@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels;
 
-namespace SFA.DAS.AdminService.Web.Tests.Controllers
+namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
     public class Given_I_request_the_AdddressPage : CertificateAmendQueryBase
     {     
