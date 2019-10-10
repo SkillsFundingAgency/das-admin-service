@@ -33,7 +33,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string ApplicationReference { get; set; }
         public string StandardName { get; set; }
-        public int StandardCode { get; set; }
+        public int? StandardCode { get; set; }
+        public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
 
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }

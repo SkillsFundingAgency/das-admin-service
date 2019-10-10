@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var organisationId = assessorOrganisation?.Id;
             var createdBy = application.CreatedBy;
-            var standardCode = int.TryParse(application.ApplicationData?.StandardCode, out var parsedStandardCode) ? parsedStandardCode : 0;
+            var standardCode = application.ApplicationData?.StandardCode ?? 0;
 
             var effectiveFrom = DateTime.UtcNow.Date;
             if(DateTime.TryParse(await GetAnswer(applicationId, "effective-from"), out var effectiveFromDate))

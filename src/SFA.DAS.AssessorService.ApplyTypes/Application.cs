@@ -25,7 +25,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string OrganisationName { get; set; }
         public string ReferenceNumber { get; set; }
         public string StandardName { get; set; }
-        public string StandardCode { get; set; }
+        public int? StandardCode { get; set; }
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
         public string ContactGivenName { get; set; }
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
     public class Apply
     {
         public string ReferenceNumber { get; set; }
-        public int StandardCode { get; set; }
+        public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }

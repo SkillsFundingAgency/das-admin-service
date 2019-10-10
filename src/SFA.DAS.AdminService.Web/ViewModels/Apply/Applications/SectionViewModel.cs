@@ -22,8 +22,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     {
         public string ApplicationReference { get; set; }
         public AssessorService.ApplyTypes.FinancialGrade Grade { get; set; }
-        public string StandardName { get; set; }
-        public int StandardCode { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }
@@ -47,8 +45,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationId = application.Id;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
             Grade = application.financialGrade;
-            StandardName = application.ApplyData.Apply.StandardName;
-            StandardCode = application.ApplyData.Apply.StandardCode;
 
             LegalName = organisation.OrganisationData.LegalName;
             TradingName = organisation.OrganisationData.TradingName;

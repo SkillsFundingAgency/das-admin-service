@@ -31,11 +31,11 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == 2)
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardName (@Model.StandardCode)</dd>
+                            <dd class="govuk-summary-list__value">@Model.Standard</dd>
                         </div>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.LegalName))

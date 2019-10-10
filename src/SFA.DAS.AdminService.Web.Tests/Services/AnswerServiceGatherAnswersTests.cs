@@ -292,7 +292,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 CreatedBy = commandTestSetup.CreatedBy,
                 ApplicationData = new ApplicationData
                 {
-                    StandardCode = commandTestSetup.StandardCode.ToString()
+                    StandardCode = commandTestSetup.StandardCode
                 }
             };
 
