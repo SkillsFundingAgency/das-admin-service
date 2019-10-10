@@ -147,11 +147,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sectionVm = new SectionViewModel(application, organisation, section, applySection);
 
             if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
-            {
-                var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-                var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+            {             
+                if (applySection.Status != ApplicationSectionStatus.Evaluated)
+                {
+                    var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+                    var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-                await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, $"{givenName} {surname}");
+                    await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, $"{givenName} {surname}");
+                }
 
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
