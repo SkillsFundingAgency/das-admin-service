@@ -267,15 +267,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Assessment")]
         public async Task<IActionResult> Assessment(Guid applicationId, int sequenceNo)
         {
-            var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-            if (activeSequence is null || activeSequence.SequenceId != sequenceNo || activeSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
+            if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
             {
-                // This is to stop the wrong sequence being approved or if not all sections are Evaluated
-                return RedirectToAction("OpenApplications");
+                // This is to stop the wrong sequence being assessed, or if not all sections are Evaluated
+                return RedirectToAction(sequenceNo == 2 ? nameof(StandardApplications) : nameof(MidpointApplications));
             }
 
-            var viewModel = new ApplicationSequenceAssessmentViewModel(activeSequence);
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
+
+            var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
             return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
         }
 
@@ -296,8 +300,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     ModelState.AddModelError(error.Key, error.Value);
                 }
 
-                var activeSequence = await _applyApiClient.GetActiveSequence(applicationId);
-                var viewModel = new ApplicationSequenceAssessmentViewModel(activeSequence);
+                var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+                var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+                if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
+                {
+                    // This is to stop the wrong sequence being returned, or if not all sections are Evaluated
+                    return RedirectToAction(sequenceNo == 2 ? nameof(StandardApplications) : nameof(MidpointApplications));
+                }
+
+                var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
+                var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
+
+                var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
                 return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
             }
 
@@ -366,7 +381,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
-        [HttpGet("/Applications/Returned")]
+        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Returned")]
         public IActionResult Returned(Guid applicationId, int sequenceNo, List<string> warningMessages)
         {
             var viewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);
