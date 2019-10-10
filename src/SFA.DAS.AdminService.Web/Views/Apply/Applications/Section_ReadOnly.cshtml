@@ -146,14 +146,13 @@
                                                 </div>
                                             }
                                             @* TODO: This no longer exists *@
-                                            @if (pg.AllFeedbackIsCompleted)
+                                            @if (pg.HasFeedback && pg.AllFeedbackIsCompleted)
                                             {
                                                 <div class="govuk-tag">
                                                     Answer updated
                                                 </div>
                                             }
                                         </dt>
-                                        @* TODO: This needs updating with new types *@
                                     <dd class="govuk-summary-list__value">
                                         @foreach (var answerPage in pg.PageOfAnswers)
                                         {
