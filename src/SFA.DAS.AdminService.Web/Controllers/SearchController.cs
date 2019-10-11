@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -31,9 +32,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("results")]
         public async Task<IActionResult> Results(string searchString, int page = 1)
         {
+            EpaOrganisation org=null;
             var searchResults = await _apiClient.Search(searchString, page);
+
+            if(!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
+                org = await _apiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
+
             var searchViewModel = new SearchViewModel
             {
+                OrganisationName = org?.Name??string.Empty,
                 StaffSearchResult = searchResults,
                 SearchString = searchString,
                 Page = page
@@ -77,6 +84,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class SearchViewModel
     {
         public string SearchString { get; set; }
+        public string OrganisationName { get; set; }
         public int Page { get; set; }
         public StaffSearchResult StaffSearchResult { get; set; }
     }

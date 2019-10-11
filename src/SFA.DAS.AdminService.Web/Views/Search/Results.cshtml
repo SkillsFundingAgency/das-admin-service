@@ -12,13 +12,21 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-5">
                 Search results
             </h1>
-            <span class="govuk-caption-xl">Number of results: @Model.StaffSearchResult.StaffSearchItems?.TotalRecordCount</span>
             @if (!string.IsNullOrEmpty(@Model.StaffSearchResult.EndpointAssessorOrganisationId) && Model.StaffSearchResult.DisplayEpao)
             {
+                <span class="govuk-caption-xl">@Model.OrganisationName</span>
                 <h2 class="govuk-heading-m">@Model.StaffSearchResult.EndpointAssessorOrganisationId</h2>
+            }
+            @if (@Model.StaffSearchResult.StaffSearchItems != null)
+            {
+                <span class="govuk-heading-s">Number of results: @Model.StaffSearchResult.StaffSearchItems.TotalRecordCount</span>
+            }
+            else
+            {
+                 <span class="govuk-heading-s">Number of results: 0</span>
             }
         </div>
     </div>

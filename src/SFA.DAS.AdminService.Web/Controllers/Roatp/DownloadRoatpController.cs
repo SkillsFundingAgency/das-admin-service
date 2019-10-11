@@ -62,27 +62,5 @@
                     $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
             }
         }
-
-        [Route("download-fat-file")]
-        public async Task<IActionResult> DownloadFatFile()
-        {
-            using (var package = new ExcelPackage())
-            {
-                var roatpSummaryWorksheet = package.Workbook.Worksheets.Add(FatWorksheetName);
-                var roatpData = await _apiClient.GetRoatpSummary();
-                if (roatpData != null && roatpData.Any())
-                {
-                    roatpSummaryWorksheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(roatpData), true);
-                }
-                else
-                {
-                    _logger.LogError("Unable to retrieve summary data from RoATP API");
-                }
-
-                var fatSpreadsheetFilename = string.Format(FatFileName, DateTime.Now.ToString("dd.MM.yyyy"));
-
-                return File(package.GetAsByteArray(), "application/excel", fatSpreadsheetFilename);
-            }
-        }
     }
 }
