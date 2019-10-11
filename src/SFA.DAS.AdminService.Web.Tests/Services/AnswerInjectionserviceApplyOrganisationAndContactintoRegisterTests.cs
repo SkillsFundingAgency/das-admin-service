@@ -255,8 +255,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                     ContactName = contactName,
                     FamilyName = "",
                     GivenNames = "",
-                    SigninType = "",
-                    SigninId = Guid.NewGuid(),
                     ContactPhoneNumber = "11111111",
                     FinancialDueDate = DateTime.MaxValue,
                     IsFinancialExempt = false

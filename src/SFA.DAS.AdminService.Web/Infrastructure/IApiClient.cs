@@ -75,8 +75,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         //Apply
         Task ImportWorkflow(IFormFile file);
-        Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
-        Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
@@ -84,8 +82,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<Contact> GetContact(Guid contactId);
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
-        Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-            bool roEpaoApprovedFlag);
+        Task SetOrganisationAsRoEpaoApproved(Guid applicationId, Guid organisationId);
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
@@ -118,5 +115,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public string ApplicationStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
+        public string CreatedBy { get; set; }
+        public int? StandardCode { get; set; }
     }
 }

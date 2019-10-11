@@ -35,8 +35,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }
-        public Guid? SigninId { get; set; }
-        public string SigninType { get; set; }
         public string UserEmail { get; set; }
 
         public List<string> OtherApplyingUserEmails { get; set; }
