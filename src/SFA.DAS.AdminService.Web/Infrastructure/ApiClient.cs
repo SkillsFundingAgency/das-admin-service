@@ -179,6 +179,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
         }
 
+        public async Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        {
+            return await Post<UpdateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-existing", request);
+        }
+
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =

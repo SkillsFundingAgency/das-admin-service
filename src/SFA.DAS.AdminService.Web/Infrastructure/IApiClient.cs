@@ -30,6 +30,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
         Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request);
+        Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request);
         Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request);
         Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request);
         Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request); 

@@ -75,32 +75,12 @@ namespace SFA.DAS.AdminService.Web.Services
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
 
+            var request = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId); // TODO: This will be GetEpaOrganisation
 
-
-            // TODO: The org is already in the database (due to migration), what we need to do is update the relevant bits
-
-            // EndPointAssessorUkprn
-            // EndPointAssessorName (if different)
-            // Status = Live
-            // UpdatedAt
-
-            // Organisation Data
-            // * FhaDetails
-            // * TradingName
-            // * PhoneNumber & Email ?
-            // * Address
-            // * CompanyNumber
-            // * CharitySummary
-            // * RoEPAOApproved = true
-
-            // PrimaryContract
-
-            var organisation = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId); // TODO: This will be GetEpaOrganisation
-
-            // Do we still need to validate here?
+            // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
-            {
-                var validationResponse = await _assessorValidationService.ValidateNewOrganisationRequest(organisation);
+            {    
+                var validationResponse = await _assessorValidationService.ValidateUpdateOrganisationRequest(request);
 
                 if (!validationResponse.IsValid)
                 {
@@ -108,22 +88,28 @@ namespace SFA.DAS.AdminService.Web.Services
                 }
             }
 
-            // Now if everything has checked out, create it <-- not quite... more like update it!
+            // If everything has checked out; approve the application
             if (warningMessages.Count == 0)
             {
-                _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
-                var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation); // TODO: This will be UpdateEpaOrganisation
-                response.OrganisationId = newOrganisationId;
+                _logger.LogInformation($"Approving organisation {request?.Name} onto the register");
+                var organisationId = await _apiClient.UpdateEpaOrganisation(request);
+                response.OrganisationId = organisationId;
 
+
+                // TODO: Migrate this section
                 _logger.LogInformation($"Assigning the primary contact");
-                var primaryContact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenNames, command.ContactFamilyName);
-                await AssignPrimaryContactToOrganisation(primaryContact, newOrganisationId);
+                var primaryContact = MapCommandToContactRequest(command.ContactEmail, organisationId, command.ContactPhoneNumber, command.ContactGivenNames, command.ContactFamilyName);
+                await AssignPrimaryContactToOrganisation(primaryContact, organisationId);
 
                 _logger.LogInformation($"Assign the applying user default permissions");
-                await AssignApplyingContactToOrganisation(command.ApplyingContactEmail, newOrganisationId);
+                await AssignApplyingContactToOrganisation(command.ApplyingContactEmail, organisationId);
 
                 _logger.LogInformation($"Inviting other applying users");
-                await InviteOtherApplyingUsersToOrganisation(command.OtherApplyingUserEmails, newOrganisationId);
+                await InviteOtherApplyingUsersToOrganisation(command.OtherApplyingUserEmails, organisationId);
+
+
+
+
             }
             else
             {
@@ -404,9 +390,10 @@ namespace SFA.DAS.AdminService.Web.Services
             }
         }
 
-        private CreateEpaOrganisationRequest MapCommandToOrganisationRequest(CreateOrganisationContactCommand command, string organisationName, long? ukprnAsLong, int? organisationTypeId)
+        private UpdateEpaOrganisationRequest MapCommandToOrganisationRequest(CreateOrganisationContactCommand command, string organisationName, long? ukprn, int? organisationTypeId)
         {
             organisationName = _cleanser.CleanseStringForSpecialCharacters(organisationName);
+            var organisationId = _cleanser.CleanseStringForSpecialCharacters(command.EndPointAssessorOrganisationId);
             var legalName = _cleanser.CleanseStringForSpecialCharacters(command.OrganisationName);
             var tradingName = _cleanser.CleanseStringForSpecialCharacters(command.TradingName);
             var email = _cleanser.CleanseStringForSpecialCharacters(command.ContactEmail);
@@ -425,25 +412,28 @@ namespace SFA.DAS.AdminService.Web.Services
                 companyNumber = companyNumber.ToUpper();
             }
 
-            return new CreateEpaOrganisationRequest
+            return new UpdateEpaOrganisationRequest
             {
                 Name = organisationName,
+                OrganisationId = organisationId,
                 OrganisationTypeId = organisationTypeId,
-                Ukprn = ukprnAsLong,
-                Address1 = address1,
-                Address2 = address2,
-                Address3 = address3,
-                Address4 = address4,
+                Ukprn = ukprn,
+                Status = null, // API will populate this
                 LegalName = legalName,
                 TradingName = tradingName,
-                Postcode = postcode,
                 Email = email,
                 PhoneNumber = phonenumber,
                 WebsiteLink = website,
+                Address1 = address1,
+                Address2 = address2,
+                Address3 = address3,
+                Address4 = address4,   
+                Postcode = postcode,
                 CompanyNumber = companyNumber,
                 CharityNumber = charityNumber,
                 FinancialDueDate = command.FinancialDueDate,
-                FinancialExempt = command.IsFinancialExempt
+                FinancialExempt = command.IsFinancialExempt,
+                ActionChoice = "ApproveApplication" // This will set: RoEPAOApproved = true
             };
         }
 
