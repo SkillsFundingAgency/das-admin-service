@@ -45,18 +45,11 @@ namespace SFA.DAS.AdminService.Web.Services
         public async Task<CreateOrganisationAndContactFromApplyResponse>
             InjectApplyOrganisationAndContactDetailsIntoRegister(CreateOrganisationContactCommand command)
         {
-            var response = new CreateOrganisationAndContactFromApplyResponse { IsEpaoApproved = false, ApplySourceIsEpao = false, WarningMessages = new List<string>() };
+            var response = new CreateOrganisationAndContactFromApplyResponse { IsEpaoApproved = false, WarningMessages = new List<string>() };
 
-            if ("RoEPAO".Equals(command.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase))
+            if (command.IsRoEpaoApproved is true)
             {
-                await UpdateFinancialDetails(command);
-                _logger.LogInformation("Source reference type is EPAO. No need to inject organisation details into register");
-                response.ApplySourceIsEpao = true;
-                return response;
-            }
-            else if (command.IsEpaoApproved is true)
-            {
-                await UpdateFinancialDetails(command);
+                await UpdateFinancialDetails(command); //ok
                 _logger.LogInformation("Source is RoEPAO approved. No need to inject organisation details into register");
                 response.IsEpaoApproved = true;
                 return response;
@@ -64,26 +57,47 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var warningMessages = new List<string>();
             var organisationName = DecideOrganisationName(command.UseTradingName, command.TradingName, command.OrganisationName);
-            var ukprnAsLong = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
+            var ukprn = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
 
             // Organisation checks ////////////////////////////////
+            RaiseWarningIfNoOrganisationId(command.EndPointAssessorOrganisationId, warningMessages);
+            RaiseWarningIfOrganisationIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
             RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
             RaiseWarningIfOrganisationNameTooShort(organisationName, warningMessages);
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
-            RaiseWarningIfUkprnIsInvalid(ukprnAsLong, warningMessages);
+            RaiseWarningIfUkprnIsInvalid(ukprn, warningMessages);
             RaiseWarningIfCompanyNumberIsInvalid(command.CompanyNumber, warningMessages);
             RaiseWarningIfCharityNumberIsInvalid(command.CharityNumber, warningMessages);
 
             // Contact checks //////////////////////////////// 
             RaiseWarningIfEmailIsMissingOrInvalid(command.ContactEmail, warningMessages);
-            //Removed since some ambiguity will exist in users having contact names in some previously started applications
-            //and givename familyname in new applications
-            //RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactName, warningMessages);
+            RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
+            RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
 
-            var organisation = MapCommandToOrganisationRequest(command, organisationName, ukprnAsLong, organisationTypeId);
 
-            // Validate new org request before processing it
+
+            // TODO: The org is already in the database (due to migration), what we need to do is update the relevant bits
+
+            // EndPointAssessorUkprn
+            // EndPointAssessorName (if different)
+            // Status = Live
+            // UpdatedAt
+
+            // Organisation Data
+            // * FhaDetails
+            // * TradingName
+            // * PhoneNumber & Email ?
+            // * Address
+            // * CompanyNumber
+            // * CharitySummary
+            // * RoEPAOApproved = true
+
+            // PrimaryContract
+
+            var organisation = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId); // TODO: This will be GetEpaOrganisation
+
+            // Do we still need to validate here?
             if (warningMessages.Count == 0)
             {
                 var validationResponse = await _assessorValidationService.ValidateNewOrganisationRequest(organisation);
@@ -94,19 +108,19 @@ namespace SFA.DAS.AdminService.Web.Services
                 }
             }
 
-            // Now if everything has checked out, create it
+            // Now if everything has checked out, create it <-- not quite... more like update it!
             if (warningMessages.Count == 0)
             {
                 _logger.LogInformation($"Creating a new epa organisation {organisation?.Name}");
-                var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation);
+                var newOrganisationId = await _apiClient.CreateEpaOrganisation(organisation); // TODO: This will be UpdateEpaOrganisation
                 response.OrganisationId = newOrganisationId;
 
                 _logger.LogInformation($"Assigning the primary contact");
-                var primaryContact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenName, command.ContactFamilyName);
+                var primaryContact = MapCommandToContactRequest(command.ContactEmail, newOrganisationId, command.ContactPhoneNumber, command.ContactGivenNames, command.ContactFamilyName);
                 await AssignPrimaryContactToOrganisation(primaryContact, newOrganisationId);
 
                 _logger.LogInformation($"Assign the applying user default permissions");
-                await AssignApplyingContactToOrganisation(command.UserEmail, newOrganisationId);
+                await AssignApplyingContactToOrganisation(command.ApplyingContactEmail, newOrganisationId);
 
                 _logger.LogInformation($"Inviting other applying users");
                 await InviteOtherApplyingUsersToOrganisation(command.OtherApplyingUserEmails, newOrganisationId);
@@ -293,23 +307,27 @@ namespace SFA.DAS.AdminService.Web.Services
                 : organisationName;
         }
 
-        private static long? GetUkprnFromRequestDetails(string organisationUkprn, string companyUkprn)
+        private static int? GetUkprnFromRequestDetails(int? organisationUkprn, string companyUkprn)
         {
-            long? ukprnAsLong = null;
-            var ukprn = !string.IsNullOrEmpty(organisationUkprn) ? organisationUkprn : companyUkprn;
+            int? ukprnAsInt = null;
 
-            if (long.TryParse(ukprn, out long _))
+            if (organisationUkprn.HasValue)
             {
-                ukprnAsLong = long.Parse(ukprn);
+                ukprnAsInt = organisationUkprn;
             }
-            return ukprnAsLong;
+            else if(int.TryParse(companyUkprn, out var ukprn))
+            {
+                ukprnAsInt = ukprn;
+            }
+            
+            return ukprnAsInt;
         }
 
         private async Task<int?> GetOrganisationTypeIdFromDescriptor(string organisationType)
         {
             var organisationTypes = await _apiClient.GetOrganisationTypes();
-            return organisationTypes.FirstOrDefault(x => string.Equals(x.Type.Replace(" ", ""),
-                organisationType.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))?.Id;
+            return organisationTypes.FirstOrDefault(x => string.Equals(x.Type?.Replace(" ", ""),
+                organisationType?.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))?.Id;
         }
 
         private void RaiseWarningIfNoOrganisationName(string organisationName, ICollection<string> warningMessages)
@@ -330,9 +348,9 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessages.Add(OrganisationAndContactMessages.OrganisationTypeNotIdentified);
         }
 
-        private void RaiseWarningIfUkprnIsInvalid(long? ukprnAsLong, ICollection<string> warningMessages)
+        private void RaiseWarningIfUkprnIsInvalid(int? ukprn, ICollection<string> warningMessages)
         {
-            if (ukprnAsLong.HasValue && !_validationService.UkprnIsValid(ukprnAsLong.Value.ToString()))
+            if (ukprn.HasValue && !_validationService.UkprnIsValid(ukprn.Value.ToString()))
                 warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
         }
 

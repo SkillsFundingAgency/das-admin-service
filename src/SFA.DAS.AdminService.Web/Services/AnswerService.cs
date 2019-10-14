@@ -72,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Services
             (   organisation.Id,
                 organisation.EndPointAssessorName,
                 organisation.OrganisationType.Type,
-                organisation.EndPointAssessorUkprn?.ToString(),
+                organisation.EndPointAssessorUkprn,
                 organisation.EndPointAssessorOrganisationId,
                 organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
@@ -90,9 +90,9 @@ namespace SFA.DAS.AdminService.Web.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                applyingContact.Id.ToString(),
-                applyingContact.FamilyName,
+                applyingContact.Id,
                 applyingContact.GivenNames,
+                applyingContact.FamilyName,
                 applyingContact.Email,
                 organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
                 organisation.OrganisationData?.FHADetails?.FinancialDueDate,
@@ -108,8 +108,10 @@ namespace SFA.DAS.AdminService.Web.Services
             var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
 
             var organisation = await _applyApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+            var organisationContacts = await _applyApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
+            var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
 
-            if (application is null || applicationData is null || organisation is null) return new CreateOrganisationStandardCommand();
+            if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();
 
             var effectiveFrom = DateTime.UtcNow.Date;
             if(DateTime.TryParse(GetAnswer(applicationData, "effective-from"), out var effectiveFromDate))
@@ -120,7 +122,7 @@ namespace SFA.DAS.AdminService.Web.Services
             var deliveryAreas = GetAnswer(applicationData, "delivery-areas");
                 
             var command = new CreateOrganisationStandardCommand
-            (   application.CreatedBy,
+            (   applyingContact.Id.ToString(),
                 organisation.Id.ToString(),
                 application.StandardCode ?? 0,
                 effectiveFrom,

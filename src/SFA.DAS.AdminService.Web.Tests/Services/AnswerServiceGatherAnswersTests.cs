@@ -49,14 +49,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 UseTradingName = commandTestSetup.UseTradingName,
                 TradingName = commandTestSetup.TradingName,
                 OrganisationName = commandTestSetup.OrganisationName,
-                IsEpaoApproved = commandTestSetup.IsEpaoApproved,
+                IsRoEpaoApproved = commandTestSetup.IsEpaoApproved,
                 OrganisationId = commandTestSetup.OrganisationId,
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = commandTestSetup.OrganisationUkprn,
-                OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
+                EndPointAssessorOrganisationId = commandTestSetup.OrganisationReferenceType,
 
-                FamilyName = commandTestSetup.ContactFamilyName,
-                GivenNames = commandTestSetup.ContactGivenNames,
+                ContactFamilyName = commandTestSetup.ContactFamilyName,
+                ContactGivenNames = commandTestSetup.ContactGivenNames,
 
                 ContactAddress1 = commandTestSetup.ContactAddress != null
                     ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine1")
@@ -84,8 +84,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 CompanyNumber = commandTestSetup.CompanyNumber,
                 CharityNumber = commandTestSetup.CharityNumber,
                 StandardWebsite = commandTestSetup.StandardWebsite,
-                UserEmail ="",
-                CreatedBy = contactId.ToString(),
+                ApplyingContactEmail ="",
+                ApplyingContactGivenNames = "",
+                ApplyingContactFamilyName = "",
+                ApplyingContactId = contactId,
                 FinancialDueDate = commandTestSetup.FinancialDueDate,
                 IsFinancialExempt = commandTestSetup.IsFinancialExempt,
                 OtherApplyingUserEmails = new List<string>()
@@ -111,19 +113,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 ["standard-website"] = commandTestSetup.StandardWebsite
             };
 
-            int? organisationUkprn = null;
-
-            if (int.TryParse(commandTestSetup.OrganisationUkprn, out int ukprnOut))
-                organisationUkprn = ukprnOut;
-
             var applicationOrganisation = new Organisation
             {
                 Id = commandTestSetup.OrganisationId,
                 EndPointAssessorName = commandTestSetup.OrganisationName,
                 OrganisationType = new AssessorService.Domain.Entities.OrganisationType { Type = commandTestSetup.OrganisationType },
-                EndPointAssessorUkprn = organisationUkprn,
+                EndPointAssessorUkprn = commandTestSetup.OrganisationUkprn,
                 EndPointAssessorOrganisationId = commandTestSetup.OrganisationReferenceType,
-                //CreatedBy = contactId.ToString(),
                 OrganisationData =new AssessorService.Domain.Entities.OrganisationData
                 {
                     RoEPAOApproved = commandTestSetup.IsEpaoApproved != null && commandTestSetup.IsEpaoApproved.Value,
@@ -159,12 +155,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             get
             {
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider",12343211, "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider", 12343211, "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "yes", "TrainingProvider", 12343211, "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "1", "TrainingProvider", 12343211, "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "false", "TrainingProvider", 12343211, "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "0", "TrainingProvider", 12343211, "RoEPAO", "Joe", "Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 
@@ -173,7 +169,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public Guid OrganisationId { get; set; }
             public string OrganisationName { get; set; }
             public string OrganisationType { get; set; }
-            public string OrganisationUkprn { get; set; }
+            public int? OrganisationUkprn { get; set; }
             public bool? IsEpaoApproved { get; set; }
             public string TradingName { get; set; }
             public bool UseTradingName { get; set; }
@@ -186,7 +182,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public string ContactAddress2 { get; set; }
             public string ContactAddress3 { get; set; }
             public string ContactAddress4 { get; set; }
-
             public string ContactPostcode { get; set; }
             public string ContactEmail { get; set; }
             public string ContactPhoneNumber { get; set; }
@@ -198,7 +193,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public DateTime? FinancialDueDate { get; set; }
             public bool? IsFinancialExempt { get; set; }
 
-            public CommandTest(Guid organisationId, string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
+            public CommandTest(Guid organisationId, string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, int? organisationUkprn 
                , string organisationReferenceType, string contactGivenNames, string contactFamilyName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
                , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
             {
@@ -248,7 +243,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             var expectedCommand = new CreateOrganisationStandardCommand
             { 
-                CreatedBy = commandTestSetup.CreatedBy,
+                CreatedBy = commandTestSetup.CreatedBy.ToString(),
                 OrganisationId = commandTestSetup.OrganisationId.ToString(),
                 StandardCode = commandTestSetup.StandardCode,
                 EffectiveFrom = commandTestSetup.EffectiveFrom,
@@ -271,14 +266,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             {
                 Id = _applicationId,
                 ApplicationId = _applicationId,
-                CreatedBy = commandTestSetup.CreatedBy,
+                CreatedBy = commandTestSetup.CreatedBy.ToString(),
                 OrganisationId = applicationOrganisation.Id,
                 StandardCode = commandTestSetup.StandardCode
             };
 
+            var applicationContact = new Contact { Id = commandTestSetup.CreatedBy, SignInId = Guid.Empty, FamilyName = "", GivenNames = "", Email = "" };
+
             _mockApplyApiClient.Setup(x => x.GetApplicationFromAssessor(application.Id.ToString())).ReturnsAsync(application);
             _mockQnaApiClient.Setup(x => x.GetApplicationData(application.ApplicationId)).ReturnsAsync(applicationData);
             _mockApplyApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
+            _mockApplyApiClient.Setup(x => x.GetOrganisationContacts(application.OrganisationId)).ReturnsAsync(new List<Contact> { applicationContact });
 
             var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId).Result;
 
@@ -288,14 +286,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         public class StandardCommandTest
         {
             public string OrganisationName { get; set; }
-            public string CreatedBy { get; set; }
+            public Guid CreatedBy { get; set; }
             public Guid OrganisationId { get; set; }
             public int StandardCode { get; set; }
             public DateTime EffectiveFrom { get; set; }
             public string DeliveryAreasString { get; set; }
             public List<string> DeliveryAreas => DeliveryAreasString?.Split(",").ToList();
 
-            public StandardCommandTest(string organisationName, string createdBy
+            public StandardCommandTest(string organisationName, Guid createdBy
                , Guid organisationId, int standardCode, DateTime effectiveFrom, string deliveryAreasString)
             {
                 OrganisationName = organisationName;
@@ -311,7 +309,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             get
             {
-                yield return new StandardCommandTest("organisation name", Guid.NewGuid().ToString(), Guid.NewGuid(), 1, DateTime.UtcNow.Date, "East Midlands");
+                yield return new StandardCommandTest("organisation name", Guid.NewGuid(), Guid.NewGuid(), 1, DateTime.UtcNow.Date, "East Midlands");
             }
         }
     }
