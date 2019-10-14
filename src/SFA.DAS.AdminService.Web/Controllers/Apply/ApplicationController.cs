@@ -261,17 +261,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
 
-           var feedback = new QnA.Api.Types.Page.Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
+           var feedback = new QnA.Api.Types.Page.Feedback { Id= Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
 
-            await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
+           var pg =  await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
 
             return RedirectToAction("Section", new { applicationId, sequenceNo, sectionNo });
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/DeleteFeedback")]
-        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, Guid feedbackId)
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
+        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId)
         {
-            await _applyApiClient.DeleteFeedback(applicationId, sequenceNo, sectionNo, pageId, feedbackId);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var section = sections.Single(x => x.SectionNo == sectionNo);
+
+            if (!string.IsNullOrEmpty(feedbackId))
+                await _qnaApiClient.DeleteFeedback(application.ApplicationId, section.Id, pageId, Guid.Parse(feedbackId));
+            else
+                _logger.LogError($"Feedback Id is null or empty - {feedbackId}");
 
             return RedirectToAction("Page", new { applicationId, sequenceNo, sectionNo, pageId });
         }

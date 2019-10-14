@@ -165,6 +165,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<Page> DeleteFeedback(Guid applicationId, Guid sectionId, string pageId, Guid feedbackId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/feedback/{feedbackId}"))
+            {
+                 return await RequestAndDeserialiseAsync<Page>(request);
+            }
+        }
+
         private class SetResultConverter : JsonConverter
         {
             public override bool CanConvert(Type objectType)
