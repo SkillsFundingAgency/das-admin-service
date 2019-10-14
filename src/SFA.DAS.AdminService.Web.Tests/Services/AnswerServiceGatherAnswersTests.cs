@@ -50,6 +50,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 TradingName = commandTestSetup.TradingName,
                 OrganisationName = commandTestSetup.OrganisationName,
                 IsEpaoApproved = commandTestSetup.IsEpaoApproved,
+                OrganisationId = commandTestSetup.OrganisationId,
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = commandTestSetup.OrganisationUkprn,
                 OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
@@ -116,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var applicationOrganisation = new Organisation
             {
-                Id = Guid.NewGuid(),
+                Id = commandTestSetup.OrganisationId,
                 EndPointAssessorName = commandTestSetup.OrganisationName,
                 OrganisationType = new AssessorService.Domain.Entities.OrganisationType { Type = commandTestSetup.OrganisationType },
                 EndPointAssessorUkprn = organisationUkprn,
@@ -157,17 +158,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             get
             {
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest("organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 
         public class CommandTest
         {
+            public Guid OrganisationId { get; set; }
             public string OrganisationName { get; set; }
             public string OrganisationType { get; set; }
             public string OrganisationUkprn { get; set; }
@@ -194,10 +196,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public DateTime? FinancialDueDate { get; set; }
             public bool? IsFinancialExempt { get; set; }
 
-            public CommandTest(string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
+            public CommandTest(Guid organisationId, string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
                , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
                , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
             {
+                OrganisationId = organisationId;
                 OrganisationName = organisationName;
                 OrganisationType = organisationType;
                 OrganisationUkprn = organisationUkprn;

@@ -70,7 +70,8 @@ namespace SFA.DAS.AdminService.Web.Services
             var standardWebsite = GetAnswer(applicationData, "standard-website");
           
             var command = new CreateOrganisationContactCommand
-            (   organisation.EndPointAssessorName,
+            (   organisation.Id,
+                organisation.EndPointAssessorName,
                 organisation.OrganisationType.Type,
                 organisation.EndPointAssessorUkprn?.ToString(),
                 organisation.EndPointAssessorOrganisationId,

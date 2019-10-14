@@ -6,7 +6,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 {
     public class CreateOrganisationContactCommand
     {
-      
+        public Guid OrganisationId { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
         public string OrganisationUkprn { get; set; }
@@ -39,7 +39,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 
         public List<string> OtherApplyingUserEmails { get; set; }
 
-        public CreateOrganisationContactCommand(string organisationName, string organisationType,
+        public CreateOrganisationContactCommand(Guid organisationId, string organisationName, string organisationType,
             string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
             bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
@@ -47,6 +47,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             string standardWebsite, string createdBy, string familyName, string givenNames, string userEmail,
             List<string> otherApplyingUserEmails, DateTime? financialDueDate, bool? isFinancialExempt)
         {
+            OrganisationId = organisationId;
             OrganisationName = organisationName;
             OrganisationType = organisationType;
             OrganisationUkprn = organisationUkprn;
