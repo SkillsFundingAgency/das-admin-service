@@ -14,8 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public bool? IsEpaoApproved { get; set; }
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
-        public string ContactName { get; set; }
-        public string ContactGivenName { get; set; }
+        public string ContactGivenNames { get; set; }
         public string ContactFamilyName { get; set; }
         public string ContactAddress1 { get; set; }
         public string ContactAddress2 { get; set; }
@@ -41,7 +40,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 
         public CreateOrganisationContactCommand(Guid organisationId, string organisationName, string organisationType,
             string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
-            bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
+            bool useTradingName, string contactGivenNames, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
             string standardWebsite, string createdBy, string familyName, string givenNames, string userEmail,
@@ -55,8 +54,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             IsEpaoApproved = isEpaoApproved;
             TradingName = tradingName;
             UseTradingName = useTradingName;
-            ContactName = contactName;
-            ContactGivenName = contactGivenName;
+            ContactGivenNames = contactGivenNames;
             ContactFamilyName = contactFamilyName;
             ContactAddress1 = contactAddress1;
             ContactAddress2 = contactAddress2;

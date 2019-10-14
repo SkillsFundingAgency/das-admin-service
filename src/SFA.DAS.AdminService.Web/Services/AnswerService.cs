@@ -37,8 +37,7 @@ namespace SFA.DAS.AdminService.Web.Services
             var useTradingNameString = GetAnswer(applicationData, "use-trading-name");
             var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
-            var contactName = GetAnswer(applicationData, "contact-name");
-            var contactGivenName = GetAnswer(applicationData, "contact-given-name");
+            var contactGivenNames = GetAnswer(applicationData, "contact-given-name");
             var contactFamilyName = GetAnswer(applicationData, "contact-family-name");
 
             // get a contact address which is a single question with multiple answers
@@ -78,8 +77,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
                 useTradingName,
-                contactName,
-                contactGivenName,
+                contactGivenNames,
                 contactFamilyName,
                 contactAddress1,
                 contactAddress2,
@@ -147,47 +145,6 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 return default(JObject);
             }
-        }
-
-        private async Task<string> GetAnswerFromQnA(Guid applicationId, string questionTag)
-        {
-            // Note: This should not be used as it is very exhaustive. But it does allow you to interrogate the QnA Questions should it not be in the ApplicationData!
-            foreach (var sequence in await _qnaApiClient.GetAllApplicationSequences(applicationId))
-            {
-                foreach (var section in await _qnaApiClient.GetSections(sequence.ApplicationId, sequence.Id))
-                {
-                    foreach (var qna in section.QnAData.Pages)
-                    {
-                        if (qna.Questions.Any(x => x.QuestionTag == questionTag))
-                        {
-                            var questionId = qna.Questions.FirstOrDefault(x => x.QuestionTag == questionTag)?.QuestionId;
-                            if (questionId is null) return null;
-
-                            foreach (var page in qna.PageOfAnswers)
-                            {
-                                var answers = page.Answers.Where(x => x.QuestionId == questionId || x.QuestionId.Contains($"{questionId}.")).ToList();
-                                {
-                                    if (answers.Count == 1)
-                                    {
-                                        return answers.First().Value;
-                                    }
-                                    else if(answers.Count > 1)
-                                    {
-                                        var subAnswers = answers.Where(x => x.QuestionId.Contains($"{questionId}.")).ToList();
-                                        return !subAnswers.Any()
-                                            ? answers.First().Value
-                                            : (subAnswers.Count == 1
-                                                ? subAnswers.First().Value
-                                                : string.Join(",", subAnswers));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

@@ -54,7 +54,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 OrganisationType = commandTestSetup.OrganisationType,
                 OrganisationUkprn = commandTestSetup.OrganisationUkprn,
                 OrganisationReferenceType = commandTestSetup.OrganisationReferenceType,
-                ContactName = commandTestSetup.ContactName,
+
+                FamilyName = commandTestSetup.ContactFamilyName,
+                GivenNames = commandTestSetup.ContactGivenNames,
 
                 ContactAddress1 = commandTestSetup.ContactAddress != null
                     ? commandTestSetup.GetJsonValue(commandTestSetup.ContactAddress, "AddressLine1")
@@ -82,8 +84,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 CompanyNumber = commandTestSetup.CompanyNumber,
                 CharityNumber = commandTestSetup.CharityNumber,
                 StandardWebsite = commandTestSetup.StandardWebsite,
-                FamilyName = "",
-                GivenNames = "",
                 UserEmail ="",
                 CreatedBy = contactId.ToString(),
                 FinancialDueDate = commandTestSetup.FinancialDueDate,
@@ -95,7 +95,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             {
                 ["trading-name"] = commandTestSetup.TradingName,
                 ["use-trading-name"] = commandTestSetup.UseTradingName,
-                ["contact-name"] = commandTestSetup.ContactName,
+                ["contact-given-name"] = commandTestSetup.ContactGivenNames,
+                ["contact-family-name"] = commandTestSetup.ContactFamilyName,
                 ["contact-address"] = commandTestSetup.ContactAddress,
                 ["contact-address1"] = commandTestSetup.ContactAddress1,
                 ["contact-address2"] = commandTestSetup.ContactAddress2,
@@ -158,12 +159,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             get
             {
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
-                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider","12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234","11112222","RC333333","1221121","www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "true", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", null, true);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "yes", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, true, "1", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "false", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", null, "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
+                yield return new CommandTest(Guid.NewGuid(), "organisation name", "trading name 1", true, false, "0", "TrainingProvider", "12343211", "RoEPAO", "Joe", "Contact", "{ 'AddressLine1': 'address 1', 'AddressLine2': 'address 2', 'AddressLine3': 'address 3', 'AddressLine4': 'address 4', 'Postcode': 'CV1' }", "address 1", "address 2", "address 3", "address 4", "CV1", "joe@cool.com", "43211234", "11112222", "RC333333", "1221121", "www.test.com", DateTime.MaxValue, false);
             }
         }
 
@@ -178,7 +179,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public bool UseTradingName { get; set; }
             public string UseTradingNameString { get; set; }
             public string OrganisationReferenceType { get; set; }
-            public string ContactName { get; set; }
+            public string ContactGivenNames { get; set; }
+            public string ContactFamilyName { get; set; }
             public string ContactAddress { get; set; }
             public string ContactAddress1 { get; set; }
             public string ContactAddress2 { get; set; }
@@ -197,7 +199,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public bool? IsFinancialExempt { get; set; }
 
             public CommandTest(Guid organisationId, string organisationName, string tradingName, bool isEpaoApproved, bool useTradingName, string useTradingNameString, string organisationType, string organisationUkprn 
-               , string organisationReferenceType, string contactName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
+               , string organisationReferenceType, string contactGivenNames, string contactFamilyName, string contactAddress, string contactAddress1, string contactAddress2, string contactAddress3, string contactAddress4, string contactPostcode
                , string contactEmail, string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber, string standardWebsite, DateTime? financialDueDate, bool? isFinancialExempt)
             {
                 OrganisationId = organisationId;
@@ -209,7 +211,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 UseTradingName = useTradingName;
                 UseTradingNameString = useTradingNameString;
                 OrganisationReferenceType = organisationReferenceType;
-                ContactName = contactName;
+                ContactGivenNames = contactGivenNames;
+                ContactFamilyName = contactFamilyName;
                 ContactAddress = contactAddress;
                 ContactAddress1 = contactAddress1;
                 ContactAddress2 = contactAddress2;
