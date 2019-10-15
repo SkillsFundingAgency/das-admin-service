@@ -481,11 +481,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
         }
 
-        public async Task SetOrganisationAsRoEpaoApproved(Guid applicationId, Guid organisationId)
-        {
-            await Post($"Review/Applications/{applicationId}/Organisation/{organisationId}/RoEpaoApproved", new { applicationId });
-        }
-
         public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
             await Post($"/Financial/{applicationId}/StartReview", new { reviewer });

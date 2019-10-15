@@ -83,7 +83,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<Contact> GetContact(Guid contactId);
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
-        Task SetOrganisationAsRoEpaoApproved(Guid applicationId, Guid organisationId);
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();

@@ -334,27 +334,21 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
                     var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
-                    //    If RoEPAOApproved = false
+
+                    //    'Inject' the Organisation and associated contacts if not RoEPAO approved
                     if (!organisation.OrganisationData.RoEPAOApproved)
                     {
                         _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
-                        //        Inject Organisation
                         var response = await AddOrganisationAndContactIntoRegister(applicationId);
                         if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);    
-                        if (!warningMessages.Any())
-                        {
-                            // TODO: Ideally this will be within the call for AddOrganisationAndContactIntoRegister(applicationId);
-                            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Updating RoEPAOApproved flag to True.");
-                            await _applyApiClient.SetOrganisationAsRoEpaoApproved(applicationId, Guid.Parse(response.OrganisationId));
-                        }
                     }
 
-                    //    Inject Standard
+                    //    'Inject' the Standard which was applied for by the organisation
                     if (!warningMessages.Any())
                     {
                         _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting standard.");
-                        var response2 = await AddOrganisationStandardIntoRegister(applicationId);
-                        if (response2.WarningMessages != null) warningMessages.AddRange(response2.WarningMessages);
+                        var response = await AddOrganisationStandardIntoRegister(applicationId);
+                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
                 }
             }
