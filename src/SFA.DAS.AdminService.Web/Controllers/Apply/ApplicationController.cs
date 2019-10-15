@@ -359,13 +359,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
                 await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
-                return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages });
             }
-            else
-            {
-                // TODO: Think about showing errors to the user and not returning the application
-                return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages });
-            }
+
+            var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);
+            return View("~/Views/Apply/Applications/Returned.cshtml", returnedViewModel);
         }
 
         private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
@@ -380,13 +377,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
             var command = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId);
             return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
-        }
-
-        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Returned")]
-        public IActionResult Returned(Guid applicationId, int sequenceNo, List<string> warningMessages)
-        {
-            var viewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);
-            return View("~/Views/Apply/Applications/Returned.cshtml", viewModel);
         }
 
         [HttpGet("Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
