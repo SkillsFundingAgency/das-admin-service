@@ -346,20 +346,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     //    'Inject' the Standard which was applied for by the organisation
                     if (!warningMessages.Any())
                     {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting standard.");
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Standard.");
                         var response = await AddOrganisationStandardIntoRegister(applicationId);
                         if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
                 }
             }
 
-            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
+            if (!warningMessages.Any())
+            {
+                var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
+                var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            // TODO: Put this back in once we're done with development
-            //await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
-
-            return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages});
+                await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
+                return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages });
+            }
+            else
+            {
+                // TODO: Think about showing errors to the user and not returning the application
+                return RedirectToAction("Returned", new { applicationId, sequenceNo, warningMessages });
+            }
         }
 
         private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
@@ -373,7 +379,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
             var command = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId);
-            return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command); // TODO: migrate Command code
+            return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Returned")]
