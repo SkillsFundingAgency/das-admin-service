@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.AssessorService.Api.Types.Commands
 {
     public class CreateOrganisationContactCommand
     {
-      
+        public Guid OrganisationId { get; set; }
         public string OrganisationName { get; set; }
         public string OrganisationType { get; set; }
-        public string OrganisationUkprn { get; set; }
-        public string OrganisationReferenceType { get; set; }
-        public bool? IsEpaoApproved { get; set; }
+        public int? OrganisationUkprn { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
+        public bool? IsRoEpaoApproved { get; set; }
         public string TradingName { get; set; }
         public bool UseTradingName { get; set; }
-        public string ContactName { get; set; }
-        public string ContactGivenName { get; set; }
+        public string ContactGivenNames { get; set; }
         public string ContactFamilyName { get; set; }
         public string ContactAddress1 { get; set; }
         public string ContactAddress2 { get; set; }
@@ -29,35 +27,34 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
         public string StandardWebsite { get; set; }
-        public string CreatedBy { get; set; }
+        
         public DateTime? FinancialDueDate { get; set; }
         public bool? IsFinancialExempt { get; set; }
 
-        public string FamilyName { get; set; }
-        public string GivenNames { get; set; }
-        public Guid? SigninId { get; set; }
-        public string SigninType { get; set; }
-        public string UserEmail { get; set; }
+        public Guid ApplyingContactId { get; set; }
+        public string ApplyingContactGivenNames { get; set; }
+        public string ApplyingContactFamilyName { get; set; } 
+        public string ApplyingContactEmail { get; set; }
 
         public List<string> OtherApplyingUserEmails { get; set; }
 
-        public CreateOrganisationContactCommand(string organisationName, string organisationType,
-            string organisationUkprn, string organisationReferenceType, bool? isEpaoApproved, string tradingName,
-            bool useTradingName, string contactName,string contactGivenName, string contactFamilyName, string contactAddress1, string contactAddress2,
+        public CreateOrganisationContactCommand(Guid organisationId, string organisationName, string organisationType,
+            int? organisationUkprn, string endPointAssessorOrganisationId, bool? isRoEpaoApproved, string tradingName,
+            bool useTradingName, string contactGivenNames, string contactFamilyName, string contactAddress1, string contactAddress2,
             string contactAddress3, string contactAddress4, string contactPostcode, string contactEmail,
             string contactPhoneNumber, string companyUkprn, string companyNumber, string charityNumber,
-            string standardWebsite, string createdBy, string familyName, string givenNames, string userEmail,
+            string standardWebsite, Guid applyingContactId, string applyingContactGivenNames, string applyingContactFamilyName, string applyingContactEmail,
             List<string> otherApplyingUserEmails, DateTime? financialDueDate, bool? isFinancialExempt)
         {
+            OrganisationId = organisationId;
             OrganisationName = organisationName;
             OrganisationType = organisationType;
             OrganisationUkprn = organisationUkprn;
-            OrganisationReferenceType = organisationReferenceType;
-            IsEpaoApproved = isEpaoApproved;
+            EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
+            IsRoEpaoApproved = isRoEpaoApproved;
             TradingName = tradingName;
             UseTradingName = useTradingName;
-            ContactName = contactName;
-            ContactGivenName = contactGivenName;
+            ContactGivenNames = contactGivenNames;
             ContactFamilyName = contactFamilyName;
             ContactAddress1 = contactAddress1;
             ContactAddress2 = contactAddress2;
@@ -70,13 +67,13 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             CompanyNumber = companyNumber;
             CharityNumber = charityNumber;
             StandardWebsite = standardWebsite;
-            CreatedBy = createdBy;
+            ApplyingContactId = applyingContactId;
+            ApplyingContactFamilyName = applyingContactFamilyName;
+            ApplyingContactGivenNames = applyingContactGivenNames;
+            ApplyingContactEmail = applyingContactEmail;
+            OtherApplyingUserEmails = otherApplyingUserEmails;
             FinancialDueDate = financialDueDate;
             IsFinancialExempt = isFinancialExempt;
-            FamilyName = familyName;
-            GivenNames = givenNames;
-            UserEmail = userEmail;
-            OtherApplyingUserEmails = otherApplyingUserEmails;
         }
 
         public CreateOrganisationContactCommand()

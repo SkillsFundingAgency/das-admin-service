@@ -179,6 +179,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
         }
 
+        public async Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        {
+            return await Post<UpdateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-existing", request);
+        }
+
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =
@@ -416,7 +421,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId)
         {
-            return await Get<AssessorService.ApplyTypes.Application>($"/Application/{applicationId}");
+            return await Get<AssessorService.ApplyTypes.Application>($"/api/v1/applications/{applicationId}/application");
         }
 
         public async Task<ApplicationResponse> GetApplicationFromAssessor(string Id)
@@ -491,29 +496,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
         }
 
-        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
-        {
-            return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
-        }
-
-        public async Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag)
-        {
-            return await Get<GetAnswersResponse>($"/JsonAnswer/{questionTag}/{applicationId}");
-        }
-
         public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
         {
-            return await Get<List<Contact>>($"/Account/Organisation/{organisationId}/Contacts");
+            return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
         }
 
         public async Task<Contact> GetContact(Guid contactId)
         {
             return await Get<Contact>($"/Account/Contact/{contactId}");
-        }
-
-        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
-        {
-            await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }
         #endregion
 

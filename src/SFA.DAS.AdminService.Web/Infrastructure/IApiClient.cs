@@ -30,6 +30,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
         Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request);
+        Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request);
         Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request);
         Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request);
         Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request); 
@@ -75,8 +76,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         //Apply
         Task ImportWorkflow(IFormFile file);
-        Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag);
-        Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag);
         Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
@@ -84,8 +83,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
         Task<Contact> GetContact(Guid contactId);
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
-        Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId,
-            bool roEpaoApprovedFlag);
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
@@ -118,5 +115,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public string ApplicationStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
+        public string CreatedBy { get; set; }
+        public int? StandardCode { get; set; }
     }
 }

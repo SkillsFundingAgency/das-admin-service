@@ -15,7 +15,7 @@ using Page = SFA.DAS.QnA.Api.Types.Page.Page;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
-    public class QnaApiClient : ApiClientBase,IQnaApiClient
+    public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
 
@@ -33,11 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ApplicationData> GetApplicationData(Guid applicationId)
+        public async Task<Dictionary<string, object>> GetApplicationData(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsync<ApplicationData>(request,
+                return await RequestAndDeserialiseAsync<Dictionary<string, object>>(request,
                     $"Could not find the application");
             }
         }
