@@ -234,17 +234,24 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var standard = await MapCommandToOrganisationStandardRequest(command);
 
-            // Validate new org standard request before processing it
+            // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
             {
                 var validationResponse = await _assessorValidationService.ValidateNewOrganisationStandardRequest(standard);
 
                 if (!validationResponse.IsValid)
                 {
-                    warningMessages.AddRange(validationResponse.Errors.Select(err => err.ErrorMessage));
+                    var validationResponseErrors = validationResponse.Errors.Select(err => err.ErrorMessage);
+                    warningMessages.AddRange(validationResponseErrors);
+                    _logger.LogInformation($"Inject standard failed on Validation Service. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", validationResponseErrors)}");
                 }
             }
+            else
+            {
+                _logger.LogInformation($"Inject standard failed at pre-check. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", warningMessages)}");
+            }
 
+            // If everything has checked out; approve the standard
             if (warningMessages.Count == 0)
             {
                 _logger.LogInformation("Injecting new standard into register");
@@ -252,7 +259,7 @@ namespace SFA.DAS.AdminService.Web.Services
             }
             else
             {
-                _logger.LogWarning("Source has invalid data. Cannot inject standard details into register at this time");
+                _logger.LogWarning($"Cannot inject standard details into register at this time. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(", ", warningMessages)}");
             }
 
             response.WarningMessages = warningMessages;
