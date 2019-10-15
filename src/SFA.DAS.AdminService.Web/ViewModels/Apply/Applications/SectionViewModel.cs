@@ -9,15 +9,6 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class AddressVm
-    {
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string AddressLine3 { get; set; }
-        public string AddressLine4 { get; set; }
-        public string Postcode { get; set; }
-
-    }
     public class SectionViewModel
     {
         public string ApplicationReference { get; set; }
@@ -39,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public int SectionNo { get; }
 
         public bool? IsSectionComplete { get; set; }
-        public Dictionary<string, AddressVm> Addresses = new Dictionary<string, AddressVm>();
+        public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
         public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection)
         {
             ApplicationId = application.Id;
@@ -73,7 +64,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                         var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
                         if (question != null && question.Input.Type == "Address")
                         {
-                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressVm>(answer.Value));
+                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value));
                         }
                     }
                 }

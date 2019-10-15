@@ -60,6 +60,16 @@
                                                 </a>
                                             </td>
                                         }
+                                        else if (question != null && question.Input.Type == "Address")
+                                        {
+                                            var address = Model.Addresses[question.QuestionId];
+                                            if (address != null)
+                                            {
+                                                <td class="govuk-table__cell">
+                                                     @address.CommaSeperatedAddress()
+                                                </td>
+                                            }
+                                        }
                                         else
                                         {
                                             <td class="govuk-table__cell">@answer.Value</td>

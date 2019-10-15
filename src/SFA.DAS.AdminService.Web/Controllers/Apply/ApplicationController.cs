@@ -220,7 +220,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 page = null;
             }
 
-            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, page);
+            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId,section, page);
 
             if (applySequence?.Status == ApplicationSequenceStatus.Submitted)
             {
@@ -257,7 +257,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 }
 
                 var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
-                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, page);
+                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page);
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
 

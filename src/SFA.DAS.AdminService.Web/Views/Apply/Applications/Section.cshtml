@@ -178,57 +178,55 @@
                                             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
                                         }
 
-                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                            {
-                                                <details class="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            View question details
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        @Html.Raw(question.QuestionBodyText)
-                                                    </div>
-                                                </details>
-                                            }
-                                            else if (question != null && question.Input.Type == "FileUpload")
+                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                        {
+                                            <details class="govuk-details">
+                                                <summary class="govuk-details__summary">
+                                                    <span class="govuk-details__summary-text">
+                                                        View question details
+                                                    </span>
+                                                </summary>
+                                                <div class="govuk-details__text">
+                                                    @Html.Raw(question.QuestionBodyText)
+                                                </div>
+                                            </details>
+                                        }
+                                        else if (question != null && question.Input.Type == "FileUpload")
+                                        {
+                                            <p class="govuk-body">
+                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                                    new
+                                                    {
+                                                        Id = Model.ApplicationId,
+                                                        sequenceNo = Model.SequenceNo,
+                                                        sectionNo = Model.SectionNo,
+                                                        pageId = pg.PageId,
+                                                        questionId = answer.QuestionId,
+                                                        filename = answer.Value
+                                                    })">
+                                                    @answer.Value
+                                                </a>
+                                            </p>
+                                        }
+                                        else if (question != null && question.Input.Type == "Address")
+                                        {
+                                            var address = Model.Addresses[question.QuestionId];
+                                            if (address != null)
                                             {
                                                 <p class="govuk-body">
-                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
-                                                        new
-                                                        {
-                                                            Id = Model.ApplicationId,
-                                                            sequenceNo = Model.SequenceNo,
-                                                            sectionNo = Model.SectionNo,
-                                                            pageId = pg.PageId,
-                                                            questionId = answer.QuestionId,
-                                                            filename = answer.Value
-                                                        })">
-                                                        @answer.Value
-                                                    </a>
+                                                    @address.CommaSeperatedAddress()
                                                 </p>
                                             }
-                                            else if (question != null && question.Input.Type == "Address")
+                                        }
+                                        else
+                                        {
+                                            if (@answer.Value != ",,")
                                             {
-                                                var address = Model.Addresses[question.QuestionId];
-                                                if (address != null)
-                                                {
-                                                    <div class="info-highlighted js-address-panel">
-                                                        <ul class="govuk-list">
-                                                            <li>@address.AddressLine2</li>
-                                                            <li>@address.AddressLine3</li>
-                                                            <li>@address.AddressLine4</li>
-                                                            <li>@address.Postcode</li>
-                                                        </ul>
-                                                    </div>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <p class="govuk-body">@answer.Value</p>
+                                                 <p class="govuk-body">@answer.Value</p>
                                             }
                                         }
                                     }
+                                }
                                 </dd>
 
                                 <dd class="govuk-summary-list__actions">
