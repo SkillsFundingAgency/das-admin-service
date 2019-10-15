@@ -366,7 +366,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
             var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-            return await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command); // TODO: migrate Command code
+            return await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
         }
 
         private async Task<CreateOrganisationStandardFromApplyResponse> AddOrganisationStandardIntoRegister(Guid applicationId)

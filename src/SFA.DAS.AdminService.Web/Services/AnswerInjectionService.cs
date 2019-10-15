@@ -15,12 +15,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
-    /// <summary>
-    /// TODO: This class is directly using the database via a repository layer which is against the design of the application which is supposed to be using 
-    /// the internal API (in this case it should be using the Assessor internal API as the Admin service has been extracted); currently the repository layer has
-    /// been duplicated between two different source repositories (changed namespace) and is accessing a database 'owned' by a different source repository.
-    /// see Tech Debt 2128
-    /// </summary>
     public class AnswerInjectionService : IAnswerInjectionService
     {
         private readonly IApiClient _apiClient;
@@ -49,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
             if (command.IsRoEpaoApproved is true)
             {
-                await UpdateFinancialDetails(command); //ok
+                await UpdateFinancialDetails(command);
                 _logger.LogInformation("Source is RoEPAO approved. No need to inject organisation details into register");
                 response.IsEpaoApproved = true;
                 return response;
@@ -75,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Services
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
             RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
 
-            var request = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId); // TODO: This will be GetEpaOrganisation
+            var request = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId);
 
             // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
@@ -84,8 +78,14 @@ namespace SFA.DAS.AdminService.Web.Services
 
                 if (!validationResponse.IsValid)
                 {
-                    warningMessages.AddRange(validationResponse.Errors.Select(err => err.ErrorMessage));
+                    var validationResponseErrors = validationResponse.Errors.Select(err => err.ErrorMessage);
+                    warningMessages.AddRange(validationResponseErrors);
+                    _logger.LogInformation($"Inject organisation failed on Validation Service. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", validationResponseErrors)}");
                 }
+            }
+            else
+            {
+                _logger.LogInformation($"Inject organisation failed at pre-check. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", warningMessages)}");
             }
 
             // If everything has checked out; approve the application
@@ -95,8 +95,6 @@ namespace SFA.DAS.AdminService.Web.Services
                 var organisationId = await _apiClient.UpdateEpaOrganisation(request);
                 response.OrganisationId = organisationId;
 
-
-                // TODO: Migrate this section
                 _logger.LogInformation($"Assigning the primary contact");
                 var primaryContact = MapCommandToContactRequest(command.ContactEmail, organisationId, command.ContactPhoneNumber, command.ContactGivenNames, command.ContactFamilyName);
                 await AssignPrimaryContactToOrganisation(primaryContact, organisationId);
@@ -106,14 +104,10 @@ namespace SFA.DAS.AdminService.Web.Services
 
                 _logger.LogInformation($"Inviting other applying users");
                 await InviteOtherApplyingUsersToOrganisation(command.OtherApplyingUserEmails, organisationId);
-
-
-
-
             }
             else
             {
-                _logger.LogWarning($"Source has invalid data. Cannot inject organisation details into register at this time. Warnings:  {string.Join(",", warningMessages)}");
+                _logger.LogWarning($"Cannot inject organisation details into register at this time. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", warningMessages)}");
             }
 
             response.WarningMessages = warningMessages;
@@ -325,7 +319,7 @@ namespace SFA.DAS.AdminService.Web.Services
         private void RaiseWarningIfOrganisationNameTooShort(string organisationName, ICollection<string> warningMessages)
         {
             if (!_validationService.IsMinimumLengthOrMore(organisationName, 2))
-                warningMessages.Add(OrganisationAndContactMessages.OrganisationNameTooShort);
+                warningMessages.Add($"{OrganisationAndContactMessages.OrganisationNameTooShort} : '{organisationName}'");
         }
 
         private static void RaiseWarningOrganisationTypeNotIdentified(int? organisationTypeId, ICollection<string> warningMessages)
@@ -337,19 +331,19 @@ namespace SFA.DAS.AdminService.Web.Services
         private void RaiseWarningIfUkprnIsInvalid(int? ukprn, ICollection<string> warningMessages)
         {
             if (ukprn.HasValue && !_validationService.UkprnIsValid(ukprn.Value.ToString()))
-                warningMessages.Add(OrganisationAndContactMessages.UkprnIsInvalidFormat);
+                warningMessages.Add($"{OrganisationAndContactMessages.UkprnIsInvalidFormat} : '{ukprn}'");
         }
 
         private void RaiseWarningIfCompanyNumberIsInvalid(string companyNumber, ICollection<string> warningMessages)
         {
             if (!string.IsNullOrEmpty(companyNumber) && !_validationService.CompanyNumberIsValid(companyNumber))
-                warningMessages.Add(OrganisationAndContactMessages.CompanyNumberNotValid);
+                warningMessages.Add($"{OrganisationAndContactMessages.CompanyNumberNotValid} : '{companyNumber}'");
         }
 
         private void RaiseWarningIfCharityNumberIsInvalid(string charityNumber, ICollection<string> warningMessages)
         {
             if (!string.IsNullOrEmpty(charityNumber) && !_validationService.CharityNumberIsValid(charityNumber))
-                warningMessages.Add(OrganisationAndContactMessages.CharityNumberNotValid);
+                warningMessages.Add($"{OrganisationAndContactMessages.CharityNumberNotValid} : '{charityNumber}'");
         }
 
         private void RaiseWarningIfEmailIsMissingOrInvalid(string email, ICollection<string> warningMessagesContact)
@@ -358,7 +352,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsMissing);
 
             if (!_validationService.CheckEmailIsValid(email))
-                warningMessagesContact.Add(OrganisationAndContactMessages.EmailIsInvalid);
+                warningMessagesContact.Add($"{OrganisationAndContactMessages.EmailIsInvalid} : '{email}'");
         }
 
         private void RaiseWarningIfContactNameIsMissingOrTooShort(string contactName, List<string> warningMessagesContact)
@@ -367,7 +361,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsMissing);
 
             if (!_validationService.IsMinimumLengthOrMore(contactName, 2))
-                warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsTooShort);
+                warningMessagesContact.Add($"{OrganisationAndContactMessages.ContactNameIsTooShort} : '{contactName}'");
         }
 
         private void RaiseWarningIfNoOrganisationId(string organisationId, List<string> warningMessages)
@@ -379,14 +373,14 @@ namespace SFA.DAS.AdminService.Web.Services
         private void RaiseWarningIfOrganisationIdIsInvalid(string organisationId, List<string> warningMessages)
         {
             if (!_validationService.OrganisationIdIsValid(organisationId))
-                warningMessages.Add(OrganisationAndContactMessages.OrganisationIdNotValid);
+                warningMessages.Add($"{OrganisationAndContactMessages.OrganisationIdNotValid} : '{organisationId}'");
         }
 
         private void RaiseWarningIfStandardCodeIsInvalid(int standardCode, List<string> warningMessagesStandard)
         {
             if (standardCode < 1)
             {
-                warningMessagesStandard.Add(OrganisationAndContactMessages.StandardInvalid);
+                warningMessagesStandard.Add($"{OrganisationAndContactMessages.StandardInvalid} : '{standardCode}'");
             }
         }
 
@@ -443,7 +437,6 @@ namespace SFA.DAS.AdminService.Web.Services
             contactPhoneNumber = _cleanser.CleanseStringForSpecialCharacters(contactPhoneNumber);
             givenNames = _cleanser.CleanseStringForSpecialCharacters(givenNames);
             familyName = _cleanser.CleanseStringForSpecialCharacters(familyName);
-            // NOTE: This used to have 'contactName' as the explicit DisplayName. I've removed it as everywhere else it concatenates givenNames & familyName
 
             return new CreateEpaOrganisationContactRequest
             {
