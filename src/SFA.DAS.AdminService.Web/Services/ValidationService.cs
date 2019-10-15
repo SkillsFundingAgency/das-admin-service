@@ -67,11 +67,11 @@ namespace SFA.DAS.AdminService.Web.Services
             return !string.IsNullOrEmpty(stringToCheck?.Trim());
         }
 
-        public bool OrganisationIdIsValid(string organisationIdToCheck)
+        public bool EndPointAssessorOrganisationIdIsValid(string endPointAssessorOrganisationIdToCheck)
         {
-            if (string.IsNullOrEmpty(organisationIdToCheck?.Trim())) return true;
+            if (string.IsNullOrEmpty(endPointAssessorOrganisationIdToCheck?.Trim())) return true;
             var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
-            return regex.Match(organisationIdToCheck).Success;
+            return regex.Match(endPointAssessorOrganisationIdToCheck).Success;
         }
 
         public bool UkprnIsValid(string ukprnToCheck)

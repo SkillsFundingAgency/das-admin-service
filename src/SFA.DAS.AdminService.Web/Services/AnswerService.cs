@@ -122,11 +122,13 @@ namespace SFA.DAS.AdminService.Web.Services
             var deliveryAreas = GetAnswer(applicationData, "delivery-areas");
                 
             var command = new CreateOrganisationStandardCommand
-            (   applyingContact.Id.ToString(),
-                organisation.Id.ToString(),
+            (   
+                organisation.Id,
+                organisation.EndPointAssessorOrganisationId,
                 application.StandardCode ?? 0,
                 effectiveFrom,
-                deliveryAreas?.Split(',').ToList());
+                deliveryAreas?.Split(',').ToList(),
+                applyingContact.Id);
 
             return command;
         }

@@ -243,11 +243,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             var expectedCommand = new CreateOrganisationStandardCommand
             { 
-                CreatedBy = commandTestSetup.CreatedBy.ToString(),
-                OrganisationId = commandTestSetup.OrganisationId.ToString(),
+                OrganisationId = commandTestSetup.OrganisationId,
+                EndPointAssessorOrganisationId = commandTestSetup.OrganisationName,
                 StandardCode = commandTestSetup.StandardCode,
                 EffectiveFrom = commandTestSetup.EffectiveFrom,
-                DeliveryAreas = commandTestSetup.DeliveryAreas
+                DeliveryAreas = commandTestSetup.DeliveryAreas,
+                ApplyingContactId = commandTestSetup.CreatedBy,
             };
 
             var applicationData = new Dictionary<string, object>
@@ -259,7 +260,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             var applicationOrganisation = new Organisation
             {
                 Id = commandTestSetup.OrganisationId,
-                EndPointAssessorName = commandTestSetup.OrganisationName
+                EndPointAssessorName = commandTestSetup.OrganisationName,
+                EndPointAssessorOrganisationId = commandTestSetup.OrganisationName
             };
 
             var application = new ApplicationResponse

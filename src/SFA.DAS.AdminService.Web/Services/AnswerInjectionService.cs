@@ -55,8 +55,8 @@ namespace SFA.DAS.AdminService.Web.Services
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
 
             // Organisation checks ////////////////////////////////
-            RaiseWarningIfNoOrganisationId(command.EndPointAssessorOrganisationId, warningMessages);
-            RaiseWarningIfOrganisationIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
+            RaiseWarningIfNoEpaoId(command.EndPointAssessorOrganisationId, warningMessages);
+            RaiseWarningIfEpaoIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
             RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
             RaiseWarningIfOrganisationNameTooShort(organisationName, warningMessages);
             RaiseWarningOrganisationTypeNotIdentified(organisationTypeId, warningMessages);
@@ -226,8 +226,8 @@ namespace SFA.DAS.AdminService.Web.Services
             var warningMessages = new List<string>();
 
             // Organisation checks ////////////////////////////////
-            RaiseWarningIfNoOrganisationId(command.OrganisationId, warningMessages);
-            RaiseWarningIfOrganisationIdIsInvalid(command.OrganisationId, warningMessages);
+            RaiseWarningIfNoEpaoId(command.EndPointAssessorOrganisationId, warningMessages);
+            RaiseWarningIfEpaoIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
 
             // Standard checks ///////////////////////////////////
             RaiseWarningIfStandardCodeIsInvalid(command.StandardCode, warningMessages);
@@ -371,16 +371,16 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessagesContact.Add($"{OrganisationAndContactMessages.ContactNameIsTooShort} : '{contactName}'");
         }
 
-        private void RaiseWarningIfNoOrganisationId(string organisationId, List<string> warningMessages)
+        private void RaiseWarningIfNoEpaoId(string endPointAssessorOrganisationId, List<string> warningMessages)
         {
-            if (!_validationService.IsNotEmpty(organisationId))
+            if (!_validationService.IsNotEmpty(endPointAssessorOrganisationId))
                 warningMessages.Add(OrganisationAndContactMessages.NoOrganisationId);
         }
 
-        private void RaiseWarningIfOrganisationIdIsInvalid(string organisationId, List<string> warningMessages)
+        private void RaiseWarningIfEpaoIdIsInvalid(string endPointAssessorOrganisationId, List<string> warningMessages)
         {
-            if (!_validationService.OrganisationIdIsValid(organisationId))
-                warningMessages.Add($"{OrganisationAndContactMessages.OrganisationIdNotValid} : '{organisationId}'");
+            if (!_validationService.EndPointAssessorOrganisationIdIsValid(endPointAssessorOrganisationId))
+                warningMessages.Add($"{OrganisationAndContactMessages.OrganisationIdNotValid} : '{endPointAssessorOrganisationId}'");
         }
 
         private void RaiseWarningIfStandardCodeIsInvalid(int standardCode, List<string> warningMessagesStandard)
@@ -457,12 +457,14 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private async Task<CreateEpaOrganisationStandardRequest> MapCommandToOrganisationStandardRequest(CreateOrganisationStandardCommand command)
         {
+            var organisationId = _cleanser.CleanseStringForSpecialCharacters(command.EndPointAssessorOrganisationId);
+
             return new CreateEpaOrganisationStandardRequest
             {
-                OrganisationId = command.OrganisationId,
+                OrganisationId = organisationId,
                 StandardCode = command.StandardCode,
                 EffectiveFrom = command.EffectiveFrom,
-                ContactId = command.CreatedBy,
+                ContactId = command.ApplyingContactId.ToString(),
                 DeliveryAreas = await MapCommandToDeliveryAreas(command),
                 DeliveryAreasComments = string.Empty
             };
