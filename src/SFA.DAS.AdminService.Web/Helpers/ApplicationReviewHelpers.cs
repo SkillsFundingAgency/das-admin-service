@@ -28,6 +28,8 @@ namespace SFA.DAS.AdminService.Web.Helpers
                     return "Not started";
                 case FinancialReviewStatus.InProgress:
                     return "In Progress";
+                case FinancialApplicationSelectedGrade.Exempt:
+                    return "Exempt";
                 case FinancialReviewStatus.Graded:
                 case FinancialReviewStatus.Approved:
                     switch(grade)
