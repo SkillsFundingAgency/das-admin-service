@@ -28,5 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
         Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId);
         Task<Page> UpdateFeedback(Guid applicationId, Guid sectionId, string pageId, QnA.Api.Types.Page.Feedback feedback);
+        Task<Page> DeleteFeedback(Guid applicationId, Guid sectionId, string pageId, Guid feedbackId);
     }
 }

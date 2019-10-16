@@ -204,18 +204,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var page = await _applyApiClient.GetPage(applicationId, sequenceNo, sectionNo, pageId);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
+            var section = sections.Single(x => x.SectionNo == sectionNo);
+            var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
 
-            if (page?.Active == false || page?.NotRequired == true)
+            if (page?.Active == false)
             {
                 // DO NOT show any information
                 page = null;
             }
 
-            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, page);
+            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId,section, page);
 
-            var sequence = await _applyApiClient.GetSequence(applicationId, sequenceNo);
-            if (sequence?.Status == ApplicationSequenceStatus.Submitted)
+            if (applySequence?.Status == ApplicationSequenceStatus.Submitted)
             {
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
@@ -228,6 +233,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Feedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackMessage)
         {
+
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var section = sections.Single(x => x.SectionNo == sectionNo);
+
             var errorMessages = new Dictionary<string, string>();
 
             if (string.IsNullOrWhiteSpace(feedbackMessage))
@@ -242,22 +254,31 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     ModelState.AddModelError(error.Key, error.Value);
                 }
 
-                var page = await _applyApiClient.GetPage(applicationId, sequenceNo, sectionNo, pageId);
-                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, page);
+                var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
+                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page);
                 return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
             }
 
-            Feedback feedback = new Feedback { Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
+           var feedback = new QnA.Api.Types.Page.Feedback { Id= Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
 
-            await _applyApiClient.AddFeedback(applicationId, sequenceNo, sectionNo, pageId, feedback);
+           var pg =  await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
 
             return RedirectToAction("Section", new { applicationId, sequenceNo, sectionNo });
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/DeleteFeedback")]
-        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, Guid feedbackId)
+        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
+        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId)
         {
-            await _applyApiClient.DeleteFeedback(applicationId, sequenceNo, sectionNo, pageId, feedbackId);
+            var application = await _apiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
+            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var section = sections.Single(x => x.SectionNo == sectionNo);
+
+            if (!string.IsNullOrEmpty(feedbackId))
+                await _qnaApiClient.DeleteFeedback(application.ApplicationId, section.Id, pageId, Guid.Parse(feedbackId));
+            else
+                _logger.LogError($"Feedback Id is null or empty - {feedbackId}");
 
             return RedirectToAction("Page", new { applicationId, sequenceNo, sectionNo, pageId });
         }

@@ -199,14 +199,9 @@
                                                         var address = Model.Addresses[question.QuestionId];
                                                         if (address != null)
                                                         {
-                                                            <div class="info-highlighted js-address-panel">
-                                                                <ul class="govuk-list">
-                                                                    <li>@address.AddressLine2</li>
-                                                                    <li>@address.AddressLine3</li>
-                                                                    <li>@address.AddressLine4</li>
-                                                                    <li>@address.Postcode</li>
-                                                                </ul>
-                                                            </div>
+                                                            <p class="govuk-body">
+                                                                @address.CommaSeperatedAddress()
+                                                            </p>
                                                         }
                                                     }
                                                     else
