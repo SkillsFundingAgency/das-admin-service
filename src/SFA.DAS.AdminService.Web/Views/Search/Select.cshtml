@@ -68,16 +68,24 @@ else
                         @Model.Learner.FundingModel
                     </dd>
                 </div>
-                @if(Model.Learner.IsPrivatelyFunded.GetValueOrDefault())
-                {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Funding type
+                        Completion status
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        Private
+                        @Model.Learner.CompletionStatusDescription
                     </dd>
                 </div>
+                @if (Model.Learner.IsPrivatelyFunded.GetValueOrDefault())
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Funding type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Private
+                        </dd>
+                    </div>
                 }
             </dl>
         </div>

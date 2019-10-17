@@ -8,6 +8,8 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 {
     [HtmlTargetElement("div", Attributes = RoleTagHelperAttributeName)]
     [HtmlTargetElement("a", Attributes = RoleTagHelperAttributeName)]
+    [HtmlTargetElement("th", Attributes = RoleTagHelperAttributeName)]
+    [HtmlTargetElement("td", Attributes = RoleTagHelperAttributeName)]
     public class RoleTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor _contextAccessor;
