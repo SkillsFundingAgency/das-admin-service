@@ -20,9 +20,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AdminService.Web.Services;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.QnA.Api.Types.Page;
 using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
-using Newtonsoft.Json.Linq;
+using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -178,6 +177,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
         {
             return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
+        }
+
+        public async Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        {
+            return await Post<UpdateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-existing", request);
         }
 
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
@@ -374,9 +378,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
         #region Apply
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceId={sequenceId}");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");
         }
 
         public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
@@ -417,7 +421,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId)
         {
-            return await Get<AssessorService.ApplyTypes.Application>($"/Application/{applicationId}");
+            return await Get<AssessorService.ApplyTypes.Application>($"/api/v1/applications/{applicationId}/application");
         }
 
         public async Task<ApplicationResponse> GetApplicationFromAssessor(string Id)
@@ -440,10 +444,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<ApplicationSection>($"Application/{applicationId}/User/null/Sequences/{sequenceId}/Sections/{sectionId}");
         }
 
-        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete)
+        public async Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate",
-                new { isSectionComplete });
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate",
+                new { isSectionComplete, evaluatedBy });
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
@@ -467,49 +471,24 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 feedbackId);
         }
 
-        public async Task ReturnApplication(Guid applicationId, int sequenceId, string returnType)
+        public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)
         {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceId}/Return", new { returnType });
+            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview", new { reviewer });
         }
 
-        public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, int pageId, string questionId, Guid userId, int sequenceId, int sectionId, string filename)
+        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            return await _client.GetAsync(new Uri($"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}", UriKind.Relative));
+            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
         }
 
-        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-
-            var downloadResponse = await _client.GetAsync(
-                $"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
-            return downloadResponse;
+            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });
         }
 
-        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            var downloadResponse = await (await _client.GetAsync(
-                $"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}")).Content.ReadAsAsync<FileInfoResponse>();
-            return downloadResponse;
-        }
-
-
-        public async Task UpdateFinancialGrade(Guid id,Guid orgId,AssessorService.ApplyTypes.FinancialGrade vmGrade)
-        {
-            await Post($"/Financial/{id}/Organisation/{orgId}/UpdateGrade", vmGrade);
-        }
-
-        public async Task StartFinancialReview(Guid applicationId)
-        {
-            await Post($"/Financial/{applicationId}/StartReview", new { applicationId });
+            await Post($"/Financial/{applicationId}/Return", grade);
         }
 
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
@@ -517,34 +496,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/Application/{applicationId}/Organisation");
         }
 
-        public async Task StartApplicationReview(Guid applicationId, int sequenceId)
-        {
-            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview", new { sequenceId });
-        }
-
-        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionTag)
-        {
-            return await Get<GetAnswersResponse>($"/Answer/{questionTag}/{applicationId}");
-        }
-
-        public async Task<GetAnswersResponse> GetJsonAnswer(Guid applicationId, string questionTag)
-        {
-            return await Get<GetAnswersResponse>($"/JsonAnswer/{questionTag}/{applicationId}");
-        }
-
         public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
         {
-            return await Get<List<Contact>>($"/Account/Organisation/{organisationId}/Contacts");
+            return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
         }
 
         public async Task<Contact> GetContact(Guid contactId)
         {
             return await Get<Contact>($"/Account/Contact/{contactId}");
-        }
-
-        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId, string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
-        {
-            await Post($"/organisations/{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}", new { roEpaoApprovedFlag });
         }
         #endregion
 

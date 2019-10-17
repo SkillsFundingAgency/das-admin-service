@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
-using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,78 +12,72 @@ namespace SFA.DAS.AdminService.Web.Services
     public class AnswerService : IAnswerService
     {
         private readonly IApiClient _applyApiClient;
-        private readonly IApiClient _assessorApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
 
 
-        public AnswerService(IApiClient applyApiClient, IApiClient assessorApiClient)
+        public AnswerService(IApiClient applyApiClient, IQnaApiClient qnaApiClient)
         {
             _applyApiClient = applyApiClient;
-            _assessorApiClient = assessorApiClient;
+            _qnaApiClient = qnaApiClient;
         }
 
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = application?.ApplyingOrganisation ?? await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
+
+            var organisation = await _applyApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+
             var organisationContacts = await _applyApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
             var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
 
-            if (application is null || organisation is null || applyingContact is null) return new CreateOrganisationContactCommand();
+            if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationContactCommand();
 
-            var tradingName = await GetAnswer(application.Id, "trading-name");
-            var useTradingNameString = await GetAnswer(application.Id, "use-trading-name");
+            var tradingName = GetAnswer(applicationData, "trading-name");
+            var useTradingNameString = GetAnswer(applicationData, "use-trading-name");
             var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
-            var contactName = await GetAnswer(application.Id, "contact-name");
-            var contactGivenName = await GetAnswer(application.Id, "contact-given-name");
-            var contactFamilyName = await GetAnswer(application.Id, "contact-family-name");
+            var contactGivenNames = GetAnswer(applicationData, "contact-given-name");
+            var contactFamilyName = GetAnswer(applicationData, "contact-family-name");
 
             // get a contact address which is a single question with multiple answers
-            JProperty contactAddress = null;
-
-            var contactAddressJsonAnswer = await GetJsonAnswer(application.Id, "contact-address");
-            if (contactAddressJsonAnswer != null)
-            {
-                contactAddress = JObject.Parse(contactAddressJsonAnswer).First is JProperty
-                    ? JObject.Parse(contactAddressJsonAnswer).First as JProperty
-                    : null;
-            }
+            var contactAddress = GetJsonAnswer(applicationData, "contact-address");
 
             // handle both a contact address which is a single question with multiple answers or multiple questions with a single answer 
-            var contactAddress1 = contactAddress?.Value["AddressLine1"].ToString() ?? await GetAnswer(application.Id, "contact-address1");
-            var contactAddress2 = contactAddress?.Value["AddressLine2"].ToString() ?? await GetAnswer(application.Id, "contact-address2");
-            var contactAddress3 = contactAddress?.Value["AddressLine3"].ToString() ?? await GetAnswer(application.Id, "contact-address3");
-            var contactAddress4 = contactAddress?.Value["AddressLine4"].ToString() ?? await GetAnswer(application.Id, "contact-address4");
-            var contactPostcode = contactAddress?.Value["Postcode"].ToString() ?? await GetAnswer(application.Id, "contact-postcode");
+            var contactAddress1 = contactAddress?["AddressLine1"].ToString() ?? GetAnswer(applicationData, "contact-address1");
+            var contactAddress2 = contactAddress?["AddressLine2"].ToString() ?? GetAnswer(applicationData, "contact-address2");
+            var contactAddress3 = contactAddress?["AddressLine3"].ToString() ?? GetAnswer(applicationData, "contact-address3");
+            var contactAddress4 = contactAddress?["AddressLine4"].ToString() ?? GetAnswer(applicationData, "contact-address4");
+            var contactPostcode = contactAddress?["Postcode"].ToString() ?? GetAnswer(applicationData, "contact-postcode");
 
-            var contactEmail = await GetAnswer(application.Id, "contact-email");
-            var contactPhoneNumber = await GetAnswer(application.Id, "contact-phone-number");
-            var companyUkprn = await GetAnswer(application.Id, "company-ukprn");
+            var contactEmail = GetAnswer(applicationData, "contact-email");
+            var contactPhoneNumber = GetAnswer(applicationData, "contact-phone-number");
+            var companyUkprn = GetAnswer(applicationData, "company-ukprn");
 
-            var companyNumber = await GetAnswer(application.Id, "company-number");
+            var companyNumber = GetAnswer(applicationData, "company-number");
             if ("no".Equals(companyNumber, StringComparison.InvariantCultureIgnoreCase))
             {
                 companyNumber = null;
             }
 
-            var charityNumber = await GetAnswer(application.Id, "charity-number");
+            var charityNumber = GetAnswer(applicationData, "charity-number");
             if ("no".Equals(charityNumber, StringComparison.InvariantCultureIgnoreCase))
             {
                 charityNumber = null;
             }
 
-            var standardWebsite = await GetAnswer(application.Id, "standard-website");
+            var standardWebsite = GetAnswer(applicationData, "standard-website");
           
             var command = new CreateOrganisationContactCommand
-            (   organisation.EndPointAssessorName,
+            (   organisation.Id,
+                organisation.EndPointAssessorName,
                 organisation.OrganisationType.Type,
-                organisation.EndPointAssessorUkprn?.ToString(),
+                organisation.EndPointAssessorUkprn,
                 organisation.EndPointAssessorOrganisationId,
                 organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
                 useTradingName,
-                contactName,
-                contactGivenName,
+                contactGivenNames,
                 contactFamilyName,
                 contactAddress1,
                 contactAddress2,
@@ -94,9 +90,9 @@ namespace SFA.DAS.AdminService.Web.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                applyingContact.Id.ToString(),
-                applyingContact.FamilyName,
+                applyingContact.Id,
                 applyingContact.GivenNames,
+                applyingContact.FamilyName,
                 applyingContact.Email,
                 organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
                 organisation.OrganisationData?.FHADetails?.FinancialDueDate,
@@ -108,46 +104,51 @@ namespace SFA.DAS.AdminService.Web.Services
 
         public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _applyApiClient.GetOrganisationForApplication(applicationId);
+            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
 
-            if (application is null || organisation is null) return new CreateOrganisationStandardCommand();
+            var organisation = await _applyApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+            var organisationContacts = await _applyApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
+            var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
 
-            var assessorOrganisation = (await _assessorApiClient.SearchOrganisations(organisation.EndPointAssessorName)).FirstOrDefault();
-
-            var organisationId = assessorOrganisation?.Id;
-            var createdBy = application.CreatedBy;
-            var standardCode = int.TryParse(application.ApplicationData?.StandardCode, out var parsedStandardCode) ? parsedStandardCode : 0;
+            if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();
 
             var effectiveFrom = DateTime.UtcNow.Date;
-            if(DateTime.TryParse(await GetAnswer(applicationId, "effective-from"), out var effectiveFromDate))
+            if(DateTime.TryParse(GetAnswer(applicationData, "effective-from"), out var effectiveFromDate))
             {
                 effectiveFrom = effectiveFromDate.Date;
             }
                 
-            var deliveryAreas = await GetAnswer(applicationId, "delivery-areas");
-            
-
+            var deliveryAreas = GetAnswer(applicationData, "delivery-areas");
+                
             var command = new CreateOrganisationStandardCommand
-            (createdBy,
-                organisationId,
-                standardCode,
+            (   
+                organisation.Id,
+                organisation.EndPointAssessorOrganisationId,
+                application.StandardCode ?? 0,
                 effectiveFrom,
-                deliveryAreas?.Split(',').ToList());
+                deliveryAreas?.Split(',').ToList(),
+                applyingContact.Id);
 
             return command;
         }
 
-        public async Task<string> GetAnswer(Guid applicationId, string questionTag)
+        private string GetAnswer(Dictionary<string, object> applicationData, string questionTag)
         {
-           var response= await _applyApiClient.GetAnswer(applicationId, questionTag);
-           return response.Answer;
+            return applicationData.ContainsKey(questionTag) ? applicationData[questionTag].ToString() : null;
         }
 
-        public async Task<string> GetJsonAnswer(Guid applicationId, string questionTag)
+        private JObject GetJsonAnswer(Dictionary<string, object> applicationData, string questionTag)
         {
-            var response = await _applyApiClient.GetJsonAnswer(applicationId, questionTag);
-            return response.Answer;
+            try
+            {
+                var json = GetAnswer(applicationData, questionTag);
+                return JObject.Parse(json);
+            }
+            catch
+            {
+                return default(JObject);
+            }
         }
     }
 }

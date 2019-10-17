@@ -5,22 +5,25 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
 {
     public class CreateOrganisationStandardCommand
     {
-        public string OrganisationId { get; set; }
+        public Guid OrganisationId { get; set; }
+        public string EndPointAssessorOrganisationId { get; set; }
+
         public int StandardCode { get; set; }
         public DateTime EffectiveFrom { get; set; }
         public DateTime DateStandardApprovedOnRegister { get; } = DateTime.Now.Date;
         public List<string> DeliveryAreas { get; set; }
 
-        public string CreatedBy { get; set; }
+        public Guid ApplyingContactId { get; set; }
 
-        public CreateOrganisationStandardCommand(string createdBy,
-            string organisationId, int standardCode, DateTime effectiveFrom, List<string> deliveryAreas)
+        public CreateOrganisationStandardCommand(Guid organisationId, string endPointAssessorOrganisationId,
+            int standardCode, DateTime effectiveFrom, List<string> deliveryAreas, Guid applyingContactId)
         {
-            CreatedBy = createdBy;
             OrganisationId = organisationId;
+            EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
             StandardCode = standardCode;
             EffectiveFrom = effectiveFrom;
             DeliveryAreas = deliveryAreas;
+            ApplyingContactId = applyingContactId;
         }
 
         public CreateOrganisationStandardCommand()

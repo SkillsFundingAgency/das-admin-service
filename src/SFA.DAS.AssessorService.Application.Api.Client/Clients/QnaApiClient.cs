@@ -15,7 +15,7 @@ using Page = SFA.DAS.QnA.Api.Types.Page.Page;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
-    public class QnaApiClient : ApiClientBase,IQnaApiClient
+    public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
 
@@ -33,11 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ApplicationData> GetApplicationData(Guid applicationId)
+        public async Task<Dictionary<string, object>> GetApplicationData(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
             {
-                return await RequestAndDeserialiseAsync<ApplicationData>(request,
+                return await RequestAndDeserialiseAsync<Dictionary<string, object>>(request,
                     $"Could not find the application");
             }
         }
@@ -50,15 +50,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<Sequence> GetApplicationActiveSequence(Guid applicationId)
+        public async Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId)
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/current"))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences"))
+            {
+                return await RequestAndDeserialiseAsync<List<Sequence>>(request,
+                    $"Could not find all sequences");
+            }
+        }
+
+        public async Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceId}"))
             {
                 return await RequestAndDeserialiseAsync<Sequence>(request,
                     $"Could not find the sequence");
             }
         }
-
 
         public async Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId)
         {
@@ -154,6 +162,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/feedback"))
             {
                 return await PostPutRequestWithResponse<QnA.Api.Types.Page.Feedback, Page>(request, feedback);
+            }
+        }
+
+        public async Task<Page> DeleteFeedback(Guid applicationId, Guid sectionId, string pageId, Guid feedbackId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/feedback/{feedbackId}"))
+            {
+                 return await RequestAndDeserialiseAsync<Page>(request);
             }
         }
 

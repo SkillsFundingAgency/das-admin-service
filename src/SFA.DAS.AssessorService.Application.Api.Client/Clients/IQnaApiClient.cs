@@ -14,9 +14,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IQnaApiClient
     {
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
-        Task<ApplicationData> GetApplicationData(Guid applicationId);
+        Task<Dictionary<string, object>> GetApplicationData(Guid applicationId);
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
-        Task<Sequence> GetApplicationActiveSequence(Guid applicationId);
+        Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId);
+        Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId);
         Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Section> GetSection(Guid applicationId, Guid sectionId);
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
@@ -27,5 +28,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
         Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId);
         Task<Page> UpdateFeedback(Guid applicationId, Guid sectionId, string pageId, QnA.Api.Types.Page.Feedback feedback);
+        Task<Page> DeleteFeedback(Guid applicationId, Guid sectionId, string pageId, Guid feedbackId);
     }
 }
