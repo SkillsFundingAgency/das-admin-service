@@ -16,7 +16,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         private readonly ILogger<ContactsApiClient> _logger;
         
-        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger, IContactApplyClient contactApplyClient) : base(baseUri, tokenService, logger)
+        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
         {
             _logger = logger;
         }
