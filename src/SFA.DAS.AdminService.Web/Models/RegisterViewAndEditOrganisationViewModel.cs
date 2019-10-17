@@ -8,7 +8,13 @@ namespace SFA.DAS.AdminService.Web.Models
 {
     public class RegisterViewAndEditOrganisationViewModel
     {
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the organisations EndPointAssessorOrganisationId
+        /// </summary>
         public string OrganisationId { get; set; }
+
         public string Name { get; set; }
         public long? Ukprn { get; set; }
         public int? OrganisationTypeId { get; set; }
@@ -27,6 +33,7 @@ namespace SFA.DAS.AdminService.Web.Models
         public string PrimaryContact { get; set; }
         public string PrimaryContactName { get; set; }
         public string Status { get; set; }
+        public IList<ContactIncludePrivilegesResponse> Users { get; set; }
         public List<ContactResponse> Contacts { get; set; }
         public string ContactsCount { get; set; }
         public string StandardsCount { get; set; }

@@ -21,7 +21,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     public class AnswerServiceGatherAnswersTests
     {
         private AnswerService _answerService;
-        private Mock<IApiClient> _mockApplyApiClient;
+        private Mock<IApiClient> _mockApiClient;
+        private Mock<IApplicationApiClient> _mockApplicationApiClient;
         private Mock<IQnaApiClient> _mockQnaApiClient;
 
         private Guid _applicationId;
@@ -30,10 +31,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         public void Arrange()
         {
             _applicationId = Guid.NewGuid();
-            _mockApplyApiClient = new Mock<IApiClient>();
+            _mockApiClient = new Mock<IApiClient>();
+            _mockApplicationApiClient = new Mock<IApplicationApiClient>();
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _answerService = new AnswerService(
-                _mockApplyApiClient.Object,
+                _mockApiClient.Object,
+                _mockApplicationApiClient.Object,
                 _mockQnaApiClient.Object
             );
         }
@@ -141,10 +144,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 CreatedBy = applicationContact.Id.ToString()
             };
 
-            _mockApplyApiClient.Setup(x => x.GetApplicationFromAssessor(application.Id.ToString())).ReturnsAsync(application);
+            _mockApplicationApiClient.Setup(x => x.GetApplication(application.Id)).ReturnsAsync(application);
             _mockQnaApiClient.Setup(x => x.GetApplicationData(application.ApplicationId)).ReturnsAsync(applicationData);
-            _mockApplyApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
-            _mockApplyApiClient.Setup(x => x.GetOrganisationContacts(applicationOrganisation.Id)).ReturnsAsync(new List<Contact> { applicationContact });
+            _mockApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
+            _mockApiClient.Setup(x => x.GetOrganisationContacts(applicationOrganisation.Id)).ReturnsAsync(new List<Contact> { applicationContact });
 
             var actualCommand = _answerService.GatherAnswersForOrganisationAndContactForApplication(_applicationId).Result;
    
@@ -275,10 +278,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var applicationContact = new Contact { Id = commandTestSetup.CreatedBy, SignInId = Guid.Empty, FamilyName = "", GivenNames = "", Email = "" };
 
-            _mockApplyApiClient.Setup(x => x.GetApplicationFromAssessor(application.Id.ToString())).ReturnsAsync(application);
+            _mockApplicationApiClient.Setup(x => x.GetApplication(application.Id)).ReturnsAsync(application);
             _mockQnaApiClient.Setup(x => x.GetApplicationData(application.ApplicationId)).ReturnsAsync(applicationData);
-            _mockApplyApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
-            _mockApplyApiClient.Setup(x => x.GetOrganisationContacts(application.OrganisationId)).ReturnsAsync(new List<Contact> { applicationContact });
+            _mockApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
+            _mockApiClient.Setup(x => x.GetOrganisationContacts(application.OrganisationId)).ReturnsAsync(new List<Contact> { applicationContact });
 
             var actualCommand = _answerService.GatherAnswersForOrganisationStandardForApplication(_applicationId).Result;
 

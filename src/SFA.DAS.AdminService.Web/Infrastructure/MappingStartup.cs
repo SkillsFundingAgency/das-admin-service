@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AdminService.Web.Automapper.CustomResolvers;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -16,6 +15,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                     .ForMember(
                         dest => dest.IsApproved, opt => opt.MapFrom(src => src.Status)
                     );
+
+                cfg.AddProfile<RegisterViewAndEditUserViewModelProfile>();
             });
         }
     }

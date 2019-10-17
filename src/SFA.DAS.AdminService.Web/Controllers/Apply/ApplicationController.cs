@@ -19,8 +19,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
-    {  
-        private readonly IApiClient _applyApiClient;
+    {
+        private readonly IApiClient _apiClient;
+        private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
@@ -28,8 +29,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
+            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _contextAccessor = contextAccessor;
@@ -93,14 +95,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> Application(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
             var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
 
@@ -110,8 +112,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
-            var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -132,8 +134,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, int sectionNo)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
-            var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -179,8 +181,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     ModelState.AddModelError(error.Key, error.Value);
                 }
 
-                var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
-                var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
+                var application = await _applyApiClient.GetApplication(applicationId);
+                var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
                 var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
                 var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
                 var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -204,7 +206,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -234,7 +236,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Feedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackMessage)
         {
 
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -269,7 +271,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
         public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -286,7 +288,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Assessment")]
         public async Task<IActionResult> Assessment(Guid applicationId, int sequenceNo)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || 
@@ -306,7 +308,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Return")]
         public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated))
@@ -354,7 +356,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 else
                 {
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
-                    var organisation = await _applyApiClient.GetOrganisation(application.OrganisationId);
+                    var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
 
                     //    'Inject' the Organisation and associated contacts if not RoEPAO approved
@@ -404,7 +406,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
         public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
             var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
