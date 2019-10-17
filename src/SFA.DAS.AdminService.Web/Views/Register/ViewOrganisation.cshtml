@@ -1,5 +1,5 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
-@using SFA.DAS.AdminService.Web.Domain
+﻿@using SFA.DAS.AdminService.Web.Domain
+@using SFA.DAS.AssessorService.Domain.Consts
 @model RegisterViewAndEditOrganisationViewModel
 @{
     ViewBag.Title = "View Organisation";
@@ -12,9 +12,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">
-                View organisation
-            </h1>
+            <span class="govuk-caption-xl">Organisation details</span>
+            <h1 class="govuk-heading-xl">@Model.Name</h1>
 
             <div id="organisationWrapper">
                 <div class="form-group">
@@ -45,7 +44,7 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Status
+                                Organisation status
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 @Model.Status
@@ -163,9 +162,83 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
+            <h2 class="govuk-heading-l">Users</h2>
+            <p class="govuk-body">A user has created an account to use the Apprenticeship assessment service.</p>
+            @if (Model.Users.Any())
+            {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">
+                                User details
+                            </th>
+                            <th class="govuk-table__header" scope="col">
+                                What they can do
+                            </th>
+                            <th class="govuk-table__header" scope="col">
+                                Status
+                            </th>
+                            <th class="govuk-table__header" scope="col" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                                Action required
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body" scope="col">
+                        @foreach (var contact in Model.Users)
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell das-no-wrap" data-label="User details">
+                                <a class="govuk-link" asp-route="RegisterUserController_Details" asp-route-contactId="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                <br />
+                                <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
+                            </td>
+                            <td class="govuk-table__cell" data-label="What they can do">
+                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                    <li>
+                                        View dashboard
+                                    </li>
+                                    @foreach (var role in contact.Privileges)
+                                    {
+                                        <li> @Html.DisplayFor(modelItem => role.UserPrivilege)</li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="govuk-table__cell" data-label="Status">
+                                @Html.DisplayFor(modelItem => contact.Contact.Status)
+                            </td>
+                            <td class="govuk-table__cell" data-label="Action required" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                                @if (contact.Contact.Status == ContactStatus.InvitePending)
+                                {
+                                    <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Approve</a>
+                                    <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Reject</a>   
+                                }
+                            </td>
+                        </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+            else
+            {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="info-summary">
+                        <h2 class="govuk-heading-m">There are no users to manage.</h2>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-l">Contacts</h2>
-
+            <p class="govuk-body">A contact has not yet created an account to become a user of the Apprenticeship assessment service.</p>
             <div class="govuk-form-group">
                 @if (@Model.Contacts.Count > 0)
                 {

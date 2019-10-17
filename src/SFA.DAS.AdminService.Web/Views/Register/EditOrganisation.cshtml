@@ -14,6 +14,7 @@ Layout = "_Layout";
             <form class="register-search-form" asp-action="EditOrganisation" asp-controller="Register" method="POST">
                 @Html.HiddenFor(c => c.FinancialDueDate)
                 @Html.HiddenFor(c => c.FinancialExempt)
+                @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(c => c.OrganisationId)
                 @Html.HiddenFor(c => c.Status)
                 @Html.HiddenFor(c => c.OrganisationTypes)

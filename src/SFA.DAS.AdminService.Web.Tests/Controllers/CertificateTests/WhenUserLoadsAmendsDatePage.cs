@@ -5,7 +5,7 @@ using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels;
 
-namespace SFA.DAS.AdminService.Web.Tests.Controllers
+namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
     public class WhenUserLoadsAmendsDatePage : CertificateAmendQueryBase
     {
