@@ -12,7 +12,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using AutoMapper;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 using System.Collections.Generic;
 
@@ -25,12 +24,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private const int FINANCIAL_SECTION_NO = 3;
 
         private readonly IApiClient _apiClient;
+        private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public FinancialController(IApiClient apiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public FinancialController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
             _apiClient = apiClient;
+            _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _qnaApiClient = qnaApiClient;
         }
@@ -38,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/Open")]
         public async Task<IActionResult> OpenApplications(int page = 1)
         {
-            var applications = await _apiClient.GetOpenFinancialApplications();
+            var applications = await _applyApiClient.GetOpenFinancialApplications();
 
             var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -51,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> RejectedApplications(int page = 1)
         {
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
-            var applications = await _apiClient.GetFeedbackAddedFinancialApplications();
+            var applications = await _applyApiClient.GetFeedbackAddedFinancialApplications();
 
             var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -63,7 +64,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/Closed")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
-            var applications = await _apiClient.GetClosedFinancialApplications();
+            var applications = await _applyApiClient.GetClosedFinancialApplications();
 
             var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -78,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
             var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-            await _apiClient.StartFinancialReview(id, $"{givenName} {surname}");
+            await _applyApiClient.StartFinancialReview(id, $"{givenName} {surname}");
 
             var vm = await CreateFinancialApplicationViewModel(id, null);
 
@@ -148,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
-                var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(vm.Id.ToString());
+                var applicationFromAssessor = await _applyApiClient.GetApplication(vm.Id);
                 var sequences = await _qnaApiClient.GetAllApplicationSequences(applicationFromAssessor.ApplicationId);
                 var financialSequence = await _qnaApiClient.GetSequence(applicationFromAssessor.ApplicationId, sequences.Single(x => x.SequenceNo == FINANCIAL_SEQUENCE_NO).Id);
                 var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, financialSequence.Id);
@@ -172,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     InadequateMoreInformation = vm.Grade.InadequateMoreInformation
                 };
 
-                await _apiClient.ReturnFinancialReview(vm.Id, grade);
+                await _applyApiClient.ReturnFinancialReview(vm.Id, grade);
 
                 return RedirectToAction("Evaluated", new {vm.Id});   
             }
@@ -187,13 +188,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/{Id}/Evaluated")]
         public async Task<IActionResult> Evaluated(Guid id)
         {
-            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
+            var applicationFromAssessor = await _applyApiClient.GetApplication(id);
             return View("~/Views/Apply/Financial/Graded.cshtml", applicationFromAssessor.financialGrade);
         }
 
         private async  Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(Guid id, FinancialGrade grade)
         {
-            var applicationFromAssessor = await _apiClient.GetApplicationFromAssessor(id.ToString());
+            var applicationFromAssessor = await _applyApiClient.GetApplication(id);
             if (grade is null)
             {
                 grade = applicationFromAssessor?.financialGrade;

@@ -11,24 +11,26 @@ namespace SFA.DAS.AdminService.Web.Services
 {
     public class AnswerService : IAnswerService
     {
-        private readonly IApiClient _applyApiClient;
+        private readonly IApiClient _apiApiClient;
+        private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
 
 
-        public AnswerService(IApiClient applyApiClient, IQnaApiClient qnaApiClient)
+        public AnswerService(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
         {
+            _apiApiClient = apiClient;
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
         }
 
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
 
-            var organisation = await _applyApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
 
-            var organisationContacts = await _applyApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
+            var organisationContacts = await _apiApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
             var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
 
             if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationContactCommand();
@@ -104,11 +106,11 @@ namespace SFA.DAS.AdminService.Web.Services
 
         public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplicationFromAssessor(applicationId.ToString());
+            var application = await _applyApiClient.GetApplication(applicationId);
             var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
 
-            var organisation = await _applyApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
-            var organisationContacts = await _applyApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
+            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+            var organisationContacts = await _apiApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
             var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
 
             if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();

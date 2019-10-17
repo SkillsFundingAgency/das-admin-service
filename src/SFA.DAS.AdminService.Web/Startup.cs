@@ -57,6 +57,7 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
@@ -64,7 +65,15 @@ namespace SFA.DAS.AdminService.Web
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
+
+            services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
+                .AddPolicyHandler(GetRetryPolicy());
+
             AddAuthentication(services);
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -127,6 +136,11 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IApiClient>(x => new ApiClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
+                x.GetService<ITokenService>()));
+
+            services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
             services.AddTransient<IQnaApiClient>(x => new QnaApiClient(

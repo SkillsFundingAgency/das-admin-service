@@ -73,31 +73,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
-
-        //Apply
-        Task ImportWorkflow(IFormFile file);
-        Task<AssessorService.ApplyTypes.Application> GetApplication(Guid applicationId);
-        Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
-        Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId);
-        Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId);
-        Task<Organisation> GetOrganisationForApplication(Guid applicationId);
-        Task<Contact> GetContact(Guid contactId);
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
-        Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId);
-        Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, AssessorService.ApplyTypes.Feedback feedback);
-        Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
-        Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
-        Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
-        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task StartFinancialReview(Guid applicationId, string reviewer);
-        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
-        Task<ApplicationResponse> GetApplicationFromAssessor(string Id);
     }
 
     public class FileInfoResponse
