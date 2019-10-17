@@ -24,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private AnswerInjectionService _answerInjectionService;
         private IValidationService _validationService;
         private Mock<IApiClient> _mockApiClient;
+        private Mock<IApplicationApiClient> _mockApplyClient;
         private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
@@ -31,8 +32,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [SetUp]
         public void Setup()
         {
-            var applicationId = Guid.NewGuid();
-
             _mockApiClient = new Mock<IApiClient>();
 
             _mockApiClient.Setup(r => r.SearchOrganisations(It.IsAny<string>()))
@@ -40,6 +39,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _mockApiClient.Setup(r => r.GetDeliveryAreas())
                .ReturnsAsync(new List<DeliveryArea> { new DeliveryArea { Id = 1, Area = "East Midlands" } });
+
+            _mockApplyClient = new Mock<IApplicationApiClient>();
 
             _validationService = new ValidationService();
             _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
@@ -51,6 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _answerInjectionService = new AnswerInjectionService(
                 _mockApiClient.Object,
+                _mockApplyClient.Object,
                 _validationService,
                 _assessorValidationService,
                 _mockSpecialCharacterCleanserService.Object,

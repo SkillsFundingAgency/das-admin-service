@@ -18,6 +18,7 @@ namespace SFA.DAS.AdminService.Web.Services
     public class AnswerInjectionService : IAnswerInjectionService
     {
         private readonly IApiClient _apiClient;
+        private readonly IApplicationApiClient _applyApiClient;
 
         private readonly IValidationService _validationService;
         private readonly IAssessorValidationService _assessorValidationService;
@@ -25,10 +26,11 @@ namespace SFA.DAS.AdminService.Web.Services
         private readonly ILogger<AnswerService> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerInjectionService(IApiClient apiClient, IValidationService validationService, IAssessorValidationService assessorValidationService,
-            ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
+        public AnswerInjectionService(IApiClient apiClient, IApplicationApiClient applyApiClient, IValidationService validationService,
+            IAssessorValidationService assessorValidationService, ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
             _apiClient = apiClient;
+            _applyApiClient = applyApiClient;
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
             _cleanser = cleanser;
@@ -283,7 +285,7 @@ namespace SFA.DAS.AdminService.Web.Services
                     FinancialExempt = command.IsFinancialExempt
                 };
 
-                await _apiClient.UpdateFinancials(req);
+                await _applyApiClient.UpdateFinancials(req);
             }
         }
 

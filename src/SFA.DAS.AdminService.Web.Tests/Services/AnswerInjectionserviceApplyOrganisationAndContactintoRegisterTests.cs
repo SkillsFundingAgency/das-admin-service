@@ -25,6 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private AnswerInjectionService _answerInjectionService;
         private IValidationService _validationService;
         private Mock<IApiClient> _mockApiClient;
+        private Mock<IApplicationApiClient> _mockApplyApiClient;
         private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
@@ -47,6 +48,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             _mockApiClient.Setup(x => x.AssociateOrganisationWithEpaContact(It.IsAny<AssociateEpaOrganisationWithEpaContactRequest>()))
                 .Returns(Task.FromResult(true));
 
+            _mockApplyApiClient = new Mock<IApplicationApiClient>();
+
             _validationService = new ValidationService();
             _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
             _mockLogger = new Mock<ILogger<AnswerService>>();
@@ -57,6 +60,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _answerInjectionService = new AnswerInjectionService(
                 _mockApiClient.Object,
+                _mockApplyApiClient.Object,
                 _validationService,
                 _assessorValidationService,
                 _mockSpecialCharacterCleanserService.Object,
@@ -128,19 +132,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             {
                 _mockApiClient.Verify(r => r.UpdateEpaOrganisation(It.IsAny<UpdateEpaOrganisationRequest>()), Times.Never);
                 _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Never);
-                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
+                _mockApplyApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
             }
             else if(testCase.Command.IsRoEpaoApproved.Value)
             {
                 _mockApiClient.Verify(r => r.UpdateEpaOrganisation(It.IsAny<UpdateEpaOrganisationRequest>()), Times.Never);
                 _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Never);
-                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Once);
+                _mockApplyApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Once);
             }
             else
             {
                 _mockApiClient.Verify(r => r.UpdateEpaOrganisation(It.IsAny<UpdateEpaOrganisationRequest>()), Times.Once);
                 _mockApiClient.Verify(r => r.CreateEpaContact(It.IsAny<CreateEpaOrganisationContactRequest>()), Times.Once);
-                _mockApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
+                _mockApplyApiClient.Verify(r => r.UpdateFinancials(It.IsAny<UpdateFinancialsRequest>()), Times.Never);
             }
         }
 

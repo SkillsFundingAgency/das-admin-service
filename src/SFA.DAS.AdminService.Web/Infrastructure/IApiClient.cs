@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http;
-using SFA.DAS.AdminService.Web.Services;
-using SFA.DAS.AssessorService.ApplyTypes;
-using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
-using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -55,6 +49,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<ScheduleRun> GetNextScheduleToRunNow();
         Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);
         Task<Organisation> GetOrganisation(Guid id);
+        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId);
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId);
@@ -72,26 +67,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
-        Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
-        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
-    }
-
-    public class FileInfoResponse
-    {
-        public string Filename { get; set; }
-        public string ContentType { get; set; }
-    }
-
-    public class ApplicationResponse
-    {
-        public Guid Id { get; set; }
-        public Guid ApplicationId { get; set; }
-        public Guid OrganisationId { get; set; }
-        public FinancialGrade financialGrade { get; set; }
-        public string ApplicationStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
-        public ApplyData ApplyData { get; set; }
-        public string CreatedBy { get; set; }
-        public int? StandardCode { get; set; }
     }
 }

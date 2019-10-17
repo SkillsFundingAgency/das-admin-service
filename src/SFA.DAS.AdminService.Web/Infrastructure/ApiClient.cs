@@ -1,27 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AdminService.Web.Services;
-using Microsoft.AspNetCore.Http;
-using Page = SFA.DAS.AssessorService.ApplyTypes.Page;
-using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -267,6 +262,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
         }
 
+        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        {
+            return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
+        }
+
         public async Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
         {
             return await Get<List<AssessorService.Domain.Entities.Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
@@ -371,15 +371,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }
         #endregion
-
-        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
-        {
-            await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
-        }
-
-        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
-        {
-            return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
-        }
     }
 }
