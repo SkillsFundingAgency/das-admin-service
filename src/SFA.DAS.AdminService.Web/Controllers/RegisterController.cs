@@ -12,19 +12,23 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AdminService.Web.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
     [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
     public class RegisterController: Controller
     {
-        private readonly ApiClient _apiClient;
+        private readonly IApiClient _apiClient;
+        private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
 
-        public RegisterController(ApiClient apiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        public RegisterController(IApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
             _apiClient = apiClient;
+            _contactsApiClient = contactsApiClient;
             _standardServiceClient = standardServiceClient;
             _env = env;
         }
@@ -64,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewModel = MapOrganisationModel(organisation);
+            var viewModel = await MapOrganisationModel(organisation);
             return View(viewModel);
         }
 
@@ -75,8 +79,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-                GatherOrganisationContacts(viewModel);
-                GatherOrganisationStandards(viewModel);
+                await GatherOrganisationContacts(viewModel);
+                await GatherOrganisationStandards(viewModel);
                 return View(viewModel);
             }
 
@@ -209,6 +213,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
+        [HttpGet("register/set-status-user/{organisationId}/{contactId}/{status}", Name= "Register_SetStatusAndNotify")]
+        public async Task<IActionResult> SetStatusAndNotify(string organisationId, Guid contactId, string status)
+        {
+            if (status == ContactStatus.Approve)
+            {
+                await _contactsApiClient.ApproveContact(contactId);
+            }
+            else
+            {
+                await _contactsApiClient.RejectContact(contactId);
+            }
+
+            return RedirectToAction(nameof(ViewOrganisation), nameof(RegisterController).RemoveController(), new { organisationId });
+        }
+
+        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-contact/{organisationId}")]
         public async Task<IActionResult> AddContact(string organisationId)
         {
@@ -240,7 +260,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var contactId = await _apiClient.CreateEpaContact(addContactRequest);
             return Redirect($"/register/view-contact/{contactId}");
-            
         }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
@@ -342,11 +361,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction("ViewOrganisation", "register",new { organisationId });
         }
 
-        [HttpGet("register/view-organisation/{organisationId}")]
+        [HttpGet("register/view-organisation/{organisationId}", Name = "Register_ViewOrganisation")]
         public async Task<IActionResult> ViewOrganisation(string organisationId)
-        {    
+        {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewModel = MapOrganisationModel(organisation);     
+            var viewModel = await MapOrganisationModel(organisation);     
             return View(viewModel);
         }
 
@@ -396,7 +415,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var standard = await _standardServiceClient.GetStandard(vm.StandardId);
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
-            vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
+            vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId);
+
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
             vm.StandardTitle = standard.Title;
@@ -435,9 +455,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             return vm;
         }
-        private void GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
+        private async Task GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
-            var organisationStandards = _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId).Result;
+            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId);
 
             viewAndEditModel.OrganisationStandards = organisationStandards;
         }
@@ -459,15 +479,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return viewModel;
         }
 
-        private void GatherOrganisationContacts(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
+        private async Task GatherOrganisationContacts(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
         {
-            var contacts =  _apiClient.GetEpaOrganisationContacts(viewAndEditModel.OrganisationId).Result;
+            viewAndEditModel.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(viewAndEditModel.OrganisationId, false);
+            viewAndEditModel.Users = await _contactsApiClient.GetAllContactsForOrganisationIncludePrivileges(viewAndEditModel.OrganisationId, true);
 
-            viewAndEditModel.Contacts = contacts;
-
-            if (viewAndEditModel.PrimaryContact != null && contacts.Any(x => x.Username == viewAndEditModel.PrimaryContact))
+            var contactsWhoCanBePrimary = await _contactsApiClient.GetAllContactsWhoCanBePrimaryForOrganisation(viewAndEditModel.OrganisationId);
+            if (viewAndEditModel.PrimaryContact != null && contactsWhoCanBePrimary.Any(x => x.Username == viewAndEditModel.PrimaryContact))
             {
-                var primaryContact = contacts.First(x => x.Username == viewAndEditModel.PrimaryContact);
+                var primaryContact = contactsWhoCanBePrimary.First(x => x.Username == viewAndEditModel.PrimaryContact);
                 viewAndEditModel.PrimaryContactName = primaryContact.DisplayName;
                 if (primaryContact.Username != null)
                 {
@@ -476,11 +496,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
         }
     
-        private RegisterViewAndEditOrganisationViewModel MapOrganisationModel(EpaOrganisation organisation)
+        private async Task<RegisterViewAndEditOrganisationViewModel> MapOrganisationModel(EpaOrganisation organisation)
         {
             var notSetDescription = "Not set";
             var viewModel = new RegisterViewAndEditOrganisationViewModel
             {
+                Id = organisation.Id,
                 OrganisationId = organisation.OrganisationId,
                 Name = organisation.Name,
                 Ukprn = organisation.Ukprn,
@@ -513,8 +534,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 viewModel.OrganisationType = organisationTypes.FirstOrDefault(x => x.Id == viewModel.OrganisationTypeId)?.Type;
             }
                
-            GatherOrganisationContacts(viewModel);
-            GatherOrganisationStandards(viewModel);
+            await GatherOrganisationContacts(viewModel);
+            await GatherOrganisationStandards(viewModel);
 
             return viewModel;
         }
