@@ -79,6 +79,11 @@
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
+                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved))
+                        {
+                            // NOTE: FHA Section should only be shown if it has been Graded or Approved. See ON-1277
+                            continue;
+                        }
                         <li>
                             <h2 class="govuk-heading-m">
                                 <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo})">
