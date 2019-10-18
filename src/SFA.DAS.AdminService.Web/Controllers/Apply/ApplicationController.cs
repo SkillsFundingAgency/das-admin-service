@@ -407,11 +407,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var section = sections.Single(x => x.SectionNo == sectionNo);
+            var section = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, sequenceNo, sectionNo);
 
             var response = await _qnaApiClient.DownloadFile(application.ApplicationId, section.Id, pageId, questionId, filename);
             var fileStream = await response.Content.ReadAsStreamAsync();
