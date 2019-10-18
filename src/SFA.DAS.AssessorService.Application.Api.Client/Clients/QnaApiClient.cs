@@ -68,6 +68,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<Sequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceNo}"))
+            {
+                return await RequestAndDeserialiseAsync<Sequence>(request,
+                    $"Could not find the sequence");
+            }
+        }
+
         public async Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceId}/sections"))
@@ -80,6 +89,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task<Section> GetSection(Guid applicationId, Guid sectionId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}"))
+            {
+                return await RequestAndDeserialiseAsync<Section>(request,
+                    $"Could not find the section");
+            }
+        }
+
+        public async Task<Section> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}"))
             {
                 return await RequestAndDeserialiseAsync<Section>(request,
                     $"Could not find the section");
