@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -86,7 +86,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View("~/Views/Apply/Financial/Application.cshtml", vm);
         }
 
-
         [HttpGet("/Financial/{Id}/Graded")]
         public async Task<IActionResult> ViewGradedApplication(Guid id)
         {
@@ -98,10 +97,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet("/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
         public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
         {
-            var sequences = await _qnaApiClient.GetAllApplicationSequences(applicationId);
-            var financialSequence = sequences.Single(x => x.SequenceNo == FINANCIAL_SEQUENCE_NO);
-            var sections = await _qnaApiClient.GetSections(applicationId, financialSequence.Id);
-            var financialSection = await _qnaApiClient.GetSection(applicationId, sections.SingleOrDefault(x => x.SectionNo == FINANCIAL_SECTION_NO).Id);
+            // NOTE: Using the QnA applicationId is somewhat dubious! We're using the Assessor applicationId nearly everywhere else.
+            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
             var org = await _apiClient.GetOrganisation(orgId);
 
@@ -150,10 +147,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
 
                 var applicationFromAssessor = await _applyApiClient.GetApplication(vm.Id);
-                var sequences = await _qnaApiClient.GetAllApplicationSequences(applicationFromAssessor.ApplicationId);
-                var financialSequence = await _qnaApiClient.GetSequence(applicationFromAssessor.ApplicationId, sequences.Single(x => x.SequenceNo == FINANCIAL_SEQUENCE_NO).Id);
-                var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, financialSequence.Id);
-                var financialSection = await _qnaApiClient.GetSection(applicationFromAssessor.ApplicationId, sections.Single(x => x.SectionNo == FINANCIAL_SECTION_NO).Id);
+                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO);
+                var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
                 if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && !string.IsNullOrEmpty(vm.Grade.InadequateMoreInformation))
                 {
@@ -184,7 +179,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
         }
 
-
         [HttpGet("/Financial/{Id}/Evaluated")]
         public async Task<IActionResult> Evaluated(Guid id)
         {
@@ -192,18 +186,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View("~/Views/Apply/Financial/Graded.cshtml", applicationFromAssessor.financialGrade);
         }
 
-        private async  Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(Guid id, FinancialGrade grade)
+        private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(Guid id, FinancialGrade grade)
         {
             var applicationFromAssessor = await _applyApiClient.GetApplication(id);
-            if (grade is null)
+            if(applicationFromAssessor is null)
             {
-                grade = applicationFromAssessor?.financialGrade;
+                return new FinancialApplicationViewModel();
+            }
+            else if (grade is null)
+            {
+                grade = applicationFromAssessor.financialGrade;
             }
 
-            var sequences = await _qnaApiClient.GetAllApplicationSequences(applicationFromAssessor.ApplicationId);
-            var financialSequence = await _qnaApiClient.GetSequence(applicationFromAssessor.ApplicationId, sequences.Single(x => x.SequenceNo == FINANCIAL_SEQUENCE_NO).Id);
-            var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, financialSequence.Id);
-            var financialSection = await _qnaApiClient.GetSection(applicationFromAssessor.ApplicationId, sections.Single(x => x.SectionNo == FINANCIAL_SECTION_NO).Id);
+            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
             var orgId = applicationFromAssessor?.OrganisationId ?? Guid.Empty;
             var organisation = await _apiClient.GetOrganisation(orgId);
@@ -222,7 +217,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return new FinancialApplicationViewModel(id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
         }
 
-        private List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
+        private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
         {
             var listOfEvidence = new List<FinancialEvidence>();
 
