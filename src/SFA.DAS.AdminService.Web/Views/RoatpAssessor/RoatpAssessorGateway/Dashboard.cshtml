@@ -1,0 +1,161 @@
+﻿@using SFA.DAS.AdminService.Web.Extensions
+
+@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.RoatpAssessorGatewayDashboardViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div>
+        <a asp-controller="RoatpAssessorDashboard" asp-action="Index">&lt; temporary back link</a>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Gateway</span>
+            <h1 class="govuk-heading-xl">View applications</h1>
+        </div>
+    </div>
+
+    <div class="govuk-tabs" data-module="tabs">
+        <h2 class="govuk-tabs__title">
+            Contents
+        </h2>
+
+
+        <ul class="govuk-tabs__list">
+
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab govuk-tabs__tab--selected" href="#new">
+                    New
+                </a>
+            </li>
+
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#inprogress">
+                    In progress
+                </a>
+            </li>
+
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#feedback">
+                    Clarifications
+                </a>
+            </li>
+
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#completed">
+                    Completed
+                </a>
+            </li>
+
+
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#search">
+                    Search
+                </a>
+            </li>
+
+        </ul>
+
+        <section class="govuk-tabs__panel" id="new">
+
+            <h2 class="govuk-heading-l">New</h2>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Organisation</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">UKPRN</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Application Ref</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Provider Type</th>
+                        <th aria-sort="ascending" scope="col" class="govuk-table__header" scope="col">Date submitted</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var application in Model.PendingReviews)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                <a asp-controller="RoatpAssessorGateway"
+                                   asp-action="StartReviewGet"
+                                   asp-route-applicationId="@application.ApplicationId">@application.Organisation</a>
+                            </td>
+                            <td class="govuk-table__cell">@application.Ukprn</td>
+                            <td class="govuk-table__cell">@application.ApplicationRef</td>
+                            <td class="govuk-table__cell">@application.ProviderType</td>
+                            <td class="govuk-table__cell">@application.SubmittedAt.ToGdsDate()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </section>
+
+        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="inprogress">
+
+            <h2 class="govuk-heading-l">In progress</h2>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Organisation</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">UKPRN</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Application Ref</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Provider Type</th>
+                        <th aria-sort="ascending" scope="col" class="govuk-table__header" scope="col">Date submitted</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var application in Model.InProgressReviews)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                <a asp-controller="RoatpAssessorGateway"
+                                   asp-action="Index"
+                                   asp-route-applicationId="@application.ApplicationId">@application.Organisation</a>
+                            </td>
+                            <td class="govuk-table__cell">@application.Ukprn</td>
+                            <td class="govuk-table__cell">@application.ApplicationRef</td>
+                            <td class="govuk-table__cell">@application.ProviderType</td>
+                            <td class="govuk-table__cell">@application.SubmittedAt.ToGdsDate()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </section>
+
+        <section class="govuk-tabs__panel" id="feedback">to do</section>
+
+        <section class="govuk-tabs__panel" id="completed">
+            <h2 class="govuk-heading-l">Completed</h2>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Organisation</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">UKPRN</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Application Ref</th>
+                        <th aria-sort="none" scope="col" class="govuk-table__header" scope="col">Provider Type</th>
+                        <th aria-sort="ascending" scope="col" class="govuk-table__header" scope="col">Date submitted</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var application in Model.CompletedReviews)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@application.Organisation</td>
+                            <td class="govuk-table__cell">@application.Ukprn</td>
+                            <td class="govuk-table__cell">@application.ApplicationRef</td>
+                            <td class="govuk-table__cell">@application.ProviderType</td>
+                            <td class="govuk-table__cell">@application.SubmittedAt.ToGdsDate()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+
+        <section class="govuk-tabs__panel" id="search">to do</section>
+
+    </div>
+</main>

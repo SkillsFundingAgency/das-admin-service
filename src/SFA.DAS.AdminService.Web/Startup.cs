@@ -32,9 +32,11 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
+using SFA.DAS.RoatpAssessor.Services;
+using MediatR;
 
 namespace SFA.DAS.AdminService.Web
-{ 
+{
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -58,6 +60,7 @@ namespace SFA.DAS.AdminService.Web
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             
             services.AddHttpClient<ApiClient>("ApiClient", config =>
@@ -113,6 +116,8 @@ namespace SFA.DAS.AdminService.Web
 
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
+            services.AddMediatR(typeof(RoatpAssessor.Application.Gateway.Commands.StartGatewayReviewCommand).Assembly);
+
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.Scan(x => x.FromCallingAssembly()
@@ -122,6 +127,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
+            services.AddTransient<IApplyTokenService, ApplyTokenService>();
 
             services.AddTransient(x => ApplicationConfiguration);
 
@@ -154,6 +160,11 @@ namespace SFA.DAS.AdminService.Web
               ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
               x.GetService<IQnaTokenService>(),
               x.GetService<ILogger<QnaApiClient>>()));
+
+            services.AddTransient<IApplyApiClient>(x => new ApplyApiClient(
+              ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+              x.GetService<IApplyTokenService>(),
+              x.GetService<ILogger<ApplyApiClient>>()));
 
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();

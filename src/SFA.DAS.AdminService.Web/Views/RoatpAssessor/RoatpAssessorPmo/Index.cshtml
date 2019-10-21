@@ -1,0 +1,9 @@
+﻿@model System.Guid
+
+<h1 class="govuk-heading-l">PMO Review</h1>
+<div class="govuk-body">
+    ApplicationId: @Model
+</div>
+<form asp-controller="RoatpAssessorPmo" asp-action="PassPmo" asp-route-applicationId="@Model">
+    <button class="govuk-button" typeof="submit">Pass PMO Review</button>
+</form>

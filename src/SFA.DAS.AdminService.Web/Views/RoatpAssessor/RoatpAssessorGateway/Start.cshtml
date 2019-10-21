@@ -1,0 +1,8 @@
+﻿@model System.Guid
+
+<h1 class="govuk-heading-l">Gateway Review</h1>
+
+<form asp-controller="RoatpAssessorGateway" asp-action="StartReview" asp-route-applicationId="@Model">
+    <div class="govuk-body">applicationId: @Model</div>
+    <button class="govuk-button" type="submit">Start Gateway Review</button>
+</form>

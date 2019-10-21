@@ -1,1 +1,136 @@
-﻿<h1>Roatp Assessor Dashboard</h1>
+﻿@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.RoatpAssessorDashboardIndexViewModel
+
+<h1 class="govuk-heading-l">Roatp Assessor Dashboard</h1>
+
+<h2 class="govuk-heading-m">Submitted Applications</h2>
+@foreach (var application in Model.SubmittedApplications)
+{
+    <form asp-controller="RoatpAssessorDashboard" asp-action="StartReview" asp-route-applicationId="@application">
+        <div class="govuk-body">applicationId: @application</div>
+        <button class="govuk-button" type="submit">Start Review</button>
+    </form>
+}
+@if (!Model.SubmittedApplications.Any())
+{
+    <div class="govuk-body">There are no submitted applications</div>
+}
+
+<hr />
+
+<h1 class="govuk-heading-l">Gateway</h1>
+
+<a class="govuk-link" asp-controller="RoatpAssessorGateway" asp-action="Dashboard">Gateway Dashboard</a>
+
+<hr />
+
+<h1 class="govuk-heading-l">PMO</h1>
+<h2 class="govuk-heading-m">Applications pending PMO review</h2>
+@foreach (var application in Model.PmoReviewsPending)
+{
+    <form asp-controller="RoatpAssessorPmo" asp-action="StartReview" asp-route-applicationId="@application">
+        <div class="govuk-body">applicationId: @application</div>
+        <button class="govuk-button" type="submit">Start PMO Review</button>
+    </form>
+}
+@if (!Model.PmoReviewsPending.Any())
+{
+    <div class="govuk-body">There are no applications pending PMO review</div>
+}
+
+<h2 class="govuk-heading-m">Applications under PMO review</h2>
+@foreach (var application in Model.PmoReviewsUnderReview)
+{
+    <div class="govuk-body">
+        <a asp-controller="RoatpAssessorPMO" asp-action="Index" asp-route-applicationId="@application">
+            applicationId: @application
+        </a>
+    </div>
+}
+@if (!Model.GatewayReviewsUnderReview.Any())
+{
+    <div class="govuk-body">There are no applications under Gateway review</div>
+}
+
+<hr />
+<h1 class="govuk-heading-l">Assessor</h1>
+
+<h2 class="govuk-heading-m">Applications pending Assessor 1 review</h2>
+@foreach (var application in Model.AssessorReview1Pending)
+{
+    <form asp-controller="RoatpAssessorReview" asp-action="StartReview" asp-route-applicationId="@application" asp-route-reviewNo="1">
+        <div class="govuk-body">applicationId: @application</div>
+        <button class="govuk-button" type="submit">Start Assessor 1 Review</button>
+    </form>
+}
+@if (!Model.AssessorReview1Pending.Any())
+{
+    <div class="govuk-body">There are no applications pending Assessor 1 review</div>
+}
+
+<h2 class="govuk-heading-m">Applications under Assessor 1 review</h2>
+@foreach (var application in Model.AssessorReview1UnderReview)
+{
+    <div class="govuk-body">
+        <a asp-controller="RoatpAssessorReview" asp-action="Index" asp-route-applicationId="@application" asp-route-reviewNo="1">
+            applicationId: @application
+        </a>
+    </div>
+}
+@if (!Model.AssessorReview1UnderReview.Any())
+{
+    <div class="govuk-body">There are no applications under Assessor 1 review</div>
+}
+
+<h2 class="govuk-heading-m">Applications pending Assessor 2 review</h2>
+@foreach (var application in Model.AssessorReview2Pending)
+{
+    <form asp-controller="RoatpAssessorReview" asp-action="StartReview" asp-route-applicationId="@application" asp-route-reviewNo="2">
+        <div class="govuk-body">applicationId: @application</div>
+        <button class="govuk-button" type="submit">Start Assessor 2 Review</button>
+    </form>
+}
+@if (!Model.AssessorReview2Pending.Any())
+{
+    <div class="govuk-body">There are no applications pending Assessor 2 review</div>
+}
+
+<h2 class="govuk-heading-m">Applications under Assessor 2 review</h2>
+@foreach (var application in Model.AssessorReview2UnderReview)
+{
+    <div class="govuk-body">
+        <a asp-controller="RoatpAssessorReview" asp-action="Index" asp-route-applicationId="@application" asp-route-reviewNo="2">
+            applicationId: @application
+        </a>
+    </div>
+}
+@if (!Model.AssessorReview2UnderReview.Any())
+{
+    <div class="govuk-body">There are no applications under Assessor 2 review</div>
+}
+
+<h2 class="govuk-heading-m">Applications pending Assessor Moderation</h2>
+@foreach (var application in Model.AssessorModerationPending)
+{
+    <form asp-controller="RoatpAssessorModeration" asp-action="StartReview" asp-route-applicationId="@application">
+        <div class="govuk-body">applicationId: @application</div>
+        <button class="govuk-button" type="submit">Start Assessor Moderation</button>
+    </form>
+}
+@if (!Model.AssessorModerationPending.Any())
+{
+    <div class="govuk-body">There are no applications pending Assessor Moderation</div>
+}
+
+<h2 class="govuk-heading-m">Applications under Assessor Moderation</h2>
+@foreach (var application in Model.AssessorModerationUnderReview)
+{
+    <div class="govuk-body">
+        <a asp-controller="RoatpAssessorModeration" asp-action="Index" asp-route-applicationId="@application" asp-route-reviewNo="2">
+            applicationId: @application
+        </a>
+    </div>
+}
+@if (!Model.AssessorModerationUnderReview.Any())
+{
+    <div class="govuk-body">There are no applications under Assessor Moderation</div>
+}
