@@ -30,6 +30,8 @@ using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Domain;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -175,6 +177,8 @@ namespace SFA.DAS.AdminService.Web
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
+
+            UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }
 
         private void AddAuthentication(IServiceCollection services)

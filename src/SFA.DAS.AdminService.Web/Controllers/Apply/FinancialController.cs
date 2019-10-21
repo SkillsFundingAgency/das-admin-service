@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            await _applyApiClient.StartFinancialReview(application.Id, GetDisplayNameOfLoggedInUser());
+            await _applyApiClient.StartFinancialReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
 
             var vm = await CreateFinancialApplicationViewModel(application, null);
 
@@ -176,7 +176,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var grade = new FinancialGrade
                 {
                     ApplicationReference = application.ApplyData.Apply.ReferenceNumber,
-                    GradedBy = GetDisplayNameOfLoggedInUser(),
+                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
@@ -278,14 +278,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 default:
                     return null;
             }
-        }
-
-        private string GetDisplayNameOfLoggedInUser()
-        {
-            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-
-            return $"{givenName} {surname}";
         }
     }
 }
