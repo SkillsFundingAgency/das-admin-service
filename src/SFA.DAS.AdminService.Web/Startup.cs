@@ -145,6 +145,11 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
+            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<ContactsApiClient>>()));
+
             services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
               ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
               x.GetService<IQnaTokenService>(),
