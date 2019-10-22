@@ -1,13 +1,16 @@
 @using Microsoft.EntityFrameworkCore.Internal
+@using SFA.DAS.AssessorService.ApplyTypes
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.FinancialApplicationViewModel
 
 @{
     ViewBag.Title = "Financial health evaluation";
     Layout = "_Layout";
+
+    var backAction = FinancialApplicationSelectedGrade.Inadequate.Equals(Model.Grade.SelectedGrade) ? "RejectedApplications" : "ClosedApplications";
 }
 
-<a asp-action="RejectedApplications" asp-controller="Financial" class="govuk-back-link">Back</a>
+<a asp-action="@backAction" asp-controller="Financial" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -109,9 +112,9 @@
 
             @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
             {
-        <p class="govuk-body">
-            <a class="govuk-link" href="@Url.Action("DownloadFiles", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
-        </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" href="@Url.Action("DownloadFiles", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
+                </p>
             }
         </div>
     </div>
@@ -120,32 +123,32 @@
     {
 
         <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <table class="govuk-table govuk-table--s">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">
-                            Questions
-                        </th>
-                        <th class="govuk-table__header" scope="col">
-                            Answers
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var pg in Model.Section.QnAData.Pages)
-                    {
-                        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-table--s">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">
+                                Questions
+                            </th>
+                            <th class="govuk-table__header" scope="col">
+                                Answers
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var pg in Model.Section.QnAData.Pages)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@question.Label</td>
-                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
-                            </tr>
+                            foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@question.Label</td>
+                                    <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
     }
 </main>
