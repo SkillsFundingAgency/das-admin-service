@@ -96,15 +96,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
-
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var applyData = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
-
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applyData.Sections);
+            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+
+            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, activeApplySequence.Sections);
 
             return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
@@ -114,10 +113,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
+
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applySequence.Sections);
 
@@ -136,13 +136,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-            var section = sections.Single(x => x.SectionNo == sectionNo);
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
             var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
+            var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
             var sectionVm = new SectionViewModel(application, organisation, section, applySection);
 
@@ -180,13 +179,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
                 var application = await _applyApiClient.GetApplication(applicationId);
                 var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-                var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-                var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-                var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-                var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
 
-                var section = sections.Single(x => x.SectionNo == sectionNo);
+                var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
+                
+                var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
                 var sectionVm = new SectionViewModel(application, organisation, section, applySection);
 
@@ -201,20 +198,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Page(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequence.SequenceNo);
-            var section = sections.Single(x => x.SectionNo == sectionNo);
+
+            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
+            var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
+
+            var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
             var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
 
-            if (page?.Active == false)
+            if (page?.Active is false)
             {
                 // DO NOT show any information
                 page = null;
             }
 
-            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId,section, page);
+            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page);
 
             if (applySequence?.Status == ApplicationSequenceStatus.Submitted)
             {
@@ -229,12 +226,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Feedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackMessage)
         {
-
             var application = await _applyApiClient.GetApplication(applicationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var section = sections.Single(x => x.SectionNo == sectionNo);
+
+            var section = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, sequenceNo, sectionNo);
 
             var errorMessages = new Dictionary<string, string>();
 
@@ -257,19 +251,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
            var feedback = new QnA.Api.Types.Page.Feedback { Id= Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
 
-           var pg =  await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
+           await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
 
-            return RedirectToAction("Section", new { applicationId, sequenceNo, sectionNo });
+           return RedirectToAction("Section", new { applicationId, sequenceNo, sectionNo });
         }
 
         [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
         public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var allApplicationSequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
-            var sequence = allApplicationSequences.Single(x => x.SequenceNo == sequenceNo);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-            var section = sections.Single(x => x.SectionNo == sectionNo);
+
+            var section = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, sequenceNo, sectionNo);
 
             if (!string.IsNullOrEmpty(feedbackId))
                 await _qnaApiClient.DeleteFeedback(application.ApplicationId, section.Id, pageId, Guid.Parse(feedbackId));
