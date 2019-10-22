@@ -150,10 +150,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {             
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
                 {
-                    var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-                    var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-
-                    await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, $"{givenName} {surname}");
+                    await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, _contextAccessor.HttpContext.User.UserDisplayName());
                 }
 
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
@@ -196,10 +193,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
             }
 
-            var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-            var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-
-            await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, $"{givenName} {surname}");
+            await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, _contextAccessor.HttpContext.User.UserDisplayName());
             return RedirectToAction("Application", new { applicationId });
         }
 
@@ -379,10 +373,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (!warningMessages.Any())
             {
-                var givenName = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")?.Value;
-                var surname = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname")?.Value;
-
-                await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, $"{givenName} {surname}");
+                await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
             }
 
             var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);

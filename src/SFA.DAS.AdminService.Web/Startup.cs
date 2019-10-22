@@ -30,6 +30,8 @@ using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Domain;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -143,6 +145,11 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
+            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<ContactsApiClient>>()));
+
             services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
               ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
               x.GetService<IQnaTokenService>(),
@@ -175,6 +182,8 @@ namespace SFA.DAS.AdminService.Web
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
+
+            UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }
 
         private void AddAuthentication(IServiceCollection services)

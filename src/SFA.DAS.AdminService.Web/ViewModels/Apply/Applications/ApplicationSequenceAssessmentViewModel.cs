@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             SequenceNo = sequence.SequenceNo;
             Sections = sections;
 
-            HasNewFeedback = sections.Any(sec => sec.QnAData.Pages.Any(p => p.HasNewFeedback));
+            HasNewFeedback = sections.Any(sec => sec.QnAData.RequestedFeedbackAnswered.HasValue && !sec.QnAData.RequestedFeedbackAnswered.Value);
 
             var fhaSection = sections.FirstOrDefault(s => s.SectionNo == 3);
 
