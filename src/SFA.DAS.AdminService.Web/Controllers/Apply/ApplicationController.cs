@@ -96,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
@@ -283,7 +283,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Assessment(Guid applicationId, int sequenceNo)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || 
                 activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
@@ -303,7 +303,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
