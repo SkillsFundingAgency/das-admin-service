@@ -1,6 +1,9 @@
-@using SFA.DAS.AdminService.Web
 @using SFA.DAS.AdminService.Web.Domain
-
+@using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Authorization;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model SFA.DAS.AdminService.Web.ViewModels.DashboardViewModel;
 @{
     ViewBag.Title = "Staff Dashboard";
 }
@@ -13,66 +16,325 @@
         </div>
     </div>
 
+    @{
+        var roleTagHelper = new RoleTagHelper(HttpContextAccessor, (IAuthorizationService)HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAuthorizationService)));
+        var sectionsShown = 0;
+    }
+
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        @{
+            var assessmentOutcomesAndCertificationsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(assessmentOutcomesAndCertificationsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@assessmentOutcomesAndCertificationsRoles" id="assessment-outcomes-and-certifications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Search">Search</a>
+                Assessment outcomes and certifications
             </h2>
-            <p class="govuk-body">Search by learner name, ULN, certificate reference or EPAO ID.</p>
+            <p class="govuk-body">Request certficates reprints, check assessment outcomes and status of certficates.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Search">Search</a>
+                </li>
+            </ul>
         </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var privatelyFundedCertficateApprovalsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(privatelyFundedCertficateApprovalsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@privatelyFundedCertficateApprovalsRoles" id="privately-funded-certficate-approvals">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="BatchSearch">Batch search</a>
-            </h2>
-            <p class="govuk-body">View current batches and search for certificates by batch number.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.RegisterViewOnlyTeam)">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Register">Register of EPAO</a>
-            </h2>
-            <p class="govuk-body">Search for add and edit EPAOs and standards. Add and edit contacts. Make standards and/or organisations live.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="ScheduleConfig">Print schedule configuration</a>
-            </h2>
-            <p class="govuk-body">Print certificates. Create, delete and view existing print schedules.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.EpaoReportsOnlyTeam)">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Reports">Reports</a>
-            </h2>
-            <p class="govuk-body">On demand reporting.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">Privately funded certificate approvals</a>
+                Privately funded certficate approvals
             </h2>
             <p class="govuk-body">A table of privately funded certificates with options to approve, send for approval or reject.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">New</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Sent for approval</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Approved</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Rejected</a>
+                </li>
+            </ul>
         </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var organsiationApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(organsiationApplicationsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@organsiationApplicationsRoles" id="organsiation-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="ExternalApi">External API</a>
+                Organsiation applications
+            </h2>
+            <p class="govuk-body">Review and approve new organsiation applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Application" asp-action="MidpointApplications">New (@Model.OrganisationApplicationsNew)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">In Progress (@Model.StandardApplicationsInProgress)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Feedback (@Model.OrganisationApplicationsFeedback)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Approved (@Model.OrganisationApplicationsApproved)</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var standardApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(standardApplicationsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@standardApplicationsRoles" id="standard-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Standard applications
+            </h2>
+            <p class="govuk-body">Review and approve new Standard applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Application" asp-action="MidpointApplications">New (@Model.StandardApplicationsNew)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">In Progress (@Model.StandardApplicationsInProgress)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Feedback (@Model.StandardApplicationsFeedback)</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Approved (@Model.StandardApplicationsApproved)</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var financialHealthAssessmentRoles = string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(financialHealthAssessmentRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@financialHealthAssessmentRoles" id="financial-health-assessment">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Financial health assessment
+            </h2>
+            <p class="govuk-body">Review financial health of an organsation.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">New</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Rejected</a>
+                </li>
+                <li>
+                    <a class="govuk-link">Closed</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var registeredEPAOsRoles = string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.RegisterViewOnlyTeam);
+            if (roleTagHelper.ShowForRoles(registeredEPAOsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@registeredEPAOsRoles" id="registered-epaos">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Registered EPAOs
+            </h2>
+            <p class="govuk-body">Search, view and edit organisations that are currently live on the Register.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Register">Search</a>
+                </li>
+                <li sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                    <a class="govuk-link">Add</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var printScheduleConfigurationRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(printScheduleConfigurationRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@printScheduleConfigurationRoles" id="print-schedule-configurations">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Print schedule configuration
+            </h2>
+            <p class="govuk-body">Create, delete and view existing print schedules.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="ScheduleConfig">View</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var reportsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.EpaoReportsOnlyTeam);
+            if (roleTagHelper.ShowForRoles(reportsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@reportsRoles" id="reports">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Reports
+            </h2>
+            <p class="govuk-body">On demand reporting</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="Reports">Reports</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var certificateBatchSearchRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(certificateBatchSearchRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@certificateBatchSearchRoles" id="certificate-batch-search">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Certificate batch search
+            </h2>
+            <p class="govuk-body">View current batches and search for certificates by batch number.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="BatchSearch">Batch search</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var recordAGradeAPIRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(recordAGradeAPIRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@recordAGradeAPIRoles" id="record-a-grade-api">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Record a grade API
             </h2>
             <p class="govuk-body">Manage user's access and generate API keys.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="ExternalApi">Users</a>
+                </li>
+            </ul>
         </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
+            var registerOfApprenticeshipTrainingProvidersRoles = Roles.RoatpGatewayTeam;
+            if (roleTagHelper.ShowForRoles(registerOfApprenticeshipTrainingProvidersRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@registerOfApprenticeshipTrainingProvidersRoles" id="register-of-apprenticeship-training-providers">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">Financial</a>
-            </h2>
-            <p class="govuk-body">Financial</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Application" asp-action="MidpointApplications">Applications</a>
-            </h2>
-            <p class="govuk-body">Review Applications</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">Register of Apprenticeship Training Providers</a>
+                Register of Apprenticeship Training Providers
             </h2>
             <p class="govuk-body">Search for add and edit Apprenticeship Training Providers</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">Search</a>
+                </li>
+            </ul>
         </div>
     </div>
+
+    @*<div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="Search">Search</a>
+                </h2>
+                <p class="govuk-body">Search by learner name, ULN, certificate reference or EPAO ID.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="BatchSearch">Batch search</a>
+                </h2>
+                <p class="govuk-body">View current batches and search for certificates by batch number.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.RegisterViewOnlyTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="Register">Register of EPAO</a>
+                </h2>
+                <p class="govuk-body">Search for add and edit EPAOs and standards. Add and edit contacts. Make standards and/or organisations live.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="ScheduleConfig">Print schedule configuration</a>
+                </h2>
+                <p class="govuk-body">Print certificates. Create, delete and view existing print schedules.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.EpaoReportsOnlyTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="Reports">Reports</a>
+                </h2>
+                <p class="govuk-body">On demand reporting.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">Privately funded certificate approvals</a>
+                </h2>
+                <p class="govuk-body">A table of privately funded certificates with options to approve, send for approval or reject.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="ExternalApi">External API</a>
+                </h2>
+                <p class="govuk-body">Manage user's access and generate API keys.</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">Financial</a>
+                </h2>
+                <p class="govuk-body">Financial</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="Application" asp-action="MidpointApplications">Applications</a>
+                </h2>
+                <p class="govuk-body">Review Applications</p>
+            </div>
+            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                    <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">Register of Apprenticeship Training Providers</a>
+                </h2>
+                <p class="govuk-body">Search for add and edit Apprenticeship Training Providers</p>
+            </div>
+        </div>*@
 </main>

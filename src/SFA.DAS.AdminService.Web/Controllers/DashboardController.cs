@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.ViewModels;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -9,7 +10,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var viewModel = new DashboardViewModel();
+            return View(viewModel);
         }
     }
 }

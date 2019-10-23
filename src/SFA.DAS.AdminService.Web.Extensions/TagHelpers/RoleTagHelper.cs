@@ -28,14 +28,23 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            string[] roles = Roles.Split(',');
-
-            Dictionary<string, bool> roleValidation = roles.ToDictionary(role => role, role => _contextAccessor.HttpContext.User.IsInRole(role));
-
-            if (roleValidation.All(kvp => kvp.Value == false))
+            if(!ShowForRoles(Roles))
             {
                 output.SuppressOutput();
             }
+        }
+
+        public bool ShowForRoles(string roles)
+        {
+            string[] roleArray = roles.Split(',');
+
+            Dictionary<string, bool> roleValidation = roleArray.ToDictionary(role => role, role => _contextAccessor.HttpContext.User.IsInRole(role));
+            if (roleValidation.All(kvp => kvp.Value == false))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
