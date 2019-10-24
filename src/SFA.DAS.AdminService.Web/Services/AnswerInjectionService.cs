@@ -94,6 +94,8 @@ namespace SFA.DAS.AdminService.Web.Services
             if (warningMessages.Count == 0)
             {
                 _logger.LogInformation($"Approving organisation {request?.Name} onto the register");
+                request.Status = OrganisationStatus.New;
+
                 var organisationId = await _apiClient.UpdateEpaOrganisation(request);
                 response.OrganisationId = organisationId;
 
@@ -421,7 +423,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 OrganisationId = organisationId,
                 OrganisationTypeId = organisationTypeId,
                 Ukprn = ukprn,
-                Status = null, // API will populate this
+                Status = null, 
                 LegalName = legalName,
                 TradingName = tradingName,
                 Email = email,
