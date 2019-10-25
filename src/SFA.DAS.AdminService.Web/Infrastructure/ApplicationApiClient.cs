@@ -82,6 +82,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
         #region Application
+        public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
+        {
+            return await Get<ApplicationReviewStatusCounts>($"/Review/ApplicationReviewStatusCounts");
+        }
+
         public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
             return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");

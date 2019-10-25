@@ -1,6 +1,6 @@
-namespace SFA.DAS.AdminService.Web.ViewModels
+﻿namespace SFA.DAS.AssessorService.ApplyTypes
 {
-    public class DashboardViewModel
+    public class ApplicationReviewStatusCounts
     {
         public int OrganisationApplicationsNew { get; set; }
         public int OrganisationApplicationsInProgress { get; set; }
