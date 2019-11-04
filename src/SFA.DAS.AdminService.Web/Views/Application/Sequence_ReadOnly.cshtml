@@ -6,10 +6,12 @@
 
 @{
     ViewBag.Title = "Application overview";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
+    var BackController = ApplicationReviewHelpers.ApplicationBacklinkController(Model.ApplicationType);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.ApplicationType, Model.ReviewStatus);
+    var Fragment = ApplicationReviewHelpers.ApplicationFragment(Model.ReviewStatus);
 }
 
-<a class="govuk-back-link" asp-controller="Application" asp-action="@BackAction">Back</a>
+<a class="govuk-back-link" asp-controller="@BackController" asp-action="@BackAction" asp-route-pageIndex="@Model.PageIndex" asp-fragment="@Fragment">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -86,7 +88,7 @@
                         }
                         <li>
                             <h2 class="govuk-heading-m">
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo})">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.ApplicationType, applicationSection.SequenceNo, applicationSection.SectionNo})">
                                     @applicationSection.LinkTitle
                                 </a>
                             </h2>
@@ -116,7 +118,7 @@
             }
 
             <div class="form-group">
-                <a class="govuk-button" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
+                <a class="govuk-link" asp-controller="@BackController" asp-action="@BackAction" asp-route-pageIndex="@Model.PageIndex" asp-fragment="@Fragment">Return to applications</a>
             </div>
         </div>
     </div>

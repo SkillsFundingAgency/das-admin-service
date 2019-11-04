@@ -4,7 +4,6 @@
 
 @{
     ViewBag.Title = Model.WarningMessages.Any() ? "Issue during approval" : "Feedback sent";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(null, Model?.SequenceNo);
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -42,7 +41,7 @@
             <h2 class="govuk-heading-m">What do you want to do next?</h2>
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-action="@BackAction" asp-controller="Application">Return to applications</a>
+                <a class="govuk-link" asp-action="@(Model.ApplicationType + "Applications")" asp-controller="@(Model.ApplicationType + "Application")">Return to applications</a>
             </p>
             <p class="govuk-body">
                 <a class="govuk-link" target="_blank" href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)

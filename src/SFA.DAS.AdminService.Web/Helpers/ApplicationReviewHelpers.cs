@@ -49,27 +49,43 @@ namespace SFA.DAS.AdminService.Web.Helpers
             return "";
         }
 
-        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceNo)
+        public static string ApplicationBacklinkAction(string applicationType, string reviewStatus)
         {
-            switch(sequenceStatus)
+            switch(reviewStatus)
             {
-                case ApplicationSequenceStatus.FeedbackAdded:
-                    return nameof(ApplicationController.RejectedApplications);
-                case ApplicationSequenceStatus.Approved:
-                case ApplicationSequenceStatus.Declined:
-                    return nameof(ApplicationController.ClosedApplications);
-                case null:
-                default:
-                    switch (sequenceNo)
-                    {
-                        case 2:
-                            return nameof(ApplicationController.StandardApplications);
-                        case 1:
-                        case null:
-                        default:
-                            return nameof(ApplicationController.MidpointApplications);
-                    }
+                case ApplicationReviewStatus.New:
+                    return $"ChangePageNew{applicationType}Applications";
+                case ApplicationReviewStatus.InProgress:
+                    return $"ChangePageInProgress{applicationType}Applications";
+                case ApplicationReviewStatus.HasFeedback:
+                    return $"ChangePageFeedback{applicationType}Applications";
+                case ApplicationReviewStatus.Approved:
+                    return $"ChangePageApproved{applicationType}Applications";
             }
+
+            return string.Empty;
+        }
+
+        public static string ApplicationBacklinkController(string applicationType)
+        {
+            return $"{applicationType}Application";
+        }
+
+        public static string ApplicationFragment(string reviewStatus)
+        {
+            switch (reviewStatus)
+            {
+                case ApplicationReviewStatus.New:
+                    return "new";
+                case ApplicationReviewStatus.InProgress:
+                    return "in-progress";
+                case ApplicationReviewStatus.HasFeedback:
+                    return "feedback";
+                case ApplicationReviewStatus.Approved:
+                    return "approved";
+            }
+
+            return string.Empty;
         }
     }
 }

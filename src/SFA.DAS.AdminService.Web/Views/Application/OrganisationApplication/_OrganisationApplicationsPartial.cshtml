@@ -1,0 +1,128 @@
+﻿@using SFA.DAS.AdminService.Web.Domain.Apply;
+@using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
+@using SFA.DAS.AdminService.Web.ViewModels.Shared;
+@using SFA.DAS.AssessorService.ApplyTypes;
+
+@model ApplicationsViewModel;
+
+<h2 class="govuk-heading-m">@Model.Title</h2>
+
+<p class="govuk-body">
+    Showing
+    @if (Model.Applications.TotalRecordCount > 0)
+    {
+        @Model.Applications.FirstVisibleItem<text> - </text>@Model.Applications.LastVisibleItem<text> of </text>
+    }
+    @Model.Applications.TotalRecordCount<text> applications</text>
+</p>
+
+<table class="govuk-table govuk-table--small">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@nameof(OrganisationApplicationsSortColumn.OrganisationName)"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="OrganisationApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@nameof(OrganisationApplicationsSortColumn.OrganisationName)"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@nameof(OrganisationApplicationsSortColumn.FinancialStatus)"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="OrganisationApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@nameof(OrganisationApplicationsSortColumn.FinancialStatus)"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Financial status</sfa-sortable-column-header>
+            </th>
+            @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
+                    <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                                                data-sortColumn="@nameof(OrganisationApplicationsSortColumn.Status)"
+                                                asp-action="@Model.SortColumnAction"
+                                                asp-controller="OrganisationApplication"
+                                                asp-fragment="@Model.Fragment"
+                                                sfa-sort-column="@nameof(OrganisationApplicationsSortColumn.Status)"
+                                                sfa-table-sort-column="@Model.SortColumn"
+                                                sfa-sort-direction="@Model.SortDirection">Status</sfa-sortable-column-header>
+                </th>
+            }
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-fifth">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@Model.DateNameForReviewStatus()"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="OrganisationApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@Model.DateNameForReviewStatus()"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">
+                                            @if (Model.ReviewStatus == ApplicationReviewStatus.New)
+                                            {
+                                                <text>Date submitted</text>
+                                            }
+                                            else if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
+                                            {
+                                                <text>Date</text>
+                                            }
+                                            else if (Model.ReviewStatus == ApplicationReviewStatus.Approved)
+                                            {
+                                                <text>Date approved</text>
+                                            }
+                                            </sfa-sortable-column-header>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model?.Applications != null)
+        {
+            @foreach (var application in Model.Applications.Items)
+            {
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">
+                <a class="govuk-link"
+                   asp-action="ActiveSequence"
+                   asp-controller="OrganisationApplication"
+                   asp-route-applicationId="@application.ApplicationId"
+                   asp-route-applicationType="@ApplyConst.ORGANISATION_APPLICATION_TYPE">
+                    @application.OrganisationName
+                </a>
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.FinancialStatus</td>
+            @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
+            }
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.DateValueForReviewStatus()</td>
+        </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (Model != null)
+{
+    <form asp-action="@Model.ChangeApplicationsPerPageAction" asp-controller="OrganisationApplication" method="get" asp-fragment="@Model.Fragment">
+        <div class="das-flex-space-around">
+            <div>
+                <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ApplicationsPerPage" asp-items="Model.ApplicationsPerPageList"></select>
+                <label for="ApplicationsPerPage">Applications per page</label>
+            </div>
+            <div class="das-pagination-links">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+                                                {
+                                                    PaginatedList = Model.Applications,
+                                                    ChangePageAction = Model.ChangePageAction,
+                                                    ChangePageController = "OrganisationApplication",
+                                                    Fragment = Model.Fragment
+                                                });}
+            </div>
+        </div>
+        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-3 js-hidden" type="submit">        
+            Update table
+        </button>
+    </form>
+}

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -39,6 +41,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 return await response.Content.ReadAsAsync<T>();
+            }
+        }
+
+        private async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
             }
         }
 
@@ -87,19 +102,30 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<ApplicationReviewStatusCounts>($"/Review/ApplicationReviewStatusCounts");
         }
 
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest)
+        {
+            return await Post<OrganisationApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
+                $"/Review/OrganisationApplications", organisationApplicationsRequest);
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetOrganisationApplications(string reviewStatus)
+        {
+            return await Get<List<ApplicationSummaryItem>>($"/Review/OrganisationApplications?reviewStatus={reviewStatus}");
+        }
+
         public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
         {
             return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/FeedbackAddedApplications");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/FeedbackAddedApplications?sequenceNo={sequenceNo}");
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications");
+            return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications?sequenceNo={sequenceNo}");
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)

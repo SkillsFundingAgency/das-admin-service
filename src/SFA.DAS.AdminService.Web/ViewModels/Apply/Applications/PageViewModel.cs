@@ -16,6 +16,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public Guid ApplicationId { get; }
 
+        public string ApplicationType { get; }
+
         public int SequenceNo { get; }
 
         public int SectionNo { get; }
@@ -26,13 +28,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
 
-        public PageViewModel(Guid applicationId, int sequenceNo, int sectionNo, string pageId,Section section, Page page)
+        public PageViewModel(Guid applicationId, string applicationType, int sequenceNo, int sectionNo, string pageId,Section section, Page page)
         {
             if (page != null)
             {
                 Page = page;
                 Title = page.Title;
                 ApplicationId = applicationId;
+                ApplicationType = applicationType;
                 SequenceNo = sequenceNo;
                 SectionNo = sectionNo;
                 PageId = page.PageId;

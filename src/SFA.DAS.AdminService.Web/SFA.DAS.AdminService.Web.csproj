@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.WsFederation" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
 
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
 
@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AdminService.Session\SFA.DAS.AdminService.Session.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
@@ -75,10 +74,13 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Views\Apply\Applications\Assessment.cshtml">
+    <Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Apply\Applications\Returned.cshtml">
+    <Content Update="Views\Application\Assessment.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Application\Returned.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\CertificateAmend\Address.cshtml">

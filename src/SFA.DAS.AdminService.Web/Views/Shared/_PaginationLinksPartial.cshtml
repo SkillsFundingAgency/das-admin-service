@@ -1,0 +1,48 @@
+@using SFA.DAS.AdminService.Web.ViewModels.Shared;
+@model PaginationLinksViewModel
+
+@if (Model != null)
+{
+    if (Model.PaginatedList.HasPreviousPage)
+    {
+        <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
+           aria-label="@("Previous " + Model.Fragment + " page")"
+           data-pageIndex="@(Model.PaginatedList.PageIndex-1)"
+           asp-action="@Model.ChangePageAction"
+           asp-controller="@Model.ChangePageController"
+           asp-route-pageIndex="@(Model.PaginatedList.PageIndex-1)"
+           asp-fragment="@Model.Fragment">&laquo; Previous</a>
+    }
+
+    if ((Model.PaginatedList.TotalPages) > 1)
+    {
+        for (int pageNumber = Model.PaginatedList.FirstVisiblePage; pageNumber <= (Model.PaginatedList.LastVisiblePage); pageNumber++)
+        {
+            if (pageNumber != Model.PaginatedList.PageIndex)
+            {
+                <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
+                   aria-label="@("Go to " + Model.Fragment + " page " + @pageNumber)"
+                   data-pageIndex="@pageNumber"
+                   asp-action="@Model.ChangePageAction"
+                   asp-controller="@Model.ChangePageController"
+                   asp-route-pageindex="@pageNumber"
+                   asp-fragment="@Model.Fragment">@pageNumber</a>
+            }
+            else
+            {
+                <span class="govuk-!-margin-left-3">@pageNumber</span>
+            }
+        }
+    }
+
+    if (Model.PaginatedList.HasNextPage)
+    {
+        <a class="@(Model.Fragment + "-page") govuk-link govuk-!-margin-left-3"
+           aria-label="@("Next " + Model.Fragment + " page")"
+           data-pageIndex="@(Model.PaginatedList.PageIndex+1)"
+           asp-action="@Model.ChangePageAction"
+           asp-controller="@Model.ChangePageController"
+           asp-route-pageIndex="@(Model.PaginatedList.PageIndex+1)"
+           asp-fragment="@Model.Fragment">Next &raquo;</a>
+    }
+}

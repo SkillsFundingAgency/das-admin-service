@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" href="@Url.Action("Section", "Application", new { applicationId = Model.ApplicationId, sequenceNo = Model.SequenceNo, sectionNo = Model.SectionNo })">Back</a>
+<a class="govuk-back-link" asp-action="Section" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-applicationType="@Model.ApplicationType" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (Model.Page == null)
@@ -101,7 +101,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">
-                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceNo = Model.SequenceNo, sectionNo = Model.SectionNo})" class="govuk-link">Return to section overview</a>
+                <a class="govuk-link" asp-action="Section" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-applicationType="@Model.ApplicationType" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo">Return to section overview</a>
             </p>
         </div>
     </div>

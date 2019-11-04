@@ -10,6 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     public class ApplicationSequenceAssessmentViewModel
     {
         public Guid ApplicationId { get; }
+        public string ApplicationType { get; }
         public int SequenceNo { get; }
         public List<Section> Sections { get; }
 
@@ -18,9 +19,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string ReturnType { get; set; }
 
-        public ApplicationSequenceAssessmentViewModel(ApplicationResponse application, Sequence sequence, List<Section> sections)
+        public ApplicationSequenceAssessmentViewModel(ApplicationResponse application, string applicationType, Sequence sequence, List<Section> sections)
         {
             ApplicationId = application.Id;
+            ApplicationType = applicationType;
             SequenceNo = sequence.SequenceNo;
             Sections = sections;
 

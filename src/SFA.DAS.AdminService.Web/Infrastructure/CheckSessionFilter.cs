@@ -1,6 +1,8 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -18,18 +20,49 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            var checkSessionAttribute = context.Controller.GetType().GetTypeInfo()
-                .GetCustomAttribute<CheckSessionAttribute>();
+            CheckSessionAttribute checkSession = null;
 
-            if (checkSessionAttribute == null)
+            var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
+            if (controllerActionDescriptor != null)
+            {
+                checkSession = controllerActionDescriptor
+                    .MethodInfo
+                    .GetCustomAttribute<CheckSessionAttribute>();
+            }
+
+            if (checkSession == null)
+            {
+                checkSession = context.Controller.GetType()
+                    .GetTypeInfo()
+                    .GetCustomAttribute<CheckSessionAttribute>();
+            }
+
+            if (checkSession == null || checkSession.CheckSession == CheckSession.Ignore)
             {
                 return;
             }
 
-            if (_sessionService.Get("OrganisationName") == null)
+            if (_sessionService.Get(checkSession.Key) == null)
             {
-                context.Result = new RedirectToActionResult("SignIn", "Account", null);
-                _logger.LogInformation("Session lost, redirecting to Sign In");
+                if (checkSession.CheckSession == CheckSession.Error)
+                {
+                    context.Result =
+                        new BadRequestObjectResult("Session lost");
+
+                    _logger.LogInformation($"Session lost, error result");
+                }
+                else if (checkSession.CheckSession == CheckSession.Redirect)
+                {
+
+                    context.Result =
+                        new RedirectToRouteResult(new RouteValueDictionary(new
+                        {
+                            controller = checkSession.Controller,
+                            action = checkSession.Action
+                        }));
+
+                    _logger.LogInformation($"Session lost, redirecting to {checkSession.Action}");
+                }
             }
             else
             {
@@ -37,6 +70,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context){}
+        public void OnActionExecuted(ActionExecutedContext context) { }
     }
 }

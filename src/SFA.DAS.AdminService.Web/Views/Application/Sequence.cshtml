@@ -6,10 +6,12 @@
 
 @{
     ViewBag.Title = "Application overview";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
+    var BackController = ApplicationReviewHelpers.ApplicationBacklinkController(Model.ApplicationType);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.ApplicationType, Model.ReviewStatus);
+    var Fragment = ApplicationReviewHelpers.ApplicationFragment(Model.ReviewStatus);
 }
 
-<a class="govuk-back-link" asp-controller="Application" asp-action="@BackAction">Back</a>
+<a class="govuk-back-link" asp-controller="@BackController" asp-action="@BackAction" asp-route-pageIndex="@Model.PageIndex" asp-fragment="@Fragment">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -86,7 +88,7 @@
                         }
                         <li>
                             <h2 class="govuk-heading-m">
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo})">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.ApplicationType, applicationSection.SequenceNo, applicationSection.SectionNo})">
                                     @applicationSection.LinkTitle
                                 </a>
                             </h2>
@@ -122,14 +124,14 @@
 
                 @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
                 {
-                    <form class="js-disable-on-submit" asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" method="get">
+                    <form class="js-disable-on-submit" asp-controller="Application" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-applicationType="@Model.ApplicationType" asp-route-sequenceNo="@Model.SequenceNo" method="get">
                         <button class="govuk-button" type="submit">Complete review</button>
                     </form>
                 }
             }
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-controller="Application" asp-action="@BackAction">Return to applications</a>
+                <a class="govuk-link" asp-controller="@BackController" asp-action="@BackAction" asp-route-pageIndex="@Model.PageIndex" asp-fragment="@Fragment">Return to applications</a>
             </p>
         </div>`
     </div>

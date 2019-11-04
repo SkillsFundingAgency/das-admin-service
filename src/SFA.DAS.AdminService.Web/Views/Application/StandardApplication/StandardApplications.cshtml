@@ -1,7 +1,8 @@
-@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Web.Domain.Apply
 @using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Extensions;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.DashboardViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationsDashboardViewModel
 
 @{
     ViewBag.Title = "Applications  - Standard applications";
@@ -13,17 +14,14 @@
 <div>
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
-            <li class="app-navigation">
-                <a asp-action="MidpointApplications" asp-controller="Application">Mid point assessments</a>
-            </li>
             <li class="app-navigation--current-page">
-                <a asp-action="StandardApplications" asp-controller="Application">Standard applications</a>
+                <a asp-action="StandardApplications" asp-controller="StandardApplication">Standard applications</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="RejectedApplications" asp-controller="Application">Rejected applications</a>
+                <a asp-action="RejectedApplications" asp-controller="StandardApplication">Rejected applications</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="Application">Completed applications</a>
+                <a asp-action="ClosedApplications" asp-controller="StandardApplication">Completed applications</a>
             </li>
         </ul>
     </nav>
@@ -59,7 +57,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="Application" asp-controller="Application" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ActiveSequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-applicationType="@ApplyConst.STANDARD_APPLICATION_TYPE">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Standard">
                                     @if (!string.IsNullOrWhiteSpace(item.Standard))
@@ -125,9 +123,9 @@
                     @if (Model.Applications.HasPreviousPage)
                     {
                         <a asp-action="StandardApplications"
-                        asp-controller="Application"
-                        asp-route-page="@(Model.Applications.PageIndex - 1)"
-                        class="govuk-link previous">
+                           asp-controller="StandardApplication"
+                           asp-route-page="@(Model.Applications.PageIndex - 1)"
+                           class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
                             <span class="description">Previous <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
@@ -137,9 +135,9 @@
                     @if (Model.Applications.HasNextPage)
                     {
                         <a asp-action="StandardApplications"
-                        asp-controller="Application"
-                        asp-route-page="@(Model.Applications.PageIndex + 1)"
-                        class="govuk-link next">
+                           asp-controller="StandardApplication"
+                           asp-route-page="@(Model.Applications.PageIndex + 1)"
+                           class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
                             <span class="description">Next <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
