@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Domain.Apply;
+using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -31,8 +32,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private const int DefaultPageIndex = 1;
         private const int DefaultApplicationsPerPage = 10;
-        private const OrganisationApplicationsSortColumn DefaultSortColumn = OrganisationApplicationsSortColumn.OrganisationName;
-        private const string DefaultSortDirection = "Asc";
         private const int DefaultPageSetSize = 6;
 
         public OrganisationApplicationController(IApplicationsSession applicationsSession, IApplicationApiClient applyApiClient, ILogger<OrganisationApplicationController> logger)
@@ -308,7 +307,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 else
                 {
                     applicationsState.SortColumn = sortColumn;
-                    applicationsState.SortDirection = "Asc";
+                    applicationsState.SortDirection = SortOrder.Asc;
                 }
             }
         }
@@ -361,7 +360,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             (
                 reviewStatus,
                 applicationsState.SortColumn.ToString(),
-                applicationsState.SortDirection == "Asc" ? 1 : 0,
+                applicationsState.SortDirection == SortOrder.Asc ? 1 : 0,
                 applicationsState.ApplicationsPerPage,
                 applicationsState.PageIndex,
                 DefaultPageSetSize
@@ -376,24 +375,24 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             _applicationsSession.ApplicationsSessionValid = true;
 
             _applicationsSession.NewOrganisationApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.InProgressOrganisationApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.FeedbackOrganisationApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.ApprovedOrganisationApplications.PageIndex = DefaultPageIndex;
-
             _applicationsSession.NewOrganisationApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
+            _applicationsSession.NewOrganisationApplications.SortColumn = OrganisationApplicationsSortColumn.SubmittedDate;
+            _applicationsSession.NewOrganisationApplications.SortDirection = SortOrder.Desc;
+
+            _applicationsSession.InProgressOrganisationApplications.PageIndex = DefaultPageIndex;
             _applicationsSession.InProgressOrganisationApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
+            _applicationsSession.InProgressOrganisationApplications.SortColumn = OrganisationApplicationsSortColumn.SubmittedDate;
+            _applicationsSession.InProgressOrganisationApplications.SortDirection = SortOrder.Desc;
+
+            _applicationsSession.FeedbackOrganisationApplications.PageIndex = DefaultPageIndex;
             _applicationsSession.FeedbackOrganisationApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
+            _applicationsSession.FeedbackOrganisationApplications.SortColumn = OrganisationApplicationsSortColumn.FeedbackAddedDate;
+            _applicationsSession.FeedbackOrganisationApplications.SortDirection = SortOrder.Desc;
+
+            _applicationsSession.ApprovedOrganisationApplications.PageIndex = DefaultPageIndex;
             _applicationsSession.ApprovedOrganisationApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
-
-            _applicationsSession.NewOrganisationApplications.SortColumn = DefaultSortColumn;
-            _applicationsSession.InProgressOrganisationApplications.SortColumn = DefaultSortColumn;
-            _applicationsSession.FeedbackOrganisationApplications.SortColumn = DefaultSortColumn;
-            _applicationsSession.ApprovedOrganisationApplications.SortColumn = DefaultSortColumn;
-
-            _applicationsSession.NewOrganisationApplications.SortDirection = DefaultSortDirection;
-            _applicationsSession.InProgressOrganisationApplications.SortDirection = DefaultSortDirection;
-            _applicationsSession.FeedbackOrganisationApplications.SortDirection = DefaultSortDirection;
-            _applicationsSession.ApprovedOrganisationApplications.SortDirection = DefaultSortDirection;
+            _applicationsSession.ApprovedOrganisationApplications.SortColumn = OrganisationApplicationsSortColumn.ClosedDate;
+            _applicationsSession.ApprovedOrganisationApplications.SortDirection = SortOrder.Desc;
         }
     }
 }

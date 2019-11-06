@@ -68,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
             {
                 if (SfaSortColumn.Equals(SfaTableSortColumn, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var sortDirectionClass = SfaSortDirection == "Asc"
+                    var sortDirectionClass = SfaSortDirection == SortOrder.Asc
                         ? "sorted-ascending"
                         : "sorted-descending";
 
@@ -104,9 +104,9 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
         private string ToogleSortDirection()
         {
             return SfaSortColumn == SfaTableSortColumn
-                ? SfaSortDirection == "Asc"
-                    ? "Desc"
-                    : "Asc"
+                ? SfaSortDirection == SortOrder.Asc
+                    ? SortOrder.Desc
+                    : SortOrder.Asc
                 : SfaSortDirection;
         }
 
@@ -119,5 +119,11 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
             }
             return passThroughAttributes;
         }
+    }
+
+    public class SortOrder
+    {
+        public const string Asc = "Asc";
+        public const string Desc = "Desc";
     }
 }
