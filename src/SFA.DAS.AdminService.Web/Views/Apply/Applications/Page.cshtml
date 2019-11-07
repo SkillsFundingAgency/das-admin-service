@@ -51,10 +51,10 @@
                         </thead>
                         <tbody class="govuk-table__body">
                             @foreach (var answer in pageOfAnswers.Answers)
-                            {
-                                var question = Model.Page.Questions.SingleOrDefault(x => x.QuestionId == answer.QuestionId);
-                                if (question != null)
-                                {
+							{
+								var question = Model.Page.Questions.SingleOrDefault(x => x.QuestionId == answer.QuestionId);
+								if (question != null)
+								{
                               <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">@question.Label</td>
 
@@ -62,15 +62,15 @@
 								{
                                     <td class="govuk-table__cell">
                                         <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
-										 new
-										 {
-											 Id = Model.ApplicationId,
-											 sequenceNo = Model.SequenceNo,
-											 sectionNo = Model.SectionNo,
-											 pageId = Model.Page.PageId,
-											 questionId = answer.QuestionId,
-											 filename = answer.Value[0]
-										 })">
+new
+{
+	Id = Model.ApplicationId,
+	sequenceNo = Model.SequenceNo,
+	sectionNo = Model.SectionNo,
+	pageId = Model.Page.PageId,
+	questionId = answer.QuestionId,
+	filename = answer.Value[0]
+})">
                                             @answer.Value[0]
                                         </a>
                                     </td>
@@ -89,9 +89,10 @@
 								{
                                     <td class="govuk-table__cell">@answer.Value[0]</td>
 								}
+								
                               </tr>
-                                
-                            }
+								}
+							}
                         </tbody>
                     </table>
                 }
