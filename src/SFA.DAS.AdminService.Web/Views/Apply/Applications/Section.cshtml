@@ -167,34 +167,34 @@
                                         </div>
                                     }
                                 </dt>
-                            <dd class="govuk-summary-list__value">
-                                @foreach (var answerPage in pg.PageOfAnswers)
-                                {
-                                    foreach (var answer in answerPage.Answers)
-                                    {
-                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-                                        if (question != null)
-                                        {
-                                            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
-                                        }
+								<dd class="govuk-summary-list__value">
+									@foreach (var answerPage in pg.PageOfAnswers)
+									{
+										foreach (var answer in answerPage.Answers)
+										{
+											var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+											if (question != null)
+											{
+												<h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
+											}
 
-                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                        {
-                                            <details class="govuk-details">
-                                                <summary class="govuk-details__summary">
-                                                    <span class="govuk-details__summary-text">
-                                                        View question details
-                                                    </span>
-                                                </summary>
-                                                <div class="govuk-details__text">
-                                                    @Html.Raw(question.QuestionBodyText)
-                                                </div>
-                                            </details>
-                                        }
-                                        else if (question != null && question.Input.Type == "FileUpload")
-                                        {
-                                            <p class="govuk-body">
-                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+											if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+											{
+												<details class="govuk-details">
+													<summary class="govuk-details__summary">
+														<span class="govuk-details__summary-text">
+															View question details
+														</span>
+													</summary>
+													<div class="govuk-details__text">
+														@Html.Raw(question.QuestionBodyText)
+													</div>
+												</details>
+											}
+											else if (question != null && question.Input.Type == "FileUpload")
+											{
+												<p class="govuk-body">
+													<a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
                                                     new
                                                     {
                                                         Id = Model.ApplicationId,
@@ -204,30 +204,33 @@
                                                         questionId = answer.QuestionId,
                                                         filename = answer.Value
                                                     })">
-                                                    @answer.Value
-                                                </a>
-                                            </p>
-                                        }
-                                        else if (question != null && question.Input.Type == "Address")
-                                        {
-                                            var address = Model.Addresses[question.QuestionId];
-                                            if (address != null)
-                                            {
-                                                <p class="govuk-body">
-                                                    @address.CommaSeperatedAddress()
-                                                </p>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (@answer.Value != null && @answer.Value.Any())
-                                            {
-                                                 <p class="govuk-body">@answer.Value</p>
-                                            }
-                                        }
-                                    }
-                                }
-                                </dd>
+														@answer.Value
+													</a>
+												</p>
+											}
+											else if (question != null && question.Input.Type == "Address")
+											{
+												var address = Model.Addresses[question.QuestionId];
+												if (address != null)
+												{
+													<p class="govuk-body">
+														@address.CommaSeperatedAddress()
+													</p>
+												}
+											}
+											else
+											{
+												if (@answer.Value != null && @answer.Value.Any())
+												{
+													@foreach (var ans in @answer.Value)
+													{
+														<p class="govuk-body">@Html.Raw(ans)</p>
+													}
+												}
+											}
+										}
+									}
+								</dd>
 
                                 <dd class="govuk-summary-list__actions">
                                     <p class="govuk-body">
