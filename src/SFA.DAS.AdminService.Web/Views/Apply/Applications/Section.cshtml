@@ -220,7 +220,7 @@
                                         }
                                         else
                                         {
-                                            if (@answer.Value != ",,")
+                                            if (@answer.Value != null && @answer.Value.Any())
                                             {
                                                  <p class="govuk-body">@answer.Value</p>
                                             }

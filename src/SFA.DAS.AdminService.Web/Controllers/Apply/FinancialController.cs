@@ -125,7 +125,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                                 {
                                     if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
 
-                                    var fileDownloadName = answer.Value;
+                                    var fileDownloadName = answer.Value[0];
 
                                     var downloadedFile = await _qnaApiClient.DownloadFile(applicationId, financialSection.Id, uploadPage.PageId, uploadQuestion.QuestionId, fileDownloadName);
 

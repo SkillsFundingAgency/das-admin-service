@@ -64,7 +64,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                         var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
                         if (question != null && question.Input.Type == "Address")
                         {
-                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value));
+                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value[0]));
                         }
                     }
                 }
