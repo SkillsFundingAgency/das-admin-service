@@ -49,18 +49,18 @@ namespace SFA.DAS.AdminService.Web.Helpers
             return "";
         }
 
-        public static string ApplicationBacklinkAction(string applicationType, string reviewStatus)
+        public static string ApplicationBacklinkAction(string reviewStatus)
         {
             switch(reviewStatus)
             {
                 case ApplicationReviewStatus.New:
-                    return $"ChangePageNew{applicationType}Applications";
+                    return $"ChangePageNewApplications";
                 case ApplicationReviewStatus.InProgress:
-                    return $"ChangePageInProgress{applicationType}Applications";
+                    return $"ChangePageInProgressApplications";
                 case ApplicationReviewStatus.HasFeedback:
-                    return $"ChangePageFeedback{applicationType}Applications";
+                    return $"ChangePageFeedbackApplications";
                 case ApplicationReviewStatus.Approved:
-                    return $"ChangePageApproved{applicationType}Applications";
+                    return $"ChangePageApprovedApplications";
             }
 
             return string.Empty;

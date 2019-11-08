@@ -108,24 +108,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 $"/Review/OrganisationApplications", organisationApplicationsRequest);
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOrganisationApplications(string reviewStatus)
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OrganisationApplications?reviewStatus={reviewStatus}");
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
-        {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo)
-        {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/FeedbackAddedApplications?sequenceNo={sequenceNo}");
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo)
-        {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications?sequenceNo={sequenceNo}");
+            return await Post<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
+                $"/Review/StandardApplications", standardApplicationsRequest);
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)

@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public int ApplicationsPerPage { get; set; }
 
-        public OrganisationApplicationsSortColumn SortColumn { get; set; }
+        public string SortColumn { get; set; }
 
         public string SortDirection { get; set; }
 
@@ -31,14 +31,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public List<SelectListItem> ApplicationsPerPageList { get; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "3", Text = "3" }, // DEBUG ONLY
             new SelectListItem { Value = "10", Text = "10" },
             new SelectListItem { Value = "50", Text = "50" },
             new SelectListItem { Value = "100", Text = "100"  },
             new SelectListItem { Value = "500", Text = "500"  }
         };
 
-        public string DateNameForReviewStatus()
+        public string DateSortColumnNameForReviewStatus()
         {
             string sortColumnName = string.Empty;
 
@@ -56,6 +55,26 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             }
 
             return sortColumnName;
+        }
+
+        public string DateHeaderColumnNameForReviewStatus()
+        {
+            string applicationColumnName = string.Empty;
+
+            if (ReviewStatus == ApplicationReviewStatus.New)
+            {
+                applicationColumnName = "Date submitted";
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.InProgress || ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                applicationColumnName = "Date";
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.Approved)
+            {
+                applicationColumnName = "Date approved";
+            }
+
+            return applicationColumnName;
         }
     }
 }

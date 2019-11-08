@@ -1,40 +1,38 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
-using System;
-
-namespace SFA.DAS.AdminService.Web.Infrastructure
+﻿namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public interface IApplicationsSession
     {
-        bool ApplicationsSessionValid { get; set; }
+        bool OrganisationApplicationsSessionValid { get; set; }
         ApplicationsState NewOrganisationApplications { get; }
         ApplicationsState InProgressOrganisationApplications { get; }
         ApplicationsState FeedbackOrganisationApplications { get; }
         ApplicationsState ApprovedOrganisationApplications { get; }
+
+        bool StandardApplicationsSessionValid { get; set; }
+        ApplicationsState NewStandardApplications { get; }
+        ApplicationsState InProgressStandardApplications { get; }
+        ApplicationsState FeedbackStandardApplications { get; }
+        ApplicationsState ApprovedStandardApplications { get; }
     } 
 
     public class ApplicationsSession : IApplicationsSession
     {
         private readonly ISessionService _sessionService;
 
-        private const string _uniqueKeyNewOrganisationApplications = "NewOrganisationApplications";
-        private const string _uniqueKeyInProgressOrganisationApplications = "InProgressOrganisationApplications";
-        private const string _uniqueKeyFeedbackOrganisationApplications = "FeedbackOrganisationApplications";
-        private const string _uniqueKeyApprovedOrganisationApplications = "ApprovedOrganisationApplications";
-
         public ApplicationsSession(ISessionService sessionService)
         {
             _sessionService = sessionService;
         }
 
-        public bool ApplicationsSessionValid
+        public bool OrganisationApplicationsSessionValid
         {
             get
             {
-                return _sessionService.Get<bool>("ApplicationsSessionValid");
+                return _sessionService.Get<bool>("OrganisationApplicationsSessionValid");
             }
             set
             {
-                _sessionService.Set("ApplicationsSessionValid", value);
+                _sessionService.Set("OrganisationApplicationsSessionValid", value);
             }
         }
 
@@ -42,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             get
             {
-                return new ApplicationsState(_sessionService, _uniqueKeyNewOrganisationApplications);
+                return new ApplicationsState(_sessionService, "NewOrganisationApplications");
             }
         }
 
@@ -50,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             get
             {
-                return new ApplicationsState(_sessionService, _uniqueKeyInProgressOrganisationApplications);
+                return new ApplicationsState(_sessionService, "InProgressOrganisationApplications");
             }
         }
 
@@ -58,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             get
             {
-                return new ApplicationsState(_sessionService, _uniqueKeyFeedbackOrganisationApplications);
+                return new ApplicationsState(_sessionService, "FeedbackOrganisationApplications");
             }
         }
 
@@ -66,7 +64,51 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             get
             {
-                return new ApplicationsState(_sessionService, _uniqueKeyApprovedOrganisationApplications);
+                return new ApplicationsState(_sessionService, "ApprovedOrganisationApplications");
+            }
+        }
+
+        public bool StandardApplicationsSessionValid
+        {
+            get
+            {
+                return _sessionService.Get<bool>("StandardApplicationsSessionValid");
+            }
+            set
+            {
+                _sessionService.Set("StandardApplicationsSessionValid", value);
+            }
+        }
+
+        public ApplicationsState NewStandardApplications
+        {
+            get
+            {
+                return new ApplicationsState(_sessionService, "NewStandardApplications");
+            }
+        }
+
+        public ApplicationsState InProgressStandardApplications
+        {
+            get
+            {
+                return new ApplicationsState(_sessionService, "InProgressStandardApplications");
+            }
+        }
+
+        public ApplicationsState FeedbackStandardApplications
+        {
+            get
+            {
+                return new ApplicationsState(_sessionService, "FeedbackStandardApplications");
+            }
+        }
+
+        public ApplicationsState ApprovedStandardApplications
+        {
+            get
+            {
+                return new ApplicationsState(_sessionService, "ApprovedStandardApplications");
             }
         }
     }
@@ -94,11 +136,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
         
-        public OrganisationApplicationsSortColumn SortColumn
+        public string SortColumn
         {
             get
             {
-                return _sessionService.Get<OrganisationApplicationsSortColumn>(_uniqueKey + "_SortColumn");
+                return _sessionService.Get(_uniqueKey + "_SortColumn");
             }
             set
             {

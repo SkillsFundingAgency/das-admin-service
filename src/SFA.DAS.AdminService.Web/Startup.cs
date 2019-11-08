@@ -101,7 +101,8 @@ namespace SFA.DAS.AdminService.Web
 
             services.Configure<RazorViewEngineOptions>(o =>
                 {
-                    o.ViewLocationFormats.Add("/Views/Application/{1}/{0}" + RazorViewEngine.ViewExtension);   
+                    o.ViewLocationFormats.Add("/Views/Application/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    o.ViewLocationFormats.Add("/Views/Application/{0}" + RazorViewEngine.ViewExtension);
                 });
 
             services.AddSession(opt => 

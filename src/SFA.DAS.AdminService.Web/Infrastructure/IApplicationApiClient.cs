@@ -12,14 +12,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<ApplicationResponse> GetApplication(Guid Id);
-        Task<List<ApplicationSummaryItem>> GetClosedApplications(int sequenceNo);
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications(int sequenceNo);
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo);
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
         Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest);
+        Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest);
 
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
         Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);

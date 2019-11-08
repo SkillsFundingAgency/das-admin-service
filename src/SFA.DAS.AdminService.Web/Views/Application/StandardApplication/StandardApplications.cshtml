@@ -1,150 +1,77 @@
-@using SFA.DAS.AdminService.Web.Domain.Apply
-@using SFA.DAS.AssessorService.ApplyTypes;
 @using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Web.Helpers;
+@using SFA.DAS.AssessorService.ApplyTypes;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationsDashboardViewModel
 
 @{
-    ViewBag.Title = "Applications  - Standard applications";
+    ViewBag.Title = "Standard applications";
     Layout = "_Layout";
 }
 
 <a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
 
-<div>
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation--current-page">
-                <a asp-action="StandardApplications" asp-controller="StandardApplication">Standard applications</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="RejectedApplications" asp-controller="StandardApplication">Rejected applications</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="StandardApplication">Completed applications</a>
-            </li>
-        </ul>
-    </nav>
-</div>
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds das-no-wrap">
-            <h1 class="govuk-heading-xl">
-                <span class="govuk-caption-xl">Applications</span>
-                Standard applications
-            </h1>
-        </div>
-    </div>
+    <h1 class="govuk-heading-xl">Standard applications</h1>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
-            @if (@Model.Applications.Items.Any())
-            {
-                <table class="govuk-table govuk-table--s das-table--responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">Standard</th>
-                            <th class="govuk-table__header" scope="col">Date submitted</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var item in Model.Applications.Items)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="ActiveSequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-applicationType="@ApplyConst.STANDARD_APPLICATION_TYPE">@item.OrganisationName</a>
-                                </td>
-                                <td class="govuk-table__cell" data-label="Standard">
-                                    @if (!string.IsNullOrWhiteSpace(item.Standard))
-                                    {
-                                        <text>@item.Standard</text>
-                                    }
-                                    else
-                                    {
-                                        <text>---</text>
-                                    }
-                                </td>
-                                <td class="govuk-table__cell" data-label="Date submitted">
-                                    @item.SubmittedDate.ToSfaShortDateString()
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                    @{
-                                        switch (item.ReviewStatus)
-                                        {
-                                            case ApplicationReviewStatus.New:
-                                                if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
-                                                {
-                                                    <div class="govuk-tag govuk-tag--updated">
-                                                        updated
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="govuk-tag govuk-tag--inactive">
-                                                        unassigned
-                                                    </div>
-                                                }
-                                                break;
-                                            case ApplicationReviewStatus.InProgress:
-                                                <div class="govuk-tag">
-                                                    in progress
-                                                </div>
-                                                break;
-                                            default:
-                                                <text>---</text>
-                                                break;
-                                        }
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="govuk-body-l">There are no open applications at this time.</p>
-            }
-
-        </div>
-    </div>
-
-    @if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="page-navigation">
-
-                    @if (Model.Applications.HasPreviousPage)
-                    {
-                        <a asp-action="StandardApplications"
-                           asp-controller="StandardApplication"
-                           asp-route-page="@(Model.Applications.PageIndex - 1)"
-                           class="govuk-link previous">
-                            <i class="arrow-button icon-left-open">&#xe800;</i>
-                            <span class="description">Previous <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+            <!-- tabs -->
+            <div class="govuk-tabs" data-module="tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                        <a class="govuk-tabs__tab" href="#new">
+                            New (@(Model.NewApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
-                    }
-
-                    @if (Model.Applications.HasNextPage)
-                    {
-                        <a asp-action="StandardApplications"
-                           asp-controller="StandardApplication"
-                           asp-route-page="@(Model.Applications.PageIndex + 1)"
-                           class="govuk-link next">
-                            <i class="arrow-button icon-right-open">&#xe801;</i>
-                            <span class="description">Next <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#in-progress">
+                            In Progress (@(Model.InProgressApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
-                    }
-                </div>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#feedback">
+                            Feedback (@(Model.FeedbackApplications?.Applications?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#approved">
+                            Approved (@(Model.ApprovedApplications?.Applications?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                </ul>
+                <section class="govuk-tabs__panel" id="new">
+                    <div id="new-standard-applications">
+                        @{await Html.RenderPartialAsync("_StandardApplicationsPartial", @Model.NewApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-progress">
+                    <div id="in-progress-standard-applications">
+                        @{await Html.RenderPartialAsync("_StandardApplicationsPartial", @Model.InProgressApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="feedback">
+                    <div id="feedback-standard-applications">
+                        @{await Html.RenderPartialAsync("_StandardApplicationsPartial", @Model.FeedbackApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="approved">
+                    <div id="approved-organisation-applications">
+                        @{await Html.RenderPartialAsync("_StandardApplicationsPartial", @Model.ApprovedApplications);}
+                    </div>
+                </section>
             </div>
         </div>
-    }
+    </div>
+    <input type="hidden" asp-for="ControllerName">
 </main>
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/javascripts/das-application-service.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/javascripts/das-application-service.min.js"></script>
+    </environment>
+}

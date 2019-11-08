@@ -1,34 +1,32 @@
 ﻿(function ($) {
-    var applicationType = "Organisation";//$("ApplicationType").val();
-    var controller = applicationType + "Application";
+    var controller = $("#ControllerName").val();
     
+    refreshClickHandlers('New','new');
+    refreshClickHandlers('InProgress', 'in-progress');
+    refreshClickHandlers('Feedback', 'feedback');
+    refreshClickHandlers('Approved', 'approved');
 
-    refreshClickHandlers('New', applicationType, 'new');
-    refreshClickHandlers('InProgress', applicationType, 'in-progress');
-    refreshClickHandlers('Feedback', applicationType, 'feedback');
-    refreshClickHandlers('Approved', applicationType, 'approved');
-
-    function refreshClickHandlers(status, applicationType, fragment) {
+    function refreshClickHandlers(reviewStatus, fragment) {
         onClickChangePage(
             "." + fragment + "-page",
-            "ChangePage" + status + applicationType + "Applications",
+            "ChangePage" + reviewStatus + "Applications",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(status, applicationType, fragment); }
+            function () { return refreshClickHandlers(reviewStatus, fragment); }
         );
         onSelectApplicationsPerPage(
             "." + fragment + "-per-page",
-            "ChangeApplicationsPerPage" + status + applicationType + "Applications",
+            "ChangeApplicationsPerPage" + reviewStatus + "Applications",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(status, applicationType, fragment); }
+            function () { return refreshClickHandlers(reviewStatus, fragment); }
         );
         onSelectSortableColumnHeader(
             "." + fragment + "-sort",
-            "Sort" + status + applicationType + "Applications",
+            "Sort" + reviewStatus + "Applications",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(status, applicationType, fragment); }            
+            function () { return refreshClickHandlers(reviewStatus, fragment); }            
         );
     }
 

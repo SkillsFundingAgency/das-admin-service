@@ -19,35 +19,45 @@
 <table class="govuk-table govuk-table--small">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-third">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
-                                            data-sortColumn="@OrganisationApplicationsSortColumn.OrganisationName"
+                                            data-sortColumn="@StandardApplicationsSortColumn.OrganisationName"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
+                                            asp-controller="StandardApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@OrganisationApplicationsSortColumn.OrganisationName"
+                                            sfa-sort-column="@StandardApplicationsSortColumn.OrganisationName"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
             </th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
-                                            data-sortColumn="@OrganisationApplicationsSortColumn.FinancialStatus"
+                                            data-sortColumn="@StandardApplicationsSortColumn.StandardCode"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
+                                            asp-controller="StandardApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@OrganisationApplicationsSortColumn.FinancialStatus"
+                                            sfa-sort-column="@StandardApplicationsSortColumn.StandardCode"
                                             sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Financial status</sfa-sortable-column-header>
+                                            sfa-sort-direction="@Model.SortDirection">Reference</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@StandardApplicationsSortColumn.StandardName"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="StandardApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@StandardApplicationsSortColumn.StandardName"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Name of Standard</sfa-sortable-column-header>
             </th>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                     <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
-                                                data-sortColumn="@OrganisationApplicationsSortColumn.Status"
+                                                data-sortColumn="@StandardApplicationsSortColumn.Status"
                                                 asp-action="@Model.SortColumnAction"
-                                                asp-controller="OrganisationApplication"
+                                                asp-controller="StandardApplication"
                                                 asp-fragment="@Model.Fragment"
-                                                sfa-sort-column="@OrganisationApplicationsSortColumn.Status"
+                                                sfa-sort-column="@StandardApplicationsSortColumn.Status"
                                                 sfa-table-sort-column="@Model.SortColumn"
                                                 sfa-sort-direction="@Model.SortDirection">Status</sfa-sortable-column-header>
                 </th>
@@ -56,7 +66,7 @@
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
                                             data-sortColumn="@Model.DateSortColumnNameForReviewStatus()"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
+                                            asp-controller="StandardApplication"
                                             asp-fragment="@Model.Fragment"
                                             sfa-sort-column="@Model.DateSortColumnNameForReviewStatus()"
                                             sfa-table-sort-column="@Model.SortColumn"
@@ -75,11 +85,12 @@
                    asp-action="ActiveSequence"
                    asp-controller="Application"
                    asp-route-applicationId="@application.ApplicationId"
-                   asp-route-applicationType="@ApplyConst.ORGANISATION_APPLICATION_TYPE">
+                   asp-route-applicationType="@ApplyConst.STANDARD_APPLICATION_TYPE">
                     @application.OrganisationName
                 </a>
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@application.FinancialStatus</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardCode</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardName</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
@@ -92,7 +103,7 @@
 </table>
 @if (Model != null)
 {
-    <form asp-action="@Model.ChangeApplicationsPerPageAction" asp-controller="OrganisationApplication" method="get" asp-fragment="@Model.Fragment">
+    <form asp-action="@Model.ChangeApplicationsPerPageAction" asp-controller="StandardApplication" method="get" asp-fragment="@Model.Fragment">
         <div class="das-flex-space-around">
             <div>
                 <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ApplicationsPerPage" asp-items="Model.ApplicationsPerPageList"></select>
@@ -103,7 +114,7 @@
                                                 {
                                                     PaginatedList = Model.Applications,
                                                     ChangePageAction = Model.ChangePageAction,
-                                                    ChangePageController = "OrganisationApplication",
+                                                    ChangePageController = "StandardApplication",
                                                     Fragment = Model.Fragment
                                                 });}
             </div>

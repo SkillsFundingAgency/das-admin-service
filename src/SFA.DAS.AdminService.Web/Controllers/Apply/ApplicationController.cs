@@ -14,6 +14,7 @@ using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AdminService.Web.Domain.Apply;
+using SFA.DAS.AdminService.Web.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -46,44 +47,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/{applicationId}/{applicationType}")]
-        public async Task<IActionResult> ActiveSequence(Guid applicationId, string applicationType)
+        public IActionResult ActiveSequence(Guid applicationId, string applicationType)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-
-            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
-
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var sequenceVm = new SequenceViewModel(application, applicationType, organisation, sequence, sections, 
-                activeApplySequence.Sections, GetApplicationsState(applicationType, application.ReviewStatus)?.PageIndex);
-
-            return View(nameof(Sequence), sequenceVm);
+            return RedirectToAction(nameof(ApplicationController.ActiveSequence),
+                ApplicationTypeController(applicationType), new { applicationId });
         }
 
         [HttpGet("/Applications/{applicationId}/{applicationType}/Sequence/{sequenceNo}")]
-        public async Task<IActionResult> Sequence(Guid applicationId, string applicationType, int sequenceNo)
+        public IActionResult Sequence(Guid applicationId, string applicationType, int sequenceNo)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-
-            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var sequenceVm = new SequenceViewModel(application, applicationType, organisation, sequence, sections, 
-                applySequence.Sections, GetApplicationsState(applicationType, application.ReviewStatus)?.PageIndex);
-
-            if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
-            {
-                return View(nameof(Sequence), sequenceVm);
-            }
-            else
-            {
-                return View($"{nameof(Sequence)}_ReadOnly", sequenceVm);
-            }
+            return RedirectToAction(nameof(ApplicationController.Sequence),
+                ApplicationTypeController(applicationType), new { applicationId, sequenceNo });
         }
 
         [HttpGet("/Applications/{applicationId}/{applicationType}/Sequence/{sequenceNo}/Section/{sectionNo}")]
@@ -357,24 +331,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
-        private ApplicationsState GetApplicationsState(string applicationType, string reviewStatus)
+        private string ApplicationTypeController(string applicationType)
         {
-            if (applicationType == ApplyConst.ORGANISATION_APPLICATION_TYPE)
+            switch (applicationType)
             {
-                switch (reviewStatus)
-                {
-                    case ApplicationReviewStatus.New:
-                        return _applicationsSession.NewOrganisationApplications;
-                    case ApplicationReviewStatus.InProgress:
-                        return _applicationsSession.InProgressOrganisationApplications;
-                    case ApplicationReviewStatus.HasFeedback:
-                        return _applicationsSession.FeedbackOrganisationApplications;
-                    case ApplicationReviewStatus.Approved:
-                        return _applicationsSession.ApprovedOrganisationApplications;
-                }
+                case ApplyConst.ORGANISATION_APPLICATION_TYPE:
+                    return nameof(OrganisationApplicationController).RemoveController();
+                case ApplyConst.STANDARD_APPLICATION_TYPE:
+                    return nameof(StandardApplicationController).RemoveController();
             }
 
-            return null;
+            return string.Empty;
         }
     }
 }

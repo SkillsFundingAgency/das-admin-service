@@ -7,7 +7,7 @@
 @{
     ViewBag.Title = "Application overview";
     var BackController = ApplicationReviewHelpers.ApplicationBacklinkController(Model.ApplicationType);
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.ApplicationType, Model.ReviewStatus);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.ReviewStatus);
     var Fragment = ApplicationReviewHelpers.ApplicationFragment(Model.ReviewStatus);
 }
 

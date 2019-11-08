@@ -2,7 +2,7 @@
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.OrganisationApplicationsViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationsDashboardViewModel
 
 @{
     ViewBag.Title = "Organisation applications";
@@ -22,48 +22,49 @@
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                         <a class="govuk-tabs__tab" href="#new">
-                            New (@(Model.NewOrganisationApplications?.Applications?.TotalRecordCount ?? 0))
+                            New (@(Model.NewApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#in-progress">
-                            In Progress (@(Model.InProgressOrganisationApplications?.Applications?.TotalRecordCount ?? 0))
+                            In Progress (@(Model.InProgressApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#feedback">
-                            Feedback (@(Model.FeedbackOrganisationApplications?.Applications?.TotalRecordCount ?? 0))
+                            Feedback (@(Model.FeedbackApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#approved">
-                            Approved (@(Model.ApprovedOrganisationApplications?.Applications?.TotalRecordCount ?? 0))
+                            Approved (@(Model.ApprovedApplications?.Applications?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                 </ul>
                 <section class="govuk-tabs__panel" id="new">
                     <div id="new-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.NewOrganisationApplications);}
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.NewApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-progress">
                     <div id="in-progress-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.InProgressOrganisationApplications);}
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.InProgressApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="feedback">
                     <div id="feedback-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.FeedbackOrganisationApplications);}
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.FeedbackApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="approved">
                     <div id="approved-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.ApprovedOrganisationApplications);}
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.ApprovedApplications);}
                     </div>
                 </section>
             </div>
         </div>
     </div>
+    <input type="hidden" asp-for="ControllerName">
 </main>
 
 @section Scripts {
