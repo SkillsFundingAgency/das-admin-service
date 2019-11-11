@@ -32,6 +32,7 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -83,6 +84,12 @@ namespace SFA.DAS.AdminService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+
+            services.Configure<RazorViewEngineOptions>(o =>
+            {
+                o.ViewLocationFormats.Add("/Views/RoatpAssessor/{1}/{0}" + RazorViewEngine.ViewExtension);
+            });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();

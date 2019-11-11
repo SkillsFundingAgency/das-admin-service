@@ -1,0 +1,37 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.RoatpDashboard.IndexViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">RoATP dashboard</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+
+        @if (Model.CanShowRoatpAssessorApplications)
+        {
+            <div class="govuk-grid-column-one-half">
+                <h2 class="govuk-heading-l">Assess applications</h2>
+                <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
+                <ul class="govuk-list govuk-list--nobullet">
+                    <li><a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get">View RoATP applications</a></li>
+                </ul>
+            </div>
+        }
+
+        @if (Model.CanShowRoatp)
+        {
+            <div class="govuk-grid-column-one-half">
+                <h2 class="govuk-heading-l">Manage register</h2>
+                <p class="govuk-body">Search, view and edit organisations that are currently live on the register.</p>
+                <ul class="govuk-list govuk-list--nobullet">
+                    <li><a asp-route="@RouteNames.Roatp_Home_Index_Get">Search the register</a></li>
+                </ul>
+            </div>
+        }
+
+    </div>
+
+</main> 
