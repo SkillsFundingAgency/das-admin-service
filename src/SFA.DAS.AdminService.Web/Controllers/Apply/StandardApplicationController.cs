@@ -19,10 +19,10 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
-    [CheckSession(nameof(StandardApplicationController), nameof(ResetSession), nameof(IApplicationsSession.StandardApplicationsSessionValid))]
+    [CheckSession(nameof(StandardApplicationController), nameof(ResetSession), nameof(IControllerSession.StandardApplication_SessionValid))]
     public class StandardApplicationController : Controller
     {
-        private readonly IApplicationsSession _applicationsSession;
+        private readonly IControllerSession _controllerSession;
         private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -32,17 +32,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private const int DefaultApplicationsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
-        public StandardApplicationController(IApplicationsSession applicationsSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, ILogger<StandardApplicationController> logger)
+        public StandardApplicationController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, ILogger<StandardApplicationController> logger)
         {
             _apiClient = apiClient;
-            _applicationsSession = applicationsSession;
+            _controllerSession = controllerSession;
             _qnaApiClient = qnaApiClient;
             _applyApiClient = applyApiClient;
             _logger = logger;
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Ignore)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Ignore)]
         public IActionResult ResetSession()
         {
             SetDefaultSession();
@@ -67,7 +67,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, ApplyConst.STANDARD_APPLICATION_TYPE, organisation, sequence, sections,
-                activeApplySequence.Sections, GetApplicationsState(application.ReviewStatus)?.PageIndex);
+                activeApplySequence.Sections, GetPagingState(application.ReviewStatus)?.PageIndex);
 
             return View(nameof(Sequence), sequenceVm);
         }
@@ -84,7 +84,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, ApplyConst.STANDARD_APPLICATION_TYPE, organisation, sequence, sections,
-                applySequence.Sections, GetApplicationsState(application.ReviewStatus)?.PageIndex);
+                applySequence.Sections, GetPagingState(application.ReviewStatus)?.PageIndex);
 
             if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
             {
@@ -100,10 +100,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> StandardApplications(int pageIndex = 1)
         {
             // reset only the page indexes; retain the sort column, direction and applications per page settings
-            _applicationsSession.NewStandardApplications.PageIndex = 1;
-            _applicationsSession.InProgressStandardApplications.PageIndex = 1;
-            _applicationsSession.FeedbackStandardApplications.PageIndex = 1;
-            _applicationsSession.ApprovedStandardApplications.PageIndex = 1;
+            _controllerSession.StandardApplication_NewApplications.PageIndex = 1;
+            _controllerSession.StandardApplication_InProgressApplictions.PageIndex = 1;
+            _controllerSession.StandardApplication_FeedbackApplications.PageIndex = 1;
+            _controllerSession.StandardApplication_ApprovedApplications.PageIndex = 1;
 
             var vm = await MapViewModelFromSession();
             return View(nameof(StandardApplications), vm);
@@ -116,23 +116,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageNewApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.New, pageIndex);
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangeApplicationsPerPageNewApplications(int applicationsPerPage = DefaultApplicationsPerPage)
+        public async Task<IActionResult> ChangeApplicationsPerPageNewApplications(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.New, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.New, itemsPerPage);
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
-        public async Task<IActionResult> ChangeApplicationsPerPageNewApplicationsPartial(int applicationsPerPage = DefaultApplicationsPerPage)
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangeApplicationsPerPageNewApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.New, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.New, itemsPerPage);
         }
 
         [HttpGet]
@@ -142,7 +142,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortNewApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.New, sortColumn, sortDirection);
@@ -155,23 +155,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageInProgressApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.InProgress, pageIndex);
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangeApplicationsPerPageInProgressApplications(int applicationsPerPage = DefaultApplicationsPerPage)
+        public async Task<IActionResult> ChangeApplicationsPerPageInProgressApplications(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.InProgress, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.InProgress, itemsPerPage);
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
-        public async Task<IActionResult> ChangeApplicationsPerPageInProgressApplicationsPartial(int applicationsPerPage = DefaultApplicationsPerPage)
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangeApplicationsPerPageInProgressApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.InProgress, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.InProgress, itemsPerPage);
         }
 
         [HttpGet]
@@ -181,7 +181,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortInProgressApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.InProgress, sortColumn, sortDirection);
@@ -194,23 +194,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageFeedbackApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.HasFeedback, pageIndex);
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangeApplicationsPerPageFeedbackApplications(int applicationsPerPage = DefaultApplicationsPerPage)
+        public async Task<IActionResult> ChangeApplicationsPerPageFeedbackApplications(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.HasFeedback, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.HasFeedback, itemsPerPage);
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
-        public async Task<IActionResult> ChangeApplicationsPerPageFeedbackApplicationsPartial(int applicationsPerPage = DefaultApplicationsPerPage)
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangeApplicationsPerPageFeedbackApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.HasFeedback, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.HasFeedback, itemsPerPage);
         }
 
         [HttpGet]
@@ -220,7 +220,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortFeedbackApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.HasFeedback, sortColumn, sortDirection);
@@ -233,23 +233,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageApprovedApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.Approved, pageIndex);
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChangeApplicationsPerPageApprovedApplications(int applicationsPerPage = DefaultApplicationsPerPage)
+        public async Task<IActionResult> ChangeApplicationsPerPageApprovedApplications(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.Approved, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplications(ApplicationReviewStatus.Approved, itemsPerPage);
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
-        public async Task<IActionResult> ChangeApplicationsPerPageApprovedApplicationsPartial(int applicationsPerPage = DefaultApplicationsPerPage)
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangeApplicationsPerPageApprovedApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
-            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.Approved, applicationsPerPage);
+            return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.Approved, itemsPerPage);
         }
 
         [HttpGet]
@@ -259,24 +259,24 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IApplicationsSession.StandardApplicationsSessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.StandardApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortApprovedApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.Approved, sortColumn, sortDirection);
         }
 
-        private ApplicationsState GetApplicationsState(string reviewStatus)
+        private IPagingState GetPagingState(string reviewStatus)
         {
             switch (reviewStatus)
             {
                 case ApplicationReviewStatus.New:
-                    return _applicationsSession.NewStandardApplications;
+                    return _controllerSession.StandardApplication_NewApplications;
                 case ApplicationReviewStatus.InProgress:
-                    return _applicationsSession.InProgressStandardApplications;
+                    return _controllerSession.StandardApplication_InProgressApplictions;
                 case ApplicationReviewStatus.HasFeedback:
-                    return _applicationsSession.FeedbackStandardApplications;
+                    return _controllerSession.StandardApplication_FeedbackApplications;
                 case ApplicationReviewStatus.Approved:
-                    return _applicationsSession.ApprovedStandardApplications;
+                    return _controllerSession.StandardApplication_ApprovedApplications;
             }
 
             return null;
@@ -286,18 +286,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var viewModel = new ApplicationsDashboardViewModel(nameof(StandardApplicationController).RemoveController());
 
-            viewModel.NewApplications = await AddApplicationsViewModelValues(viewModel.NewApplications, ApplicationReviewStatus.New, _applicationsSession.NewStandardApplications);
-            viewModel.InProgressApplications = await AddApplicationsViewModelValues(viewModel.InProgressApplications, ApplicationReviewStatus.InProgress, _applicationsSession.InProgressStandardApplications);
-            viewModel.FeedbackApplications = await AddApplicationsViewModelValues(viewModel.FeedbackApplications, ApplicationReviewStatus.HasFeedback, _applicationsSession.FeedbackStandardApplications);
-            viewModel.ApprovedApplications = await AddApplicationsViewModelValues(viewModel.ApprovedApplications, ApplicationReviewStatus.Approved, _applicationsSession.ApprovedStandardApplications);
+            viewModel.NewApplications = await AddApplicationsViewModelValues(viewModel.NewApplications, ApplicationReviewStatus.New, _controllerSession.StandardApplication_NewApplications);
+            viewModel.InProgressApplications = await AddApplicationsViewModelValues(viewModel.InProgressApplications, ApplicationReviewStatus.InProgress, _controllerSession.StandardApplication_InProgressApplictions);
+            viewModel.FeedbackApplications = await AddApplicationsViewModelValues(viewModel.FeedbackApplications, ApplicationReviewStatus.HasFeedback, _controllerSession.StandardApplication_FeedbackApplications);
+            viewModel.ApprovedApplications = await AddApplicationsViewModelValues(viewModel.ApprovedApplications, ApplicationReviewStatus.Approved, _controllerSession.StandardApplication_ApprovedApplications);
 
             return viewModel;
         }
 
         private async Task<IActionResult> ChangePageApplications(string reviewStatus, int pageIndex)
         {
-            var applicationsState = GetApplicationsState(reviewStatus);
-            applicationsState.PageIndex = pageIndex;
+            var pagingState = GetPagingState(reviewStatus);
+            pagingState.PageIndex = pageIndex;
 
             var vm = await MapViewModelFromSession();
             return View(nameof(StandardApplications), vm);
@@ -305,87 +305,87 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private async Task<IActionResult> ChangePageApplicationsPartial(string reviewStatus, int pageIndex)
         {
-            var applicationState = this.GetApplicationsState(reviewStatus);
-            applicationState.PageIndex = pageIndex;
+            var pagingState = this.GetPagingState(reviewStatus);
+            pagingState.PageIndex = pageIndex;
 
-            var viewModel = await AddApplicationsViewModelValues(new ApplicationsViewModel(), reviewStatus, applicationState);
+            var viewModel = await AddApplicationsViewModelValues(new ApplicationsViewModel(), reviewStatus, pagingState);
             return PartialView("_StandardApplicationsPartial", viewModel);
         }
 
-        private async Task<IActionResult> ChangeApplicationsPerPageApplications(string reviewStatus, int applicationsPerPage)
+        private async Task<IActionResult> ChangeApplicationsPerPageApplications(string reviewStatus, int itemsPerPage)
         {
-            var applicationState = this.GetApplicationsState(reviewStatus);
-            applicationState.ApplicationsPerPage = applicationsPerPage;
+            var pagingState = this.GetPagingState(reviewStatus);
+            pagingState.ItemsPerPage = itemsPerPage;
 
             return await ChangePageApplications(reviewStatus, 1);
         }
 
-        private async Task<IActionResult> ChangeApplicationsPerPageApplicationsPartial(string reviewStatus, int applicationsPerPage)
+        private async Task<IActionResult> ChangeApplicationsPerPageApplicationsPartial(string reviewStatus, int itemsPerPage)
         {
-            var applicationsState = GetApplicationsState(reviewStatus);
-            applicationsState.ApplicationsPerPage = applicationsPerPage;
+            var pagingState = GetPagingState(reviewStatus);
+            pagingState.ItemsPerPage = itemsPerPage;
 
             return await ChangePageApplicationsPartial(reviewStatus, 1);
         }
 
         private async Task<IActionResult> SortApplications(string reviewStatus, string sortColumn, string sortDirection)
         {
-            UpdateSortDirection(sortColumn, sortDirection, GetApplicationsState(reviewStatus));
+            UpdateSortDirection(sortColumn, sortDirection, GetPagingState(reviewStatus));
             return await ChangePageApplications(reviewStatus, 1);
         }
 
         private async Task<IActionResult> SortApplicationsPartial(string reviewStatus, string sortColumn, string sortDirection)
         {
-            UpdateSortDirection(sortColumn, sortDirection, GetApplicationsState(reviewStatus));
+            UpdateSortDirection(sortColumn, sortDirection, GetPagingState(reviewStatus));
             return await ChangePageApplicationsPartial(reviewStatus, 1);
         }
 
-        private void UpdateSortDirection(string sortColumn, string sortDirection, ApplicationsState applicationsState)
+        private void UpdateSortDirection(string sortColumn, string sortDirection, IPagingState pagingState)
         {
-            if (applicationsState.SortColumn == sortColumn)
+            if (pagingState.SortColumn == sortColumn)
             {
-                applicationsState.SortDirection = sortDirection;
+                pagingState.SortDirection = sortDirection;
             }
             else
             {
-                applicationsState.SortColumn = sortColumn;
-                applicationsState.SortDirection = SortOrder.Asc;
+                pagingState.SortColumn = sortColumn;
+                pagingState.SortDirection = SortOrder.Asc;
             }
         }
 
-        private async Task<ApplicationsViewModel> AddApplicationsViewModelValues(ApplicationsViewModel viewModel, string reviewStatus, ApplicationsState applicationsState)
+        private async Task<ApplicationsViewModel> AddApplicationsViewModelValues(ApplicationsViewModel viewModel, string reviewStatus, IPagingState pagingState)
         {
             viewModel.ReviewStatus = reviewStatus;
-            viewModel.PageIndex = applicationsState.PageIndex;
-            viewModel.ApplicationsPerPage = applicationsState.ApplicationsPerPage;
-            viewModel.SortColumn = applicationsState.SortColumn;
-            viewModel.SortDirection = applicationsState.SortDirection;
-            viewModel.Applications = await GetPageApplications(viewModel.ReviewStatus, applicationsState);
+            viewModel.PageIndex = pagingState.PageIndex;
+            viewModel.ItemsPerPage = pagingState.ItemsPerPage;
+            viewModel.SortColumn = pagingState.SortColumn;
+            viewModel.SortDirection = pagingState.SortDirection;
+            viewModel.PaginatedList = await GetPageApplications(viewModel.ReviewStatus, pagingState);
 
             switch (reviewStatus)
             {
                 case ApplicationReviewStatus.New:
-                    viewModel.ChangePageAction = "ChangePageNewApplications";
-                    viewModel.ChangeApplicationsPerPageAction = "ChangeApplicationPerPageNewApplications";
-                    viewModel.SortColumnAction = "SortNewStandardApplications";
+                    viewModel.ChangePageAction = nameof(ChangePageNewApplications);
+                    viewModel.ChangeItemsPerPageAction = nameof(ChangeApplicationsPerPageNewApplications);
+                    viewModel.SortColumnAction = nameof(SortNewApplications);
                     viewModel.Title = "New";
                     break;
                 case ApplicationReviewStatus.InProgress:
-                    viewModel.ChangePageAction = "ChangePageInProgressApplications";
-                    viewModel.ChangeApplicationsPerPageAction = "ChangeApplicationPerPageInProgressApplications";
-                    viewModel.SortColumnAction = "SortInProgressApplications";
+                    viewModel.ChangePageAction = nameof(ChangePageInProgressApplications);
+                    viewModel.ChangeItemsPerPageAction = nameof(ChangeApplicationsPerPageInProgressApplications);
+                    viewModel.SortColumnAction = nameof(SortInProgressApplications);
                     viewModel.Title = "In progress";
                     break;
                 case ApplicationReviewStatus.HasFeedback:
-                    viewModel.ChangePageAction = "ChangePageFeedbackApplications";
-                    viewModel.ChangeApplicationsPerPageAction = "ChangeApplicationPerPageFeedbackApplications";
-                    viewModel.SortColumnAction = "SortFeedbackApplications";
+                    viewModel.ChangePageAction = nameof(ChangePageFeedbackApplications);
+                    viewModel.ChangeItemsPerPageAction = nameof(ChangeApplicationsPerPageFeedbackApplications);
+                    viewModel.SortColumnAction = nameof(SortFeedbackApplications);
                     viewModel.Title = "Feedback";
                     break;
                 case ApplicationReviewStatus.Approved:
-                    viewModel.ChangePageAction = "ChangePageApprovedApplications";
-                    viewModel.ChangeApplicationsPerPageAction = "ChangeApplicationPerPageApprovedApplications";
-                    viewModel.SortColumnAction = "SortApprovedApplications";
+                    viewModel.ChangePageAction = nameof(ChangePageApprovedApplications);
+                    viewModel.ChangeItemsPerPageAction = nameof(ChangeApplicationsPerPageApprovedApplications);
+                    viewModel.SortColumnAction = nameof(SortApprovedApplications);
                     viewModel.Title = "Approved";
                     break;
             }
@@ -395,15 +395,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return viewModel;
         }
 
-        private async Task<PaginatedList<ApplicationSummaryItem>> GetPageApplications(string reviewStatus, ApplicationsState applicationsState)
+        private async Task<PaginatedList<ApplicationSummaryItem>> GetPageApplications(string reviewStatus, IPagingState pagingState)
         {
             var standardApplicationsRequest = new StandardApplicationsRequest
             (
                 reviewStatus,
-                applicationsState.SortColumn.ToString(),
-                applicationsState.SortDirection == SortOrder.Asc ? 1 : 0,
-                applicationsState.ApplicationsPerPage,
-                applicationsState.PageIndex,
+                pagingState.SortColumn.ToString(),
+                pagingState.SortDirection == SortOrder.Asc ? 1 : 0,
+                pagingState.ItemsPerPage,
+                pagingState.PageIndex,
                 DefaultPageSetSize
             );
 
@@ -413,27 +413,27 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private void SetDefaultSession()
         {
-            _applicationsSession.StandardApplicationsSessionValid = true;
+            _controllerSession.StandardApplication_SessionValid = true;
 
-            _applicationsSession.NewStandardApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.NewStandardApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
-            _applicationsSession.NewStandardApplications.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
-            _applicationsSession.NewStandardApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_NewApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.StandardApplication_NewApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_NewApplications.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
+            _controllerSession.StandardApplication_NewApplications.SortDirection = SortOrder.Desc;
 
-            _applicationsSession.InProgressStandardApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.InProgressStandardApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
-            _applicationsSession.InProgressStandardApplications.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
-            _applicationsSession.InProgressStandardApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_InProgressApplictions.PageIndex = DefaultPageIndex;
+            _controllerSession.StandardApplication_InProgressApplictions.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_InProgressApplictions.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
+            _controllerSession.StandardApplication_InProgressApplictions.SortDirection = SortOrder.Desc;
 
-            _applicationsSession.FeedbackStandardApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.FeedbackStandardApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
-            _applicationsSession.FeedbackStandardApplications.SortColumn = StandardApplicationsSortColumn.FeedbackAddedDate;
-            _applicationsSession.FeedbackStandardApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_FeedbackApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.StandardApplication_FeedbackApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_FeedbackApplications.SortColumn = StandardApplicationsSortColumn.FeedbackAddedDate;
+            _controllerSession.StandardApplication_FeedbackApplications.SortDirection = SortOrder.Desc;
 
-            _applicationsSession.ApprovedStandardApplications.PageIndex = DefaultPageIndex;
-            _applicationsSession.ApprovedStandardApplications.ApplicationsPerPage = DefaultApplicationsPerPage;
-            _applicationsSession.ApprovedStandardApplications.SortColumn = StandardApplicationsSortColumn.ClosedDate;
-            _applicationsSession.ApprovedStandardApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_ApprovedApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.StandardApplication_ApprovedApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_ApprovedApplications.SortColumn = StandardApplicationsSortColumn.ClosedDate;
+            _controllerSession.StandardApplication_ApprovedApplications.SortDirection = SortOrder.Desc;
         }
     }
 }

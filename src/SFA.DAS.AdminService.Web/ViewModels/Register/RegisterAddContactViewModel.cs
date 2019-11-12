@@ -1,4 +1,4 @@
-namespace SFA.DAS.AdminService.Web.Models
+namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterAddContactViewModel
     {

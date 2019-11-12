@@ -4,7 +4,7 @@ using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System;
 
-namespace SFA.DAS.AdminService.Web.Models
+namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterViewAndEditOrganisationViewModel
     {
@@ -37,7 +37,8 @@ namespace SFA.DAS.AdminService.Web.Models
         public List<ContactResponse> Contacts { get; set; }
         public string ContactsCount { get; set; }
         public string StandardsCount { get; set; }
-        public List<OrganisationStandardSummary> OrganisationStandards { get; set; }
+        public OrganisationStandardsViewModel OrganisationStandardsViewModel { get; set; }
+        public RegisterViewOrganisationStandardsViewModel RegisterViewOrganisationStandardsViewModel { get; set; }
         public List<OrganisationType> OrganisationTypes { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }

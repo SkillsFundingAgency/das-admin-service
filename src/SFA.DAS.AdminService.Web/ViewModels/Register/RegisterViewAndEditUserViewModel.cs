@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AdminService.Web.Models
+namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterViewAndEditUserViewModel
     {

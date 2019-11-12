@@ -22,22 +22,22 @@
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                         <a class="govuk-tabs__tab" href="#new">
-                            New (@(Model.NewApplications?.Applications?.TotalRecordCount ?? 0))
+                            New (@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#in-progress">
-                            In Progress (@(Model.InProgressApplications?.Applications?.TotalRecordCount ?? 0))
+                            In Progress (@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#feedback">
-                            Feedback (@(Model.FeedbackApplications?.Applications?.TotalRecordCount ?? 0))
+                            Feedback (@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#approved">
-                            Approved (@(Model.ApprovedApplications?.Applications?.TotalRecordCount ?? 0))
+                            Approved (@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                 </ul>

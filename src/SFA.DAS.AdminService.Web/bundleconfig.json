@@ -29,6 +29,16 @@
         }
     },
     {
+        "outputFileName": "wwwroot/javascripts/das-view-organisation-service.min.js",
+        "inputFiles": [
+            "wwwroot/javascripts/das-view-organisation-service.js"
+        ],
+        "minify": {
+            "enabled": true,
+            "renameLocals": true
+        }
+    },
+    {
         "outputFileName": "wwwroot/javascripts/epao-validation.min.js",
         "inputFiles": [
             "wwwroot/javascripts/epao-validation.js"

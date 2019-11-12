@@ -21,8 +21,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
     {
-        private readonly IApplicationsSession _applicationsSession;
-
         private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -32,10 +30,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApplicationsSession applicationsSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
-            _applicationsSession = applicationsSession;
-
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;

@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AdminService.Web.Models
+namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterAddOrganisationStandardViewModel
     {
@@ -19,7 +19,6 @@ namespace SFA.DAS.AdminService.Web.Models
         public DateTime? StandardLastDateForNewStarts { get; set; }
         public List<ContactResponse> Contacts { get; set; }
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
-        //public DateTime EffectiveFromDate { get; set; }
         public string EffectiveFromDay { get; set; }
         public string EffectiveFromMonth { get; set; }
         public string EffectiveFromYear { get; set; }
@@ -32,6 +31,5 @@ namespace SFA.DAS.AdminService.Web.Models
         public List<int> DeliveryAreas { get; set; }
         public string Comments { get; set; }
         public string DeliveryAreasComments { get; set; }
-
     }
 }

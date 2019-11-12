@@ -1,5 +1,7 @@
-﻿@using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AdminService.Web.Models.RegisterViewAndEditOrganisationStandardViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
+@model RegisterViewAndEditOrganisationStandardViewModel
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit organisation standard";
     Layout = "_Layout";
@@ -17,9 +19,9 @@
                 @Html.HiddenFor(c => c.StandardId)
                 @Html.HiddenFor(c => c.Ukprn)
                 @Html.HiddenFor(c => c.OrganisationName)
-                @Html.HiddenFor(c => c.StandardTitle)        
+                @Html.HiddenFor(c => c.StandardTitle)
                 @Html.HiddenFor(m => m.StandardEffectiveFrom)
-                @Html.HiddenFor(m => m.StandardEffectiveTo)  
+                @Html.HiddenFor(m => m.StandardEffectiveTo)
                 @Html.HiddenFor(c => c.StandardLastDateForNewStarts)
                 @Html.HiddenFor(c => c.Status)
                 @Html.HiddenFor(c => c.OrganisationStatus)
@@ -145,7 +147,7 @@
                 </dl>
 
                 <h2 class="govuk-heading-l">New organisation standard details</h2>
-            
+
                 <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="EffectiveFrom"></span>
                     <span class="govuk-error-message" asp-validation-for="EffectiveFromDay"></span>
@@ -183,14 +185,14 @@
                         </div>
                     </div>
 
-            
+
                 </div>
                 <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="EffectiveTo"></span>
                     <span class="govuk-error-message" asp-validation-for="EffectiveToDay"></span>
                     <span class="govuk-error-message" asp-validation-for="EffectiveToMonth"></span>
                     <span class="govuk-error-message" asp-validation-for="EffectiveToYear"></span>
-                    
+
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Effective to
                     </legend>
@@ -221,10 +223,10 @@
                             </div>
                         </div>
                     </div>
-            
+
                 </div>
                 <div class="govuk-form-group" sfa-validation-for="ContactId" sfa-validationerror-class="govuk-form-group--error">
-                    
+
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Contact
                     </legend>
@@ -268,14 +270,12 @@
                         {
                             var checkboxChecked = Model.DeliveryAreas != null && Model.DeliveryAreas.Any(x => x == deliveryArea.Id) ? "checked" : "";
                             <div class="govuk-checkboxes__item">
-                                <input 
-                                    class="govuk-checkboxes__input" 
-                                    id="@deliveryArea.Id"
-                                    name="DeliveryAreas"
-                                    type="checkbox"
-                                    value="@deliveryArea.Id"
-                                    @checkboxChecked
-                                />
+                                <input class="govuk-checkboxes__input"
+                                       id="@deliveryArea.Id"
+                                       name="DeliveryAreas"
+                                       type="checkbox"
+                                       value="@deliveryArea.Id"
+                                       @checkboxChecked />
                                 <label class="govuk-label govuk-checkboxes__label" for="@deliveryArea.Id">
                                     @deliveryArea.Area
                                 </label>
@@ -298,10 +298,10 @@
                     <span class="govuk-error-message" asp-validation-for="Comments"></span>
                     <textarea class="govuk-textarea" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="govuk-textarea--error" asp-for="Comments" rows="5"></textarea>
                 </div>
-                
-                    <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
-                    <a class="govuk-button govuk-button--secondary" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
-                
+
+                <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
+                <a class="govuk-button govuk-button--secondary" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
+
             </form>
         </div>
     </div>

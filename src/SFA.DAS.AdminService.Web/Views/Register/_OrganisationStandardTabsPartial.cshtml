@@ -1,0 +1,18 @@
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
+@model RegisterViewOrganisationStandardsViewModel
+
+<div class="govuk-tabs" data-module="tabs">
+    <ul class="govuk-tabs__list">
+        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+            <a class="govuk-tabs__tab" href="#approved">
+                Approved
+            </a>
+        </li>
+    </ul>
+    <section class="govuk-tabs__panel" id="approved">
+        <div id="approved-organisation-standards">
+            @{await Html.RenderPartialAsync("_OrganisationStandardsPartial", @Model.OrganisationStandards);}
+        </div>
+    </section>
+</div>

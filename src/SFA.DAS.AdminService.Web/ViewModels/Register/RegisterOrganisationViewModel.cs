@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AdminService.Web.Models
+namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterOrganisationViewModel
     {

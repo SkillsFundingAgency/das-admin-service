@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Moq;
 using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +15,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 {
     public class RegisterBase
     {
+        protected Mock<IPagingState> ApprovedStandards;
+        protected Mock<IControllerSession> ControllerSession;
         protected Mock<IApiClient> ApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
         protected Mock<IStandardServiceClient> StandardServiceClient;
@@ -70,8 +75,28 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             List<OrganisationStandardSummary> organisationStandards = new List<OrganisationStandardSummary>
             {
-                new OrganisationStandardSummary { Id = 1}
+                new OrganisationStandardSummary
+                {
+                    Id = 1,
+                    StandardCollation = new StandardCollation
+                    {
+                        ReferenceNumber = "ST0001",
+                        StandardId = 1,
+                        Title = "Gravyboat Maker"
+                    },
+                    DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100)
+                } 
             };
+
+            ApprovedStandards = new Mock<IPagingState>();
+            ApprovedStandards.Setup(p => p.ItemsPerPage).Returns(10);
+            ApprovedStandards.Setup(p => p.PageIndex).Returns(1);
+            ApprovedStandards.Setup(p => p.SortColumn).Returns(OrganisationStandardSortColumn.StandardName);
+            ApprovedStandards.Setup(p => p.SortDirection).Returns(SortOrder.Asc);
+
+            ControllerSession = new Mock<IControllerSession>();
+            ControllerSession.Setup(p => p.Register_SessionValid).Returns(true);
+            ControllerSession.Setup(p => p.Register_ApprovedStandards).Returns(ApprovedStandards.Object);
 
             ApiClient = new Mock<IApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,21 +14,24 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
     [HtmlTargetElement(TagName)]
     public class SfaSortableColumnHeaderTagHelper : TagHelper
     {
-        public const string TagName = "sfa-sortable-column-header";
+        private const string TagName = "sfa-sortable-column-header";
 
-        public const string AspActionName = "asp-action";
-        public const string AspControllerName = "asp-controller";
-        public const string AspHostName = "asp-host";
-        public const string AspProtocolName = "asp-protocol";
-        public const string AspFragmentName = "asp-fragment";
+        private const string AspActionName = "asp-action";
+        private const string AspControllerName = "asp-controller";
+        private const string AspRouteValuesDictionaryName = "asp-all-route-data";
+        private const string AspRouteValuesPrefix = "asp-route-";
+        private const string AspHostName = "asp-host";
+        private const string AspProtocolName = "asp-protocol";
+        private const string AspFragmentName = "asp-fragment";
 
-        public const string SfaSortColumnName = "sfa-sort-column";
-        public const string SfaSortDirectionName = "sfa-sort-direction";
-        public const string SfaTableSortColumnName = "sfa-table-sort-column";
-
-        public const string DataSortDirectionName = "data-SortDirection";
-
-        private readonly IHtmlGenerator _generator;
+        private const string SfaSortColumnName = "sfa-sort-column";
+        private const string SfaSortDirectionName = "sfa-sort-direction";
+        
+        private const string SfaTableSortColumnName = "sfa-table-sort-column";
+        private const string DataSortDirectionName = "data-SortDirection";
+        
+        private IDictionary<string, string> _routeValues;
+        private readonly IHtmlGenerator _generator;        
 
         public SfaSortableColumnHeaderTagHelper(IHtmlGenerator generator)
         {
@@ -43,6 +47,24 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 
         [HtmlAttributeName(AspControllerName)]
         public string AspController { get; set; }
+
+        [HtmlAttributeName(AspRouteValuesDictionaryName, DictionaryAttributePrefix = AspRouteValuesPrefix)]
+        public IDictionary<string, string> RouteValues
+        {
+            get
+            {
+                if (_routeValues == null)
+                {
+                    _routeValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+
+                return _routeValues;
+            }
+            set
+            {
+                _routeValues = value;
+            }
+        }
 
         [HtmlAttributeName(AspHostName)]
         public string AspHost { get; set; }
@@ -83,13 +105,14 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
                 output.Attributes.Add(DataSortDirectionName, new HtmlString(ToogleSortDirection()));
 
                 var content = (await output.GetChildContentAsync()).GetContent();
+
+                var routeValues = _routeValues?.Count > 0 ? new RouteValueDictionary(_routeValues) : new RouteValueDictionary();
+                routeValues["SortColumn"] = SfaSortColumn;
+                routeValues["SortDirection"] = ToogleSortDirection();
+
                 var link = _generator.GenerateActionLink(ViewContext, content,
                     AspAction, AspController, AspProtocol, AspHost, AspFragment,
-                    new
-                    {
-                        SortColumn = SfaSortColumn,
-                        SortDirection = ToogleSortDirection()
-                    },
+                    routeValues,
                     GetPassThroughAttributes(output));
 
                 link.WriteTo(writer, NullHtmlEncoder.Default);

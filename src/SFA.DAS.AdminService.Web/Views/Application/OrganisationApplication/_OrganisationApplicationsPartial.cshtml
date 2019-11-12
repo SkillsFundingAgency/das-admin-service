@@ -9,11 +9,11 @@
 
 <p class="govuk-body">
     Showing
-    @if (Model.Applications.TotalRecordCount > 0)
+    @if (Model.PaginatedList.TotalRecordCount > 0)
     {
-        @Model.Applications.FirstVisibleItem<text> - </text>@Model.Applications.LastVisibleItem<text> of </text>
+        @Model.PaginatedList.FirstVisibleItem<text> - </text>@Model.PaginatedList.LastVisibleItem<text> of </text>
     }
-    @Model.Applications.TotalRecordCount<text> applications</text>
+    @Model.PaginatedList.TotalRecordCount<text> applications</text>
 </p>
 
 <table class="govuk-table govuk-table--small">
@@ -65,9 +65,9 @@
         </tr>
     </thead>
     <tbody class="govuk-table__body">
-        @if (Model?.Applications != null)
+        @if (Model?.PaginatedList != null)
         {
-            @foreach (var application in Model.Applications.Items)
+            @foreach (var application in Model.PaginatedList.Items)
             {
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">
@@ -92,16 +92,16 @@
 </table>
 @if (Model != null)
 {
-    <form asp-action="@Model.ChangeApplicationsPerPageAction" asp-controller="OrganisationApplication" method="get" asp-fragment="@Model.Fragment">
+    <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="OrganisationApplication" method="get" asp-fragment="@Model.Fragment">
         <div class="das-flex-space-around">
             <div>
-                <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ApplicationsPerPage" asp-items="Model.ApplicationsPerPageList"></select>
+                <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ItemsPerPage" asp-items="Model.ItemsPerPageList"></select>
                 <label for="ApplicationsPerPage">Applications per page</label>
             </div>
             <div class="das-pagination-links">
                 @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
                                                 {
-                                                    PaginatedList = Model.Applications,
+                                                    PaginatedList = Model.PaginatedList,
                                                     ChangePageAction = Model.ChangePageAction,
                                                     ChangePageController = "OrganisationApplication",
                                                     Fragment = Model.Fragment

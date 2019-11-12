@@ -1,32 +1,29 @@
 ﻿(function ($) {
-    var controller = $("#ControllerName").val();
+    var controller = 'Register';
     
-    refreshClickHandlers('New','new');
-    refreshClickHandlers('InProgress', 'in-progress');
-    refreshClickHandlers('Feedback', 'feedback');
-    refreshClickHandlers('Approved', 'approved');
+    refreshClickHandlers('approved');
 
-    function refreshClickHandlers(reviewStatus, fragment) {
+    function refreshClickHandlers(fragment) {
         onClickChangePage(
             "." + fragment + "-page",
-            "ChangePage" + reviewStatus + "Applications",
+            "ChangePageViewOrganisationApprovedStandards",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(reviewStatus, fragment); }
+            function () { return refreshClickHandlers(fragment); }
         );
         onSelectApplicationsPerPage(
             "." + fragment + "-per-page",
-            "ChangeApplicationsPerPage" + reviewStatus + "Applications",
+            "ChangeStandardsPerPageViewOrganisationApprovedStandards",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(reviewStatus, fragment); }
+            function () { return refreshClickHandlers(fragment); }
         );
         onSelectSortableColumnHeader(
             "." + fragment + "-sort",
-            "Sort" + reviewStatus + "Applications",
+            "SortViewOrganisationApprovedStandards",
             "#" + fragment,
             "#" + fragment,
-            function () { return refreshClickHandlers(reviewStatus, fragment); }            
+            function () { return refreshClickHandlers(fragment); }            
         );
     }
 
@@ -39,11 +36,12 @@
     ) {
         $(linkClass).each(function (i, obj) {
             $(obj).click(function (event) {
-                var pageIndex = $(obj).attr("data-pageIndex");
-                changeApplicationsPartial(
+                var allRouteData = JSON.parse($(obj).attr("data-all-route-data"));
+                var specificRouteData = { pageIndex: $(obj).attr("data-pageIndex") };
+                changeStandardsPartial(
                     actionMethod,
                     fragment,
-                    { pageIndex: pageIndex },
+                    combineJson(allRouteData, specificRouteData),
                     containerId,
                     refreshFunction
                 );
@@ -60,13 +58,13 @@
         refreshFunction
     ) {
         $(selectClass).change(function () {
-            var selectedVal = $(this)
-                .find(":selected")
-                .val();
-            changeApplicationsPartial(
+            var allRouteData = JSON.parse($(this).attr("data-all-route-data"));
+            var specificRouteData = { itemsPerPage: this.value };
+            
+            changeStandardsPartial(
                 actionMethod,
                 fragment,
-                { itemsPerPage: selectedVal },
+                combineJson(allRouteData, specificRouteData),
                 containerId,
                 refreshFunction
             );
@@ -83,12 +81,12 @@
     ) {
         $(linkClass).each(function (i, obj) {
             $(obj).click(function (event) {
-                var sortColumn = $(obj).attr("data-sortColumn");
-                var sortDirection = $(obj).attr("data-sortDirection");
-                changeApplicationsPartial(
+                var allRouteData = JSON.parse($(obj).attr("data-all-route-data"));
+                var specificRouteData = { sortColumn: $(obj).attr("data-sortColumn"), sortDirection: $(obj).attr("data-sortDirection") };
+                changeStandardsPartial(
                     actionMethod,
                     fragment,
-                    { sortColumn: sortColumn, sortDirection: sortDirection },
+                    combineJson(allRouteData, specificRouteData),
                     containerId,
                     refreshFunction
                 );
@@ -97,7 +95,7 @@
         });
     }
 
-    function changeApplicationsPartial(
+    function changeStandardsPartial(
         actionMethod,
         fragment,
         data,
@@ -124,4 +122,17 @@
             }
         });
     }    
+
+    function combineJson(first, second) {
+        var attributes = Object.keys(second);
+
+        for (var i = 0; i < attributes.length; i++) {
+            if (!first.hasOwnProperty(attributes[i])) {
+                first[attributes[i]] = second[attributes[i]];
+            }
+        }
+
+        return first;
+    }
+
 })(jQuery);

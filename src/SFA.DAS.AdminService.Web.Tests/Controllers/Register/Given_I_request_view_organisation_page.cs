@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [SetUp]
         public async Task Arrange()
         {
-            Sut = new RegisterController(ApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
 
             var actionResult = await Sut.ViewOrganisation(OrganisationOneOrganisationId);
             var result = actionResult as ViewResult;

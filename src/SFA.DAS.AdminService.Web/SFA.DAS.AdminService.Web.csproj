@@ -226,6 +226,9 @@
     <Content Update="wwwroot\inactive_app_offline_public_beta.htm">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\javascripts\das-view-organisation-service.min.js">
+      <DependentUpon>das-view-organisation-service.js</DependentUpon>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
