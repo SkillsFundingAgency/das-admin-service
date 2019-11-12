@@ -13,7 +13,7 @@
         @if (Model.CanShowRoatpAssessorApplications)
         {
             <div class="govuk-grid-column-one-half">
-                <h2 class="govuk-heading-l">Assess applications</h2>
+                <h2 class="govuk-heading-l">RoATP applications</h2>
                 <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
                 <ul class="govuk-list govuk-list--nobullet">
                     <li><a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get">View RoATP applications</a></li>
@@ -24,10 +24,15 @@
         @if (Model.CanShowRoatp)
         {
             <div class="govuk-grid-column-one-half">
-                <h2 class="govuk-heading-l">Manage register</h2>
-                <p class="govuk-body">Search, view and edit organisations that are currently live on the register.</p>
+                <h2 class="govuk-heading-l">Manage the RoATP</h2>
                 <ul class="govuk-list govuk-list--nobullet">
-                    <li><a asp-route="@RouteNames.Roatp_Home_Index_Get">Search the register</a></li>
+                    <li><a asp-route="@RouteNames.Roatp_Home_Index_Get">Search for an apprenticeship training provider</a></li>
+                    <li><a class="govuk-link" asp-route="@RouteNames.Roatp_AddRoatpOrganisation_EnterUkprn_Get">Add a new apprenticeship training provider</a></li>
+                </ul>
+
+                <h2 class="govuk-heading-l">Reporting</h2>
+                <ul class="govuk-list">
+                    <li><a class="govuk-link" asp-route="@RouteNames.Roatp_DownloadRoatp_Download_Get">Download list of apprenticeship training providers</a></li>
                 </ul>
             </div>
         }

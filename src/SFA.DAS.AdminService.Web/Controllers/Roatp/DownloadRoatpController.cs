@@ -31,7 +31,7 @@
             _logger = logger;
         }
 
-        [Route("download-register")]
+        [HttpGet("download-register", Name = RouteNames.Roatp_DownloadRoatp_Download_Get)]
         public async Task<IActionResult> Download()
         {
             using (var package = new ExcelPackage())

@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         }
 
 
-        [Route("organisations-ukprn")]
+        [HttpGet("organisations-ukprn", Name = RouteNames.Roatp_AddRoatpOrganisation_EnterUkprn_Get)]
         public async Task<IActionResult> EnterUkprn()
         {
             ModelState.Clear();
