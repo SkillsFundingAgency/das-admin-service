@@ -29,9 +29,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public IActionResult PostSignIn()
         {
-            if(!HttpContext.User.HasValidRole())
+            if(!User.HasValidRole())
             {
-                _logger.LogInformation($"PostSignIn - User '{HttpContext.User.Identity.Name}' does not have a valid role");
+                _logger.LogInformation($"PostSignIn - User '{User.Identity.Name}' does not have a valid role");
                 foreach (var cookie in Request.Cookies.Keys)
                 {
                     Response.Cookies.Delete(cookie);
@@ -40,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("InvalidRole", "Home");
             }
 
-            if (HttpContext.User.HasRoatpRolesOnly())
+            if (User.HasRoatpRolesOnly())
             {
                 if (User.IsInRole(Roles.RoatpAssessorGateway))
                 {

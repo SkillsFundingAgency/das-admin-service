@@ -85,9 +85,10 @@ namespace SFA.DAS.AdminService.Web
                 options.RequestCultureProviders.Clear();
             });
 
+            //Adding RoatpAssessor as a view location so controllers can use Action/View name convention
             services.Configure<RazorViewEngineOptions>(o =>
             {
-                o.ViewLocationFormats.Add("/Views/RoatpAssessor/{1}/{0}" + RazorViewEngine.ViewExtension);
+                o.ViewLocationFormats.Add("~/Views/RoatpAssessor/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
 
             services.AddMvc(options =>
