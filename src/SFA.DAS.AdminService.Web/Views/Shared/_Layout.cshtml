@@ -94,7 +94,7 @@
                 <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
 
                     <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
-                        <span class="govuk-visually-hidden">Signed in as </span>
+                        <span>Signed in as </span>
                         @User.UserDisplayName()
                     </p>
                 </span>
@@ -119,6 +119,11 @@
             </strong>
             <span class="govuk-phase-banner__text">
                 This is a new service
+
+                @if (ViewBag.ShowRoatpFeedbackLink == true)
+                {
+                    <text> - your <a href="https://www.smartsurvey.co.uk/s/UDD7V/" target="_blank">feedback</a> will helps us to improve it.</text>
+                }
             </span>
         </p>
     </div>
