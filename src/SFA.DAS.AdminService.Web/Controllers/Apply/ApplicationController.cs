@@ -73,7 +73,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
                 applySequence.Sections, backAction, backController, backOrganisationId);
 
-            if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
+            var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
+            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {
                 return View(nameof(Sequence), sequenceVm);
             }
@@ -97,7 +99,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sectionVm = new SectionViewModel(application, organisation, section, applySection, backAction, backController, backOrganisationId);
 
-            if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
+            var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
+            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {             
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
                 {
@@ -165,7 +169,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page, backAction, backController, backOrganisationId);
 
-            if (applySequence?.Status == ApplicationSequenceStatus.Submitted)
+            var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
+            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {
                 return View(nameof(Page), pageVm);
             }
