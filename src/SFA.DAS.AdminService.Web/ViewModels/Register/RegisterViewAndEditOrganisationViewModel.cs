@@ -37,7 +37,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public List<ContactResponse> Contacts { get; set; }
         public string ContactsCount { get; set; }
         public string StandardsCount { get; set; }
-        public OrganisationStandardsViewModel OrganisationStandardsViewModel { get; set; }
         public RegisterViewOrganisationStandardsViewModel RegisterViewOrganisationStandardsViewModel { get; set; }
         public List<OrganisationType> OrganisationTypes { get; set; }
         public string CompanyNumber { get; set; }

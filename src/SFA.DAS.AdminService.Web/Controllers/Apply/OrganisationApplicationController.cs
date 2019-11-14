@@ -45,66 +45,27 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [CheckSession(nameof(IControllerSession.OrganisationApplication_SessionValid), CheckSession.Ignore)]
         public IActionResult ResetSession()
         {
+            // reset all the session paging settings
             SetDefaultSession();
+            
             return RedirectToAction(nameof(OrganisationApplications));
         }
 
         [HttpGet]
         public IActionResult Index()
         {
-            return RedirectToAction(nameof(OrganisationApplications));
-        }
-
-        [HttpGet("/Applications/{applicationId}/Organisation")]
-        public async Task<IActionResult> ActiveSequence(Guid applicationId)
-        {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-
-            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
-
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var sequenceVm = new SequenceViewModel(application, ApplyConst.ORGANISATION_APPLICATION_TYPE, organisation, sequence, sections,
-                activeApplySequence.Sections, GetPagingState(application.ReviewStatus)?.PageIndex);
-
-            return View(nameof(Sequence), sequenceVm);
-        }
-
-        [HttpGet("/Applications/{applicationId}/Organisation/Sequence/{sequenceNo}")]
-        public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo)
-        {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-
-            var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
-
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
-
-            var sequenceVm = new SequenceViewModel(application, ApplyConst.ORGANISATION_APPLICATION_TYPE, organisation, sequence, sections,
-                applySequence.Sections, GetPagingState(application.ReviewStatus)?.PageIndex);
-
-            if (application.ApplicationStatus == ApplicationStatus.Submitted || application.ApplicationStatus == ApplicationStatus.Resubmitted)
-            {
-                return View(nameof(Sequence), sequenceVm);
-            }
-            else
-            {
-                return View($"{nameof(Sequence)}_ReadOnly", sequenceVm);
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> OrganisationApplications(int pageIndex = 1)
-        {
-            // reset only the page indexes; retain the sort column, direction and applications per page settings
+            // reset only the page indexes; retain the sort column, direction and items per page settings
             _controllerSession.OrganisationApplication_NewApplications.PageIndex = 1;
             _controllerSession.OrganisationApplication_InProgressApplications.PageIndex = 1;
             _controllerSession.OrganisationApplication_FeedbackApplications.PageIndex = 1;
             _controllerSession.OrganisationApplication_ApprovedApplications.PageIndex = 1;
 
+            return RedirectToAction(nameof(OrganisationApplications));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OrganisationApplications()
+        {
             var vm = await MapViewModelFromSession();
             return View(nameof(OrganisationApplications), vm);
         }
@@ -356,7 +317,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private async Task<ApplicationsViewModel> AddApplicationsViewModelValues(ApplicationsViewModel viewModel, string reviewStatus, IPagingState pagingState)
         {
             viewModel.ReviewStatus = reviewStatus;
-            viewModel.PageIndex = pagingState.PageIndex;
             viewModel.ItemsPerPage = pagingState.ItemsPerPage;
             viewModel.SortColumn = pagingState.SortColumn;
             viewModel.SortDirection = pagingState.SortDirection;

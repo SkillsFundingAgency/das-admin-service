@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" a href="/register/view-organisation/@Model.OrganisationId">Return to organisation</a>
+<a class="govuk-back-link" asp-action="ViewOrganisation" asp-controller="Register" asp-route-organisationId="@Model.OrganisationId" asp-fragment="approved">Return to organisation</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">

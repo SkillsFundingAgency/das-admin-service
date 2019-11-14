@@ -3,7 +3,7 @@
 @using SFA.DAS.AdminService.Web.ViewModels.Shared;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model OrganisationStandardsViewModel
+@model OrganisationApprovedStandardsViewModel
 
 <h2 class="govuk-heading-m">@Model.PaginationViewModel.Title</h2>
 
@@ -13,7 +13,7 @@
     {
         @Model.PaginationViewModel.PaginatedList.FirstVisibleItem<text> - </text>@Model.PaginationViewModel.PaginatedList.LastVisibleItem<text> of </text>
     }
-    @Model.PaginationViewModel.PaginatedList.TotalRecordCount<text> applications</text>
+    @Model.PaginationViewModel.PaginatedList.TotalRecordCount<text> standards</text>
 </p>
 
 <table class="govuk-table govuk-table--small">
@@ -31,7 +31,7 @@
                                             sfa-table-sort-column="@Model.PaginationViewModel.SortColumn"
                                             sfa-sort-direction="@Model.PaginationViewModel.SortDirection">Standard</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__cell--numeric govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
                                             data-sortColumn="@OrganisationStandardSortColumn.StandardCode"
                                             data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
@@ -43,7 +43,7 @@
                                             sfa-table-sort-column="@Model.PaginationViewModel.SortColumn"
                                             sfa-sort-direction="@Model.PaginationViewModel.SortDirection">Reference</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__cell--numeric govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
                                             data-sortColumn="@OrganisationStandardSortColumn.DateApproved"
                                             data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"

@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class SectionViewModel
+    public class SectionViewModel : BackViewModel
     {
         public string ApplicationReference { get; set; }
         public AssessorService.ApplyTypes.FinancialGrade Grade { get; set; }
@@ -26,16 +26,17 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public Section Section { get; }
         public ApplySection ApplySection { get; }
         public Guid ApplicationId { get; }
-        public string ApplicationType { get; }
         public int SequenceNo { get; }
         public int SectionNo { get; }
 
         public bool? IsSectionComplete { get; set; }
+        
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
-        public SectionViewModel(ApplicationResponse application, string applicationType, Organisation organisation, Section section, ApplySection applySection)
+
+        public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection, string backAction, string backController, string backOrganisationId)
+            : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
-            ApplicationType = applicationType;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
             Grade = application.financialGrade;
 

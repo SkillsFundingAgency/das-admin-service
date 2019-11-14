@@ -8,15 +8,13 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class PageViewModel
+    public class PageViewModel : BackViewModel
     {
         public Page Page { get; }
 
         public string Title { get; }
 
         public Guid ApplicationId { get; }
-
-        public string ApplicationType { get; }
 
         public int SequenceNo { get; }
 
@@ -28,14 +26,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
 
-        public PageViewModel(Guid applicationId, string applicationType, int sequenceNo, int sectionNo, string pageId,Section section, Page page)
+        public PageViewModel(Guid applicationId, int sequenceNo, int sectionNo, string pageId,Section section, Page page, string backAction, string backController, string backOrganisationId)
+            : base(backAction, backController, backOrganisationId)
         {
             if (page != null)
             {
                 Page = page;
                 Title = page.Title;
                 ApplicationId = applicationId;
-                ApplicationType = applicationType;
                 SequenceNo = sequenceNo;
                 SectionNo = sectionNo;
                 PageId = page.PageId;

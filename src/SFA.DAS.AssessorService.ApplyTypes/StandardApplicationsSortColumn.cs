@@ -3,7 +3,7 @@
     public class StandardApplicationsSortColumn
     {
         public const string OrganisationName = "OrganisationName";
-        public const string StandardCode = "StandardCode";
+        public const string StandardReference = "StandardReference";
         public const string StandardName = "StandardName";
         public const string Status = "Status";
         public const string SubmittedDate = "SubmittedDate";

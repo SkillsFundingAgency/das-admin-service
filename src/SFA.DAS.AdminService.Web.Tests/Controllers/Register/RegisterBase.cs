@@ -5,9 +5,11 @@ using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 
@@ -18,6 +20,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Mock<IPagingState> ApprovedStandards;
         protected Mock<IControllerSession> ControllerSession;
         protected Mock<IApiClient> ApiClient;
+        protected Mock<IApplicationApiClient> ApplyApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
         protected Mock<IStandardServiceClient> StandardServiceClient;
         protected Mock<IHostingEnvironment> Env;
@@ -88,6 +91,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 } 
             };
 
+            List<ApplicationSummaryItem> standardApplications = new List<ApplicationSummaryItem>
+            {
+                new ApplicationSummaryItem
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    StandardReference = "ST0002",
+                    StandardName = "Senior Gravyboat Maker"
+                }
+            };
+
+            PaginatedList<ApplicationSummaryItem> standardApplicationPaginatedList 
+                = new PaginatedList<ApplicationSummaryItem>(standardApplications, standardApplications.Count, 1, short.MaxValue, 6);
+            
             ApprovedStandards = new Mock<IPagingState>();
             ApprovedStandards.Setup(p => p.ItemsPerPage).Returns(10);
             ApprovedStandards.Setup(p => p.PageIndex).Returns(1);
@@ -102,6 +118,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
             ApiClient.Setup(p => p.GetOrganisationTypes()).ReturnsAsync(organisationTypes);
             ApiClient.Setup(p => p.GetEpaOrganisationStandards(OrganisationOneOrganisationId)).ReturnsAsync(organisationStandards);
+
+            ApplyApiClient = new Mock<IApplicationApiClient>();
+            ApplyApiClient.Setup(p => p.GetStandardApplications(It.IsAny<StandardApplicationsRequest>())).ReturnsAsync(standardApplicationPaginatedList);
 
             ContactsApiClient = new Mock<IContactsApiClient>();
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, false)).ReturnsAsync(contacts);

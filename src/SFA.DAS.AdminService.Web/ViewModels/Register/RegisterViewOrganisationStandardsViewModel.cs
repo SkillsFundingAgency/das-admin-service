@@ -7,28 +7,24 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public RegisterViewOrganisationStandardsViewModel(string controllerName)
         {
             ControllerName = controllerName;
-            OrganisationStandards = new OrganisationStandardsViewModel();
-            InProgressApplications = new ApplicationsViewModel();
-            FeedbackApplications = new ApplicationsViewModel();
+            OrganisationStandards = new OrganisationApprovedStandardsViewModel();
+            InProgressApplications = new OrganisationStandardsApplicationsViewModel();
+            FeedbackApplications = new OrganisationStandardsApplicationsViewModel();
         }
 
         public string ControllerName { get; }
 
-        public OrganisationStandardsViewModel OrganisationStandards { get; set; }
+        public OrganisationApprovedStandardsViewModel OrganisationStandards { get; set; }
 
-        public ApplicationsViewModel InProgressApplications { get; set; }
+        public OrganisationStandardsApplicationsViewModel InProgressApplications { get; set; }
 
-        public ApplicationsViewModel FeedbackApplications { get; set; }
+        public OrganisationStandardsApplicationsViewModel FeedbackApplications { get; set; }
 
         public bool HasStandards
         {
             get
             {
-                return
-                    OrganisationStandards.PaginationViewModel.PaginatedList.TotalRecordCount > 0 ||
-                    InProgressApplications.PaginatedList.TotalRecordCount > 0 ||
-                    FeedbackApplications.PaginatedList.TotalRecordCount > 0;
-
+                return OrganisationStandards.HasStandards || InProgressApplications.HasStandards || FeedbackApplications.HasStandards;
             }
         }
     }

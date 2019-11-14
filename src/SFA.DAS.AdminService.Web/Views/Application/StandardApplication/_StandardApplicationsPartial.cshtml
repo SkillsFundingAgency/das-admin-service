@@ -31,11 +31,11 @@
             </th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
-                                            data-sortColumn="@StandardApplicationsSortColumn.StandardCode"
+                                            data-sortColumn="@StandardApplicationsSortColumn.StandardReference"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="StandardApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@StandardApplicationsSortColumn.StandardCode"
+                                            sfa-sort-column="@StandardApplicationsSortColumn.StandardReference"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Reference</sfa-sortable-column-header>
             </th>
@@ -85,11 +85,12 @@
                    asp-action="ActiveSequence"
                    asp-controller="Application"
                    asp-route-applicationId="@application.ApplicationId"
-                   asp-route-applicationType="@ApplyConst.STANDARD_APPLICATION_TYPE">
+                   asp-route-backAction="StandardApplications"
+                   asp-route-backController="StandardApplication">
                     @application.OrganisationName
                 </a>
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardCode</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardReference</td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardName</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {

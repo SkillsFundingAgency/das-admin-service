@@ -8,12 +8,12 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class SequenceViewModel
+    public class SequenceViewModel : BackViewModel
     {
-        public SequenceViewModel(ApplicationResponse application, string applicationType, Organisation organisation, Sequence sequence, 
-            List<Section> sections, List<ApplySection> applySections, int? pageIndex)
+        public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, 
+            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId)
+            : base (backAction, backController, backOrganisationId)
         {
-            ApplicationType = applicationType;
             ApplicationId = application.Id;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
             StandardName = application.ApplyData.Apply.StandardName;
@@ -34,8 +34,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
-
-            PageIndex = pageIndex;
         }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)
@@ -50,7 +48,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             return sections.Where(s => requiredSectionsNos.Contains(s.SectionNo)).ToList();
         }
 
-        public string ApplicationType { get; set; }
         public string ApplicationReference { get; set; }
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
@@ -71,7 +68,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public List<ApplySection> ApplySections { get; }
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
-
-        public int? PageIndex { get; }
     }
 }

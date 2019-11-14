@@ -19,15 +19,17 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
     [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
-    [CheckSession(nameof(RegisterController), nameof(ResetSession), nameof(IControllerSession.Register_SessionValid))]
+    [CheckSession(nameof(RegisterController), nameof(Index), nameof(IControllerSession.Register_SessionValid))]
     public class RegisterController: Controller
     {
         private readonly IControllerSession _controllerSession;
         private readonly IApiClient _apiClient;
+        private readonly IApplicationApiClient _applyApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
@@ -36,24 +38,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private const int DefaultStandardsPerPage = 2;
         private const int DefaultPageSetSize = 6;
 
-        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
             _controllerSession = controllerSession;
             _apiClient = apiClient;
+            _applyApiClient = applyApiClient;
             _contactsApiClient = contactsApiClient;
             _standardServiceClient = standardServiceClient;
             _env = env;
         }
 
         [CheckSession(nameof(IControllerSession.Register_SessionValid), CheckSession.Ignore)]
-        public IActionResult ResetSession()
-        {
-            SetDefaultSession();
-            return RedirectToAction(nameof(Index));
-        }
-
         public IActionResult Index()
-        {            
+        {
+            // reset all the session paging settings when searching for a new organisation on the register
+            SetDefaultSession();
+
             return View(); 
         }
 
@@ -400,7 +400,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> ChangePageViewOrganisationApprovedStandardsPartial(string organisationId, int pageIndex)
         {
             _controllerSession.Register_ApprovedStandards.PageIndex = pageIndex;
-            var viewModel = new OrganisationStandardsViewModel
+            var viewModel = new OrganisationApprovedStandardsViewModel
             {
                 OrganisationId = organisationId,
                 PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
@@ -421,7 +421,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             _controllerSession.Register_ApprovedStandards.ItemsPerPage = itemsPerPage;
             _controllerSession.Register_ApprovedStandards.PageIndex = 1;
-            var viewModel = new OrganisationStandardsViewModel
+            var viewModel = new OrganisationApprovedStandardsViewModel
             {
                 OrganisationId = organisationId,
                 PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
@@ -442,7 +442,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             UpdateSortDirection(sortColumn, sortDirection, _controllerSession.Register_ApprovedStandards);
             _controllerSession.Register_ApprovedStandards.PageIndex = 1;
-            var viewModel = new OrganisationStandardsViewModel
+            var viewModel = new OrganisationApprovedStandardsViewModel
             {
                 OrganisationId = organisationId,
                 PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
@@ -542,8 +542,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
             if (organisationStandards != null)
             {
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel = new RegisterViewOrganisationStandardsViewModel(nameof(RegisterController).RemoveController());
+                
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.OrganisationId = viewAndEditModel.OrganisationId;
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel = await GatherOrganisationStandards(viewAndEditModel.OrganisationId, paged);
+                
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.OrganisationId = viewAndEditModel.OrganisationId;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.InProgress);
+
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.OrganisationId = viewAndEditModel.OrganisationId;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.HasFeedback);
             }
         }
 
@@ -567,7 +574,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                             _controllerSession.Register_ApprovedStandards.PageIndex,
                             _controllerSession.Register_ApprovedStandards.ItemsPerPage,
                             DefaultPageSetSize),
-                        PageIndex = _controllerSession.Register_ApprovedStandards.PageIndex,
                         ItemsPerPage = _controllerSession.Register_ApprovedStandards.ItemsPerPage,
                         Fragment = "approved",
                         SortColumn = _controllerSession.Register_ApprovedStandards.SortColumn,
@@ -579,6 +585,34 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             return null;
+        }
+
+        private async Task<PaginationViewModel<ApplicationSummaryItem>> GatherOrganisationStandardApplications(string organisationId, string reviewStatus)
+        {
+            var standardApplicationsRequest = new StandardApplicationsRequest
+            (
+                organisationId,
+                reviewStatus,
+                StandardApplicationsSortColumn.StandardName,
+                1,
+                short.MaxValue,
+                DefaultPageIndex,
+                DefaultPageSetSize
+            );
+
+            var standardApplications = await _applyApiClient.GetStandardApplications(standardApplicationsRequest);
+
+            return new PaginationViewModel<ApplicationSummaryItem>
+            {
+                PaginatedList = standardApplications,
+                ItemsPerPage = short.MaxValue,
+                Fragment = reviewStatus == ApplicationReviewStatus.InProgress ? "in-progress" : "feedback",
+                SortColumn = StandardApplicationsSortColumn.StandardName,
+                SortDirection = SortOrder.Asc,
+                ChangePageAction = string.Empty,
+                ChangeItemsPerPageAction = string.Empty,
+                SortColumnAction = string.Empty
+            };
         }
 
         private void UpdateSortDirection(string sortColumn, string sortDirection, IPagingState pagingState)

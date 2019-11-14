@@ -75,7 +75,8 @@
                    asp-action="ActiveSequence"
                    asp-controller="Application"
                    asp-route-applicationId="@application.ApplicationId"
-                   asp-route-applicationType="@ApplyConst.ORGANISATION_APPLICATION_TYPE">
+                   asp-route-backAction="OrganisationApplications"
+                   asp-route-backController="OrganisationApplication">
                     @application.OrganisationName
                 </a>
             </td>
