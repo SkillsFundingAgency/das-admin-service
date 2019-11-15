@@ -28,7 +28,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Shared
 
         public List<SelectListItem> ItemsPerPageList { get; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "2", Text = "2" }, // DEBUG
             new SelectListItem { Value = "10", Text = "10" },
             new SelectListItem { Value = "50", Text = "50" },
             new SelectListItem { Value = "100", Text = "100"  },
