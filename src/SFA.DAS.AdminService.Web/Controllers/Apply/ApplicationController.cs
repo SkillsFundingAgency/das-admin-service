@@ -249,7 +249,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View(nameof(Assessment), viewModel);
         }
 
-        [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId}")]
+        [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId?}")]
         public async Task<IActionResult> Return(Guid applicationId, string backAction, string backController, int sequenceNo, string returnType, string backOrganisationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
