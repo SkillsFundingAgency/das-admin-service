@@ -17,6 +17,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                     );
 
                 cfg.AddProfile<RegisterViewAndEditUserViewModelProfile>();
+                cfg.AddProfile<RoatpAssessorProfile>();
             });
         }
     }

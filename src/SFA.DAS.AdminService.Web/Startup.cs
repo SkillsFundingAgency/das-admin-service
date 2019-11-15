@@ -116,7 +116,9 @@ namespace SFA.DAS.AdminService.Web
             services.AddHealthChecks();
             MappingStartup.AddMappings();
             
-            ConfigureDependencyInjection(services);           
+            ConfigureDependencyInjection(services);
+
+            RoatpAssessor.Configuration.IoC.ConfigureServices(ApplicationConfiguration.ApplyApiAuthentication, services);
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)

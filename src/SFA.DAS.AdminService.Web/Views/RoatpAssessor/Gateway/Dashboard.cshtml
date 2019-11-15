@@ -1,6 +1,13 @@
-﻿<partial name="_RoatpBreadcrumb" />
+﻿@using SFA.DAS.AdminService.Web.Extensions
+@using SFA.DAS.RoatpAssessor.Application.Gateway;
+@using SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway;
+@using SFA.DAS.RoatpAssessor.Domain.DTOs;
 
-<main class="govuk-main-wrapper " id="main-content" role="main">
+@model DashboardViewModel
+
+<partial name="_RoatpBreadcrumb" />
+
+<main class="govuk-main-wrapper roatp-assessor-dashboard" id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -9,59 +16,129 @@
         </div>
     </div>
 
-    <div class="govuk-tabs" data-module="tabs">
+    <div class="govuk-tabs">
         <h2 class="govuk-tabs__title">
             Contents
         </h2>
 
         <ul class="govuk-tabs__list">
             <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab govuk-tabs__tab--selected" href="#new">
-                    New (todo)
+                <a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get" asp-route-tab="@nameof(DashboardTab.New)" class="govuk-tabs__tab @Model.NewApplicationsTabCss">
+                    New (@Model.NewApplicationsCount)
                 </a>
             </li>
             <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#inprogress">
-                    In progress (todo)
-                </a>
-            </li>
-
-
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#gateway-outcomes">
-                    Gateway outcomes (todo)
+                <a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get" asp-route-tab="@nameof(DashboardTab.InProgress)" class="govuk-tabs__tab @Model.InProgressTabCss">
+                    In progress (@Model.InProgressCount)
                 </a>
             </li>
             <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" href="#search">
-                    Search applications (todo)
+                <a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get" asp-route-tab="@nameof(DashboardTab.Outcomes)" class="govuk-tabs__tab @Model.OutcomesTabCss">
+                    Gateway outcomes
+                </a>
+            </li>
+            <li class="govuk-tabs__list-item">
+                <a asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get" asp-route-tab="@nameof(DashboardTab.Search)" class="govuk-tabs__tab @Model.SearchTabCss">
+                    Search applications
                 </a>
             </li>
         </ul>
 
-        <section class="govuk-tabs__panel" id="new">
+        @if (Model.Tab == DashboardTab.New)
+        {
+            <section class="govuk-tabs__panel">
 
-            <h2 class="govuk-heading-l">New</h2>
+                <h2 class="govuk-heading-l">New</h2>
+                <table class="govuk-table govuk-!-font-size-16">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Application.OrganisationName))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.New)"
+                                   asp-route-sortBy="@nameof(Application.OrganisationName)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Application.OrganisationName))">Organisation name</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Application.Ukprn))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.New)"
+                                   asp-route-sortBy="@nameof(Application.Ukprn)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Application.Ukprn))">UKPRN</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Application.ApplicationRef))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.New)"
+                                   asp-route-sortBy="@nameof(Application.ApplicationRef)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Application.ApplicationRef))">Application<br/>reference number</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Application.ProviderRoute))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.New)"
+                                   asp-route-sortBy="@nameof(Application.ProviderRoute)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Application.ProviderRoute))">Provider route</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Application.SubmittedAt))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.New)"
+                                   asp-route-sortBy="@nameof(Application.SubmittedAt)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Application.SubmittedAt))">Application submitted</a>
+                            </th>
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var application in Model.NewApplications)
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@application.OrganisationName</td>
+                            <td class="govuk-table__cell">@application.Ukprn</td>
+                            <td class="govuk-table__cell">@application.ApplicationRef</td>
+                            <td class="govuk-table__cell">@application.ProviderRoute</td>
+                            <td class="govuk-table__cell">@application.SubmittedAt.ToGdsDate()</td>
+                            <td class="govuk-table__cell">
+                                <form asp-route="@RouteNames.RoatpAssessor_Gateway_Start_Review" asp-route-applicationId="@application.Id">
+                                    <button type="submit" class="govuk-button--looks-like-link  govuk-!-font-size-16">Assign to me</button>
+                                </form>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
 
-        </section>
+            </section>
+        }
 
-        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="inprogress">
+        @if (Model.Tab == DashboardTab.InProgress)
+        {
+            <section class="govuk-tabs__panel">
 
-            <h2 class="govuk-heading-l">In progress</h2>
-            
-        </section>
+                <h2 class="govuk-heading-l">In progress</h2>
 
-        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="gateway-outcomes">
+            </section>
+        }
 
-            <h2 class="govuk-heading-l">Gateway outcomes</h2>
-            
-        </section>
+        @if (Model.Tab == DashboardTab.Outcomes)
+        {
+            <section class="govuk-tabs__panel">
 
+                <h2 class="govuk-heading-l">Gateway outcomes</h2>
 
-        <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="search">
+            </section>
+        }
 
-            <h2 class="govuk-heading-l">Search applications</h2>
-            
-        </section>
+        @if (Model.Tab == DashboardTab.Search)
+        {
+
+            <section class="govuk-tabs__panel">
+
+                <h2 class="govuk-heading-l">Search applications</h2>
+
+            </section>
+        }
+
     </div>
 </main>
