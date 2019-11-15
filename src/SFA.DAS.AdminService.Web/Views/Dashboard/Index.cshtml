@@ -30,7 +30,7 @@
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
                 Assessment outcomes and certifications
             </h2>
-            <p class="govuk-body">Request certficates reprints, check assessment outcomes and status of certficates.</p>
+            <p class="govuk-body">Request certificates reprints, check assessment outcomes and status of certficates.</p>
             <ul class="govuk-list">
                 <li>
                     <a class="govuk-link" asp-controller="Search">Search</a>
@@ -56,13 +56,13 @@
                     <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">New</a>
                 </li>
                 <li>
-                    <a class="govuk-link">Sent for approval</a>
+                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent for approval</a>
                 </li>
                 <li>
-                    <a class="govuk-link">Approved</a>
+                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
                 </li>
                 <li>
-                    <a class="govuk-link">Rejected</a>
+                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="Rejected">Rejected</a>
                 </li>
             </ul>
         </div>
@@ -143,10 +143,10 @@
                     <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">New</a>
                 </li>
                 <li>
-                    <a class="govuk-link">Rejected</a>
+                    <a class="govuk-link" asp-controller="Financial" asp-action="RejectedApplications">Rejected</a>
                 </li>
                 <li>
-                    <a class="govuk-link">Closed</a>
+                    <a class="govuk-link" asp-controller="Financial" asp-action="ClosedApplications">Closed</a>
                 </li>
             </ul>
         </div>
@@ -169,7 +169,7 @@
                     <a class="govuk-link" asp-controller="Register">Search</a>
                 </li>
                 <li sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                    <a class="govuk-link">Add</a>
+                    <a class="govuk-link" asp-controller="Register" asp-action="AddOrganisation">Add</a>
                 </li>
             </ul>
         </div>
