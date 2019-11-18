@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Guid UserThreeId = Guid.NewGuid();
 
         protected RegisterController Sut;
-       
+
         public RegisterBase()
         {
             EpaOrganisation organisation = new EpaOrganisation
@@ -76,20 +76,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 new ContactResponse { Id = UserThreeId }
             };
 
-            List<OrganisationStandardSummary> organisationStandards = new List<OrganisationStandardSummary>
-            {
-                new OrganisationStandardSummary
+            List<OrganisationStandardSummary> organisationStandards = new List<OrganisationStandardSummary>();
+            for (int standard = 0; standard < 20; standard++)
+            { 
+                organisationStandards.Add(new OrganisationStandardSummary
                 {
-                    Id = 1,
+                    Id = standard,
                     StandardCollation = new StandardCollation
                     {
-                        ReferenceNumber = "ST0001",
-                        StandardId = 1,
-                        Title = "Gravyboat Maker"
+                        ReferenceNumber = string.Format("ST{0:4}", standard),
+                        StandardId = standard,
+                        Title = string.Format("{0} Gravyboat Maker", NumberToAlpha(standard / 10))
                     },
                     DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100)
-                } 
-            };
+                }); ;
+            }
 
             List<ApplicationSummaryItem> standardApplications = new List<ApplicationSummaryItem>
             {
@@ -101,14 +102,43 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 }
             };
 
-            PaginatedList<ApplicationSummaryItem> standardApplicationPaginatedList 
+            PaginatedList<ApplicationSummaryItem> standardApplicationPaginatedList
                 = new PaginatedList<ApplicationSummaryItem>(standardApplications, standardApplications.Count, 1, short.MaxValue, 6);
-            
+
+            int itemsPerPage = 10;
+            int pageIndex = 1;
+            string sortColumn = OrganisationStandardSortColumn.StandardName;
+            string sortDirection = SortOrder.Asc;
+
             ApprovedStandards = new Mock<IPagingState>();
-            ApprovedStandards.Setup(p => p.ItemsPerPage).Returns(10);
-            ApprovedStandards.Setup(p => p.PageIndex).Returns(1);
-            ApprovedStandards.Setup(p => p.SortColumn).Returns(OrganisationStandardSortColumn.StandardName);
-            ApprovedStandards.Setup(p => p.SortDirection).Returns(SortOrder.Asc);
+            
+            ApprovedStandards.SetupGet(s => s.ItemsPerPage).Returns(itemsPerPage);
+            ApprovedStandards.SetupSet(p => p.ItemsPerPage = It.IsAny<int>()).Callback<int>(r => 
+            { 
+                itemsPerPage = r;
+                ApprovedStandards.SetupGet(s => s.ItemsPerPage).Returns(itemsPerPage);
+            });
+
+            ApprovedStandards.SetupGet(s => s.PageIndex).Returns(pageIndex);
+            ApprovedStandards.SetupSet(p => p.PageIndex = It.IsAny<int>()).Callback<int>(r => 
+            { 
+                pageIndex = r;
+                ApprovedStandards.SetupGet(s => s.PageIndex).Returns(pageIndex);
+            });
+
+            ApprovedStandards.SetupGet(s => s.SortColumn).Returns(sortColumn);
+            ApprovedStandards.SetupSet(p => p.SortColumn = It.IsAny<string>()).Callback<string>(r => 
+            { 
+                sortColumn = r;
+                ApprovedStandards.SetupGet(s => s.SortColumn).Returns(sortColumn);
+            });
+
+            ApprovedStandards.SetupGet(s => s.SortDirection).Returns(sortDirection);
+            ApprovedStandards.SetupSet(p => p.SortDirection = It.IsAny<string>()).Callback<string>(r => 
+            { 
+                sortDirection = r;
+                ApprovedStandards.SetupGet(s => s.SortDirection).Returns(sortDirection);
+            });
 
             ControllerSession = new Mock<IControllerSession>();
             ControllerSession.Setup(p => p.Register_SessionValid).Returns(true);
@@ -129,6 +159,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             StandardServiceClient = new Mock<IStandardServiceClient>();
             Env = new Mock<IHostingEnvironment>();
+        }
+
+        public string NumberToAlpha(long number, bool isLower = false)
+        {
+            string returnVal = "";
+            char c = isLower ? 'a' : 'A';
+            while (number >= 0)
+            {
+                returnVal = (char)(c + number % 26) + returnVal;
+                number /= 26;
+                number--;
+            }
+
+            return returnVal;
         }
     }
 }

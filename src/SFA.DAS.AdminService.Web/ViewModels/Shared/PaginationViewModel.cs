@@ -14,8 +14,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Shared
 
         public string SortDirection { get; set; }
 
-        public int PageIndex { get; set; }
-
         public string Fragment { get; set; }
 
         public string Title { get; set; }
