@@ -18,7 +18,7 @@ namespace SFA.DAS.RoatpAssessor.Application.Gateway.Requests
 
         public async Task<GetDashboardResponse> Handle(GetDashboardRequest request, CancellationToken cancellationToken)
         {
-            var countsTask = _applyApiClient.GetGatewayCounts();
+            var countsTask = _applyApiClient.GetGatewayCountsAsync();
 
             var newApplicationsTask = request.Tab == DashboardTab.New 
                 ? _applyApiClient.GetSubmittedApplicationsAsync() 

@@ -100,7 +100,7 @@
                             <td class="govuk-table__cell">@application.ProviderRoute</td>
                             <td class="govuk-table__cell">@application.SubmittedAt.ToGdsDate()</td>
                             <td class="govuk-table__cell">
-                                <form asp-route="@RouteNames.RoatpAssessor_Gateway_Start_Review" asp-route-applicationId="@application.Id">
+                                <form asp-route="@RouteNames.RoatpAssessor_Gateway_StartReview_Post" asp-route-applicationId="@application.Id">
                                     <button type="submit" class="govuk-button--looks-like-link  govuk-!-font-size-16">Assign to me</button>
                                 </form>
                             </td>

@@ -1,0 +1,87 @@
+﻿@using SFA.DAS.RoatpAssessor.Domain.DTOs
+
+@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway.OutcomeViewModel
+
+<h2 class="govuk-heading-l govuk-!-margin-top-9">What is the outcome of this check?</h2>
+
+<div class="govuk-form-group">
+
+    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+        <div class="govuk-radios__item">
+            <input asp-for="Outcome" class="govuk-radios__input" type="radio" value="@OutcomeResult.Pass" data-aria-controls="pass-conditional-container">
+            <label class="govuk-label govuk-radios__label" for="gw-company-legal-outcome-conditional-1">
+                Pass
+            </label>
+        </div>
+
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="pass-conditional-container">
+            <div class="govuk-character-count" data-module="character-count" data-maxlength="750">
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="PassComment">
+                        Add comments (optional)
+                    </label>
+
+                    <textarea asp-for="PassComment" class="govuk-textarea js-character-count" rows="5" aria-describedby="@Html.IdFor(m => m.PassComment)-info"></textarea>
+                </div>
+
+                <span id="@Html.IdFor(m => m.PassComment)-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                    You can enter up to 750 characters
+                </span>
+            </div>
+        </div>
+
+        <div class="govuk-radios__item">
+            <input asp-for="Outcome" class="govuk-radios__input" type="radio" value="@OutcomeResult.Reject" data-aria-controls="reject-conditional-container">
+            <label class="govuk-label govuk-radios__label" for="gw-company-legal-outcome-conditional-2">
+                Reject
+            </label>
+        </div>
+
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="reject-conditional-container">
+
+            <div class="govuk-character-count" data-module="character-count" data-maxlength="750">
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="RejectComment">
+                        Add comments
+                    </label>
+
+                    <textarea asp-for="RejectComment" class="govuk-textarea js-character-count" rows="5" aria-describedby="@Html.IdFor(m => m.RejectComment)-info"></textarea>
+                </div>
+
+                <span id="@Html.IdFor(m => m.RejectComment)-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                    You can enter up to 750 characters
+                </span>
+            </div>
+        </div>
+
+        <div class="govuk-radios__divider">or</div>
+
+        <div class="govuk-radios__item">
+            <input asp-for="Outcome" class="govuk-radios__input" type="radio" value="@OutcomeResult.InProgress" data-aria-controls="inprogress-conditional-container">
+            <label class="govuk-label govuk-radios__label" for="gw-company-legal-outcome-conditional-2">
+                In progress
+            </label>
+        </div>
+
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inprogress-conditional-container">
+
+            <div class="govuk-character-count" data-module="character-count" data-maxlength="750">
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="InProgressComment">
+                        Add comments
+                    </label>
+
+                    <textarea asp-for="InProgressComment" class="govuk-textarea js-character-count" rows="5" aria-describedby="@Html.IdFor(m => m.InProgressComment)-info"></textarea>
+                </div>
+
+                <span id="@Html.IdFor(m => m.InProgressComment)-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                    You can enter up to 750 characters
+                </span>
+            </div>
+        </div>
+
+
+    </div>
+</div>

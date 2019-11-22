@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SFA.DAS.AdminService.Web
+﻿namespace SFA.DAS.AdminService.Web
 {
     public static class RouteNames
     {
@@ -16,6 +11,11 @@ namespace SFA.DAS.AdminService.Web
 
         //RoatpAssesssor
         public const string RoatpAssessor_Gateway_Dashboard_Get = "RoatpAssessor_Gateway_Dashboard_Get";
-        public const string RoatpAssessor_Gateway_Start_Review = "RoatpAssessor_Gateway_Start_Review";
+        public const string RoatpAssessor_Gateway_StartReview_Post = "RoatpAssessor_Gateway_StartReview_Post";
+        public const string RoatpAssessor_Gateway_Overview_Get = "RoatpAssessor_Gateway_Overview_Get";
+        public const string RoatpAssessor_Gateway_LegalChecks_Get = "RoatpAssessor_Gateway_LegalChecks_Get";
+        public const string RoatpAssessor_Gateway_LegalChecks_Post = "RoatpAssessor_Gateway_LegalChecks_Post";
+        public const string RoatpAssessor_Gateway_Website_Get = "RoatpAssessor_Gateway_Website_Get";
+        public const string RoatpAssessor_Gateway_Website_Post = "RoatpAssessor_Gateway_Website_Post";
     }
 }

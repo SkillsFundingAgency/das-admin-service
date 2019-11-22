@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 
-namespace SFA.DAS.RoatpAssessor.Services
+namespace SFA.DAS.RoatpAssessor.Services.ApplyApiClient
 {
     public class ApplyTokenService : IApplyTokenService
     {

@@ -1,0 +1,67 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway.LegalChecksViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Initial checks</span>
+            <h1 class="govuk-heading-xl">Legal and address checks</h1>
+
+            <form asp-route="@RouteNames.RoatpAssessor_Gateway_LegalChecks_Get" class="form">
+
+                <h2 class="govuk-heading-l govuk-!-margin-top-9" id="realtime">Does the legal name match for all sources?</h2>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Source</th>
+                            <th scope="col" class="govuk-table__header">Legal name</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__header">Submitted application</td>
+                            <td class="govuk-table__cell">SAFRAN LANDING SYSTEMS UK LTD</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__header">UKRLP</td>
+                            <td class="govuk-table__cell">SAFRAN LANDING SYSTEMS UK LTD</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__header">Companies House</td>
+                            <td class="govuk-table__cell">SAFRAN LANDING SYSTEMS UK LTD</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="govuk-form-group">
+
+                    <div class="govuk-radios govuk-radios--inline">
+
+                        <div class="govuk-radios__item">
+                            <input asp-for="LegalNameMatch" id="legalname_yes" class="govuk-radios__input" type="radio" value="True">
+                            <label class="govuk-label govuk-radios__label" for="gw-company-legal-legalname-1">
+                                Yes
+                            </label>
+                        </div>
+
+                        <div class="govuk-radios__item">
+                            <input asp-for="LegalNameMatch" id="legalname_no"  class="govuk-radios__input" type="radio" value="False">
+                            <label class="govuk-label govuk-radios__label" for="gw-company-legal-legalname-2">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <partial name="_RoatpOutcome" for="Outcome" />
+
+                <button type="submit" class="govuk-button govuk-!-margin-right-1">
+                    Save and continue
+                </button>
+            </form>
+
+            <p><a href="/staff-app/v8/applications/gateway/tasklist-company">Back to application assessment overview</a></p>
+
+        </div>
+    </div>
+</main>

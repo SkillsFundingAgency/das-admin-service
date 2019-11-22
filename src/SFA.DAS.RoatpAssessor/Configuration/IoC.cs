@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.RoatpAssessor.Application;
-using SFA.DAS.RoatpAssessor.Services;
+using SFA.DAS.RoatpAssessor.Application.Services;
+using SFA.DAS.RoatpAssessor.Services.ApplyApiClient;
 
 namespace SFA.DAS.RoatpAssessor.Configuration
 {
@@ -20,6 +21,8 @@ namespace SFA.DAS.RoatpAssessor.Configuration
               applyApiAuthentication.ApiBaseAddress,
               x.GetService<IApplyTokenService>(),
               x.GetService<ILogger<ApplyApiClient>>()));
+
+            services.AddTransient<ITimeProvider, TimeProvider>();
         }
     }
 }

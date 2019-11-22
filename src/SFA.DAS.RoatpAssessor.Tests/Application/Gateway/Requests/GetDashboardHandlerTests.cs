@@ -28,7 +28,7 @@ namespace SFA.DAS.RoatpAssessor.Tests.Application.Gateway.Requests
         public async Task ShouldOrderNewApplications(string sortBy, bool sortDescending, string first, string second, string third, string fourth, string fifth)
         {
             var applyApiClientMock = new Mock<IApplyApiClient>();
-            applyApiClientMock.Setup(a => a.GetGatewayCounts())
+            applyApiClientMock.Setup(a => a.GetGatewayCountsAsync())
                 .ReturnsAsync(new GatewayCounts());
 
             applyApiClientMock.Setup(a => a.GetSubmittedApplicationsAsync())

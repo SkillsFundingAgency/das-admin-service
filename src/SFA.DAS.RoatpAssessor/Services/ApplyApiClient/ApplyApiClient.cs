@@ -2,13 +2,14 @@
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.RoatpAssessor.Application;
+using SFA.DAS.RoatpAssessor.Application.Gateway.Commands;
 using SFA.DAS.RoatpAssessor.Domain.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.RoatpAssessor.Services
+namespace SFA.DAS.RoatpAssessor.Services.ApplyApiClient
 {
     public class ApplyApiClient : ApiClientBase, IApplyApiClient
     {
@@ -28,11 +29,35 @@ namespace SFA.DAS.RoatpAssessor.Services
             }
         }
 
-        public Task<GatewayCounts> GetGatewayCounts()
+        public Task<GatewayCounts> GetGatewayCountsAsync()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"roatp-assessor/gateway/counts"))
             {
                 return RequestAndDeserialiseAsync<GatewayCounts>(request);
+            }
+        }
+
+        public Task UpdateGatewayOutcomesAsync(UpdateGatewayOutcomesCommand command)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"roatp-assessor/gateway/outcomes"))
+            {
+                return PostPutRequest(request, command);
+            }
+        }
+
+        public Task<Gateway> GetGatewayReviewAsync(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"roatp-assessor/gateway/{applicationId}"))
+            {
+                return RequestAndDeserialiseAsync<Gateway>(request);
+            }
+        }
+
+        public Task<Domain.DTOs.Application> GetApplicationAsync(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Application/{applicationId}"))
+            {
+                return RequestAndDeserialiseAsync<Domain.DTOs.Application>(request);
             }
         }
     }
