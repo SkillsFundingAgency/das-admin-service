@@ -23,7 +23,7 @@ namespace SFA.DAS.RoatpAssessor.Application.Gateway.Requests
 
         public async Task<QuestionReview> Handle(GetQuestionReviewRequest request, CancellationToken cancellationToken)
         {
-            var pageTask = _qnaApiClient.GetPage(request.ApplicationId, request.QuestionConfig.SectionId, request.QuestionConfig.PageId);
+            var pageTask = _qnaApiClient.GetPage(request.ApplicationId, request.OutcomeConfig.SectionId, request.OutcomeConfig.PageId);
             var gatewayReviewTask = _applyApiClient.GetGatewayReviewAsync(request.ApplicationId);
             var applicationTask = _applyApiClient.GetApplicationAsync(request.ApplicationId);
 
@@ -32,22 +32,21 @@ namespace SFA.DAS.RoatpAssessor.Application.Gateway.Requests
             var gatewayReview = gatewayReviewTask.Result;
             var application = applicationTask.Result;
 
-            var outcome = GetQuestionOutcome(gatewayReview, request.QuestionConfig);
-            var answers = GetQuestionAnswersFromPage(pageTask.Result, request.QuestionConfig.QuestionId);
+            var outcome = GetQuestionOutcome(gatewayReview, request.OutcomeConfig);
+            var answers = GetQuestionAnswersFromPage(pageTask.Result, request.OutcomeConfig.QuestionId);
 
             var questionReview = new QuestionReview
             {
                 OrganisationName = application.OrganisationName,
                 Ukprn = application.Ukprn,
                 Answers = answers,
-                QuestionConfig = request.QuestionConfig,
                 Outcome = outcome
             };
 
             return questionReview;
         }
 
-        private Outcome GetQuestionOutcome(Domain.DTOs.Gateway gateway, QuestionConfig questionConfig)
+        private Outcome GetQuestionOutcome(Domain.DTOs.Gateway gateway, OutcomeConfig questionConfig)
         {
             return gateway.Outcomes?.SingleOrDefault(o =>
                 o.SectionId == questionConfig.SectionId &&

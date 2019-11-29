@@ -8,12 +8,12 @@ namespace SFA.DAS.RoatpAssessor.Application.Gateway.Requests
     public class GetQuestionReviewRequest : IRequest<QuestionReview>
     {
         public Guid ApplicationId { get; }
-        public QuestionConfig QuestionConfig { get; }
+        public OutcomeConfig OutcomeConfig { get; }
 
-        public GetQuestionReviewRequest(Guid applicationId, QuestionConfig questionConfig)
+        public GetQuestionReviewRequest(Guid applicationId, OutcomeConfig outcomeConfig)
         {
             ApplicationId = applicationId;
-            QuestionConfig = questionConfig;
+            OutcomeConfig = outcomeConfig;
         }
     }
 }

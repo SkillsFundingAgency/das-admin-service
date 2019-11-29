@@ -9,8 +9,6 @@ using System;
 using System.Threading.Tasks;
 using SFA.DAS.RoatpAssessor.Application.Gateway.Commands;
 using SFA.DAS.RoatpAssessor.Application.Services;
-using System.Collections.Generic;
-using SFA.DAS.RoatpAssessor.Domain.DTOs;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.RoatpAssessor.Configuration;
 using System.Linq;
@@ -58,22 +56,46 @@ namespace SFA.DAS.AdminService.Web.Controllers.RoatpAssessor
         }
 
         [HttpGet("{applicationId:Guid}/legal-checks", Name = RouteNames.RoatpAssessor_Gateway_LegalChecks_Get)]
-        public IActionResult LegalChecks([FromRoute] Guid applicationId)
+        public async Task<IActionResult> LegalChecks([FromRoute] Guid applicationId)
         {
-            var vm = new LegalChecksViewModel();
+            var request = new GetQuestionReviewRequest(applicationId, ReviewConfig.InitialChecks.Ukprn.Outcome);
+            var questionReview = await _mediator.Send(request);
+
+            var vm = new LegalChecksViewModel
+            {
+                LegalNameCheck = questionReview.Outcome.GetCheckValue(ReviewConfig.InitialChecks.Ukprn.LegalNameCheck),
+                StatusCheck = questionReview.Outcome.GetCheckValue(ReviewConfig.InitialChecks.Ukprn.StatusCheck),
+                AddressCheck = questionReview.Outcome.GetCheckValue(ReviewConfig.InitialChecks.Ukprn.AddressCheck),
+                Outcome = questionReview.Outcome.ToOutcomeViewModel()
+            };
+
             return View(vm);
         }
 
         [HttpPost("{applicationId:Guid}/legal-checks", Name = RouteNames.RoatpAssessor_Gateway_LegalChecks_Post)]
-        public IActionResult LegalChecks(LegalChecksEditModel model)
+        public async Task<IActionResult> LegalChecks(LegalChecksEditModel model)
         {
+            var outcome = model.Outcome.ToOutcome(ReviewConfig.InitialChecks.Ukprn.Outcome);
+
+            outcome.SetCheckValue(ReviewConfig.InitialChecks.Ukprn.LegalNameCheck, model.LegalNameCheck);
+            outcome.SetCheckValue(ReviewConfig.InitialChecks.Ukprn.StatusCheck, model.StatusCheck);
+            outcome.SetCheckValue(ReviewConfig.InitialChecks.Ukprn.AddressCheck, model.AddressCheck);
+
+            var command = new UpdateGatewayOutcomesCommand(
+                model.ApplicationId,
+                User.GetId(),
+                _timeProvider.UtcNow, 
+                outcome);
+
+            await _mediator.Send(command);
+
             return RedirectToRoute(RouteNames.RoatpAssessor_Gateway_Overview_Get);
         }
 
         [HttpGet("{applicationId:Guid}/website", Name = RouteNames.RoatpAssessor_Gateway_Website_Get)]
         public async Task<IActionResult> Website([FromRoute] Guid applicationId)
         {
-            var questionConfig = QuestionsConfig.OrganisationInformation.Website;
+            var questionConfig = ReviewConfig.OrganisationInformation.Website.Outcome;
 
             var request = new GetQuestionReviewRequest(applicationId, questionConfig);
             var questionReview = await _mediator.Send(request);
@@ -95,9 +117,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.RoatpAssessor
         [HttpPost("{applicationId:Guid}/website", Name = RouteNames.RoatpAssessor_Gateway_Website_Post)]
         public async Task<IActionResult> Website(WebsiteEditModel model)
         {
-            var outcome = model.Outcome.ToOutcome(QuestionsConfig.OrganisationInformation.Website);
+            var outcome = model.Outcome.ToOutcome(ReviewConfig.OrganisationInformation.Website.Outcome);
 
-            var command = new UpdateGatewayOutcomesCommand(model.ApplicationId, User.GetId(), _timeProvider.UtcNow, outcome);
+            var command = new UpdateGatewayOutcomesCommand(
+                model.ApplicationId, 
+                User.GetId(), 
+                _timeProvider.UtcNow, 
+                outcome);
 
             await _mediator.Send(command);
             

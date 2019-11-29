@@ -1,12 +1,14 @@
 ﻿using SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway;
 using SFA.DAS.RoatpAssessor.Configuration;
 using SFA.DAS.RoatpAssessor.Domain.DTOs;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Extensions
 {
     public static class OutcomeExtensions
     {
-        public static Outcome ToOutcome(this OutcomeViewModel model, QuestionConfig question)
+        public static Outcome ToOutcome(this OutcomeViewModel model, OutcomeConfig question)
         {
             var outcome = new Outcome
             {
@@ -55,6 +57,30 @@ namespace SFA.DAS.AdminService.Web.Extensions
             }
 
             return vm;
+        }
+
+        public static string GetCheckValue(this Outcome outcome, string checkName)
+        {
+            if (outcome?.Checks == null)
+                return null;
+
+            return outcome.Checks.FirstOrDefault(c => c.Name == checkName)?.Value;
+        }
+
+        public static void SetCheckValue(this Outcome outcome, string checkName, string value)
+        {
+            if (outcome.Checks == null)
+                outcome.Checks = new List<Check>();
+
+            var check = outcome.Checks.SingleOrDefault(c => c.Name == checkName);
+
+            if(check == null)
+            {
+                check = new Check { Name = checkName };
+                outcome.Checks.Add(check);
+            }
+
+            check.Value = value;
         }
     }
 }

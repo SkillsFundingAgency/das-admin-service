@@ -6,9 +6,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway
     public class LegalChecksEditModel
     {
         [FromRoute]
-        public Guid applicationId { get; set; }
+        public Guid ApplicationId { get; set; }
 
-        public bool? LegalNameMatch { get; set; }
+        public string LegalNameCheck { get; set; }
+        public string StatusCheck { get; set; }
+        public string AddressCheck { get; set; }
 
         public OutcomeViewModel Outcome { get; set; }
     }
