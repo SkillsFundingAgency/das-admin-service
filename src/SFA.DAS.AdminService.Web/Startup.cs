@@ -126,7 +126,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.Scan(x => x.FromCallingAssembly()
-                .AddClasses()
+                .AddClasses(classes => classes.Where(type => !type.Name.EndsWith("TagHelper")))
                 .AsImplementedInterfaces()
                 .WithTransientLifetime());
 

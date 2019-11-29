@@ -17,5 +17,6 @@
         public const string RoatpAssessor_Gateway_LegalChecks_Post = "RoatpAssessor_Gateway_LegalChecks_Post";
         public const string RoatpAssessor_Gateway_Website_Get = "RoatpAssessor_Gateway_Website_Get";
         public const string RoatpAssessor_Gateway_Website_Post = "RoatpAssessor_Gateway_Website_Post";
+        public const string RoatpAssessor_Gateway_Parent_Company_Get = "RoatpAssessor_Gateway_Parent_Company_Get";
     }
 }
