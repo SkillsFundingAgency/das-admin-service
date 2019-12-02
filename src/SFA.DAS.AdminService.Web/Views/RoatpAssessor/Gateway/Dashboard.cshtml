@@ -118,6 +118,72 @@
 
                 <h2 class="govuk-heading-l">In progress</h2>
 
+                <table class="govuk-table govuk-!-font-size-16">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.OrganisationName))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.OrganisationName)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.OrganisationName))">Organisation name</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.Ukprn))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.Ukprn)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.Ukprn))">UKPRN</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.ApplicationRef))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.ApplicationRef)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.ApplicationRef))">Application<br />reference number</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.ProviderRoute))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.ProviderRoute)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.ProviderRoute))">Provider route</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.SubmittedAt))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.SubmittedAt)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.SubmittedAt))">Application submitted</a>
+                            </th>
+                            <th class="govuk-table__header">
+                                <a aria-sort="@Model.GetAriaSort(nameof(Gateway.AssignedToName))"
+                                   asp-route="@RouteNames.RoatpAssessor_Gateway_Dashboard_Get"
+                                   asp-route-tab="@nameof(DashboardTab.InProgress)"
+                                   asp-route-sortBy="@nameof(Gateway.AssignedToName)"
+                                   asp-route-sort="@Model.GetRouteSort(nameof(Gateway.AssignedToName))">Assigned to</a>
+                            </th>
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var review in Model.InProgress)
+                        {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@review.OrganisationName</td>
+                            <td class="govuk-table__cell">@review.Ukprn</td>
+                            <td class="govuk-table__cell">@review.ApplicationRef</td>
+                            <td class="govuk-table__cell">@review.ProviderRoute</td>
+                            <td class="govuk-table__cell">@review.SubmittedAt.ToGdsDate()</td>
+                            <td class="govuk-table__cell">@review.AssignedToName</td>
+                            <td class="govuk-table__cell">
+                                <a asp-route="@RouteNames.RoatpAssessor_Gateway_Overview_Get" asp-route-applicationId="@review.ApplicationId">Edit</a>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+
             </section>
         }
 

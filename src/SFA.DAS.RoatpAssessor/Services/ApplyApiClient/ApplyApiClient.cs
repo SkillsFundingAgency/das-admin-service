@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.RoatpAssessor.Application;
 using SFA.DAS.RoatpAssessor.Application.Gateway.Commands;
 using SFA.DAS.RoatpAssessor.Domain.DTOs;
+using SFA.DAS.RoatpAssessor.Services.ApplyApiClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -26,6 +27,14 @@ namespace SFA.DAS.RoatpAssessor.Services.ApplyApiClient
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/roatp-assessor/applications/submitted"))
             {
                 return RequestAndDeserialiseAsync<List<Domain.DTOs.Application>>(request);
+            }
+        }
+
+        public Task<List<Gateway>> GetInProgressAsync()
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/roatp-assessor/gateway/in-progress"))
+            {
+                return RequestAndDeserialiseAsync<List<Domain.DTOs.Gateway>>(request);
             }
         }
 
@@ -58,6 +67,14 @@ namespace SFA.DAS.RoatpAssessor.Services.ApplyApiClient
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/Application/{applicationId}"))
             {
                 return RequestAndDeserialiseAsync<Domain.DTOs.Application>(request);
+            }
+        }
+
+        public Task CreateGatewayAsync(CreateGatewayModel model)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"roatp-assessor/gateway/create"))
+            {
+                return PostPutRequest(request, model);
             }
         }
     }

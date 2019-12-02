@@ -44,9 +44,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.RoatpAssessor
         }
 
         [HttpPost("{applicationId:Guid}/start-review", Name = RouteNames.RoatpAssessor_Gateway_StartReview_Post)]
-        public IActionResult StartReview([FromRoute] Guid applicationId)
+        public async Task<IActionResult> StartReview([FromRoute] Guid applicationId)
         {
-            return RedirectToRoute(RouteNames.RoatpAssessor_Gateway_Overview_Get);
+            var command = new CreateGatewayCommand(applicationId, User.GetId(), User.GetGivenNameAndSurname());
+
+            await _mediator.Send(command);
+
+            return RedirectToRoute(RouteNames.RoatpAssessor_Gateway_Overview_Get, new { applicationId });
         }
 
         [HttpGet("{applicationId:Guid}/overview", Name = RouteNames.RoatpAssessor_Gateway_Overview_Get)]

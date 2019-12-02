@@ -10,7 +10,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway
         private const string SelectedTabCss = "govuk-tabs__tab--selected";
 
         public DashboardTab Tab { get; set; }
-        public List<DashboardApplication> NewApplications { get; set; }
+        public List<DashboardNewApplication> NewApplications { get; set; }
+        public List<DashboardInProgress> InProgress { get; set; }
         public int NewApplicationsCount { get; set; }
         public int InProgressCount { get; set; }
         public string SortedBy { get; set; }
@@ -24,7 +25,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway
 
         public string OutcomesTabCss => Tab == DashboardTab.Outcomes
             ? SelectedTabCss : "";
-
 
         public string SearchTabCss => Tab == DashboardTab.Search
             ? SelectedTabCss : "";
@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway
         }
     }
 
-    public class DashboardApplication
+    public class DashboardNewApplication
     {
         public Guid Id { get; set; }
         public string OrganisationName { get; set; }
@@ -54,5 +54,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.Gateway
         public string ApplicationRef { get; set; }
         public string ProviderRoute { get; set; }
         public DateTime SubmittedAt { get; set; }
+    }
+
+    public class DashboardInProgress
+    {
+        public Guid ApplicationId { get; set; }
+        public string OrganisationName { get; set; }
+        public string Ukprn { get; set; }
+        public string ApplicationRef { get; set; }
+        public string ProviderRoute { get; set; }
+        public DateTime SubmittedAt { get; set; }
+        public string AssignedToName { get; set; }
     }
 }

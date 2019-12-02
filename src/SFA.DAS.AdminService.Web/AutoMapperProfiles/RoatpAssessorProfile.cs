@@ -7,7 +7,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
     {
         public RoatpAssessorProfile()
         {
-            CreateMap<RoatpAssessor.Domain.DTOs.Application, DashboardApplication>();
+            CreateMap<RoatpAssessor.Domain.DTOs.Application, DashboardNewApplication>();
         }
     }
 }
