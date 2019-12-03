@@ -433,8 +433,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddContactsAndDeliveryAreasAndDateDetails(RegisterViewAndEditOrganisationStandardViewModel vm)
         {
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
-
-            vm.Contacts = await _apiClient.GetEpaOrganisationContacts(vm.OrganisationId);
+            
+            vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId, true);
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             if (vm.EffectiveFrom.HasValue)
