@@ -19,6 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
         protected Guid OrganisationOneId = Guid.NewGuid();
         protected string OrganisationOneOrganisationId = "EPA0001";
+        protected const int organisationStandardId = 1;
 
         protected Guid ContactOneId = Guid.NewGuid();
         protected Guid ContactTwoId = Guid.NewGuid();
@@ -73,12 +74,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 new OrganisationStandardSummary { Id = 1}
             };
 
+            List<DeliveryArea> deliveryAreas = new List<DeliveryArea>
+            {
+                new DeliveryArea { Id = 1 }
+            };
+
+            var organisationStandard = new OrganisationStandard() { OrganisationId = OrganisationOneOrganisationId };
+
             ApiClient = new Mock<IApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
             ApiClient.Setup(p => p.GetOrganisationTypes()).ReturnsAsync(organisationTypes);
             ApiClient.Setup(p => p.GetEpaOrganisationStandards(OrganisationOneOrganisationId)).ReturnsAsync(organisationStandards);
+            ApiClient.Setup(p => p.GetOrganisationStandard(organisationStandardId)).ReturnsAsync(organisationStandard);
+            ApiClient.Setup(p => p.GetDeliveryAreas()).ReturnsAsync(deliveryAreas);
 
             ContactsApiClient = new Mock<IContactsApiClient>();
+            ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, null)).ReturnsAsync(contacts);            
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, false)).ReturnsAsync(contacts);
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisationIncludePrivileges(OrganisationOneOrganisationId, true)).ReturnsAsync(users);
             ContactsApiClient.Setup(p => p.GetAllContactsWhoCanBePrimaryForOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(contactsWhoCanBePrimary);
