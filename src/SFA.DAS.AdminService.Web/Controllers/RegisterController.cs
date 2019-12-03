@@ -434,7 +434,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
             
-            vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId, true);
+            vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId);
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             if (vm.EffectiveFrom.HasValue)
