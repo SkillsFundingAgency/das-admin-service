@@ -36,5 +36,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             _viewModelResponse.Contacts.Should().Contain(p => p.Id == ContactOneId);
             _viewModelResponse.Contacts.Should().Contain(p => p.Id == ContactTwoId);
         }
+
+        [Test]
+        public async Task  WhenEditOrganisationSTandard_ThenReturnListOfContacts()
+        {           
+            //Act
+            var actionResult = await Sut.EditOrganisationStandard(1);
+            
+            //Assert
+            // TODO: need to complete.
+            var result = actionResult as ViewResult;
+            var test = result.Model as RegisterViewAndEditOrganisationStandardViewModel;
+
+        }
     }
 }

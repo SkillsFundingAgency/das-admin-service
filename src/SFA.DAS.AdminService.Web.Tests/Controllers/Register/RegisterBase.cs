@@ -16,6 +16,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Mock<IContactsApiClient> ContactsApiClient;
         protected Mock<IStandardServiceClient> StandardServiceClient;
         protected Mock<IHostingEnvironment> Env;
+        private Mock<OrganisationStandard> MockOrgaisationStandard;
 
         protected Guid OrganisationOneId = Guid.NewGuid();
         protected string OrganisationOneOrganisationId = "EPA0001";
@@ -73,15 +74,31 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 new OrganisationStandardSummary { Id = 1}
             };
 
+            List<DeliveryArea> deliveryAreas = new List<DeliveryArea>
+            {
+                new DeliveryArea {Id = 1, Area = "Area", Status = "Status", Ordering = 1}
+            };
+
+
+            MockOrgaisationStandard = new Mock<OrganisationStandard>();
+
+            var objOrganisationStandard = new OrganisationStandard()
+            {
+                OrganisationId = OrganisationOneOrganisationId
+            };
+          
             ApiClient = new Mock<IApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
             ApiClient.Setup(p => p.GetOrganisationTypes()).ReturnsAsync(organisationTypes);
             ApiClient.Setup(p => p.GetEpaOrganisationStandards(OrganisationOneOrganisationId)).ReturnsAsync(organisationStandards);
+            ApiClient.Setup(p => p.GetOrganisationStandard(1)).ReturnsAsync(objOrganisationStandard);
+            ApiClient.Setup(p => p.GetDeliveryAreas()).ReturnsAsync(deliveryAreas);
 
             ContactsApiClient = new Mock<IContactsApiClient>();
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, false)).ReturnsAsync(contacts);
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisationIncludePrivileges(OrganisationOneOrganisationId, true)).ReturnsAsync(users);
             ContactsApiClient.Setup(p => p.GetAllContactsWhoCanBePrimaryForOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(contactsWhoCanBePrimary);
+            
 
             StandardServiceClient = new Mock<IStandardServiceClient>();
             Env = new Mock<IHostingEnvironment>();
