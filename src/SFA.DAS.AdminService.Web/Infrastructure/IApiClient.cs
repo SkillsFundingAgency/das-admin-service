@@ -42,7 +42,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<EpaContact> GetEpaContactBySignInId(Guid signInId);
         Task<EpaContact> GetEpaContactByEmail(string email);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
-        Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
         Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
