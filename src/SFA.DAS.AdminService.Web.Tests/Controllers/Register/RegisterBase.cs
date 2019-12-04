@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
         protected Guid OrganisationOneId = Guid.NewGuid();
         protected string OrganisationOneOrganisationId = "EPA0001";
-        protected const int organisationStandardId = 1;
+        protected const int organisationStandardId = 1;        
 
         protected Guid ContactOneId = Guid.NewGuid();
         protected Guid ContactTwoId = Guid.NewGuid();
@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 new DeliveryArea { Id = 1 }
             };
 
-            var organisationStandard = new OrganisationStandard() { OrganisationId = OrganisationOneOrganisationId };
+            var organisationStandard = new OrganisationStandard() { OrganisationId = OrganisationOneOrganisationId, Id = organisationStandardId };
 
             ApiClient = new Mock<IApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
