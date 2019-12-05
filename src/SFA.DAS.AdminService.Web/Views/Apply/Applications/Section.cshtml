@@ -1,4 +1,4 @@
-@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.QnA.Api.Types.Page
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
 
 @{
@@ -222,7 +222,7 @@
                                         {
                                             if (@answer.Value != ",,")
                                             {
-                                                 <p class="govuk-body">@answer.Value</p>
+                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
                                             }
                                         }
                                     }
