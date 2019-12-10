@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
     public class LearnerDetailForStaffViewModel
     {
-        public LearnerDetailForStaff Learner { get; set; }
+        public LearnerDetailResult Learner { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
         public bool ShowDetail { get; set; }

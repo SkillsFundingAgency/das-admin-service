@@ -44,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
-        Task<LearnerDetailForStaff> GetLearner(int stdCode, long uln, bool allLogs);
+        Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
         Task<List<Option>> GetOptions(int stdCode);
