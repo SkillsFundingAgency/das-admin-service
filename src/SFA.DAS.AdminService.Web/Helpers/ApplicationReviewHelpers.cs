@@ -44,6 +44,8 @@ namespace SFA.DAS.AdminService.Web.Helpers
                     break;
                 case FinancialReviewStatus.Exempt:
                     return "Exempt";
+                case FinancialReviewStatus.Rejected:
+                    return "Rejected";
             }
 
             return "";
