@@ -166,13 +166,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
                 var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
-                if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && !string.IsNullOrEmpty(vm.Grade.InadequateMoreInformation))
-                {
-                    var pageId = financialSection.QnAData.Pages.First(p => p.Active).PageId;
-                    var feedback = new QnA.Api.Types.Page.Feedback { Message = vm.Grade.InadequateMoreInformation, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
-                    await _qnaApiClient.UpdateFeedback(application.ApplicationId, financialSection.Id, pageId, feedback);
-                }
-
                 var grade = new FinancialGrade
                 {
                     ApplicationReference = application.ApplyData.Apply.ReferenceNumber,
