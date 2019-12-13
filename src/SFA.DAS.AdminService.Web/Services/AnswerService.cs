@@ -35,40 +35,40 @@ namespace SFA.DAS.AdminService.Web.Services
 
             if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationContactCommand();
 
-            var tradingName = GetAnswer(applicationData, "trading-name");
-            var useTradingNameString = GetAnswer(applicationData, "use-trading-name");
+            var tradingName = GetAnswer(applicationData, "trading_name");
+            var useTradingNameString = GetAnswer(applicationData, "use_trading_name");
             var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
-            var contactGivenNames = GetAnswer(applicationData, "contact-given-name");
-            var contactFamilyName = GetAnswer(applicationData, "contact-family-name");
+            var contactGivenNames = GetAnswer(applicationData, "contact_given_name");
+            var contactFamilyName = GetAnswer(applicationData, "contact_family_name");
 
             // get a contact address which is a single question with multiple answers
-            var contactAddress = GetJsonAnswer(applicationData, "contact-address");
+            var contactAddress = GetJsonAnswer(applicationData, "contact_address");
 
             // handle both a contact address which is a single question with multiple answers or multiple questions with a single answer 
-            var contactAddress1 = contactAddress?["AddressLine1"].ToString() ?? GetAnswer(applicationData, "contact-address1");
-            var contactAddress2 = contactAddress?["AddressLine2"].ToString() ?? GetAnswer(applicationData, "contact-address2");
-            var contactAddress3 = contactAddress?["AddressLine3"].ToString() ?? GetAnswer(applicationData, "contact-address3");
-            var contactAddress4 = contactAddress?["AddressLine4"].ToString() ?? GetAnswer(applicationData, "contact-address4");
-            var contactPostcode = contactAddress?["Postcode"].ToString() ?? GetAnswer(applicationData, "contact-postcode");
+            var contactAddress1 = contactAddress?["AddressLine1"].ToString() ?? GetAnswer(applicationData, "contact_address1");
+            var contactAddress2 = contactAddress?["AddressLine2"].ToString() ?? GetAnswer(applicationData, "contact_address2");
+            var contactAddress3 = contactAddress?["AddressLine3"].ToString() ?? GetAnswer(applicationData, "contact_address3");
+            var contactAddress4 = contactAddress?["AddressLine4"].ToString() ?? GetAnswer(applicationData, "contact_address4");
+            var contactPostcode = contactAddress?["Postcode"].ToString() ?? GetAnswer(applicationData, "contact_postcode");
 
-            var contactEmail = GetAnswer(applicationData, "contact-email");
-            var contactPhoneNumber = GetAnswer(applicationData, "contact-phone-number");
-            var companyUkprn = GetAnswer(applicationData, "company-ukprn");
+            var contactEmail = GetAnswer(applicationData, "contact_email");
+            var contactPhoneNumber = GetAnswer(applicationData, "contact_phone_number");
+            var companyUkprn = GetAnswer(applicationData, "company_ukprn");
 
-            var companyNumber = GetAnswer(applicationData, "company-number");
+            var companyNumber = GetAnswer(applicationData, "company_number");
             if ("no".Equals(companyNumber, StringComparison.InvariantCultureIgnoreCase))
             {
                 companyNumber = null;
             }
 
-            var charityNumber = GetAnswer(applicationData, "charity-number");
+            var charityNumber = GetAnswer(applicationData, "charity_number");
             if ("no".Equals(charityNumber, StringComparison.InvariantCultureIgnoreCase))
             {
                 charityNumber = null;
             }
 
-            var standardWebsite = GetAnswer(applicationData, "standard-website");
+            var standardWebsite = GetAnswer(applicationData, "standard_website");
           
             var command = new CreateOrganisationContactCommand
             (   organisation.Id,
@@ -116,12 +116,12 @@ namespace SFA.DAS.AdminService.Web.Services
             if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();
 
             var effectiveFrom = DateTime.UtcNow.Date;
-            if(DateTime.TryParse(GetAnswer(applicationData, "effective-from"), out var effectiveFromDate))
+            if(DateTime.TryParse(GetAnswer(applicationData, "effective_from"), out var effectiveFromDate))
             {
                 effectiveFrom = effectiveFromDate.Date;
             }
                 
-            var deliveryAreas = GetAnswer(applicationData, "delivery-areas");
+            var deliveryAreas = GetAnswer(applicationData, "delivery_areas");
                 
             var command = new CreateOrganisationStandardCommand
             (   
