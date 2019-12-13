@@ -158,12 +158,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<EpaContact> GetEpaContactByEmail(string email)
         {
             return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/email/{email}");
-        }
-
-        public async Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId)
-        {
-            return await Get<List<ContactResponse>>($"api/v1/contacts/get-all/{organisationId}");
-        }
+        }     
 
         public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
         {
