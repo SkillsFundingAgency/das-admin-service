@@ -191,7 +191,7 @@
                                                 </div>
                                             </details>
                                         }
-                                        else if (question != null && question.Input.Type == "FileUpload")
+                                        if (question != null && question.Input.Type == "FileUpload")
                                         {
                                             <p class="govuk-body">
                                                 <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
