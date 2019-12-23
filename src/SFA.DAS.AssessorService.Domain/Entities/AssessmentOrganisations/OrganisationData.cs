@@ -13,5 +13,9 @@
 
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public bool RoATPApproved { get; set; }
+        public bool RoEPAOApproved { get; set; }
+
+        public FHADetails FhaDetails { get; set; }
     }
 }

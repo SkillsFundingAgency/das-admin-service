@@ -9,5 +9,6 @@ namespace SFA.DAS.AdminService.Application.Interfaces.Validation
         Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request);
         Task<ValidationResponse> ValidateNewContactRequest(CreateEpaOrganisationContactRequest request);
         Task<ValidationResponse> ValidateNewOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request);
+        Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request);
     }
 }

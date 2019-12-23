@@ -16,10 +16,10 @@
             <li class="app-navigation">
                 <a asp-action="OpenApplications" asp-controller="Financial">New assessments</a>
             </li>
-            <li class="app-navigation--current-page">
+            <li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="Financial">Rejected assessments</a>
             </li>
-            <li class="app-navigation">
+            <li class="app-navigation--current-page">
                 <a asp-action="ClosedApplications" asp-controller="Financial">Closed assessments</a>
             </li>
         </ul>
@@ -55,7 +55,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="Financial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date graded">
                                     @item.Grade.GradedDateTime.ToSfaShortDateString()
@@ -65,18 +65,16 @@
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.FinancialStatus)
                                         {
-                                            case ApplicationSectionStatus.Graded:
-                                            case ApplicationSectionStatus.Evaluated:
-                                            case ApplicationSequenceStatus.Approved:
+                                            case FinancialReviewStatus.Graded:
                                                 <div class="govuk-tag govuk-tag--approved">
-                                                    accepted
+                                                    graded
                                                 </div>
                                                 break;
-                                            case ApplicationSequenceStatus.Rejected:
-                                                <div class="govuk-tag govuk-tag--rejected">
-                                                    declined
+                                            case FinancialReviewStatus.Approved:
+                                                <div class="govuk-tag govuk-tag--approved">
+                                                    accepted
                                                 </div>
                                                 break;
                                             default:

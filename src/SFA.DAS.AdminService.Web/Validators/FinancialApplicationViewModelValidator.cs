@@ -1,10 +1,8 @@
-using System;
 using FluentValidation;
 using FluentValidation.Validators;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AdminService.Web.Controllers.Apply;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
+using SFA.DAS.AssessorService.ApplyTypes;
+using System;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -30,13 +28,13 @@ namespace SFA.DAS.AdminService.Web.Validators
                     switch (vm.Grade.SelectedGrade)
                     {
                         case FinancialApplicationSelectedGrade.Outstanding:
-                            ProcessDate(vm.Grade.OutstandingFinancialDueDate, "Grade.OutstandingFinancialDueDate", context);
+                            ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate", context);
                             break;
                         case FinancialApplicationSelectedGrade.Good:
-                            ProcessDate(vm.Grade.GoodFinancialDueDate, "Grade.GoodFinancialDueDate", context);
+                            ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", context);
                             break;
                         case FinancialApplicationSelectedGrade.Satisfactory:
-                            ProcessDate(vm.Grade.SatisfactoryFinancialDueDate, "Grade.SatisfactoryFinancialDueDate", context);
+                            ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
                             break;
                     }
                 }

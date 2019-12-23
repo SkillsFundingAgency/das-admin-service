@@ -35,6 +35,12 @@ namespace SFA.DAS.AdminService.Web.Services
             return await _apiClient.CreateOrganisationStandardValidate(validationRequest);
         }
 
+        public async Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request)
+        {
+            var validationRequest = MapToUpdateEpaOrganisationValidateRequest(request);
+            return await _apiClient.UpdateOrganisationValidate(validationRequest);
+        }
+
         private CreateEpaOrganisationValidationRequest MapToCreateEpaOrganisationValidateRequest(CreateEpaOrganisationRequest request)
         {
             return new CreateEpaOrganisationValidationRequest
@@ -69,6 +75,26 @@ namespace SFA.DAS.AdminService.Web.Services
                 EffectiveTo = request?.EffectiveTo,
                 ContactId = request?.ContactId,
                 DeliveryAreas = request?.DeliveryAreas
+            };
+        }
+
+        private UpdateEpaOrganisationValidationRequest MapToUpdateEpaOrganisationValidateRequest(UpdateEpaOrganisationRequest request)
+        {
+            return new UpdateEpaOrganisationValidationRequest
+            {
+                Name = request?.Name,
+                Ukprn = request?.Ukprn,
+                OrganisationTypeId = request?.OrganisationTypeId,
+                OrganisationId = request?.OrganisationId,
+                Address1 = request?.Address1,
+                Address2 = request?.Address2,
+                Address3 = request?.Address3,
+                Address4 = request?.Address4,
+                Postcode = request?.Postcode,
+                CompanyNumber = request?.CompanyNumber,
+                CharityNumber = request?.CharityNumber,
+                Status = request?.Status,
+                ActionChoice = request?.ActionChoice
             };
         }
     }

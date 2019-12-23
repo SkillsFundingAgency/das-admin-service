@@ -13,14 +13,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool NotRequired { get; set; }
     }
 
-    public class ApplicationSequenceStatus
+    public static class ApplicationSequenceStatus
     {
         public const string Draft = "Draft";
         public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string FeedbackAdded = "FeedbackAdded";
         public const string Resubmitted = "Resubmitted";
-        public const string Rejected = "Rejected";
+        public const string Declined = "Declined";
         public const string Approved = "Approved";
     }
 }

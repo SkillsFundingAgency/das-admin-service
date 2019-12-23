@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})">Back</a>
+<a class="govuk-back-link" href="@Url.Action("Section", "Application", new { applicationId = Model.ApplicationId, sequenceNo = Model.SequenceNo, sectionNo = Model.SectionNo })">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     @if (Model.Page == null)
@@ -40,7 +40,7 @@
 
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-                @foreach (var pageOfAnswers in Model.Page.DisplayAnswerPages)
+                @foreach (var pageOfAnswers in Model.Page.PageOfAnswers)
                 {
                     <table class="govuk-table govuk-table--s">
                         <thead class="govuk-table__head">
@@ -50,33 +50,47 @@
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
-                            @foreach (var answer in pageOfAnswers.DisplayAnswers)
+                            @foreach (var answer in pageOfAnswers.Answers)
                             {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">@answer.Label</td>
+                                var question = Model.Page.Questions.SingleOrDefault(x => x.QuestionId == answer.QuestionId);
+                                if (question != null)
+                                {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@question.Label</td>
 
-                                    @if (answer is FileUploadDisplayAnswer)
-                                    {
-                                        var fuAnswer = answer as FileUploadDisplayAnswer;
-                                        <td class="govuk-table__cell">
-                                            <a class="govuk-link" href="@Url.Action("Download", "Application",
+                                @if (question.Input.Type == "FileUpload")
+                                {
+                                    <td class="govuk-table__cell">
+                                        <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
                                                 new
                                                 {
-                                                    applicationId = fuAnswer.ApplicationId,
-                                                    sequenceId = fuAnswer.SequenceId,
-                                                    sectionId = fuAnswer.SectionId,
-                                                    pageId = fuAnswer.PageId,
-                                                    questionId = fuAnswer.QuestionId,
-                                                    filename = fuAnswer.FileName
+                                                    Id = Model.ApplicationId,
+                                                    sequenceNo = Model.SequenceNo,
+                                                    sectionNo = Model.SectionNo,
+                                                    pageId = Model.Page.PageId,
+                                                    questionId = answer.QuestionId,
+                                                    filename = answer.Value
                                                 })">
-                                            </a>
+                                            @answer.Value
+                                        </a>
+                                    </td>
+                                }
+                                else if (question != null && question.Input.Type == "Address")
+                                {
+                                    var address = Model.Addresses[question.QuestionId];
+                                    if (address != null)
+                                    {
+                                        <td class="govuk-table__cell">
+                                            @address.CommaSeperatedAddress()
                                         </td>
                                     }
-                                    else
-                                    {
-                                        <td class="govuk-table__cell">@answer.Answer()</td>
-                                    }
-                                </tr>
+                                }
+                                else
+                                {
+                                    <td class="govuk-table__cell">@Model.DisplayAnswerValue(answer,question)</td>
+                                }
+                            </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -93,8 +107,8 @@
                         <p class="govuk-body">@feedback.Message</p>
                         @if (feedback.IsNew)
                         {
-                            <form class="js-disable-on-submit" asp-action="DeleteFeedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
-                                <input type="hidden" name="FeedbackId" value="@feedback.Id"/>
+                            <form class="js-disable-on-submit" asp-action="DeleteFeedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" 
+                                  asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId" asp-route-feedbackId="@feedback.Id">
                                 <button class="govuk-button govuk-button--warning" type="submit">Delete</button>
                             </form>
                         }
@@ -107,7 +121,7 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form class="js-disable-on-submit" asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">
+                <form class="js-disable-on-submit" asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId">
                     <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
                         <label class="govuk-label govuk-label--l" for="message">
                             Add feedback
@@ -124,7 +138,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">
-                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId})" class="govuk-link">Return to section overview</a>
+                <a href="@Url.Action("Section", "Application", new {applicationId = Model.ApplicationId, sequenceNo = Model.SequenceNo, sectionNo = Model.SectionNo})" class="govuk-link">Return to section overview</a>
             </p>
         </div>
     </div>
