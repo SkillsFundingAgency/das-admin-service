@@ -23,7 +23,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public bool Active { get; set; }
         public bool NotRequired { get; set; }
         public string BodyText { get; set; }
-        public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
+        public FinancialGrade FinancialApplicationGrade { get; set; }
         
         public List<Feedback> Feedback { get; set; }
         public bool HasFeedback => Feedback?.Any() ?? false;

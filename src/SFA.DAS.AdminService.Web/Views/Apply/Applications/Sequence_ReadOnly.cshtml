@@ -2,12 +2,11 @@
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AssessorService.Domain.Extensions
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationSequenceViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SequenceViewModel
 
 @{
     ViewBag.Title = "Application overview";
-    var OpenStatusList = new string[] { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.FeedbackAdded };
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Sequence?.Status, Model.SequenceId);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
 }
 
 <a class="govuk-back-link" asp-controller="Application" asp-action="@BackAction">Back</a>
@@ -16,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (Model.Sequence == null)
+            @if (Model.Sections == null)
             {
                 <h1 class="govuk-heading-xl">Sequence not active</h1>
             }
@@ -32,7 +31,7 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceId == 2)
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
@@ -78,24 +77,32 @@
                 }
 
                 <ul class="govuk-list">
-                    @foreach (var applicationSection in Model.Sequence.Sections.OrderBy(s => s.SectionId))
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
+                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
+                        {
+                            // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
+                            continue;
+                        }
                         <li>
                             <h2 class="govuk-heading-m">
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo})">
                                     @applicationSection.LinkTitle
                                 </a>
                             </h2>
                             <span class="govuk-hint">
-                                @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
                             </span>
-                            @if (applicationSection.HasNewPageFeedback)
+
+                            @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
                             {
                                 <div class="govuk-tag">
                                     Feedback added
                                 </div>
                             }
-                            @if (applicationSection.Status == ApplicationSectionStatus.Evaluated)
+
+                            @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
+                            @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
                             {
                                 <div class="govuk-tag">
                                     Evaluated

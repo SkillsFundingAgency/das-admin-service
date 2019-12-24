@@ -1,5 +1,6 @@
 using System;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
@@ -12,14 +13,21 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public int? Ukprn { get; }
         public string CompanyNumber { get; }
 
-        public ApplicationSection Section { get; }
-        public FinancialApplicationGrade Grade { get; set; }
+        public Section Section { get; }
+        public FinancialGrade Grade { get; set; }
         public Guid ApplicationId { get; set; }
+        public Guid Id { get; set; }
+        public Guid OrgId { get; set; }
+
+        public FinancialDueDate OutstandingFinancialDueDate { get; set; }
+        public FinancialDueDate GoodFinancialDueDate { get; set; }
+        public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
 
         public FinancialApplicationViewModel() { }
 
-        public FinancialApplicationViewModel(Guid applicationId, ApplicationSection section, FinancialApplicationGrade grade, AssessorService.ApplyTypes.Application application)
+        public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)
         {
+            Id = id;
             if (section != null)
             {
                 Section = section;
@@ -30,44 +38,66 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                 ApplicationId = applicationId;
             }
 
-            SetupGrade(section, grade);
+            SetupGradeAndFinancialDueDate(grade);
+            OrgId = application.ApplyingOrganisationId;
 
-            if (application != null)
+            if (application.ApplicationData != null)
             {
-                if (application.ApplicationData != null)
-                {
-                    ApplicationReference = application.ApplicationData.ReferenceNumber;
-                }
+                ApplicationReference = application.ApplicationData.ReferenceNumber;
+            }
 
-                if (application.ApplyingOrganisation?.OrganisationDetails != null)
-                {
-                    Ukprn = application.ApplyingOrganisation.OrganisationUkprn;
-                    LegalName = application.ApplyingOrganisation.OrganisationDetails.LegalName;
-                    TradingName = application.ApplyingOrganisation.OrganisationDetails.TradingName;
-                    ProviderName = application.ApplyingOrganisation.OrganisationDetails.ProviderName;
-                    CompanyNumber = application.ApplyingOrganisation.OrganisationDetails.CompanyNumber;
-                }
+
+            if (application.ApplyingOrganisation?.OrganisationData != null)
+            {
+                Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
+                LegalName = application.ApplyingOrganisation.OrganisationData.LegalName;
+                TradingName = application.ApplyingOrganisation.OrganisationData.TradingName;
+                ProviderName = application.ApplyingOrganisation.OrganisationData.ProviderName;
+                CompanyNumber = application.ApplyingOrganisation.OrganisationData.CompanyNumber;
             }
         }
 
-        private void SetupGrade(ApplicationSection section, FinancialApplicationGrade grade)
+        private void SetupGradeAndFinancialDueDate(FinancialGrade grade)
         {
-            if (grade != null)
-            {
-                Grade = grade;
-            }
-            else if (section?.QnAData?.FinancialApplicationGrade != null)
-            {
-                Grade = section.QnAData.FinancialApplicationGrade;
-            }
-            else
-            {
-                Grade = new FinancialApplicationGrade();
-            }
+            Grade = grade ?? new FinancialGrade();
 
-            if (Grade.OutstandingFinancialDueDate is null) Grade.OutstandingFinancialDueDate = new FinancialDueDate();
-            if (Grade.GoodFinancialDueDate is null) Grade.GoodFinancialDueDate = new FinancialDueDate();
-            if (Grade.SatisfactoryFinancialDueDate is null) Grade.SatisfactoryFinancialDueDate = new FinancialDueDate();
+            OutstandingFinancialDueDate = new FinancialDueDate();
+            GoodFinancialDueDate = new FinancialDueDate();
+            SatisfactoryFinancialDueDate = new FinancialDueDate();
+
+            if(Grade.FinancialDueDate.HasValue)
+            {
+                var day = Grade.FinancialDueDate.Value.Day.ToString();
+                var month = Grade.FinancialDueDate.Value.Month.ToString();
+                var year = Grade.FinancialDueDate.Value.Year.ToString();
+
+                switch (Grade.SelectedGrade)
+                {
+                    case FinancialApplicationSelectedGrade.Outstanding:
+                        OutstandingFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    case FinancialApplicationSelectedGrade.Good:
+                        GoodFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    case FinancialApplicationSelectedGrade.Satisfactory:
+                        SatisfactoryFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    public class FinancialDueDate
+    {
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
+
+        public DateTime ToDateTime()
+        {
+            return new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
         }
     }
 }

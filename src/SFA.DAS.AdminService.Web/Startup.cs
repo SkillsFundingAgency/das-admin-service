@@ -30,6 +30,8 @@ using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Domain;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -57,6 +59,7 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
@@ -64,16 +67,15 @@ namespace SFA.DAS.AdminService.Web
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
-            services.AddHttpClient<ApplyApiClient>("ApplyApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
+
+            services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
-            
+
             AddAuthentication(services);
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -119,7 +121,8 @@ namespace SFA.DAS.AdminService.Web
                 .WithTransientLifetime());
 
             services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IApplyTokenService, ApplyTokenService>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
+
             services.AddTransient(x => ApplicationConfiguration);
 
             services.AddTransient<ISessionService>(x =>
@@ -132,26 +135,25 @@ namespace SFA.DAS.AdminService.Web
                         x.GetService<ITokenService>(), 
                         x.GetService<ILogger<OrganisationsApiClient>>()));
 
-            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                x.GetService<ITokenService>(), 
-                x.GetService<ILogger<ContactsApiClient>>(),
-                x.GetService<IContactApplyClient>()));
-            
-            services.AddTransient<IApplyApiClient>(x => new ApplyApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<ApplyApiClient>>(),
-                x.GetService<IApplyTokenService>()));
-
             services.AddTransient<IApiClient>(x => new ApiClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
 
-            services.AddTransient<IContactApplyClient>(x => new ContactApplyClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress, 
-                x.GetService<ITokenService>(), 
-                x.GetService<ILogger<ContactApplyClient>>()));
+            services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<ApplicationApiClient>>(),
+                x.GetService<ITokenService>()));
+
+            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<ContactsApiClient>>()));
+
+            services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
+              ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
+              x.GetService<IQnaTokenService>(),
+              x.GetService<ILogger<QnaApiClient>>()));
 
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
@@ -180,6 +182,8 @@ namespace SFA.DAS.AdminService.Web
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
+
+            UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }
 
         private void AddAuthentication(IServiceCollection services)

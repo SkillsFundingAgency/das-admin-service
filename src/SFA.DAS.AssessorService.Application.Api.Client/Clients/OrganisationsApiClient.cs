@@ -320,6 +320,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+
         public async Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get,
