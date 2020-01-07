@@ -1,0 +1,43 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.RoatpAssessorModerationViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <partial name="../_RoatpAssessorPage.cshtml" model="@Model" />
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-8">
+        <div class="govuk-grid-column-one-half">
+            <h1 class="govuk-heading-l">Review 1 Comments</h1>
+            <p class="govuk-label govuk-label--s">
+                @Model.Review1Outcome
+            </p>
+            <p class="govuk-body">
+                @Model.Review1Comment
+            </p>
+        </div>
+
+        <div class="govuk-grid-column-one-half">
+            <h1 class="govuk-heading-l">Review 2 Comments</h1>
+            <p class="govuk-label govuk-label--s">
+                @Model.Review2Outcome
+            </p>
+            <p class="govuk-body">
+                @Model.Review2Comment
+            </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="js-disable-on-submit" asp-action="Feedback" asp-controller="RoatpAssessorModeration" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId">
+                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--l" for="message">
+                        Add Feedback
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="FeedbackMessage"></span>
+                    <textarea class="govuk-textarea" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="govuk-textarea--error" asp-for="FeedbackMessage"></textarea>
+                </div>
+                <button class="govuk-button" type="submit">Add Feedback</button>
+            </form>
+        </div>
+    </div>
+</main>

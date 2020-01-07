@@ -1,0 +1,26 @@
+﻿<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-xl">RoATP staff dashboard</h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-l">Assess applications</h2>
+            <p class="govuk-body">Review and approve new organisation applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list govuk-list--nobullet">
+                <li><a asp-controller="RoatpAssessorDashboard" asp-action="Index">View applications</a></li>
+            </ul>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-l">Manage register</h2>
+            <p class="govuk-body">Search, view and edit organisations that are currently live on the register.</p>
+            <ul class="govuk-list govuk-list--nobullet">
+                <li><a asp-controller="RoatpHome" asp-action="Index">Search the register</a></li>
+            </ul>
+        </div>
+    </div>
+
+</main>

@@ -1,0 +1,23 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.RoatpAssessor.RoatpAssessorReviewViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <h1 class="govuk-heading-l">@Model.ReviewNo</h1>
+
+    <partial name="../_RoatpAssessorPage.cshtml" model="@Model" />
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="js-disable-on-submit" asp-action="Feedback" asp-controller="RoatpAssessorReview" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@Model.PageId">
+                <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--l" for="message">
+                        Add Comment
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="FeedbackMessage"></span>
+                    <textarea class="govuk-textarea" rows="15" sfa-validation-for="FeedbackMessage" sfa-validationerror-class="govuk-textarea--error" asp-for="FeedbackMessage"></textarea>
+                </div>
+                <button class="govuk-button" type="submit">Add Comment & Fail</button>
+            </form>
+        </div>
+    </div>
+</main>

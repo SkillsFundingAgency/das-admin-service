@@ -8,4 +8,8 @@
     public interface IQnaTokenService : ITokenService
     {
     }
+
+    public interface IApplyTokenService : ITokenService
+    { 
+    }
 }
