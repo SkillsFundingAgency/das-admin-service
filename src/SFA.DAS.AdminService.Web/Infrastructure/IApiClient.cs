@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using SFA.DAS.Apprenticeships.Api.Types;
+﻿using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -25,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
         Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request);
+        Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request);
         Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request);
         Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request);
         Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request); 
@@ -42,13 +42,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<EpaContact> GetEpaContactBySignInId(Guid signInId);
         Task<EpaContact> GetEpaContactByEmail(string email);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
-        Task<List<ContactResponse>> GetEpaOrganisationContacts(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
         Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
-        Task<List<Option>> GetOptions(int stdCode);
+        Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);
         Task<Organisation> GetOrganisation(Guid id);
+        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId);
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId);
@@ -66,6 +66,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
-        Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
     }
 }

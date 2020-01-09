@@ -11,7 +11,7 @@
         bool DateIsValid(string dateToCheck);
         bool DateIsTodayOrInFuture(string dateToCheck);
         bool DateIsTodayOrInPast(string dateToCheck);
-        bool OrganisationIdIsValid(string organisationIdToCheck);
+        bool EndPointAssessorOrganisationIdIsValid(string endPointAssessorOrganisationIdToCheck);
 
         bool CompanyNumberIsValid(string companyNumberToCheck);
         bool CharityNumberIsValid(string charityNumberToCheck);

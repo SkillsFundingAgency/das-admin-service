@@ -449,7 +449,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 StatusDate = DateTime.Now,
                 Ukprn = model.UKPRN,
                 TradingName = model?.TradingName,
-                Username = HttpContext.User.OperatorName(),
+                Username = HttpContext.User.UserDisplayName(),
                 SourceIsUKRLP = true,
                 ApplicationDeterminedDate = model.ApplicationDeterminedDate
             };

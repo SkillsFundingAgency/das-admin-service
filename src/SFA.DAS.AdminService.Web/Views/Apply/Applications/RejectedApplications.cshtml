@@ -60,13 +60,13 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceId="@item.SequenceId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceNo="@item.SequenceNo">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Application type">
                                     @item.ApplicationType
                                 </td>
                                 <td class="govuk-table__cell" data-label="Standard">
-                                    @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceId == 2)
+                                    @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceNo == 2)
                                     {
                                         <text>@item.Standard</text>
                                     }
@@ -80,9 +80,9 @@
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.ReviewStatus)
                                         {
-                                            case ApplicationSequenceStatus.FeedbackAdded:
+                                            case ApplicationReviewStatus.HasFeedback:
                                                 <div class="govuk-tag govuk-tag--rejected">
                                                     rejected
                                                 </div>

@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationLegalName.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
 
             var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
             request.LegalName = request.LegalName.ToUpper();
@@ -88,7 +88,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationUkprn.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationUkprnRequest>(model);
             var result = await _apiClient.UpdateOrganisationUkprn(request);
 			
@@ -167,7 +167,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationCompanyNumber.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationCompanyNumberRequest>(model);
             var result = await _apiClient.UpdateOrganisationCompanyNumber(request);
 
@@ -190,7 +190,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationStatus.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
             if (model.OrganisationStatusId == 0) // Removed
             {
@@ -223,7 +223,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationType.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationTypeRequest>(model);
 
             var result = await _apiClient.UpdateOrganisationType(request);
@@ -259,7 +259,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationTradingName.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
 
             var request = Mapper.Map<UpdateOrganisationTradingNameRequest>(model);
             var result = await _apiClient.UpdateOrganisationTradingName(request);
@@ -295,7 +295,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationParentCompanyGuarantee.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
 
             var request = Mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
             var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(request);
@@ -350,7 +350,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationFinancialTrackRecord.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
 
             var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
             var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
@@ -399,7 +399,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationProviderType.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
 
             var searchModel = _sessionService.GetSearchResults();
             var previousProviderTypeId = searchModel.SelectedResult.ProviderType.Id;
@@ -460,7 +460,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationCharityNumber.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationCharityNumberRequest>(model);
             var result = await _apiClient.UpdateOrganisationCharityNumber(request);
 
@@ -482,7 +482,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/UpdateOrganisationApplicationDeterminedDate.cshtml", model);
             }
 
-            model.UpdatedBy = HttpContext.User.OperatorName();
+            model.UpdatedBy = HttpContext.User.UserDisplayName();
             var request = Mapper.Map<UpdateOrganisationApplicationDeterminedDateRequest>(model);
 
             var result = await _apiClient.UpdateApplicationDeterminedDate(request);
