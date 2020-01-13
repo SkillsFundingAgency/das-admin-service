@@ -92,15 +92,15 @@
                                     if (address != null)
                                     {
                                         <td class="govuk-table__cell">
-                                                 @address.CommaSeperatedAddress()
+                                            @address.CommaSeperatedAddress()
                                         </td>
                                     }
                                 }
                                 else
                                 {
-                                    <td class="govuk-table__cell">@answer.Value</td>
-                                    }
-                                    </tr>
+                                    <td class="govuk-table__cell">@Model.DisplayAnswerValue(answer,question)</td>
+                                }
+                            </tr>
                                 }
                             }
                         </tbody>

@@ -1,3 +1,4 @@
+@using SFA.DAS.QnA.Api.Types.Page
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AdminService.Web.Helpers;
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
@@ -188,23 +189,23 @@
                                                 <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
                                             }
 
-                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                            {
-                                                <details class="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            View question details
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        @Html.Raw(question.QuestionBodyText)
-                                                    </div>
-                                                </details>
-                                            }
-                                            else if (question != null && question.Input.Type == "FileUpload")
-                                            {
-                                                <p class="govuk-body">
-                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                        {
+                                            <details class="govuk-details">
+                                                <summary class="govuk-details__summary">
+                                                    <span class="govuk-details__summary-text">
+                                                        View question details
+                                                    </span>
+                                                </summary>
+                                                <div class="govuk-details__text">
+                                                    @Html.Raw(question.QuestionBodyText)
+                                                </div>
+                                            </details>
+                                        }
+                                        if (question != null && question.Input.Type == "FileUpload")
+                                        {
+                                            <p class="govuk-body">
+                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
                                                     new
                                                     {
                                                         Id = Model.ApplicationId,
@@ -214,29 +215,29 @@
                                                         questionId = answer.QuestionId,
                                                         filename = answer.Value
                                                     })">
-                                                        @answer.Value
-                                                    </a>
+                                                    @answer.Value
+                                                </a>
+                                            </p>
+                                        }
+                                        else if (question != null && question.Input.Type == "Address")
+                                        {
+                                            var address = Model.Addresses[question.QuestionId];
+                                            if (address != null)
+                                            {
+                                                <p class="govuk-body">
+                                                    @address.CommaSeperatedAddress()
                                                 </p>
                                             }
-                                            else if (question != null && question.Input.Type == "Address")
+                                        }
+                                        else
+                                        {
+                                            if (@answer.Value != ",,")
                                             {
-                                                var address = Model.Addresses[question.QuestionId];
-                                                if (address != null)
-                                                {
-                                                    <p class="govuk-body">
-                                                        @address.CommaSeperatedAddress()
-                                                    </p>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (@answer.Value != ",,")
-                                                {
-                                                    <p class="govuk-body">@answer.Value</p>
-                                                }
+                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
                                             }
                                         }
                                     }
+                                }
                                 </dd>
 
                                 <dd class="govuk-summary-list__actions">

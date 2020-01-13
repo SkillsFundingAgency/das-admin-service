@@ -219,7 +219,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string StandardName { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }
         public List<StandardSubmission> StandardSubmissions { get; set; }
-        public int InitSubmissionCount { get; set; }
+        public int InitSubmissionsCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }

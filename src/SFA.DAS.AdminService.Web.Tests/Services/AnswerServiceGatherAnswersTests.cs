@@ -98,22 +98,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var applicationData = new Dictionary<string, object>
             {
-                ["trading-name"] = commandTestSetup.TradingName,
-                ["use-trading-name"] = commandTestSetup.UseTradingName,
-                ["contact-given-name"] = commandTestSetup.ContactGivenNames,
-                ["contact-family-name"] = commandTestSetup.ContactFamilyName,
-                ["contact-address"] = commandTestSetup.ContactAddress,
-                ["contact-address1"] = commandTestSetup.ContactAddress1,
-                ["contact-address2"] = commandTestSetup.ContactAddress2,
-                ["contact-address3"] = commandTestSetup.ContactAddress3,
-                ["contact-address4"] = commandTestSetup.ContactAddress4,
-                ["contact-postcode"] = commandTestSetup.ContactPostcode,
-                ["contact-email"] = commandTestSetup.ContactEmail,
-                ["contact-phone-number"] = commandTestSetup.ContactPhoneNumber,  
-                ["company-ukprn"] = commandTestSetup.CompanyUkprn,
-                ["company-number"] = commandTestSetup.CompanyNumber,
-                ["charity-number"] = commandTestSetup.CharityNumber,
-                ["standard-website"] = commandTestSetup.StandardWebsite
+                ["trading_name"] = commandTestSetup.TradingName,
+                ["use_trading_name"] = commandTestSetup.UseTradingName,
+                ["contact_given_name"] = commandTestSetup.ContactGivenNames,
+                ["contact_family_name"] = commandTestSetup.ContactFamilyName,
+                ["contact_address"] = commandTestSetup.ContactAddress,
+                ["contact_address1"] = commandTestSetup.ContactAddress1,
+                ["contact_address2"] = commandTestSetup.ContactAddress2,
+                ["contact_address3"] = commandTestSetup.ContactAddress3,
+                ["contact_address4"] = commandTestSetup.ContactAddress4,
+                ["contact_postcode"] = commandTestSetup.ContactPostcode,
+                ["contact_email"] = commandTestSetup.ContactEmail,
+                ["contact_phone_number"] = commandTestSetup.ContactPhoneNumber,  
+                ["company_ukprn"] = commandTestSetup.CompanyUkprn,
+                ["company_number"] = commandTestSetup.CompanyNumber,
+                ["charity_number"] = commandTestSetup.CharityNumber,
+                ["standard_website"] = commandTestSetup.StandardWebsite
             };
 
             var applicationOrganisation = new Organisation
@@ -256,8 +256,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var applicationData = new Dictionary<string, object>
             {
-                ["effective-from"] = commandTestSetup.EffectiveFrom,
-                ["delivery-areas"] = commandTestSetup.DeliveryAreasString
+                ["effective_from"] = commandTestSetup.EffectiveFrom,
+                ["delivery_areas"] = commandTestSetup.DeliveryAreasString
             };
 
             var applicationOrganisation = new Organisation

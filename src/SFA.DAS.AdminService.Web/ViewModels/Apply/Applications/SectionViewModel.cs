@@ -73,5 +73,27 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 }
             }
         }
+
+        public string DisplayAnswerValue(QnA.Api.Types.Page.Answer answer, QnA.Api.Types.Page.Question question)
+        {
+            if (question?.Input?.Type == "Date" || question?.Input?.Type == "MonthAndYear")
+            {
+                var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (question.Input.Type == "Date")
+                {
+                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
+                    return datetime.ToString("dd/MM/yyyy");
+                }
+                else if (question.Input.Type == "MonthAndYear")
+                {
+                    DateTime datetime;
+                    DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out datetime);
+                    return datetime.ToString("MM/yyyy");
+                }
+            }
+
+            return answer.Value;
+        }
     }
 }
