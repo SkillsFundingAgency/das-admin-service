@@ -1,5 +1,5 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "serviceName": {
@@ -13,12 +13,10 @@
             "defaultValue": ""
         },
         "keyVaultName": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
         },
         "keyVaultResourceGroup": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
         },
         "configurationStorageConnectionString": {
             "type": "securestring"
@@ -33,75 +31,30 @@
             "type": "securestring"
         },
         "loggingRedisKey": {
-            "type": "securestring"
-        },
-        "aspSize": {
-            "type": "string",
-            "defaultValue": "1"
-        },
-        "aspInstances": {
-            "type": "int",
-            "defaultValue": 1
-        },
-        "location": {
-            "type": "string",
-            "defaultValue": "West Europe"
+            "type": "string"
         },
         "appServiceAllowedIPs": {
             "type": "array",
-            "defaultValue": []
+            "defaultValue": [
+            ]
         },
-        "aseResourceGroup": {
-            "type": "string",
-            "defaultValue": ""
+        "sharedFrontendAppServicePlanName": {
+            "type": "string"
         },
-        "aseHostingEnvironmentName": {
-            "type": "string",
-            "defaultValue": ""
+        "sharedAppServicePlanResourceGroup": {
+            "type": "string"
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-        "appServicePlanName": "[concat(variables('resourceNamePrefix'), '-asp')]"
+        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]"
     },
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "app-service-plan",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-plan.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
-                    },
-                    "aspLocation": {
-                        "value": "[parameters('location')]"
-                    },
-                    "aspSize": {
-                        "value": "[parameters('aspSize')]"
-                    },
-                    "aspInstances": {
-                        "value": "[parameters('aspInstances')]"
-                    },
-                    "aseHostingEnvironmentName": {
-                        "value": "[parameters('aseHostingEnvironmentName')]"
-                    },
-                    "aseResourceGroup": {
-                        "value": "[parameters('aseResourceGroup')]"
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
             "name": "app-service-certificate",
+            "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
             "condition": "[greater(length(parameters('certificateName')), 0)]",
             "properties": {
@@ -121,13 +74,10 @@
                         "value": "[parameters('keyVaultResourceGroup')]"
                     },
                     "serverFarmId": {
-                        "value": "[resourceId ('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedFrontEndAppServicePlanName'))]"
                     }
                 }
-            },
-            "dependsOn": [
-                "app-service-plan"
-            ]
+            }
         },
         {
             "apiVersion": "2017-05-10",
@@ -144,10 +94,10 @@
                         "value": "[variables('appServiceName')]"
                     },
                     "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
+                        "value": "[parameters('sharedFrontendAppServicePlanName')]"
                     },
                     "appServicePlanResourceGroup": {
-                        "value": "[resourceGroup().name]"
+                        "value": "[parameters('sharedAppServicePlanResourceGroup')]"
                     },
                     "deployStagingSlot": {
                         "value": true
@@ -209,8 +159,7 @@
                 }
             },
             "dependsOn": [
-                "app-service-certificate",
-                "app-service-plan"
+                "app-service-certificate"
             ]
         },
         {
@@ -231,8 +180,7 @@
                         "value": "[variables('appServiceName')]"
                     }
                 }
-            },
-            "dependsOn": []
+            }
         }
     ],
     "outputs": {
