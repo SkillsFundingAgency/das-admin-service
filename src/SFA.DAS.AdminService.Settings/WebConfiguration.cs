@@ -20,6 +20,8 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
+        [JsonRequired] public ClientApiAuthentication RoatpApplyApiAuthentication { get; set; }
+
         [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
 
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }

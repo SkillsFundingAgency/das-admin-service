@@ -16,6 +16,7 @@ using SFA.DAS.AdminService.Web.Controllers;
 using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Tests.MockedObjects;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Posts
 {
@@ -24,6 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
         protected Mock<ILogger<CertificateAmendController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient MockApiClient;
+        protected Mock<ApiClientFactory<ApiClient>> MockApiClientFactory;
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
 
         protected Mock<ISessionService> MockSession;
@@ -43,6 +45,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
+            MockApiClientFactory = new Mock<ApiClientFactory<ApiClient>>();
+            MockApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(MockApiClient);
             MockStandardServiceClient = new Mock<IStandardServiceClient>();
 
 

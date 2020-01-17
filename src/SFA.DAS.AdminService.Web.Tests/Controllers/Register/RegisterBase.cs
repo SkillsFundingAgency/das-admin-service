@@ -4,7 +4,9 @@ using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -12,10 +14,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 {
     public class RegisterBase
     {
-        protected Mock<IApiClient> ApiClient;
-        protected Mock<IContactsApiClient> ContactsApiClient;
+        protected Mock<ApiClient> ApiClient;
+        protected Mock<ContactsApiClient> ContactsApiClient;
         protected Mock<IStandardServiceClient> StandardServiceClient;
         protected Mock<IHostingEnvironment> Env;
+        protected Mock<ApiClientFactory<ApiClient>> ApiClientFactory;
+        protected Mock<ApiClientFactory<ContactsApiClient>> ContactsApiClientFactory;
 
         protected Guid OrganisationOneId = Guid.NewGuid();
         protected string OrganisationOneOrganisationId = "EPA0001";
@@ -39,9 +43,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 OrganisationTypeId = 1
             };
 
-            List<OrganisationType> organisationTypes = new List<OrganisationType>
+            List<AssessorService.Api.Types.Models.AO.OrganisationType> organisationTypes = new List<AssessorService.Api.Types.Models.AO.OrganisationType>
             {
-                new OrganisationType
+                new AssessorService.Api.Types.Models.AO.OrganisationType
                 {
                     Id = 1
                 }
@@ -81,14 +85,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             var organisationStandard = new OrganisationStandard() { OrganisationId = OrganisationOneOrganisationId, Id = organisationStandardId };
 
-            ApiClient = new Mock<IApiClient>();
+            ApiClient = new Mock<ApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
             ApiClient.Setup(p => p.GetOrganisationTypes()).ReturnsAsync(organisationTypes);
             ApiClient.Setup(p => p.GetEpaOrganisationStandards(OrganisationOneOrganisationId)).ReturnsAsync(organisationStandards);
             ApiClient.Setup(p => p.GetOrganisationStandard(organisationStandardId)).ReturnsAsync(organisationStandard);
             ApiClient.Setup(p => p.GetDeliveryAreas()).ReturnsAsync(deliveryAreas);
 
-            ContactsApiClient = new Mock<IContactsApiClient>();
+
+
+            ContactsApiClient = new Mock<ContactsApiClient>();
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, null)).ReturnsAsync(contacts);            
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, false)).ReturnsAsync(contacts);
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisationIncludePrivileges(OrganisationOneOrganisationId, true)).ReturnsAsync(users);
@@ -96,6 +102,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             StandardServiceClient = new Mock<IStandardServiceClient>();
             Env = new Mock<IHostingEnvironment>();
+
+            ApiClientFactory = new Mock<ApiClientFactory<ApiClient>>();
+            ApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(ApiClient.Object);
+            ContactsApiClientFactory = new Mock<ApiClientFactory<ContactsApiClient>>();
+            ContactsApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(ContactsApiClient.Object);
         }
     }
 }

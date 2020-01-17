@@ -5,6 +5,8 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
@@ -12,9 +14,9 @@ namespace SFA.DAS.AdminService.Web.Services
     {
         private readonly IApiClient _apiClient;
 
-        public AssessorValidationService(IApiClient apiClient)
+        public AssessorValidationService(ApiClientFactory<ApiClient> apiClient)
         {
-            _apiClient = apiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
         }
 
         public async Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request)

@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             var certificatePrivateProviderUkprnController =
                 new CertificatePrivateProviderUkprnController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockApiClient                    
+                    MockApiClientFactory.Object
                     );
           
 

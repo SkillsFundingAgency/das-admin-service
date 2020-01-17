@@ -13,19 +13,22 @@ using SFA.DAS.AssessorService.Domain.Entities;
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     public class ContactsApiClient : ApiClientBase, IContactsApiClient
-    {
-        private readonly ILogger<ContactsApiClient> _logger;
-        
-        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ContactsApiClient> logger) : base(baseUri, tokenService, logger)
+    { 
+        public ContactsApiClient() : base()
         {
-            _logger = logger;
+
+        }
+
+        public ContactsApiClient(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
+        {
+            
         }
 
         public ContactsApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
         }
 
-        public async Task<List<Privilege>> GetPrivileges()
+        public async virtual Task<List<Privilege>> GetPrivileges()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/privileges"))
             {
@@ -33,7 +36,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId)
+        public async virtual Task<List<ContactsPrivilege>> GetContactPrivileges(Guid userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/privileges"))
             {
@@ -41,7 +44,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetByUsername(string username)
+        public async virtual Task<ContactResponse> GetByUsername(string username)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/username/{WebUtility.UrlEncode(username)}"))
             {
@@ -49,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetById(Guid id)
+        public async virtual Task<ContactResponse> GetById(Guid id)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{id}"))
             {
@@ -58,7 +61,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         }
 
 
-        public async Task<ContactResponse> Update(UpdateContactRequest updateContactRequest)
+        public async virtual Task<ContactResponse> Update(UpdateContactRequest updateContactRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/"))
             {
@@ -66,7 +69,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
+        public async virtual Task<ContactResponse> UpdateStatus(UpdateContactStatusRequest updateContactStatusRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/status"))
             {
@@ -74,7 +77,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactBoolResponse> DoesContactHavePrivileges(string userId)
+        public async virtual Task<ContactBoolResponse> DoesContactHavePrivileges(string userId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/user/{userId}/haveprivileges"))
             {
@@ -82,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> GetContactBySignInId(string signInId)
+        public async virtual Task<ContactResponse> GetContactBySignInId(string signInId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/signInId/{signInId}"))
             {
@@ -91,7 +94,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null)
+        public async virtual Task<List<ContactResponse>> GetAllContactsForOrganisation(string epaoId, bool? withUser = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll"))
             {
@@ -102,7 +105,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null)
+        public async virtual Task<List<ContactIncludePrivilegesResponse>> GetAllContactsForOrganisationIncludePrivileges(string epaoId, bool? withUser = null)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/getAll/includePrivileges"))
             {
@@ -113,7 +116,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId)
+        public async virtual Task<List<ContactResponse>> GetAllContactsWhoCanBePrimaryForOrganisation(string epaoId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/contacts/getAllWhoCanBePrimary/{epaoId}"))
             {
@@ -121,7 +124,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactResponse> UpdateOrgAndStatus(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
+        public async virtual Task<ContactResponse> UpdateOrgAndStatus(UpdateContactWithOrgAndStausRequest updateContactWithOrgAndStausRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/contacts/updateContactWithOrgAndStatus"))
             {
@@ -129,7 +132,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ContactBoolResponse> InviteUser(CreateContactRequest createContactRequest)
+        public async virtual Task<ContactBoolResponse> InviteUser(CreateContactRequest createContactRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts"))
             {
@@ -141,7 +144,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task Callback(SignInCallback callback)
+        public async virtual Task Callback(SignInCallback callback)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/contacts/callback"))
             {
@@ -149,7 +152,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task MigrateUsers()
+        public async virtual Task MigrateUsers()
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateUsers"))
             {
@@ -161,17 +164,17 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task MigrateSingleContactToApply(System.Guid signinId)
+        public async virtual Task MigrateSingleContactToApply(System.Guid signinId)
         {
             var signinIdWrapper = new SigninIdWrapper(signinId);
-            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
+            Logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
                 await PostPutRequest(request, signinIdWrapper);
             }
         }
 
-        public async Task<ContactResponse> CreateANewContactWithGivenId(Contact contact)
+        public async virtual Task<ContactResponse> CreateANewContactWithGivenId(Contact contact)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/createNewContactWithGivenId"))
             {
@@ -182,7 +185,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task AssociateDefaultRolesAndPrivileges(Contact contact)
+        public async virtual Task AssociateDefaultRolesAndPrivileges(Contact contact)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/associateDefaultRolesAndPrivileges"))
             {
@@ -191,7 +194,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest)
+        public async virtual Task<SetContactPrivilegesResponse> SetContactPrivileges(SetContactPrivilegesRequest privilegesRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/setContactPrivileges"))
             {
@@ -199,7 +202,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId)
+        public async virtual Task<RemoveContactFromOrganisationResponse> RemoveContactFromOrganisation(Guid requestingUserId, Guid contactId)
         {
             var removeContactRequest = new RemoveContactFromOrganisationRequest(requestingUserId, contactId);
 
@@ -209,7 +212,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<InviteContactToOrganisationResponse> InviteContactToOrganisation(InviteContactToOrganisationRequest invitationRequest)
+        public async virtual Task<InviteContactToOrganisationResponse> InviteContactToOrganisation(InviteContactToOrganisationRequest invitationRequest)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/inviteContactToOrganisation"))
             {
@@ -217,7 +220,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task RequestForPrivilege(Guid contactId, Guid privilegeId)
+        public async virtual Task RequestForPrivilege(Guid contactId, Guid privilegeId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/requestForPrivilege"))
             {
@@ -225,7 +228,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task ApproveContact(Guid contactId)
+        public async virtual Task ApproveContact(Guid contactId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/approve"))
             {
@@ -233,7 +236,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task RejectContact(Guid contactId)
+        public async virtual Task RejectContact(Guid contactId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/reject"))
             {

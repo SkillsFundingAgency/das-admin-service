@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
             var certificatePrivateFirstNameController =
                 new CertificatePrivateFirstNameController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockApiClient                    
+                    MockApiClientFactory.Object
                 );
 
             var vm = new CertificateFirstNameViewModel

@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +18,10 @@ namespace SFA.DAS.AdminService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
 
 
-        public AnswerService(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
+        public AnswerService(ApiClientFactory<ApiClient> apiClient, ApiClientFactory<ApplicationApiClient> applyApiClient, IQnaApiClient qnaApiClient)
         {
-            _apiApiClient = apiClient;
-            _applyApiClient = applyApiClient;
+            _apiApiClient = apiClient.GetApiClient(ApplicationType.EPAO);
+            _applyApiClient = applyApiClient.GetApiClient(ApplicationType.EPAO);
             _qnaApiClient = qnaApiClient;
         }
 

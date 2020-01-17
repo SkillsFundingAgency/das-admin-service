@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             var certificatePrivateFirstNameController =
                 new CertificatePrivateFirstNameController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockApiClient                  
+                    MockApiClientFactory.Object
                     );
             
             _result = certificatePrivateFirstNameController.FirstName(Certificate.Id, true).GetAwaiter().GetResult();

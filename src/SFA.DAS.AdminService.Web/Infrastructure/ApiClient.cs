@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
@@ -20,32 +21,37 @@ using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.Organisatio
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
-    public class ApiClient : IApiClient
+    public class ApiClient : ApiClientBase, IApiClient
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<ApiClient> _logger;
-        private readonly ITokenService _tokenService;
-
-        public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
+        //    private readonly HttpClient _client;
+        //    private readonly ILogger<ApiClient> _logger;
+        //    private readonly ITokenService _tokenService;
+        
+        public ApiClient() : base()
         {
-            _client = client;
-            _logger = logger;
-            _tokenService = tokenService;
+
         }
 
-        public ApiClient(string baseUri, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(HttpClient client, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(client, tokenService, logger)
         {
-            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _logger = logger;
-            _tokenService = tokenService;
+            //_client = client;
+            //_logger = logger;
+            //_tokenService = tokenService;
+        }
+
+        public ApiClient(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
+        {
+            //_client = new HttpClient { BaseAddress = new Uri(baseUri) };
+            //_logger = logger;
+            //_tokenService = tokenService;
         }
 
         private async Task<T> Get<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            using (var response = await HttpClient.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 return await response.Content.ReadAsAsync<T>();
             }
@@ -53,11 +59,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         private async Task<U> Post<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+            using (var response = await HttpClient.PostAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
@@ -66,21 +72,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         private async Task Post<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+            using (var response = await HttpClient.PostAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
         }
 
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
+            using (var response = await HttpClient.PutAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
             {
                 return await response.Content.ReadAsAsync<U>();
@@ -89,43 +95,43 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         protected async Task<T> Delete<T>(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+            using (var response = await HttpClient.DeleteAsync(new Uri(uri, UriKind.Relative)))
             {
                 return await response.Content.ReadAsAsync<T>();
             }
         }
 
-        public async Task<List<CertificateResponse>> GetCertificates()
+        public async virtual Task<List<CertificateResponse>> GetCertificates()
         {
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
-        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
+        public async virtual Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
         {
             return await Get<PaginatedList<CertificateSummaryResponse>>($"/api/v1/certificates/approvals/?pageSize={pageSize}&pageIndex={pageIndex}&status={status}&privatelyFundedStatus={privatelyFundedStatus}");
         }
 
-        public async Task<StaffSearchResult> Search(string searchString, int page)
+        public async virtual Task<StaffSearchResult> Search(string searchString, int page)
         {
             return await Get<StaffSearchResult>($"/api/v1/staffsearch?searchQuery={searchString}&page={page}");
         }
 
-        public async Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString)
+        public async virtual Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString)
         {
             return await Get<List<AssessmentOrganisationSummary>>(
                 $"/api/ao/assessment-organisations/search/{searchString}");
         }
 
-        public async Task<string> ImportOrganisations()
+        public async virtual Task<string> ImportOrganisations()
         {
             var uri = "/api/ao/assessment-organisations/";
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", TokenService.GetToken());
 
-            using (var response = await _client.PatchAsync(new Uri(uri, UriKind.Relative), null))
+            using (var response = await HttpClient.PatchAsync(new Uri(uri, UriKind.Relative), null))
             {
                 var res = await response.Content.ReadAsAsync<AssessmentOrgsImportResponse>();
                 return res.Status;
@@ -133,48 +139,48 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
 
-        public async Task<List<OrganisationType>> GetOrganisationTypes()
+        public async virtual Task<List<OrganisationType>> GetOrganisationTypes()
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
         }
         
 
-        public async Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
+        public async virtual Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
         {
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
         }
         
-        public async Task<AssessmentOrganisationContact> GetEpaContact(string contactId)
+        public async virtual Task<AssessmentOrganisationContact> GetEpaContact(string contactId)
         {
             return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
         }
 
-        public async Task<EpaContact> GetEpaContactBySignInId(Guid signInId)
+        public async virtual Task<EpaContact> GetEpaContactBySignInId(Guid signInId)
         {
             return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/signInId/{signInId.ToString()}");
         }
 
-        public async Task<EpaContact> GetEpaContactByEmail(string email)
+        public async virtual Task<EpaContact> GetEpaContactByEmail(string email)
         {
             return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/email/{email}");
         }     
 
-        public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
+        public async virtual Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
         {
             return await Get<List<OrganisationStandardSummary>>($"/api/ao/assessment-organisations/{organisationId}/standards");
         }
 
-        public async Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
+        public async virtual Task<ValidationResponse> CreateOrganisationValidate(CreateEpaOrganisationValidationRequest request)
         {
             return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
         }
 
-        public async Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        public async virtual Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
         {
             return await Post<UpdateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-existing", request);
         }
 
-        public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
+        public async virtual Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =
                 await Post<CreateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations",
@@ -182,12 +188,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
-        public async Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request)
+        public async virtual Task<ValidationResponse> CreateOrganisationStandardValidate(CreateEpaOrganisationStandardValidationRequest request)
         {
             return await Post<CreateEpaOrganisationStandardValidationRequest, ValidationResponse>("api/ao/assessment-organisations/standards/validate-new", request);
         }
 
-        public async Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
+        public async virtual Task<string> CreateEpaOrganisationStandard(CreateEpaOrganisationStandardRequest request)
         {
             var result =
                 await Post<CreateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
@@ -195,7 +201,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
-        public async Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
+        public async virtual Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request)
         {
             var result =
                 await Put<UpdateEpaOrganisationStandardRequest, EpaoStandardResponse>("api/ao/assessment-organisations/standards",
@@ -203,165 +209,165 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
-        public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
+        public async virtual Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
         {
             var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);
             return result.Details;
         }
 
-        public async Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request)
+        public async virtual Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request)
         {
             return await Post<CreateEpaContactValidationRequest, ValidationResponse>("api/ao/assessment-organisations/contacts/validate-new", request);
         }
 
-        public async Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request)
+        public async virtual Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request)
         {
             var result = await Post<CreateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
             return result.Details;
         }
 
-        public async Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request)
+        public async virtual Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request)
         {
             var result = await Put<UpdateEpaOrganisationContactRequest, EpaOrganisationContactResponse>("api/ao/assessment-organisations/contacts", request);
             return result.Details;
         }
 
-        public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request)
+        public async virtual Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request)
         {
             return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
         }
 
-        public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
+        public async virtual Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
         {
             return await Get<PaginatedList<StaffBatchSearchResult>>(
                 $"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
         }
 
-        public async Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page)
+        public async virtual Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page)
         {
             return await Get<PaginatedList<StaffBatchLogResult>>($"/api/v1/staffsearch/batchlog?page={page}");
         }
 
-        public async Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
+        public async virtual Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
         {
             return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
         }
 
-        public async Task<Certificate> GetCertificate(Guid certificateId)
+        public async virtual Task<Certificate> GetCertificate(Guid certificateId)
         {
             return await Get<Certificate>($"api/v1/certificates/{certificateId}");
         }
 
-        public async Task<Organisation> GetOrganisation(Guid id)
+        public async virtual Task<Organisation> GetOrganisation(Guid id)
         {
             return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
         }
 
-        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        public async virtual Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
         {
             return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
         }
 
-        public async Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
+        public async virtual Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
         {
             return await Get<List<AssessorService.Domain.Entities.Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
         }
 
-        public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
+        public async virtual Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
 
-        public async Task<ScheduleRun> GetNextScheduleToRunNow()
+        public async virtual Task<ScheduleRun> GetNextScheduleToRunNow()
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
         }
 
-        public async Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
+        public async virtual Task<ScheduleRun> GetNextScheduledRun(int scheduleType)
         {
             return await Get<ScheduleRun>($"api/v1/schedule/next?scheduleType={scheduleType}");
         }
 
-        public async Task<object> RunNowScheduledRun(int scheduleType)
+        public async virtual Task<object> RunNowScheduledRun(int scheduleType)
         {
             return await Post<object, object>($"api/v1/schedule/runnow?scheduleType={scheduleType}", default(object));
         }
 
-        public async Task<object> CreateScheduleRun(ScheduleRun schedule)
+        public async virtual Task<object> CreateScheduleRun(ScheduleRun schedule)
         {
             return await Put<ScheduleRun, object>($"api/v1/schedule/create", schedule);
         }
 
-        public async Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
+        public async virtual Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId)
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
         }
 
-        public async Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType)
+        public async virtual Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType)
         {
             return await Get<IList<ScheduleRun>>($"api/v1/schedule/all?scheduleType={scheduleType}");
         }
 
-        public async Task<object> DeleteScheduleRun(Guid scheduleRunId)
+        public async virtual Task<object> DeleteScheduleRun(Guid scheduleRunId)
         {
             return await Delete<object>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
         }
 
-        public async Task<Certificate> PostReprintRequest(
+        public async virtual Task<Certificate> PostReprintRequest(
             StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
         {
             return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint",
                 staffCertificateDuplicateRequest);
                 }
 
-        public async Task<List<StandardCollation>> SearchStandards(string searchString)
+        public async virtual Task<List<StandardCollation>> SearchStandards(string searchString)
         {
             return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
 
-        public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
+        public async virtual Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
         {
             await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
                 certificatePostApprovalViewModel);
         }
 
-        public async Task<List<DeliveryArea>> GetDeliveryAreas()
+        public async virtual Task<List<DeliveryArea>> GetDeliveryAreas()
         {
             return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
         }
 
-        public async Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId)
+        public async virtual Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId)
         {
             return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
         }
 
         #region Reports
-        public async Task<IEnumerable<StaffReport>> GetReportList()
+        public async virtual Task<IEnumerable<StaffReport>> GetReportList()
         {
             return await Get<IEnumerable<StaffReport>>($"api/v1/staffreports");
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
+        public async virtual Task<IEnumerable<IDictionary<string, object>>> GetReport(Guid reportId)
         {
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/{reportId}");
         }
 
-        public async Task<ReportType> GetReportTypeFromId(Guid reportId)
+        public async virtual Task<ReportType> GetReportTypeFromId(Guid reportId)
         {
             return await Get<ReportType>($"api/v1/staffreports/{reportId}/report-type");
         }
 
-        public async Task<ReportDetails> GetReportDetailsFromId(Guid reportId)
+        public async virtual Task<ReportDetails> GetReportDetailsFromId(Guid reportId)
         {
             return await Get<ReportDetails>($"api/v1/staffreports/{reportId}/report-details");
         }
 
-        public async Task GatherAndCollateStandards()
+        public async virtual Task GatherAndCollateStandards()
         {
              await Post($"api/ao/update-standards", new GatherStandardsRequest());
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
+        public async virtual Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
         {
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }

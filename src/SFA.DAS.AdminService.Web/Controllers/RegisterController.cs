@@ -14,6 +14,8 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -25,10 +27,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
 
-        public RegisterController(IApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        public RegisterController(ApiClientFactory<ApiClient> apiClient, ApiClientFactory<ContactsApiClient> contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
-            _apiClient = apiClient;
-            _contactsApiClient = contactsApiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
+            _contactsApiClient = contactsApiClient.GetApiClient(ApplicationType.EPAO);
             _standardServiceClient = standardServiceClient;
             _env = env;
         }

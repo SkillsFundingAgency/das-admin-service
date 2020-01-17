@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
@@ -28,10 +30,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public FinancialController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public FinancialController(ApiClientFactory<ApiClient> apiClient, ApiClientFactory<ApplicationApiClient> applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
-            _apiClient = apiClient;
-            _applyApiClient = applyApiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
+            _applyApiClient = applyApiClient.GetApiClient(ApplicationType.EPAO);
             _contextAccessor = contextAccessor;
             _qnaApiClient = qnaApiClient;
         }

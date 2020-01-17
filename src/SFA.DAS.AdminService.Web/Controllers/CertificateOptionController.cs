@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -13,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateOptionController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient)
+            ApiClientFactory<ApiClient> apiClient)
             : base(logger, contextAccessor, apiClient)
         { }
 

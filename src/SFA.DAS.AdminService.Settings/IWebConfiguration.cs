@@ -14,6 +14,7 @@
         string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        ClientApiAuthentication RoatpApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }
         ClientApiAuthentication RoatpApiAuthentication { get; set; }

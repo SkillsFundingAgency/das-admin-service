@@ -7,6 +7,7 @@ using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels;
 using System;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         public CertificateDateController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient,
+            ApiClientFactory<ApiClient> apiClient,
             CertificateDateViewModelValidator validator) : base(logger, contextAccessor, apiClient)
         {
             _validator = validator;

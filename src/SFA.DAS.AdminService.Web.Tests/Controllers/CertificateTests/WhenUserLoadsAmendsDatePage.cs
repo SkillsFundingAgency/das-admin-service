@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             var certificateApprenticeDetailsController =
                 new CertificateDateController(MockedLogger.Object,
                     MockHttpContextAccessor.Object,
-                    ApiClient,
+                    ApiClientFactory.Object,
                     certificateDateViewModelValidator);
             _result = certificateApprenticeDetailsController.Date(Certificate.Id, true).GetAwaiter().GetResult();
 

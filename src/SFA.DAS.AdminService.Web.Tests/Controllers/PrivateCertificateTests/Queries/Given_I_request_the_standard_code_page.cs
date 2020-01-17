@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
                     MockHttpContextAccessor.Object,
                     MockAssessmentOrgsApiClient,
                     new CacheService(mockDistributedCache.Object),
-                    MockApiClient,
+                    MockApiClientFactory.Object,
                     MockStandardServiceClient.Object
                     );      
 

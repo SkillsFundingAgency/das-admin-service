@@ -14,6 +14,8 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Private
 {
@@ -30,13 +32,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
             IHttpContextAccessor contextAccessor,
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheService cacheHelper,
-            ApiClient apiClient,
+            ApiClientFactory<ApiClient> apiClient,
             IStandardServiceClient standardServiceClient)
             : base(logger, contextAccessor, apiClient)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
-            _apiClient = apiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
             _standardServiceClient = standardServiceClient;
         }
 

@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [SetUp]
         public void Arrange()
         {
-            Sut = new RegisterController(ApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
+            Sut = new RegisterController(ApiClientFactory.Object, ContactsApiClientFactory.Object, StandardServiceClient.Object, Env.Object);
         }
 
         [Test]

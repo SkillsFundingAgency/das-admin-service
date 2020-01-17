@@ -19,6 +19,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Extensions;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         public CertificateApprovalsController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient)
+            ApiClientFactory<ApiClient> apiClient)
             : base(logger, contextAccessor, apiClient)
         {
 

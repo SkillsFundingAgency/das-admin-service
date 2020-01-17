@@ -12,6 +12,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
@@ -26,11 +28,11 @@ namespace SFA.DAS.AdminService.Web.Services
         private readonly ILogger<AnswerService> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerInjectionService(IApiClient apiClient, IApplicationApiClient applyApiClient, IValidationService validationService,
+        public AnswerInjectionService(ApiClientFactory<ApiClient> apiClient, ApiClientFactory<ApplicationApiClient> applyApiClient, IValidationService validationService,
             IAssessorValidationService assessorValidationService, ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
-            _apiClient = apiClient;
-            _applyApiClient = applyApiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
+            _applyApiClient = applyApiClient.GetApiClient(ApplicationType.EPAO);
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
             _cleanser = cleanser;

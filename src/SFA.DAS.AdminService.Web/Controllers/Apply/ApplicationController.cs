@@ -14,6 +14,8 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -29,10 +31,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(ApiClientFactory<ApiClient> apiClient, ApiClientFactory<ApplicationApiClient> applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
-            _apiClient = apiClient;
-            _applyApiClient = applyApiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
+            _applyApiClient = applyApiClient.GetApiClient(ApplicationType.EPAO);
             _qnaApiClient = qnaApiClient;
             _contextAccessor = contextAccessor;
 

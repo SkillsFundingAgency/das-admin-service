@@ -122,6 +122,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
+            services.AddTransient<IApiClientConfig, ApiClientConfig>();
 
             services.AddTransient(x => ApplicationConfiguration);
 
@@ -130,25 +131,32 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CertificateDateViewModelValidator>();
 
-            services.AddTransient<IOrganisationsApiClient>(x =>
-                    new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                        x.GetService<ITokenService>(), 
-                        x.GetService<ILogger<OrganisationsApiClient>>()));
+            services.AddTransient<ApiClientFactory<OrganisationsApiClient>>();
+            services.AddTransient<ApiClientFactory<ApiClient>>();
+            services.AddTransient<ApiClientFactory<ApplicationApiClient>>();
+            services.AddTransient<ApiClientFactory<ContactsApiClient>>();
 
-            services.AddTransient<IApiClient>(x => new ApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<ApiClient>>(),
-                x.GetService<ITokenService>()));
+            //services.AddTransient<IOrganisationsApiClient>(x =>
+            //        new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+            //            x.GetService<ITokenService>(), 
+            //            x.GetService<ILogger<OrganisationsApiClient>>()));
 
-            services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<ApplicationApiClient>>(),
-                x.GetService<ITokenService>()));
+            //services.AddTransient<IApiClient>(x => new ApiClient(
+            //    ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+            //    x.GetService<ILogger<ApiClient>>(),
+            //    x.GetService<ITokenService>()));
 
-            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                x.GetService<ITokenService>(),
-                x.GetService<ILogger<ContactsApiClient>>()));
+            //services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
+            //    ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+            //    x.GetService<ILogger<ApplicationApiClient>>(),
+            //    x.GetService<ITokenService>()));
+
+            //services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+            //    ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+            //    x.GetService<ITokenService>(),
+            //    x.GetService<ILogger<ContactsApiClient>>()));
+
+            services.AddTransient<IApiClientConfig, ApiClientConfig>();
 
             services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
               ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
@@ -172,8 +180,8 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IAzureTokenService>(),
                 x.GetService<ILogger<AzureApiClientBase>>(),
                 x.GetService<IWebConfiguration>(),
-                x.GetService<IOrganisationsApiClient>(),
-                x.GetService<IContactsApiClient>()));
+                x.GetService<ApiClientFactory<OrganisationsApiClient>>(),
+                x.GetService<ApiClientFactory<ContactsApiClient>>()));
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();

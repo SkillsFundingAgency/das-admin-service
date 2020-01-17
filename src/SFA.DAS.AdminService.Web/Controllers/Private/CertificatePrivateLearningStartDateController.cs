@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Private
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
 
         public CertificatePrivateLearnerStartDateController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient,
+            ApiClientFactory<ApiClient> apiClient,
             CertificateLearnerStartDateViewModelValidator certificateLearnerStartDateViewModelValidator) : base(logger,
             contextAccessor, apiClient)
         {

@@ -10,6 +10,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -21,12 +23,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
         protected readonly ApiClient ApiClient;     
 
         public CertificateBaseController(ILogger<CertificateAmendController> logger, 
-            IHttpContextAccessor contextAccessor, 
-            ApiClient apiClient)
+            IHttpContextAccessor contextAccessor,
+            ApiClientFactory<ApiClient> apiClient)
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
-            ApiClient = apiClient;           
+            ApiClient = apiClient.GetApiClient(ApplicationType.EPAO);           
         }
 
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()

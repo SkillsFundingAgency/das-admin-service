@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.Domain.Entities;
 using FHADetails = SFA.DAS.AssessorService.Domain.Entities.FHADetails;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -21,8 +22,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     public class AnswerServiceGatherAnswersTests
     {
         private AnswerService _answerService;
-        private Mock<IApiClient> _mockApiClient;
-        private Mock<IApplicationApiClient> _mockApplicationApiClient;
+        private Mock<ApiClient> _mockApiClient;
+        private Mock<ApiClientFactory<ApiClient>> _mockApiClientFactory;
+        private Mock<ApplicationApiClient> _mockApplicationApiClient;
+        private Mock<ApiClientFactory<ApplicationApiClient>> _mockApplicationApiClientFactory;
         private Mock<IQnaApiClient> _mockQnaApiClient;
 
         private Guid _applicationId;
@@ -31,12 +34,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         public void Arrange()
         {
             _applicationId = Guid.NewGuid();
-            _mockApiClient = new Mock<IApiClient>();
-            _mockApplicationApiClient = new Mock<IApplicationApiClient>();
+            _mockApiClient = new Mock<ApiClient>();
+            _mockApiClientFactory = new Mock<ApiClientFactory<ApiClient>>();
+            _mockApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(_mockApiClient.Object);
+            _mockApplicationApiClient = new Mock<ApplicationApiClient>();
+            _mockApplicationApiClientFactory = new Mock<ApiClientFactory<ApplicationApiClient>>();
+            _mockApplicationApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(_mockApplicationApiClient.Object);
             _mockQnaApiClient = new Mock<IQnaApiClient>();
             _answerService = new AnswerService(
-                _mockApiClient.Object,
-                _mockApplicationApiClient.Object,
+                _mockApiClientFactory.Object,
+                _mockApplicationApiClientFactory.Object,
                 _mockQnaApiClient.Object
             );
         }

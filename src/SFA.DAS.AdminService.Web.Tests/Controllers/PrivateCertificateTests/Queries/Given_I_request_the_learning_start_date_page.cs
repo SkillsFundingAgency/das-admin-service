@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             var certificatePrivateLearnerStartDateController =
                 new CertificatePrivateLearnerStartDateController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockApiClient,
+                    MockApiClientFactory.Object,
                     certificateLearnerStartDateViewModelValidator                    
                     );            
 

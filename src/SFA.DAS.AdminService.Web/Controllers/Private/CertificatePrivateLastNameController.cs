@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AssessorService.Application.Api.Client;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Private
 {
@@ -16,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
     {
         public CertificatePrivateLastNameController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient) : base(logger, contextAccessor, apiClient)
+            ApiClientFactory<ApiClient> apiClient) : base(logger, contextAccessor, apiClient)
         { }
 
         [HttpGet]

@@ -16,6 +16,10 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
+using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
+using OrganisationData = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationData;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -24,8 +28,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
     {
         private AnswerInjectionService _answerInjectionService;
         private IValidationService _validationService;
-        private Mock<IApiClient> _mockApiClient;
-        private Mock<IApplicationApiClient> _mockApplyApiClient;
+        private Mock<ApiClient> _mockApiClient;
+        private Mock<ApiClientFactory<ApiClient>> _mockApiClientFactory;
+        private Mock<ApplicationApiClient> _mockApplyApiClient;
+        private Mock<ApiClientFactory<ApplicationApiClient>> _mockApplyApiClientFactory;
         private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
@@ -35,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             var contactId = Guid.Empty;
 
-            _mockApiClient = new Mock<IApiClient>();
+            _mockApiClient = new Mock<ApiClient>();
             _mockApiClient.Setup(x => x.GetEpaContact(contactId.ToString()))
                 .Returns(Task.FromResult<AssessmentOrganisationContact>(null));
 
@@ -48,10 +54,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             _mockApiClient.Setup(x => x.AssociateOrganisationWithEpaContact(It.IsAny<AssociateEpaOrganisationWithEpaContactRequest>()))
                 .Returns(Task.FromResult(true));
 
-            _mockApplyApiClient = new Mock<IApplicationApiClient>();
+            _mockApplyApiClient = new Mock<ApplicationApiClient>();
+            _mockApiClientFactory = new Mock<ApiClientFactory<ApiClient>>();
+            _mockApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(_mockApiClient.Object);
+            _mockApplyApiClientFactory = new Mock<ApiClientFactory<ApplicationApiClient>>();
+            _mockApplyApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(_mockApplyApiClient.Object);
 
             _validationService = new ValidationService();
-            _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
+            _assessorValidationService = new AssessorValidationService(_mockApiClientFactory.Object);
             _mockLogger = new Mock<ILogger<AnswerService>>();
 
             _mockSpecialCharacterCleanserService = new Mock<ISpecialCharacterCleanserService>();
@@ -59,8 +69,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
                 .Returns((string s) => s);
 
             _answerInjectionService = new AnswerInjectionService(
-                _mockApiClient.Object,
-                _mockApplyApiClient.Object,
+                _mockApiClientFactory.Object,
+                _mockApplyApiClientFactory.Object,
                 _validationService,
                 _assessorValidationService,
                 _mockSpecialCharacterCleanserService.Object,

@@ -8,6 +8,8 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -15,10 +17,10 @@ namespace SFA.DAS.AdminService.Web.Validators
     {
         private readonly IOrganisationsApiClient _apiClient;
         private readonly IRegisterValidator _registerValidator;
-        public RegisterEditOrganisationStandardViewModelValidator(IOrganisationsApiClient apiClient,
+        public RegisterEditOrganisationStandardViewModelValidator(ApiClientFactory<OrganisationsApiClient> apiClient,
             IRegisterValidator registerValidator)
         {
-            _apiClient = apiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
             _registerValidator = registerValidator;
             var errorInEffectiveFrom = false;
 

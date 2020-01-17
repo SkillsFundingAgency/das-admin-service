@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 {
@@ -20,13 +21,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         protected readonly IOrganisationsApiClient _organisationsApiClient;
         protected readonly IContactsApiClient _contactsApiClient;
 
-        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IWebConfiguration webConfiguration, IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient) : base(baseUri, tokenService, logger)
+        public AzureApiClient(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger, IWebConfiguration webConfiguration, ApiClientFactory<OrganisationsApiClient> organisationsApiClient, ApiClientFactory<ContactsApiClient> contactsApiClient) : base(baseUri, tokenService, logger)
         {
             _productId = webConfiguration.AzureApiAuthentication.ProductId;
             _groupId = webConfiguration.AzureApiAuthentication.GroupId;
             _requestBaseUri = new Uri(webConfiguration.AzureApiAuthentication.RequestBaseAddress);
-            _organisationsApiClient = organisationsApiClient;
-            _contactsApiClient = contactsApiClient;
+            _organisationsApiClient = organisationsApiClient.GetApiClient(ApplicationType.EPAO);
+            _contactsApiClient = contactsApiClient.GetApiClient(ApplicationType.EPAO);
         }
 
         public async Task<PaginatedList<AzureUser>> ListUsers(int page)

@@ -17,7 +17,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public abstract class ApiClientBase : IDisposable
     {
         protected ITokenService TokenService;
-        private readonly ILogger<ApiClientBase> _logger;
+        protected ILogger<ApiClientBase> Logger;
         protected HttpClient HttpClient;
 
         private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
@@ -28,9 +28,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             NullValueHandling = NullValueHandling.Ignore
         };
 
+        protected ApiClientBase()
+        {
+
+        }
+
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
         {
-            _logger = logger;
+            Logger = logger;
 
             TokenService = tokenService;
 
@@ -47,7 +52,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             TokenService = tokenService;
 
-            _logger = logger;
+            Logger = logger;
 
             HttpClient = httpClient;
 
@@ -150,7 +155,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                Logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
                 throw new HttpRequestException(json);
             }
         }
@@ -238,7 +243,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                Logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
                 throw new HttpRequestException(json);
             }
         }
@@ -271,7 +276,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                Logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
                 throw new HttpRequestException(json);
             }
         }
@@ -298,7 +303,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
             else
             {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+                Logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
                 throw new HttpRequestException(json);
             }
         }

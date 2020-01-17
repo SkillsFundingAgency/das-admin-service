@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             certificateApprovalsController =
                 new CertificateApprovalsController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockApiClient                  
+                    MockApiClientFactory.Object
                     );
         }
 

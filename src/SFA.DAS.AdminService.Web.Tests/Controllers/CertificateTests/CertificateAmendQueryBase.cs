@@ -19,6 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient ApiClient;
+        protected Mock<ApiClientFactory<ApiClient>> ApiClientFactory;
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
@@ -30,6 +31,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
             ApiClient = SetupApiClient(mockedApiClientLogger);
+            ApiClientFactory = new Mock<ApiClientFactory<ApiClient>>();
+            ApiClientFactory.Setup(x => x.GetApiClient(It.IsAny<ApplicationType>())).Returns(ApiClient);
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }        
@@ -66,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);
+            var apiClient = new ApiClient(client, tokenServiceMock.Object, apiClientLoggerMock.Object);
             return apiClient;
         }
 

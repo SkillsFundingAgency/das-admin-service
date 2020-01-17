@@ -1,6 +1,8 @@
 using FluentValidation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -8,9 +10,9 @@ namespace SFA.DAS.AdminService.Web.Validators
     {
         private readonly IOrganisationsApiClient _apiClient;
        
-        public RegisterUpdateContactViewModelValidator(IOrganisationsApiClient apiClient)
+        public RegisterUpdateContactViewModelValidator(ApiClientFactory<OrganisationsApiClient> apiClient)
         {
-            _apiClient = apiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
         RuleFor(vm => vm).Custom((vm, context) =>
         {
             var validationResult =  _apiClient.ValidateUpdateContact(vm.ContactId, vm.FirstName , vm.LastName, vm.Email, vm.PhoneNumber).Result;

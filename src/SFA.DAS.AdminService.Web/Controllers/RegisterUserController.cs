@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
+using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -18,10 +20,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
 
-        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient)
+        public RegisterUserController(ApiClientFactory<ContactsApiClient> contactsApiClient, IHttpContextAccessor httpContextAccessor, ApiClientFactory<OrganisationsApiClient> organisationsApiClient)
         {
-            _contactsApiClient = contactsApiClient;
-            _organisationsApiClient = organisationsApiClient;
+            _contactsApiClient = contactsApiClient.GetApiClient(ApplicationType.EPAO);
+            _organisationsApiClient = organisationsApiClient.GetApiClient(ApplicationType.EPAO);
         }
 
         [HttpGet("register/view-user/{contactId}", Name = "RegisterUserController_Details")]

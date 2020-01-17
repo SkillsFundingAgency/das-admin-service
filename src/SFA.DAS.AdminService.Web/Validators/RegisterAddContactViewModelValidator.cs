@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -10,9 +12,9 @@ namespace SFA.DAS.AdminService.Web.Validators
     {
         private readonly IOrganisationsApiClient _apiClient;
 
-       public RegisterAddContactViewModelValidator(IOrganisationsApiClient apiClient)
+       public RegisterAddContactViewModelValidator(ApiClientFactory<OrganisationsApiClient> apiClient)
         {
-            _apiClient = apiClient;
+            _apiClient = apiClient.GetApiClient(ApplicationType.EPAO);
           
             RuleFor(vm => vm).Custom((vm, context) =>
             {
