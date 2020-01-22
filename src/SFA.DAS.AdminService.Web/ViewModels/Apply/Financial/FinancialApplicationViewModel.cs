@@ -22,7 +22,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public FinancialDueDate OutstandingFinancialDueDate { get; set; }
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
-
+        public FinancialDueDate MonitoringFinancialDueDate { get; set; }
+        
         public FinancialApplicationViewModel() { }
 
         public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)
@@ -64,8 +65,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             OutstandingFinancialDueDate = new FinancialDueDate();
             GoodFinancialDueDate = new FinancialDueDate();
             SatisfactoryFinancialDueDate = new FinancialDueDate();
+            MonitoringFinancialDueDate = new FinancialDueDate();
 
-            if(Grade.FinancialDueDate.HasValue)
+            if (Grade.FinancialDueDate.HasValue)
             {
                 var day = Grade.FinancialDueDate.Value.Day.ToString();
                 var month = Grade.FinancialDueDate.Value.Month.ToString();
@@ -81,6 +83,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                         break;
                     case FinancialApplicationSelectedGrade.Satisfactory:
                         SatisfactoryFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
+                        break;
+                    case FinancialApplicationSelectedGrade.Monitoring:
+                        MonitoringFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
                         break;
                     default:
                         break;
