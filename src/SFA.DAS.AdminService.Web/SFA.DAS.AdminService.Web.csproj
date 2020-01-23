@@ -159,6 +159,12 @@
     <Content Update="Views\Roatp\AddApplicationDeterminedDate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\Apply\Applications\Assessment.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\Apply\Applications\Returned.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\EnterUkprn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

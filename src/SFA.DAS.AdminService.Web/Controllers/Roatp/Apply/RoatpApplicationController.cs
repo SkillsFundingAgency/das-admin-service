@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _logger = logger;
         }
 
-        [HttpGet("/Applications/Midpoint")]
+        [HttpGet("/Roatp/Applications/Midpoint")]
         public async Task<IActionResult> MidpointApplications(int page = 1)
         {
             const int midpointSequenceId = 1;
@@ -53,10 +53,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/MidpointApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Applications/MidpointApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Applications/Standard")]
+        [HttpGet("/Roatp/Applications/Standard")]
         public async Task<IActionResult> StandardApplications(int page = 1)
         {
             const int standardSequenceId = 2;
@@ -66,10 +66,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/StandardApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Applications/StandardApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Applications/Rejected")]
+        [HttpGet("/Roatp/Applications/Rejected")]
         public async Task<IActionResult> RejectedApplications(int page = 1)
         {
             // NOTE: Rejected actually means Feedback Added
@@ -79,10 +79,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/RejectedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Applications/RejectedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Applications/Closed")]
+        [HttpGet("/Roatp/Applications/Closed")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetClosedApplications();
@@ -91,10 +91,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Applications/ClosedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Applications/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Applications/{applicationId}")]
+        [HttpGet("/Roatp/Applications/{applicationId}")]
         public async Task<IActionResult> Application(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -107,10 +107,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, activeApplySequence.Sections);
 
-            return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
+            return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}")]
+        [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -127,15 +127,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {
-                return View("~/Views/Apply/Applications/Sequence.cshtml", sequenceVm);
+                return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
             }
             else
             {
-                return View("~/Views/Apply/Applications/Sequence_ReadOnly.cshtml", sequenceVm);
+                return View("~/Views/Roatp/Apply/Applications/Sequence_ReadOnly.cshtml", sequenceVm);
             }
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
+        [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, int sectionNo)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -158,15 +158,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, _contextAccessor.HttpContext.User.UserDisplayName());
                 }
 
-                return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
+                return View("~/Views/Roatp//Applications/Section.cshtml", sectionVm);
             }
             else
             {
-                return View("~/Views/Apply/Applications/Section_ReadOnly.cshtml", sectionVm);
+                return View("~/Views/Roatp/Apply/Applications/Section_ReadOnly.cshtml", sectionVm);
             }
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
+        [HttpPost("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}")]
         public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool? isSectionComplete)
         {
             var errorMessages = new Dictionary<string, string>();
@@ -193,14 +193,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 var sectionVm = new SectionViewModel(application, organisation, section, applySection);
 
-                return View("~/Views/Apply/Applications/Section.cshtml", sectionVm);
+                return View("~/Views/Roatp/Apply/Applications/Section.cshtml", sectionVm);
             }
 
             await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, _contextAccessor.HttpContext.User.UserDisplayName());
             return RedirectToAction("Application", new { applicationId });
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
+        [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -223,15 +223,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {
-                return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
+                return View("~/Views/Roatp/Apply/Applications/Page.cshtml", pageVm);
             }
             else
             {
-                return View("~/Views/Apply/Applications/Page_ReadOnly.cshtml", pageVm);
+                return View("~/Views/Roatp/Apply/Applications/Page_ReadOnly.cshtml", pageVm);
             }
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
+        [HttpPost("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
         public async Task<IActionResult> Feedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackMessage)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -254,7 +254,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
                 var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page);
-                return View("~/Views/Apply/Applications/Page.cshtml", pageVm);
+                return View("~/Views/Roatp/Apply/Applications/Page.cshtml", pageVm);
             }
 
            var feedback = new QnA.Api.Types.Page.Feedback { Id= Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
@@ -264,7 +264,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
            return RedirectToAction("Section", new { applicationId, sequenceNo, sectionNo });
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
+        [HttpPost("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}")]
         public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -279,7 +279,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("Page", new { applicationId, sequenceNo, sectionNo, pageId });
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequence/{sequenceNo}/Assessment")]
+        [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Assessment")]
         public async Task<IActionResult> Assessment(Guid applicationId, int sequenceNo)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -296,10 +296,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
 
             var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
-            return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
+            return View("~/Views/Roatp/Apply/Applications/Assessment.cshtml", viewModel);
         }
 
-        [HttpPost("/Applications/{applicationId}/Sequence/{sequenceNo}/Return")]
+        [HttpPost("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Return")]
         public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
@@ -330,7 +330,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
 
                     var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
-                    return View("~/Views/Apply/Applications/Assessment.cshtml", viewModel);
+                    return View("~/Views/Roatp/Apply/Applications/Assessment.cshtml", viewModel);
                 }
             }
            
@@ -377,7 +377,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);
-            return View("~/Views/Apply/Applications/Returned.cshtml", returnedViewModel);
+            return View("~/Views/Roatp/Apply/Applications/Returned.cshtml", returnedViewModel);
         }
 
         private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
@@ -394,7 +394,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
-        [HttpGet("Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        [HttpGet("/Roatp/Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
         public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
         {
             var application = await _applyApiClient.GetApplication(applicationId);

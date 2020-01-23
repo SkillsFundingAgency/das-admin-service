@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _qnaApiClient = qnaApiClient;
         }
 
-        [HttpGet("/Financial/Open")]
+        [HttpGet("/Roatp/Financial/Open")]
         public async Task<IActionResult> OpenApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetOpenFinancialApplications();
@@ -45,10 +45,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Financial/OpenApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/Rejected")]
+        [HttpGet("/Roatp/Financial/Rejected")]
         public async Task<IActionResult> RejectedApplications(int page = 1)
         {
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
@@ -58,10 +58,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Financial/RejectedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Financial/RejectedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/Closed")]
+        [HttpGet("/Roatp/Financial/Closed")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetClosedFinancialApplications();
@@ -70,10 +70,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Apply/Financial/ClosedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/{Id}")]
+        [HttpGet("/Roatp/Financial/{Id}")]
         public async Task<IActionResult> ViewApplication(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
@@ -86,10 +86,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = await CreateFinancialApplicationViewModel(application, null);
 
-            return View("~/Views/Apply/Financial/Application.cshtml", vm);
+            return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
         }
 
-        [HttpGet("/Financial/{Id}/Graded")]
+        [HttpGet("/Roatp/Financial/{Id}/Graded")]
         public async Task<IActionResult> ViewGradedApplication(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
@@ -100,10 +100,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = await CreateFinancialApplicationViewModel(application, null);
 
-            return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
+            return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
-        [HttpGet("/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
+        [HttpGet("/Roatp/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
         public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
         {
             // NOTE: Using the QnA applicationId is somewhat dubious! We're using the Assessor applicationId nearly everywhere else.
@@ -152,7 +152,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return new NotFoundResult();
         }
 
-        [HttpPost("/Financial")]
+        [HttpPost("/Roatp/Financial")]
         public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
             var application = await _applyApiClient.GetApplication(vm.Id);
@@ -183,11 +183,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else
             {
                 var newvm = await CreateFinancialApplicationViewModel(application, vm.Grade);
-                return View("~/Views/Apply/Financial/Application.cshtml", newvm);
+                return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
         }
 
-        [HttpGet("/Financial/{Id}/Evaluated")]
+        [HttpGet("/Roatp/Financial/{Id}/Evaluated")]
         public async Task<IActionResult> Evaluated(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
@@ -196,7 +196,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            return View("~/Views/Apply/Financial/Graded.cshtml", application.financialGrade);
+            return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.financialGrade);
         }
 
         private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(ApplicationResponse applicationFromAssessor, FinancialGrade grade)
