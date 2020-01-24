@@ -12,10 +12,10 @@
             "type": "string",
             "defaultValue": ""
         },
-        "keyVaultName": {
+        "sharedKeyVaultName": {
             "type": "string"
         },
-        "keyVaultResourceGroup": {
+        "sharedManagementResourceGroup": {
             "type": "string"
         },
         "configurationStorageConnectionString": {
@@ -68,10 +68,10 @@
                         "value": "[parameters('certificateName')]"
                     },
                     "keyVaultName": {
-                        "value": "[parameters('keyVaultName')]"
+                        "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
-                        "value": "[parameters('keyVaultResourceGroup')]"
+                        "value": "[parameters('sharedManagementResourceGroup')]"
                     },
                     "serverFarmId": {
                         "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedFrontEndAppServicePlanName'))]"
