@@ -1,5 +1,6 @@
 @using SFA.DAS.QnA.Api.Types.Page
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
+@using System.Text.RegularExpressions;
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpSectionViewModel
 
 @{
     ViewBag.Title = @Model.Title ?? "Section not active";
@@ -81,7 +82,7 @@
             </div>
         </div>
 
-        @if (Model.SequenceNo == 1 && Model.SectionNo == 3)
+        @*@if (Model.SequenceNo == 1 && Model.SectionNo == 3)
         {
             // NOTE: The FHA Section has a read only view. See ON-1277
             var financialApplication = Model.Grade;
@@ -125,7 +126,7 @@
                     </dl>
                 </div>
             </div>
-        }
+        }*@
 
         {
             <div class="govuk-grid-row">
@@ -161,7 +162,7 @@
                                             var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
                                             if (question != null)
                                             {
-                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
+                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(Regex.Replace(question.Label, "<.*?>", string.Empty))</h3>
                                             }
 
                                             if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
@@ -180,7 +181,7 @@
                                             if (question != null && question.Input.Type == "FileUpload")
                                             {
                                                 <p class="govuk-body">
-                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "RoatpApplication",
                                                                   new
                                                             {
                                                                 Id = Model.ApplicationId,
@@ -204,11 +205,19 @@
                                                     </p>
                                                 }
                                             }
+                                            else if (question != null && question.Input.Type == "TabularData")
+                                            {
+                                                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Applications/_TabularData.cshtml", answer.Value);
+                                            }
+                                            else if (question != null && question.Input.Type == "Hidden")
+                                            {
+
+                                            }
                                             else
                                             {
                                                 <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
                                             }
-                                        }
+                                    }
                                     }
                                 </dd>
 
@@ -229,7 +238,7 @@
     }
 
     <p class="govuk-body">
-        <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo">Return to application overview</a>
+        <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo">Return to section overview</a>
     </p>
     </div>
     </div>

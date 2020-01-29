@@ -2,7 +2,7 @@
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.DashboardViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpDashboardViewModel
 
 @{
     ViewBag.Title = "Applications  - Mid point assessments";
@@ -16,9 +16,6 @@
         <ul class="app-navigation__list">
             <li class="app-navigation--current-page">
                 <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Mid point assessments</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="StandardApplications" asp-controller="RoatpApplication">Standard applications</a>
             </li>
             <li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpApplication">Rejected applications</a>
@@ -50,7 +47,7 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">Financial review</th>
+                            @*<th class="govuk-table__header" scope="col">Financial review</th>*@
                             <th class="govuk-table__header" scope="col">Date submitted</th>
                             <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
                         </tr>
@@ -60,11 +57,11 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="Application" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="Application" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
-                                <td class="govuk-table__cell" data-label="Financial review">
+                                @*<td class="govuk-table__cell" data-label="Financial review">
                                     @ApplicationReviewHelpers.TranslateFinancialStatus(item.FinancialStatus, item.FinancialGrade)
-                                </td>
+                                </td>*@
                                 <td class="govuk-table__cell" data-label="Date submitted">
                                     @item.SubmittedDate.ToSfaShortDateString()
                                 </td>

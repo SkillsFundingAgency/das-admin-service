@@ -1,7 +1,7 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.FinancialDashboardViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
 @{
     ViewBag.Title = "Financial health assessments - New assessments";
@@ -54,12 +54,12 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
-                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date submitted">
                                     @item.SubmittedDate.ToSfaShortDateString()
                                 </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
+                                @*<td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
                                         switch (item.FinancialStatus)
                                         {
@@ -87,7 +87,7 @@
                                                 break;
                                         }
                                     }
-                                </td>
+                                </td>*@
                             </tr>
                         }
                     </tbody>

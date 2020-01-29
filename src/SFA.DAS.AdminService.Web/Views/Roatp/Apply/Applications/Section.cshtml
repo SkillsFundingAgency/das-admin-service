@@ -1,5 +1,5 @@
 @using SFA.DAS.QnA.Api.Types.Page
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpSectionViewModel
 
 @{
     ViewBag.Title = @Model.Title ?? "Section not active";
@@ -194,7 +194,7 @@
                                         if (question != null && question.Input.Type == "FileUpload")
                                         {
                                             <p class="govuk-body">
-                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "RoatpApplication",
                                                     new
                                                     {
                                                         Id = Model.ApplicationId,

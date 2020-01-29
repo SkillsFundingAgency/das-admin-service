@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -22,12 +22,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<Organisation> GetOrganisation(Guid id)
         {
-            return await Task.FromResult(new Organisation());
+            return await Get<Organisation>($"/organisations/id/{id}");
         }
-
-        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        
+        private async Task<T> Get<T>(string uri)
         {
-            return await Task.FromResult(new List<Contact>());
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
         }
     }
 }

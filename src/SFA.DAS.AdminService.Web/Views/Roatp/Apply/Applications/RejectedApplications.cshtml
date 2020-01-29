@@ -1,7 +1,7 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.DashboardViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpDashboardViewModel
 
 @{
     ViewBag.Title = "Applications - Rejected applications";
@@ -60,9 +60,9 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId" asp-route-sequenceNo="@item.SequenceNo">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
-                                <td class="govuk-table__cell" data-label="Application type">
+                                @*<td class="govuk-table__cell" data-label="Application type">
                                     @item.ApplicationType
                                 </td>
                                 <td class="govuk-table__cell" data-label="Standard">
@@ -74,7 +74,7 @@
                                     {
                                         <text>---</text>
                                     }
-                                </td>
+                                </td>*@
                                 <td class="govuk-table__cell" data-label="Date rejected">
                                     @item.FeedbackAddedDate.ToSfaShortDateString()
                                 </td>

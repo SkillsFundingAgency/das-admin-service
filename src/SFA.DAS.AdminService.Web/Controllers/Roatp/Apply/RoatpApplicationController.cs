@@ -46,27 +46,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Applications/Midpoint")]
         public async Task<IActionResult> MidpointApplications(int page = 1)
         {
-            const int midpointSequenceId = 1;
-            var applications = await _applyApiClient.GetOpenApplications(midpointSequenceId);
+            var applications = await _applyApiClient.GetOpenApplications();
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Applications/MidpointApplications.cshtml", viewmodel);
-        }
-
-        [HttpGet("/Roatp/Applications/Standard")]
-        public async Task<IActionResult> StandardApplications(int page = 1)
-        {
-            const int standardSequenceId = 2;
-            var applications = await _applyApiClient.GetOpenApplications(standardSequenceId);
-
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
-
-            return View("~/Views/Roatp/Apply/Applications/StandardApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Roatp/Applications/Rejected")]
@@ -74,10 +59,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             // NOTE: Rejected actually means Feedback Added
             var applications = await _applyApiClient.GetFeedbackAddedApplications();
+            
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Applications/RejectedApplications.cshtml", viewmodel);
         }
@@ -87,9 +72,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedApplications();
 
-            var paginatedApplications = new PaginatedList<ApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new DashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Applications/ClosedApplications.cshtml", viewmodel);
         }
@@ -100,14 +85,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
-            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+            var activeApplySequence = application.ApplyData.Sequences.OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
-            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+            var sequences = await _qnaApiClient.GetAllApplicationSequences(application.ApplicationId);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, activeApplySequence.Sections);
+            var roatpSequences = await _applyApiClient.GetRoatpSequences();
 
-            return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
+            //var sequenceVm = new RoatpSequenceViewModel(application, organisation, sequence, sections, activeApplySequence.Sections);
+
+            //return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
+
+            var taskListViewModel = new RoatpTaskListViewModel(application, organisation, sequences, application.ApplyData.Sequences, roatpSequences);
+            return View("~/Views/Roatp/Apply/Applications/TaskList.cshtml", taskListViewModel);
         }
 
         [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}")]
@@ -121,11 +110,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections, applySequence.Sections);
+            var roatpSequences = await _applyApiClient.GetRoatpSequences();
+            var sequenceVm = new RoatpSequenceViewModel(application, organisation, sequence, sections, applySequence.Sections, roatpSequences);
 
-            var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
-            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
-            if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
+            var activeApplicationStatuses = new List<string> { ApplicationStatus.GatewayAssessed, ApplicationStatus.Resubmitted };
+            //var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            if (activeApplicationStatuses.Contains(application.ApplicationStatus))
             {
                 return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
             }
@@ -147,9 +137,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
-            var sectionVm = new SectionViewModel(application, organisation, section, applySection);
+            foreach(var page in section.QnAData.Pages)
+            {
+                var excludedAnswers = new List<string> { "ApplicationId", "RedirectAction" };
+                var excludedQuestions = page.Questions.Where(x => excludedAnswers.Contains(x.QuestionId));
+                foreach(var question in excludedQuestions)
+                {
+                    page.Questions.Remove(question);
+                }
+            }
 
-            var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
+            var sectionVm = new RoatpSectionViewModel(application, organisation, section, applySection);
+
+            var activeApplicationStatuses = new List<string> { ApplicationStatus.GatewayAssessed, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {             
@@ -191,7 +191,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
-                var sectionVm = new SectionViewModel(application, organisation, section, applySection);
+                var sectionVm = new RoatpSectionViewModel(application, organisation, section, applySection);
 
                 return View("~/Views/Roatp/Apply/Applications/Section.cshtml", sectionVm);
             }
@@ -288,110 +288,98 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || 
                 activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
-                // This is to stop the wrong sequence being assessed, or if not all sections are Evaluated
-                return RedirectToAction(sequenceNo == 2 ? nameof(StandardApplications) : nameof(MidpointApplications));
+                return RedirectToAction(nameof(MidpointApplications));
             }
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
 
-            var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
+            var viewModel = new RoatpApplicationSequenceAssessmentViewModel(application, sequence, sections);
             return View("~/Views/Roatp/Apply/Applications/Assessment.cshtml", viewModel);
         }
 
         [HttpPost("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Return")]
         public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
-
-            if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
-            {
-                // This is to stop the wrong sequence being returned, or if not all sections are Evaluated
-                return RedirectToAction(sequenceNo == 2 ? nameof(StandardApplications) : nameof(MidpointApplications));
-            }
-            else
-            {
-                var errorMessages = new Dictionary<string, string>();
-
-                if (string.IsNullOrWhiteSpace(returnType))
-                {
-                    errorMessages["ReturnType"] = "Please state what you would like to do next";
-                }
-
-                if (errorMessages.Any())
-                {
-                    foreach (var error in errorMessages)
-                    {
-                        ModelState.AddModelError(error.Key, error.Value);
-                    }
-
-                    var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
-                    var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
-
-                    var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
-                    return View("~/Views/Roatp/Apply/Applications/Assessment.cshtml", viewModel);
-                }
-            }
-           
             var warningMessages = new List<string>();
-            if (sequenceNo == 2 && returnType == "Approve")
-            {
-                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == 1);
 
-                // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
-                if (sequenceOne?.NotRequired is true)
-                {
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One is NOT REQUIRED - Injecting Standard");
-                    var response = await AddOrganisationStandardIntoRegister(applicationId);
-                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
-                }
-                // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
-                else
-                {
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
-                    var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
+            // REPLACE WITH ROATP LOGIC
 
-                    //    'Inject' the Organisation and associated contacts if not RoEPAO approved
-                    if (!organisation.OrganisationData.RoEPAOApproved)
-                    {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
-                        var response = await AddOrganisationAndContactIntoRegister(applicationId);
-                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);    
-                    }
+            //var application = await _applyApiClient.GetApplication(applicationId);
+            //var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-                    //    'Inject' the Standard which was applied for by the organisation
-                    if (!warningMessages.Any())
-                    {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Standard.");
-                        var response = await AddOrganisationStandardIntoRegister(applicationId);
-                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
-                    }
-                }
-            }
+            //if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
+            //{
+            //    // This is to stop the wrong sequence being returned, or if not all sections are Evaluated
+            //    return RedirectToAction(sequenceNo == 2 ? nameof(StandardApplications) : nameof(MidpointApplications));
+            //}
+            //else
+            //{
+            //    var errorMessages = new Dictionary<string, string>();
 
-            if (!warningMessages.Any())
-            {
-                await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
-            }
+            //    if (string.IsNullOrWhiteSpace(returnType))
+            //    {
+            //        errorMessages["ReturnType"] = "Please state what you would like to do next";
+            //    }
+
+            //    if (errorMessages.Any())
+            //    {
+            //        foreach (var error in errorMessages)
+            //        {
+            //            ModelState.AddModelError(error.Key, error.Value);
+            //        }
+
+            //        var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
+            //        var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
+
+            //        var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections);
+            //        return View("~/Views/Roatp/Apply/Applications/Assessment.cshtml", viewModel);
+            //    }
+            //}
+
+            //if (sequenceNo == 2 && returnType == "Approve")
+            //{
+            //    var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == 1);
+
+            //    // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
+            //    if (sequenceOne?.NotRequired is true)
+            //    {
+            //        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One is NOT REQUIRED - Injecting Standard");
+            //        var response = await AddOrganisationStandardIntoRegister(applicationId);
+            //        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+            //    }
+            //    // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
+            //    else
+            //    {
+            //        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
+            //        var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            //        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
+
+            //        //    'Inject' the Organisation and associated contacts if not RoEPAO approved
+            //        if (!organisation.OrganisationData.RoEPAOApproved)
+            //        {
+            //            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
+            //            var response = await AddOrganisationAndContactIntoRegister(applicationId);
+            //            if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);    
+            //        }
+
+            //        //    'Inject' the Standard which was applied for by the organisation
+            //        if (!warningMessages.Any())
+            //        {
+            //            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Standard.");
+            //            var response = await AddOrganisationStandardIntoRegister(applicationId);
+            //            if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+            //        }
+            //    }
+            //}
+
+            //if (!warningMessages.Any())
+            //{
+            //    await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
+            //}
 
             var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages);
             return View("~/Views/Roatp/Apply/Applications/Returned.cshtml", returnedViewModel);
-        }
-
-        private async Task<CreateOrganisationAndContactFromApplyResponse> AddOrganisationAndContactIntoRegister(Guid applicationId)
-        {
-            _logger.LogInformation($"Attempting to inject organisation into register for application {applicationId}");
-            var command = await _answerService.GatherAnswersForOrganisationAndContactForApplication(applicationId);
-            return await _answerInjectionService.InjectApplyOrganisationAndContactDetailsIntoRegister(command);
-        }
-
-        private async Task<CreateOrganisationStandardFromApplyResponse> AddOrganisationStandardIntoRegister(Guid applicationId)
-        {
-            _logger.LogInformation($"Attempting to inject standard into register for application {applicationId}");
-            var command = await _answerService.GatherAnswersForOrganisationStandardForApplication(applicationId);
-            return await _answerInjectionService.InjectApplyOrganisationStandardDetailsIntoRegister(command);
         }
 
         [HttpGet("/Roatp/Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]

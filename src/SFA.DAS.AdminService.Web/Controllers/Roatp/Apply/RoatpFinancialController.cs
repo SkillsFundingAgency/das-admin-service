@@ -41,9 +41,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetOpenFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
@@ -54,9 +54,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
             var applications = await _applyApiClient.GetFeedbackAddedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Financial/RejectedApplications.cshtml", viewmodel);
         }
@@ -66,9 +66,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<FinancialApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new FinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
             return View("~/Views/Roatp/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
@@ -145,7 +145,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                     zipStream.Position = 0;
 
-                    return File(zipStream.ToArray(), "application/zip", $"FinancialDocuments_{organisation.EndPointAssessorName}.zip");
+                    return File(zipStream.ToArray(), "application/zip", $"FinancialDocuments_{organisation.Name}.zip");
                 }
             }
 
@@ -168,7 +168,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 var grade = new FinancialGrade
                 {
-                    ApplicationReference = application.ApplyData.Apply.ReferenceNumber,
+                    ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber,
                     GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
@@ -199,11 +199,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.financialGrade);
         }
 
-        private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(ApplicationResponse applicationFromAssessor, FinancialGrade grade)
+        private async Task<RoatpFinancialApplicationViewModel> CreateFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor, FinancialGrade grade)
         {
             if (applicationFromAssessor is null)
             {
-                return new FinancialApplicationViewModel();
+                return new RoatpFinancialApplicationViewModel();
             }
             else if (grade is null)
             {
@@ -215,18 +215,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var orgId = applicationFromAssessor.OrganisationId;
             var organisation = await _apiClient.GetOrganisation(orgId);
 
-            var application = new AssessorService.ApplyTypes.Application
+            var application = new AssessorService.ApplyTypes.Roatp.Apply
             {
-                ApplicationData = new ApplicationData
-                {
-                    ReferenceNumber = applicationFromAssessor.ApplyData.Apply.ReferenceNumber
-                },
-                ApplyingOrganisation = organisation,
-                ApplyingOrganisationId = orgId,
+                //ApplicationData = new ApplicationData
+                //{
+                //    ReferenceNumber = applicationFromAssessor.ApplyData.ApplyDetails.ReferenceNumber
+                //},
+                //ApplyingOrganisation = organisation,
+                //ApplyingOrganisationId = orgId,
                 ApplicationStatus = applicationFromAssessor.ApplicationStatus
             };
 
-            return new FinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
         }
 
         private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)

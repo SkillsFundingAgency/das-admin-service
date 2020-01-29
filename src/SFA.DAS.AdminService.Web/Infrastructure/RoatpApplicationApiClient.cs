@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -36,42 +38,42 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             
         }
 
-        public async Task<ApplicationResponse> GetApplication(Guid Id)
+        public async Task<RoatpApplicationResponse> GetApplication(Guid applicationId)
         {
-            return await Task.FromResult(new ApplicationResponse());
+            return await Get<RoatpApplicationResponse>($"/Application/{applicationId}");
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedApplications()
         {
-            return await Task.FromResult(new List<ApplicationSummaryItem>());
+            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedFinancialApplications()
         {
-            return await Task.FromResult(new List<FinancialApplicationSummaryItem>());
+            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedApplications()
         {
-            return await Task.FromResult(new List<ApplicationSummaryItem>());
+            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedFinancialApplications()
         {
-            return await Task.FromResult(new List<FinancialApplicationSummaryItem>());
+            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenApplications()
         {
-            return await Task.FromResult(new List<ApplicationSummaryItem>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/Open");
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
+        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenFinancialApplications()
         {
-            return await Task.FromResult(new List<FinancialApplicationSummaryItem>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/OpenApplications");
         }
 
-        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
+        public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
         {
             
         }
@@ -95,5 +97,45 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             
         }
+
+        public async Task<List<RoatpSequence>> GetRoatpSequences()
+        {
+            return await Get<List<RoatpSequence>>($"/roatp-sequences");
+        }
+
+        private async Task<T> Get<T>(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsAsync<T>();
+            }
+        }
+
+        private async Task Post<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
+        }
+
+        private async Task<U> Put<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
+        }
+
     }
 }
