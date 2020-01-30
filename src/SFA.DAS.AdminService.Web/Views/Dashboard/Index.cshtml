@@ -81,6 +81,12 @@
             </h2>
             <p class="govuk-body">Review RoATP Applications</p>
         </div>
+        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.RoatpGatewayTeam, Roles.CertificationTeam)">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                <a class="govuk-link" asp-controller="RoatpGateway" asp-action="NewApplications">Gateway</a>
+            </h2>
+            <p class="govuk-body">RoATP Gateway</p>
+        </div>
         <!-- need to assign to RoATP roles -->
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
