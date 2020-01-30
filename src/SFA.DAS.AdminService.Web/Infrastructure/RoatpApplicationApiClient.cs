@@ -55,12 +55,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedApplications()
         {
-            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/FeedbackAdded");
         }
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedFinancialApplications()
         {
-            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/FeedbackAddedApplications");
         }
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenApplications()
