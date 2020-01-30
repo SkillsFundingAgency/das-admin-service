@@ -45,12 +45,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedApplications()
         {
-            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/Closed");
         }
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedFinancialApplications()
         {
-            return await Task.FromResult(new List<AssessorService.ApplyTypes.Roatp.Apply>());
+            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/ClosedApplications");            
         }
 
         public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedApplications()
