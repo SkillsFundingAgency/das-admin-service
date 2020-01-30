@@ -31,13 +31,6 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Standard</dt>
-                            <dd class="govuk-summary-list__value">@Model.Standard</dd>
-                        </div>
-                    }
                     @if (!string.IsNullOrWhiteSpace(Model.LegalName))
                     {
                         <div class="govuk-summary-list__row">
@@ -78,12 +71,7 @@
 
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
-                    {
-                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded ||  Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
-                        {
-                            // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
-                            continue;
-                        }
+                    {                        
                         <li>
                             <h2 class="govuk-heading-m">
                                 <a class="govuk-link" href="@Url.Action("Section", "RoatpApplication", new {Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo})">

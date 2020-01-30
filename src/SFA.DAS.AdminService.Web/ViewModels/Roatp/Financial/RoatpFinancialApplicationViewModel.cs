@@ -42,21 +42,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
             SetupGradeAndFinancialDueDate(grade);
             OrgId = application.OrganisationId;
-
-            //if (application.ApplicationData != null)
-            //{
-            //    ApplicationReference = application.ApplicationData.ReferenceNumber;
-            //}
-
-
-            //if (application.ApplyingOrganisation?.OrganisationData != null)
-            //{
-            //    Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
-            //    LegalName = application.ApplyingOrganisation.OrganisationData.LegalName;
-            //    TradingName = application.ApplyingOrganisation.OrganisationData.TradingName;
-            //    ProviderName = application.ApplyingOrganisation.OrganisationData.ProviderName;
-            //    CompanyNumber = application.ApplyingOrganisation.OrganisationData.CompanyNumber;
-            //}
         }
 
         private void SetupGradeAndFinancialDueDate(FinancialGrade grade)

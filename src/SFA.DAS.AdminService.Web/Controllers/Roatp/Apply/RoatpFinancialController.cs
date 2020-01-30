@@ -21,9 +21,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class RoatpFinancialController : Controller
     {
-        private const int FINANCIAL_SEQUENCE_NO = 1;
-        private const int FINANCIAL_SECTION_NO = 3;
-
         private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -164,8 +161,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
-                var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+                // replace with reference to RoATP sections
+
+                //var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
+                //var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
                 var grade = new FinancialGrade
                 {
@@ -174,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
+                    //FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
                     InadequateMoreInformation = vm.Grade.InadequateMoreInformation
                 };
 
@@ -211,8 +210,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 grade = applicationFromAssessor.financialGrade;
             }
 
-            //var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
-
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
             var financialSequences = roatpSequences.Where(x => x.Roles.Contains(Roles.ProviderRiskAssuranceTeam));
             var financialSections = new List<Section>();
@@ -236,12 +233,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var application = new AssessorService.ApplyTypes.Roatp.Apply
             {
-                //ApplicationData = new ApplicationData
-                //{
-                //    ReferenceNumber = applicationFromAssessor.ApplyData.ApplyDetails.ReferenceNumber
-                //},
-                //ApplyingOrganisation = organisation,
-                //ApplyingOrganisationId = orgId,
                 ApplicationStatus = applicationFromAssessor.ApplicationStatus
             };
 

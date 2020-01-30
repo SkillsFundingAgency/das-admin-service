@@ -60,24 +60,6 @@
                                 <td class="govuk-table__cell" data-label="Date rejected">
                                     @item.FeedbackAddedDate.ToSfaShortDateString()
                                 </td>
-                                @*<td class="govuk-table__cell" data-label="Grade">
-                                    @item.Grade.SelectedGrade
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                    @{
-                                        switch (item.FinancialStatus)
-                                        {
-                                            case FinancialReviewStatus.Rejected:
-                                                <div class="govuk-tag govuk-tag--rejected">
-                                                    rejected
-                                                </div>
-                                                break;
-                                            default:
-                                                <text>---</text>
-                                                break;
-                                        }
-                                    }
-                                </td>*@
                             </tr>
                         }
                     </tbody>

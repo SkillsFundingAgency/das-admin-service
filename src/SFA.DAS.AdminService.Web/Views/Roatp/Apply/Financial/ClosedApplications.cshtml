@@ -56,33 +56,7 @@
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
-                                </td>
-                                @*<td class="govuk-table__cell" data-label="Date graded">
-                                    @item.Grade.GradedDateTime.ToSfaShortDateString()
-                                </td>
-                                <td class="govuk-table__cell" data-label="Grade">
-                                    @item.Grade.SelectedGrade
-                                </td>*@
-                                @*<td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                    @{
-                                        switch (item.FinancialStatus)
-                                        {
-                                            case FinancialReviewStatus.Graded:
-                                                <div class="govuk-tag govuk-tag--approved">
-                                                    graded
-                                                </div>
-                                                break;
-                                            case FinancialReviewStatus.Approved:
-                                                <div class="govuk-tag govuk-tag--approved">
-                                                    accepted
-                                                </div>
-                                                break;
-                                            default:
-                                                <text>---</text>
-                                                break;
-                                        }
-                                    }
-                                </td>*@
+                                </td>                               
                             </tr>
                         }
                     </tbody>

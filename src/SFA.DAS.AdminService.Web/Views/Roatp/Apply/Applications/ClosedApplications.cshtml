@@ -57,19 +57,6 @@
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
-                                @*<td class="govuk-table__cell" data-label="Application type">
-                                    @item.ApplicationType
-                                </td>*@
-                                @*<td class="govuk-table__cell" data-label="Standard">
-                                    @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceNo == 2)
-                                    {
-                                        <text>@item.Standard</text>
-                                    }
-                                    else
-                                    {
-                                        <text>---</text>
-                                    }
-                                </td>*@
                                 <td class="govuk-table__cell" data-label="Date closed">
                                     @item.ClosedDate.ToSfaShortDateString()
                                 </td>
