@@ -21,7 +21,7 @@
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="GatewayReviewStatus"></a></li>
+                            <li><a sfa-validation-for="IsGatewayApproved"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -92,31 +92,31 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="Grade" asp-controller="RoatpGateway">
+            <form class="js-disable-on-submit" asp-action="EvaluateGateway" asp-controller="RoatpGateway">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="Id" value="@Model.Id" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <fieldset class="govuk-fieldset">
-                        <legend id="GatewayReviewStatus">
+                        <legend id="IsGatewayApproved">
                             <h2 class="govuk-heading-l">
-                                What is the grade for this application?
+                                What is the grade for this Gateway?
                             </h2>
                         </legend>
 
-                        <span class="govuk-error-message" asp-validation-for="GatewayReviewStatus"></span>
+                        <span class="govuk-error-message" asp-validation-for="IsGatewayApproved"></span>
 
                         <div class="govuk-radios govuk-radios--inline">
                             <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_approve" type="radio" value="@GatewayReviewStatus.Approved" sfa-validation-for="GatewayReviewStatus" />
-                                <label class="govuk-label govuk-radios__label" for="options_approve">
+                                <input class="govuk-radios__input" asp-for="IsGatewayApproved" id="options_yes" type="radio" value="True" sfa-validation-for="IsGatewayApproved" />
+                                <label class="govuk-label govuk-radios__label" for="options_yes">
                                     Approve
                                 </label>
                             </div>
                             @*<div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_decline" type="radio" value="@GatewayReviewStatus.Declined" sfa-validation-for="GatewayReviewStatus" />
-                                <label class="govuk-label govuk-radios__label" for="options_decline">
+                                <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_no" type="radio" value="False" sfa-validation-for="IsGatewayApproved" />
+                                <label class="govuk-label govuk-radios__label" for="options_no">
                                     Decline
                                 </label>
                             </div>*@

@@ -71,10 +71,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Roatp/Gateway/{Id}")]
-        public async Task<IActionResult> ViewApplication(Guid Id)
+        [HttpGet("/Roatp/Gateway/{applicationId}")]
+        public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -87,10 +87,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
         }
 
-        [HttpGet("/Roatp/Gateway/{Id}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid Id)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Graded")]
+        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -103,18 +103,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
 
         [HttpPost("/Roatp/Gateway")]
-        public async Task<IActionResult> Grade(RoatpGatewayApplicationViewModel vm)
+        public async Task<IActionResult> EvaluateGateway(RoatpGatewayApplicationViewModel vm, bool? isGatewayApproved)
         {
-            var application = await _applyApiClient.GetApplication(vm.Id);
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
 
+            if (!isGatewayApproved.HasValue)
+            {
+                ModelState.AddModelError("IsGatewayApproved", "Please evaluate Gateway");
+            }
+
             if (ModelState.IsValid)
             {
-                //await _applyApiClient.ReturnGatewayReview(vm.Id);
-                return RedirectToAction(nameof(Evaluated), new { vm.Id });
+                //await _applyApiClient.ReturnGatewayReview(vm.Id, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
             }
             else
             {
@@ -123,16 +128,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
         }
 
-        [HttpGet("/Roatp/Gateway/{Id}/Evaluated")]
-        public async Task<IActionResult> Evaluated(Guid Id)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Evaluated")]
+        public async Task<IActionResult> Evaluated(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application?.financialGrade is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            return View("~/Views/Roatp/Apply/Gateway/Graded.cshtml");
+            return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
         }
 
         private async Task<RoatpGatewayApplicationViewModel> CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
