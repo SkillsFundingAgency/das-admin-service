@@ -91,5 +91,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public string Title { get; set; }
         public bool Sequential { get; set; }
         public List<string> ExcludeSections { get; set; }
+        public List<string> Roles { get; set; }
     }
 }
