@@ -6,10 +6,9 @@
 
 @{
     ViewBag.Title = "Application overview";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
 }
 
-<a class="govuk-back-link" asp-controller="RoatpApplication" asp-action="@BackAction">Back</a>
+<a class="govuk-back-link" asp-controller="RoatpApplication" asp-action="Application" asp-route-applicationid="@Model.ApplicationId">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -117,7 +116,7 @@
             }
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-controller="RoatpApplication" asp-action="@BackAction">Return to applications</a>
+                <a class="govuk-link" asp-controller="RoatpApplication" asp-action="Application" asp-route-applicationid="@Model.ApplicationId">Return to application overview</a>
             </p>
         </div>`
     </div>
