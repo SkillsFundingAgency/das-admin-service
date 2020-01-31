@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Domain
         public const string RegisterViewOnlyTeam = "EPV";
         public const string RoatpGatewayTeam = "APR";
         public const string RoatpGatewayAssessorTeam = "GAC";
-        public const string RoatpAssessorTeam = "tbc";
+        public const string RoatpAssessorTeam = "AAC";
         public const string EpaoReportsOnlyTeam = "EPX";
 
         public static bool HasValidRole(this ClaimsPrincipal user)
