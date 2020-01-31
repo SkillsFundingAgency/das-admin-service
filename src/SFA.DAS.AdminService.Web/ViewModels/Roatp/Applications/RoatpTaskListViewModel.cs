@@ -17,17 +17,20 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
-            FinancialDueDate = application.financialGrade?.FinancialDueDate;
-
-            foreach (var roatpSequence in roatpSequences)
+            FinancialDueDate = application.financialGrade?.FinancialDueDate;    
+            
+            foreach(var sequence in applySequences)
             {
-                var applySequence = applySequences.FirstOrDefault(x => x.SequenceNo == roatpSequence.Id);
-                applySequence.Description = roatpSequence.Title;          
-                if (!roatpSequence.Roles.Contains(Roles.RoatpAssessorTeam)) 
+                var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceNo);
+                if (roatpSequence != null)
                 {
-                    applySequence.NotRequired = true;
+                    sequence.Description = roatpSequence.Title;
                 }
-            }           
+                if (roatpSequence == null || !roatpSequence.Roles.Contains(Roles.RoatpAssessorTeam))
+                {
+                    sequence.NotRequired = true;
+                }
+            }
 
             ApplySequences = applySequences.Where(x => !x.NotRequired).ToList();
             Sequences = sequences;

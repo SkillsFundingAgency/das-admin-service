@@ -69,7 +69,7 @@
                 }
 
                 <ul class="govuk-list">
-                    @foreach (var applicationSequence in Model.ApplySequences.Where(x => x.SequenceNo > 0).OrderBy(x => x.SequenceNo))
+                    @foreach (var applicationSequence in Model.ApplySequences.OrderBy(x => x.SequenceNo))
                     {
                         <li>
                             <h2 class="govuk-heading-m">
