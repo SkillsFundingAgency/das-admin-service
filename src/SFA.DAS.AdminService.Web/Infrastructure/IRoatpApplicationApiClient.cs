@@ -26,16 +26,24 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
 
         Task<List<RoatpSequence>> GetRoatpSequences();
+
+
+        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
     }
 
-    public class RoatpApplicationResponse
+    public class RoatpApplicationResponse // Update this copy in Apply API too!
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
-        public FinancialGrade financialGrade { get; set; }
+        public FinancialGrade financialGrade { get; set; } // Not sure why this is here. Old code perhaps?
         public string ApplicationStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string FinancialReviewStatus { get; set; } // Not sure why this is here. Old code perhaps?
         public RoatpApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }
         public int? StandardCode { get; set; }

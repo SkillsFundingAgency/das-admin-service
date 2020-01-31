@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public Guid OrganisationId { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
 
         public Guid Id { get; set; }

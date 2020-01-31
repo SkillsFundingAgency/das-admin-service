@@ -32,9 +32,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/New")]
         public async Task<IActionResult> NewApplications(int page = 1)
         {
-            //var applications = await _applyApiClient.GetNewGatewayApplications();
-
-            var applications = new List<GatewayApplicationSummaryItem>();
+            var applications = await _applyApiClient.GetNewGatewayApplications();
 
             var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -46,9 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/InProgress")]
         public async Task<IActionResult> InProgressApplications(int page = 1)
         {
-            //var applications = await _applyApiClient.GetInProgressGatewayApplications();
-
-            var applications = new List<GatewayApplicationSummaryItem>();
+            var applications = await _applyApiClient.GetInProgressGatewayApplications();
 
             var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -60,9 +56,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/Closed")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
-            //var applications = await _applyApiClient.GetClosedGatewayApplications();
-
-            var applications = new List<GatewayApplicationSummaryItem>();
+            var applications = await _applyApiClient.GetClosedGatewayApplications();
 
             var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -80,9 +74,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            //await _applyApiClient.StartGatewayReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
+            await _applyApiClient.StartGatewayReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
 
-            var vm = await CreateGatewayApplicationViewModel(application);
+            var vm = CreateGatewayApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
         }
@@ -96,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            var vm = await CreateGatewayApplicationViewModel(application);
+            var vm = CreateGatewayApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", vm);
         }
@@ -118,12 +112,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                //await _applyApiClient.ReturnGatewayReview(vm.Id, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+                await _applyApiClient.EvaluateGateway(vm.Id, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
                 return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
             }
             else
             {
-                var newvm = await CreateGatewayApplicationViewModel(application);
+                var newvm = CreateGatewayApplicationViewModel(application);
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
             }
         }
@@ -140,7 +134,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
         }
 
-        private async Task<RoatpGatewayApplicationViewModel> CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
+        private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
         {
             if (applicationFromRoatp is null)
             {
@@ -163,8 +157,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 Id = applicationFromRoatp.Id,
                 ApplicationId = applicationFromRoatp.ApplicationId,
                 OrganisationId = applicationFromRoatp.OrganisationId,
-                ApplicationStatus = applicationFromRoatp.ApplicationStatus
-                
+                ApplicationStatus = applicationFromRoatp.ApplicationStatus,
+                GatewayReviewStatus = applicationFromRoatp.GatewayReviewStatus
             };
 
             return new RoatpGatewayApplicationViewModel(application);
