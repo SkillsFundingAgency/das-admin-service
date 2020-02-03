@@ -6,6 +6,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -14,6 +15,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using FinancialEvidence = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialEvidence;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
@@ -25,6 +27,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private const int FinancialHealthSequenceNo = 2;
 
         public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
@@ -153,7 +156,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Financial")]
         public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
-            var application = await _applyApiClient.GetApplication(vm.Id);
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
@@ -161,23 +164,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                // replace with reference to RoATP sections
-
-                //var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
-                //var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
-
-                var grade = new FinancialGrade
+                var grade = new FinancialReviewDetails
                 {
-                    ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber,
                     GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    //FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
-                    InadequateMoreInformation = vm.Grade.InadequateMoreInformation
+                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId)
                 };
 
-                await _applyApiClient.ReturnFinancialReview(vm.Id, grade);
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, grade);
                 return RedirectToAction(nameof(Evaluated), new { vm.Id });
             }
             else
@@ -239,22 +235,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSections, grade, application);
         }
 
-        private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
+        private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)
         {
             var listOfEvidence = new List<FinancialEvidence>();
 
-            if (financialSequence != null && financialSection != null)
+            var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, FinancialHealthSequenceNo);
+            var financialSections = await _qnaApiClient.GetSections(applicationId, financialSequence.Id);
+
+            foreach(var financialSection in financialSections)
             {
-                var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
-                foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
+                if (financialSection != null)
                 {
-                    foreach (var uploadQuestion in uploadPage.Questions)
+                    var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
+                    foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
                     {
-                        foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
+                        foreach (var uploadQuestion in uploadPage.Questions)
                         {
-                            if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
-                            var filenameWithFullPath = $"{financialSequence.ApplicationId}/{financialSequence.Id}/{financialSection.Id}/{uploadPage.PageId}/{uploadQuestion.QuestionId}/{answer.Value}";
-                            listOfEvidence.Add(new FinancialEvidence { Filename = filenameWithFullPath });
+                            foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
+                            {
+                                if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
+                                var filenameWithFullPath = $"{financialSequence.ApplicationId}/{financialSequence.Id}/{financialSection.Id}/{uploadPage.PageId}/{uploadQuestion.QuestionId}/{answer.Value}";
+                                listOfEvidence.Add(new FinancialEvidence { Filename = filenameWithFullPath });
+                            }
                         }
                     }
                 }

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -78,9 +79,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             
         }
 
-        public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)
+        public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails grade)
         {
-            
+            await Post<FinancialReviewDetails>($"/Financial/Grade/{applicationId}", grade);
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)

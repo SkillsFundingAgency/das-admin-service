@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenApplications();
         Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenFinancialApplications();
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
-        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
+        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails grade);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);
