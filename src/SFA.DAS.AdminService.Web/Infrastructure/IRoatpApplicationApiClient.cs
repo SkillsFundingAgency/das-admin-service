@@ -28,9 +28,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<RoatpSequence>> GetRoatpSequences();
 
 
-        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.GatewayApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
     }

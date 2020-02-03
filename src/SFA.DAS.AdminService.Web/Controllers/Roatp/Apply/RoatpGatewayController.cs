@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetNewGatewayApplications();
 
-            var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetInProgressGatewayApplications();
 
-            var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 
@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedGatewayApplications();
 
-            var paginatedApplications = new PaginatedList<GatewayApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 

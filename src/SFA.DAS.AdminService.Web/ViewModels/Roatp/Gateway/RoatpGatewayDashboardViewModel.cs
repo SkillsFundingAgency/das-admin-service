@@ -5,6 +5,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
     public class RoatpGatewayDashboardViewModel
     {
-        public PaginatedList<GatewayApplicationSummaryItem> Applications { get; set; }
+        public PaginatedList<RoatpApplicationSummaryItem> Applications { get; set; }
     }
 }
