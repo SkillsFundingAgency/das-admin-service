@@ -24,12 +24,13 @@ namespace SFA.DAS.AdminService.Web.Domain
                    || user.IsInRole(ProviderRiskAssuranceTeam)
                    || user.IsInRole(RegisterViewOnlyTeam)
                    || user.IsInRole(RoatpGatewayTeam)
+                   || user.IsInRole(RoatpGatewayAssessorTeam)
                    || user.IsInRole(EpaoReportsOnlyTeam);
         }
 
         public static bool HasRoatpRoleOnly(this ClaimsPrincipal user)
         {
-            if (user.IsInRole(RoatpGatewayTeam)
+            if ((user.IsInRole(RoatpGatewayTeam) || user.IsInRole(RoatpGatewayAssessorTeam))
                 && !user.IsInRole(CertificationTeam)
                 && !user.IsInRole(OperationsTeam)
                 && !user.IsInRole(AssessmentDeliveryTeam)
