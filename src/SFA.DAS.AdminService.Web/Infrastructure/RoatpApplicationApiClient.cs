@@ -128,7 +128,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
         {
-            await Post($"/Financial/{applicationId}/Return", new { isGatewayApproved, evaluatedBy });
+            await Post($"/GatewayReview/{applicationId}/Evaluate", new { isGatewayApproved, evaluatedBy });
         }
 
 
