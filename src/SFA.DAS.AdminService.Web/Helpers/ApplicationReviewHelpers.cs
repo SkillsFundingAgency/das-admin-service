@@ -35,6 +35,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
                         case FinancialApplicationSelectedGrade.Outstanding:
                         case FinancialApplicationSelectedGrade.Good:
                         case FinancialApplicationSelectedGrade.Satisfactory:
+                        case FinancialApplicationSelectedGrade.Monitoring:
                             return "Passed";
                         case FinancialApplicationSelectedGrade.Exempt:
                             return "Exempt";
