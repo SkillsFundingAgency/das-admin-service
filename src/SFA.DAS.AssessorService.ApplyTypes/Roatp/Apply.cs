@@ -77,6 +77,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public DateTime? FinancialDueDate { get; set; }
         public string GradedBy { get; set; }
         public DateTime? GradedDateTime { get; set; }
+        public string Comments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
     }
 

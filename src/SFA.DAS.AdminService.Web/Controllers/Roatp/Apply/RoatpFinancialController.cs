@@ -170,7 +170,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId)
+                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
+                    Comments = vm.Grade.InadequateMoreInformation
                 };
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, grade);
