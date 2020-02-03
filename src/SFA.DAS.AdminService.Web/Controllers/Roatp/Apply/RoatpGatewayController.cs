@@ -74,27 +74,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            await _applyApiClient.StartGatewayReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-
             var vm = CreateGatewayApplicationViewModel(application);
 
-            return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
-        }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
-        {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            if (application is null)
+            switch (application.GatewayReviewStatus)
             {
-                return RedirectToAction(nameof(NewApplications));
+                case GatewayReviewStatus.New:
+                    await _applyApiClient.StartGatewayReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
+                case GatewayReviewStatus.InProgress:
+                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
+                case GatewayReviewStatus.Approved:
+                case GatewayReviewStatus.Declined:
+                    return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", vm);
+                default:
+                    return RedirectToAction(nameof(NewApplications));
             }
-
-            var vm = CreateGatewayApplicationViewModel(application);
-
-            return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", vm);
         }
-
 
         [HttpPost("/Roatp/Gateway")]
         public async Task<IActionResult> EvaluateGateway(RoatpGatewayApplicationViewModel vm, bool? isGatewayApproved)
@@ -126,7 +122,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> Evaluated(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            if (application?.financialGrade is null)
+            if (application is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
