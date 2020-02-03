@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
