@@ -19,12 +19,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             FinancialReviewStatus = application.FinancialReviewStatus;
             FinancialDueDate = application.financialGrade?.FinancialDueDate;
 
-            //LegalName = organisation.OrganisationData.LegalName;
-            //TradingName = organisation.OrganisationData.TradingName;
-            //ProviderName = organisation.OrganisationData.ProviderName;
-            //Ukprn = organisation.EndPointAssessorUkprn;
-            //CompanyNumber = organisation.OrganisationData.CompanyNumber;
-
             var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceNo);
             if (roatpSequence != null)
             {
@@ -58,9 +52,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         }
 
         public string ApplicationReference { get; set; }
-        public string StandardName { get; set; }
-        public int? StandardCode { get; set; }
-        public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
 
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
@@ -68,8 +59,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string LegalName { get; set; }
         public string TradingName { get; set; }
         public string ProviderName { get; set; }
-        public int? Ukprn { get; set; }
-        public string CompanyNumber { get; set; }
+        public int? Ukprn { get; set; }        public string CompanyNumber { get; set; }
 
         public string Status { get; set; }
         public List<Section> Sections { get; }

@@ -17,9 +17,6 @@
                 <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Mid point assessments</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="StandardApplications" asp-controller="RoatpApplication">Standard applications</a>
-            </li>
-            <li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpApplication">Rejected applications</a>
             </li>
             <li class="app-navigation--current-page">
@@ -49,8 +46,6 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">Application type</th>
-                            <th class="govuk-table__header" scope="col">Standard</th>
                             <th class="govuk-table__header" scope="col">Date closed</th>
                             <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
                         </tr>
@@ -62,19 +57,6 @@
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
-                                @*<td class="govuk-table__cell" data-label="Application type">
-                                    @item.ApplicationType
-                                </td>*@
-                                @*<td class="govuk-table__cell" data-label="Standard">
-                                    @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceNo == 2)
-                                    {
-                                        <text>@item.Standard</text>
-                                    }
-                                    else
-                                    {
-                                        <text>---</text>
-                                    }
-                                </td>*@
                                 <td class="govuk-table__cell" data-label="Date closed">
                                     @item.ClosedDate.ToSfaShortDateString()
                                 </td>

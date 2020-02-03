@@ -59,35 +59,6 @@
                                 <td class="govuk-table__cell" data-label="Date submitted">
                                     @item.SubmittedDate.ToSfaShortDateString()
                                 </td>
-                                @*<td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                    @{
-                                        switch (item.FinancialStatus)
-                                        {
-                                            case FinancialReviewStatus.New:
-                                                if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
-                                                {
-                                                    <div class="govuk-tag govuk-tag--updated">
-                                                        updated
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="govuk-tag govuk-tag--inactive">
-                                                        unassigned
-                                                    </div>
-                                                }
-                                                break;
-                                            case FinancialReviewStatus.InProgress:
-                                                <div class="govuk-tag">
-                                                    in progress
-                                                </div>
-                                                break;
-                                            default:
-                                                <text>---</text>
-                                                break;
-                                        }
-                                    }
-                                </td>*@
                             </tr>
                         }
                     </tbody>

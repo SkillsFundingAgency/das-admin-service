@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -94,10 +93,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
 
-            //var sequenceVm = new RoatpSequenceViewModel(application, organisation, sequence, sections, activeApplySequence.Sections);
-
-            //return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);
-
             var taskListViewModel = new RoatpTaskListViewModel(application, organisation, sequences, application.ApplyData.Sequences, roatpSequences);
             return View("~/Views/Roatp/Apply/Applications/TaskList.cshtml", taskListViewModel);
         }
@@ -117,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sequenceVm = new RoatpSequenceViewModel(application, organisation, sequence, sections, applySequence.Sections, roatpSequences);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.GatewayAssessed, ApplicationStatus.Resubmitted };
-            //var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            
             if (activeApplicationStatuses.Contains(application.ApplicationStatus))
             {
                 return View("~/Views/Roatp/Apply/Applications/Sequence.cshtml", sequenceVm);

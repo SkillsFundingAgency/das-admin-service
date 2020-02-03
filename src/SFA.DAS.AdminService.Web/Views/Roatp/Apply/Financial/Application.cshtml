@@ -85,53 +85,63 @@
                 </p>
             }
 
-            @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
-            {
-                <p class="govuk-body govuk-!-margin-bottom-8">
-                    <a class="govuk-link" href="@Url.Action("DownloadFiles", "Financial", new { Model.OrgId, Model.Section.ApplicationId })">Download financial statements</a>
-                </p>
-            }
-        </div>
-    </div>
 
-    @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
-    {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <table class="govuk-table govuk-table--s">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">
-                            Questions
-                        </th>
-                        <th class="govuk-table__header" scope="col">
-                            Answers
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var pg in Model.Section.QnAData.Pages)
-                    {
-                        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@question.Label</td>
-                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
         </div>
     </div>
+    @foreach (var section in Model.Sections)
+    {
+        @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
+        {
+            <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
+        }
+        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+        {
+            <p class="govuk-body govuk-!-margin-bottom-8">
+                <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+            </p>
+        }
+
+        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+        {
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table govuk-table--s">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">
+                                    Questions
+                                </th>
+                                <th class="govuk-table__header" scope="col">
+                                    Answers
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var pg in section.QnAData.Pages)
+                            {
+                                foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
+                                        <td class="govuk-table__cell">@Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     }
+
+
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form class="js-disable-on-submit" asp-action="Grade" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                <input type="hidden" name="Id" value="@Model.Id"/>
-                <input type="hidden" name="OrgId" value="@Model.OrgId"/>
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="OrgId" value="@Model.OrgId" />
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 
@@ -149,7 +159,7 @@
 
                     <div class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
                         </div>
 
@@ -185,7 +195,7 @@
                         </div>
 
                         <div class="govuk-radios__item" data-target="good-more-info">
-                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
+                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="good">Good</label>
                         </div>
 

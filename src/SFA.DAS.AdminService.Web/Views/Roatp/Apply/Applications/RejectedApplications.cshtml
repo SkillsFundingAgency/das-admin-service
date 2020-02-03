@@ -16,9 +16,6 @@
             <li class="app-navigation">
                 <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Mid point assessments</a>
             </li>
-            <li class="app-navigation">
-                <a asp-action="StandardApplications" asp-controller="RoatpApplication">Standard applications</a>
-            </li>
             <li class="app-navigation--current-page">
                 <a asp-action="RejectedApplications" asp-controller="RoatpApplication">Rejected applications</a>
             </li>
@@ -62,19 +59,6 @@
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
                                 </td>
-                                @*<td class="govuk-table__cell" data-label="Application type">
-                                    @item.ApplicationType
-                                </td>
-                                <td class="govuk-table__cell" data-label="Standard">
-                                    @if (!string.IsNullOrWhiteSpace(item.Standard) && item.SequenceNo == 2)
-                                    {
-                                        <text>@item.Standard</text>
-                                    }
-                                    else
-                                    {
-                                        <text>---</text>
-                                    }
-                                </td>*@
                                 <td class="govuk-table__cell" data-label="Date rejected">
                                     @item.FeedbackAddedDate.ToSfaShortDateString()
                                 </td>

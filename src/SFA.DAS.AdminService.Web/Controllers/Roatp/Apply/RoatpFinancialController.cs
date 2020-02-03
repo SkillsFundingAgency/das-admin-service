@@ -7,6 +7,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Paging;
+using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +21,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class RoatpFinancialController : Controller
     {
-        private const int FINANCIAL_SEQUENCE_NO = 1;
-        private const int FINANCIAL_SECTION_NO = 3;
-
         private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -103,14 +101,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
-        [HttpGet("/Roatp/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
-        public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
+        [HttpGet("/Roatp/Financial/Download/Application/{ApplicationId}/Section/{sectionId}")]
+        public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
-            // NOTE: Using the QnA applicationId is somewhat dubious! We're using the Assessor applicationId nearly everywhere else.
-            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
-            var organisation = await _apiClient.GetOrganisation(orgId);
+            var financialSection = await _qnaApiClient.GetSection(applicationId, sectionId);
+            
+            var application = await _applyApiClient.GetApplication(applicationId);
 
-            if (financialSection != null && organisation != null)
+            if (financialSection != null)
             {
                 using (var zipStream = new MemoryStream())
                 {
@@ -145,7 +143,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                     zipStream.Position = 0;
 
-                    return File(zipStream.ToArray(), "application/zip", $"FinancialDocuments_{organisation.Name}.zip");
+                    return File(zipStream.ToArray(), "application/zip", $"FinancialDocuments_{application.ApplyData.ApplyDetails.OrganisationName}.zip");
                 }
             }
 
@@ -163,8 +161,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
-                var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+                // replace with reference to RoATP sections
+
+                //var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
+                //var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
 
                 var grade = new FinancialGrade
                 {
@@ -173,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.Grade.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
+                    //FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
                     InadequateMoreInformation = vm.Grade.InadequateMoreInformation
                 };
 
@@ -210,23 +210,33 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 grade = applicationFromAssessor.financialGrade;
             }
 
-            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+            var roatpSequences = await _applyApiClient.GetRoatpSequences();
+            var financialSequences = roatpSequences.Where(x => x.Roles.Contains(Roles.ProviderRiskAssuranceTeam));
+            var financialSections = new List<Section>();
+            foreach(var sequence in financialSequences)
+            {
+                var qnaSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationFromAssessor.ApplicationId, sequence.Id);
+                var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, qnaSequence.Id);
+                foreach(var section in sections)
+                {
+                    var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.Id);
+
+                    if (!roatpSequence.ExcludeSections.Contains(section.SectionNo.ToString()))
+                    {
+                        financialSections.Add(section);
+                    }
+                }
+            }
 
             var orgId = applicationFromAssessor.OrganisationId;
             var organisation = await _apiClient.GetOrganisation(orgId);
 
             var application = new AssessorService.ApplyTypes.Roatp.Apply
             {
-                //ApplicationData = new ApplicationData
-                //{
-                //    ReferenceNumber = applicationFromAssessor.ApplyData.ApplyDetails.ReferenceNumber
-                //},
-                //ApplyingOrganisation = organisation,
-                //ApplyingOrganisationId = orgId,
                 ApplicationStatus = applicationFromAssessor.ApplicationStatus
             };
 
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSections, grade, application);
         }
 
         private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)

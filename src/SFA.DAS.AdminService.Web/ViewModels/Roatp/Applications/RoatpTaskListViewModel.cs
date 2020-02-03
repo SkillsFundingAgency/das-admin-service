@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -16,15 +17,22 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
-            FinancialDueDate = application.financialGrade?.FinancialDueDate;
-
-            foreach (var roatpSequence in roatpSequences)
+            FinancialDueDate = application.financialGrade?.FinancialDueDate;    
+            
+            foreach(var sequence in applySequences)
             {
-                var applySequence = applySequences.FirstOrDefault(x => x.SequenceNo == roatpSequence.Id);
-                applySequence.Description = roatpSequence.Title;                
+                var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceNo);
+                if (roatpSequence != null)
+                {
+                    sequence.Description = roatpSequence.Title;
+                }
+                if (roatpSequence == null || !roatpSequence.Roles.Contains(Roles.RoatpAssessorTeam))
+                {
+                    sequence.NotRequired = true;
+                }
             }
 
-            ApplySequences = applySequences;
+            ApplySequences = applySequences.Where(x => !x.NotRequired).ToList();
             Sequences = sequences;
         }
 
@@ -41,10 +49,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         }
 
         public string ApplicationReference { get; set; }
-        public string StandardName { get; set; }
-        public int? StandardCode { get; set; }
-        public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
-
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
 
