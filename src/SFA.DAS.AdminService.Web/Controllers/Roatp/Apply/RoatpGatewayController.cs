@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            await _applyApiClient.StartGatewayReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
+            await _applyApiClient.StartGatewayReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
 
             var vm = CreateGatewayApplicationViewModel(application);
 
@@ -112,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                await _applyApiClient.EvaluateGateway(vm.Id, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+                await _applyApiClient.EvaluateGateway(vm.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
                 return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
             }
             else
