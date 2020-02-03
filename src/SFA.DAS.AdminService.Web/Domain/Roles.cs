@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Domain
 
         public static bool HasRoatpRoleOnly(this ClaimsPrincipal user)
         {
-            if ((user.IsInRole(RoatpGatewayTeam) || user.IsInRole(RoatpGatewayAssessorTeam))
+            if (user.IsInRole(RoatpGatewayTeam)
                 && !user.IsInRole(CertificationTeam)
                 && !user.IsInRole(OperationsTeam)
                 && !user.IsInRole(AssessmentDeliveryTeam)
