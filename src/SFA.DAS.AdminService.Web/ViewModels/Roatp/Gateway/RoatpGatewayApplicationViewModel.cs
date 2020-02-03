@@ -30,16 +30,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
             OrgId = application.OrganisationId;
 
             ApplicationStatus = application.ApplicationStatus;
-            //GatewayReviewStatus = application.GatewayReviewStatus;
+            GatewayReviewStatus = application.GatewayReviewStatus;
 
-            //if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Approved)
-            //{
-            //    IsGatewayApproved = true;
-            //}
-            //else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Declined)
-            //{
-            //    IsGatewayApproved = false;
-            //}
+            if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Approved)
+            {
+                IsGatewayApproved = true;
+            }
+            else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Declined)
+            {
+                IsGatewayApproved = false;
+            }
 
             if (application.ApplyData?.ApplyDetails != null)
             {
