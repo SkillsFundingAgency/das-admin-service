@@ -104,6 +104,36 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpSequence>>($"/roatp-sequences");
         }
 
+
+
+
+        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetNewGatewayApplications()
+        {
+            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/NewApplications");
+        }
+
+        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
+        {
+            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/InProgressApplications");
+        }
+
+        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
+        {
+            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/ClosedApplications");
+        }
+
+        public async Task StartGatewayReview(Guid applicationId, string reviewer)
+        {
+            await Post($"/GatewayReview/{applicationId}/StartReview", new { reviewer });
+        }
+
+        public async Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
+        {
+            await Post($"/GatewayReview/{applicationId}/Evaluate", new { isGatewayApproved, evaluatedBy });
+        }
+
+
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

@@ -24,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Domain
                    || user.IsInRole(ProviderRiskAssuranceTeam)
                    || user.IsInRole(RegisterViewOnlyTeam)
                    || user.IsInRole(RoatpGatewayTeam)
+                   || user.IsInRole(RoatpGatewayAssessorTeam)
                    || user.IsInRole(EpaoReportsOnlyTeam);
         }
 

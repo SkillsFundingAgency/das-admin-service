@@ -10,9 +10,12 @@ using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+// NOTE: For future work, consider if these base types are acceptable or if we need Roatp versions
+using ApplicationSectionStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSectionStatus;
+using ApplicationSequenceStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSequenceStatus;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

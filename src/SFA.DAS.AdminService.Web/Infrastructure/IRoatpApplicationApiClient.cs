@@ -27,6 +27,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
 
         Task<List<RoatpSequence>> GetRoatpSequences();
+
+
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
     }
     
 }
