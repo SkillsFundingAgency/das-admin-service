@@ -11,12 +11,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<RoatpApplicationResponse> GetApplication(Guid Id);
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedFinancialApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedFinancialApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenFinancialApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications();
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
         Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails grade);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
@@ -29,9 +29,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<RoatpSequence>> GetRoatpSequences();
 
 
-        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
     }

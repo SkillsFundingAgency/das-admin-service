@@ -54,7 +54,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
-                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.ApplyData.ApplyDetails.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date submitted">
                                     @item.SubmittedDate.ToSfaShortDateString()

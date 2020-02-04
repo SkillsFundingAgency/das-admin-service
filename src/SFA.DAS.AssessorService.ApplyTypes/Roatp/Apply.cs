@@ -95,6 +95,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
         public RoatpApplyData ApplyData { get; set; }
         public string CreatedBy { get; set; }
         public int? StandardCode { get; set; }

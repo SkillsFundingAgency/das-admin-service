@@ -42,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetOpenFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -55,7 +55,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
             var applications = await _applyApiClient.GetFeedbackAddedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -67,7 +67,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 

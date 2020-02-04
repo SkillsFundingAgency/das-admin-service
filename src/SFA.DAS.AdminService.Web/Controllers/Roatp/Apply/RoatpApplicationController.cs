@@ -49,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> MidpointApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetOpenApplications();
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             // NOTE: Rejected actually means Feedback Added
             var applications = await _applyApiClient.GetFeedbackAddedApplications();
             
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedApplications();
 
-            var paginatedApplications = new PaginatedList<AssessorService.ApplyTypes.Roatp.Apply>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 

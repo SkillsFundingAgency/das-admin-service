@@ -44,34 +44,34 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<RoatpApplicationResponse>($"/Application/{applicationId}");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/Closed");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Closed");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetClosedFinancialApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/ClosedApplications");            
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/ClosedApplications");            
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/FeedbackAdded");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/FeedbackAdded");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/FeedbackAddedApplications");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/FeedbackAddedApplications");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Applications/Open");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Open");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.Apply>> GetOpenFinancialApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.Apply>>($"/Financial/OpenApplications");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/OpenApplications");
         }
 
         public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
@@ -107,19 +107,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
 
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetNewGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/NewApplications");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/GatewayReview/NewApplications");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/InProgressApplications");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/GatewayReview/InProgressApplications");
         }
 
-        public async Task<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
         {
-            return await Get<List<AssessorService.ApplyTypes.Roatp.RoatpApplicationSummaryItem>>($"/GatewayReview/ClosedApplications");
+            return await Get<List<RoatpApplicationSummaryItem>>($"/GatewayReview/ClosedApplications");
         }
 
         public async Task StartGatewayReview(Guid applicationId, string reviewer)
