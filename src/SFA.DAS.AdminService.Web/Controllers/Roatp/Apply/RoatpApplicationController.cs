@@ -103,6 +103,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
+            await _applyApiClient.StartAssessorReview(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);

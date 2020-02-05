@@ -34,6 +34,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+
+        Task StartAssessorReview(Guid applicationId, string reviewer);
     }
     
 }

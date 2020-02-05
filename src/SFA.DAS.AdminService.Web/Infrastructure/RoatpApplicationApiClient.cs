@@ -132,7 +132,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"/GatewayReview/{applicationId}/Evaluate", new { isGatewayApproved, evaluatedBy });
         }
 
-
+        public async Task StartAssessorReview(Guid applicationId, string reviewer)
+        {
+            await Post($"/Application/{applicationId}/StartAssessorReview", new { reviewer });
+        }
 
         private async Task<T> Get<T>(string uri)
         {
