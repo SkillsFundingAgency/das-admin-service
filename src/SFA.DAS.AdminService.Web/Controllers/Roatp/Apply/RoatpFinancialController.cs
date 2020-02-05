@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            await _applyApiClient.StartFinancialReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
+            await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
 
             var vm = await CreateFinancialApplicationViewModel(application, null);
 

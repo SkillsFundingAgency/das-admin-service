@@ -91,7 +91,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
-            
+            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });            
         }
 
         public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
