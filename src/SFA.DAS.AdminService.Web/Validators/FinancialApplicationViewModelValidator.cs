@@ -23,7 +23,8 @@ namespace SFA.DAS.AdminService.Web.Validators
                 }
                 else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding 
                          || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good 
-                         || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory)
+                         || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory
+                         || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Monitoring)
                 {
                     switch (vm.Grade.SelectedGrade)
                     {
@@ -35,6 +36,9 @@ namespace SFA.DAS.AdminService.Web.Validators
                             break;
                         case FinancialApplicationSelectedGrade.Satisfactory:
                             ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
+                            break;
+                        case FinancialApplicationSelectedGrade.Monitoring:
+                            ProcessDate(vm.MonitoringFinancialDueDate, "MonitoringFinancialDueDate", context);
                             break;
                     }
                 }
