@@ -5,6 +5,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
     public class RoatpFinancialDashboardViewModel
     {
-        public PaginatedList<RoatpApplicationSummaryItem> Applications { get; set; }
+        public PaginatedList<RoatpFinancialSummaryItem> Applications { get; set; }
     }
 }

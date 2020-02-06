@@ -12,13 +12,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<RoatpApplicationResponse> GetApplication(Guid Id);
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
         Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
-        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails grade);
+        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);

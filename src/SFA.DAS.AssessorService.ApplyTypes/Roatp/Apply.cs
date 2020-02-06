@@ -105,6 +105,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
     {
         public List<RoatpApplySequence> Sequences { get; set; }
         public RoatpApplyDetails ApplyDetails { get; set; }
+        public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
 
     public class RoatpApplyDetails

@@ -18,8 +18,8 @@
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="Grade.SelectedGrade"></a></li>
-                            <li><a sfa-validation-for="Grade.InadequateMoreInformation"></a></li>
+                            <li><a sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
+                            <li><a sfa-validation-for="FinancialReviewDetails.Comments"></a></li>
                             <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
@@ -151,15 +151,15 @@
                         </h2>
                     </legend>
 
-                    <span class="govuk-error-message" asp-validation-for="Grade.SelectedGrade"></span>
-                    <span class="govuk-error-message" asp-validation-for="Grade.InadequateMoreInformation"></span>
+                    <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.SelectedGrade"></span>
+                    <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.Comments"></span>
                     <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
 
                     <div class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
                         </div>
 
@@ -195,7 +195,7 @@
                         </div>
 
                         <div class="govuk-radios__item" data-target="good-more-info">
-                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
+                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="good">Good</label>
                         </div>
 
@@ -231,7 +231,7 @@
                         </div>
 
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="satisfactory" data-aria-controls="satisfactory-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
+                            <input class="govuk-radios__input" id="satisfactory" data-aria-controls="satisfactory-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Satisfactory)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
                             <label class="govuk-label govuk-radios__label" for="satisfactory">Satisfactory</label>
                         </div>
 
@@ -267,14 +267,14 @@
                         </div>
 
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="inadequate" data-aria-controls="inadequate-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
+                            <input class="govuk-radios__input" id="inadequate" data-aria-controls="inadequate-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                             <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
                         </div>
 
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" id="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="govuk-input--error"></textarea>
+                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" id="Grade.InadequateMoreInformation" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
                             </div>
                         </div>
 

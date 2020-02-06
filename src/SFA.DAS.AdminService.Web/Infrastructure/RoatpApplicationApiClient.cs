@@ -49,9 +49,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Closed");
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications()
         {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/ClosedApplications");            
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications");            
         }
 
         public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
@@ -59,9 +59,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/FeedbackAdded");
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/FeedbackAddedApplications");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/FeedbackAddedApplications");
         }
 
         public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
@@ -69,9 +69,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Open");
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
         {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Financial/OpenApplications");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications");
         }
 
         public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
@@ -79,9 +79,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             
         }
 
-        public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails grade)
+        public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
-            await Post<FinancialReviewDetails>($"/Financial/Grade/{applicationId}", grade);
+            await Post($"/Financial/Grade/{applicationId}", new { financialReviewDetails, financialReviewStatus });
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)

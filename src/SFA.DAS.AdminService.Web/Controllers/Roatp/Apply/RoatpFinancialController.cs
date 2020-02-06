@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplyData = SFA.DAS.AssessorService.ApplyTypes.Roatp.ApplyData;
 using FinancialEvidence = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialEvidence;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
@@ -42,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetOpenFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -55,7 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
             var applications = await _applyApiClient.GetFeedbackAddedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -67,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var applications = await _applyApiClient.GetClosedFinancialApplications();
 
-            var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
+            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
 
@@ -164,7 +166,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                var grade = new FinancialReviewDetails
+                var financialReviewDetails = new FinancialReviewDetails
                 {
                     GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
@@ -174,7 +176,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     Comments = vm.Grade.InadequateMoreInformation
                 };
 
-                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, grade);
+                var financialReviewStatus = GetApplicableFinancialReviewStatus(financialReviewDetails.SelectedGrade);
+
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails, financialReviewStatus);
                 return RedirectToAction(nameof(Evaluated), new { vm.Id });
             }
             else
@@ -230,7 +234,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var application = new AssessorService.ApplyTypes.Roatp.Apply
             {
-                ApplicationStatus = applicationFromAssessor.ApplicationStatus
+                ApplicationStatus = applicationFromAssessor.ApplicationStatus,
+                ApplyData = Mapper.Map<ApplyData>(applicationFromAssessor.ApplyData)
             };
 
             return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSections, grade, application);
@@ -283,6 +288,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     return vm.SatisfactoryFinancialDueDate?.ToDateTime();
                 default:
                     return null;
+            }
+        }
+
+        private static string GetApplicableFinancialReviewStatus(string financialGrade)
+        {
+            switch (financialGrade)
+            {
+                case FinancialApplicationSelectedGrade.Outstanding:
+                case FinancialApplicationSelectedGrade.Good:
+                case FinancialApplicationSelectedGrade.Satisfactory:
+                    return FinancialReviewStatus.Approved;
+
+                case FinancialApplicationSelectedGrade.Exempt:
+                    return FinancialReviewStatus.Exempt;
+
+                default:
+                    return FinancialReviewStatus.Rejected;
             }
         }
     }

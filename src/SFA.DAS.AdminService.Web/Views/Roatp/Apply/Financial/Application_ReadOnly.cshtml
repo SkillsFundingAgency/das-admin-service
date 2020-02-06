@@ -7,7 +7,7 @@
     ViewBag.Title = "Financial health evaluation";
     Layout = "_Layout";
 
-    var backAction = FinancialApplicationSelectedGrade.Inadequate.Equals(Model.Grade.SelectedGrade) ? "RejectedApplications" : "ClosedApplications";
+    var backAction = FinancialApplicationSelectedGrade.Inadequate.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "RejectedApplications" : "ClosedApplications";
 }
 
 <a asp-action="@backAction" asp-controller="RoatpFinancial" class="govuk-back-link">Back</a>
@@ -81,7 +81,7 @@
                         Grade
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Grade.SelectedGrade
+                        @Model.FinancialReviewDetails.SelectedGrade
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -89,7 +89,10 @@
                         Date reviewed
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Grade.GradedDateTime.ToShortDateString()
+                        @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
+                        {
+                            @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToShortDateString())
+                        }
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -97,7 +100,7 @@
                         Comments
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @(Model.Grade.InadequateMoreInformation ?? "")
+                        @(Model.FinancialReviewDetails.Comments ?? "")
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -105,7 +108,7 @@
                         Reviewer
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Grade.GradedBy
+                        @Model.FinancialReviewDetails.GradedBy
                     </dd>
                 </div>
             </dl>
