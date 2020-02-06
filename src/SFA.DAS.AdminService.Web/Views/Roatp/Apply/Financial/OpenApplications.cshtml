@@ -52,14 +52,43 @@
                     <tbody class="govuk-table__body">
                         @foreach (var item in Model.Applications.Items)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
-                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
-                                </td>
-                                <td class="govuk-table__cell" data-label="Date submitted">
-                                    @item.SubmittedDate.ToSfaShortDateString()
-                                </td>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
+                                <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
+                            </td>
+                            <td class="govuk-table__cell" data-label="Date submitted">
+                                @item.SubmittedDate.ToSfaShortDateString()
+                            </td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
+                                @{
+                                    switch (item.AssessorReviewStatus)
+                                    {
+                                        case ApplicationReviewStatus.New:
+                                            if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
+                                            {
+                                                <div class="govuk-tag govuk-tag--updated">
+                                                    updated
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="govuk-tag govuk-tag--inactive">
+                                                    unassigned
+                                                </div>
+                                            }
+                                            break;
+                                        case ApplicationReviewStatus.InProgress:
+                                            <div class="govuk-tag">
+                                                in progress
+                                            </div>
+                                            break;
+                                        default:
+                                            <text>---</text>
+                                            break;
+                                    }
+                                }
+                            </td>
+                        </tr>
                         }
                     </tbody>
                 </table>
