@@ -225,13 +225,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var orgId = applicationFromAssessor.OrganisationId;
             var organisation = await _apiClient.GetOrganisation(orgId);
-
-            var application = new AssessorService.ApplyTypes.Roatp.Apply
-            {
-                ApplicationStatus = applicationFromAssessor.ApplicationStatus,
-                ApplyData = Mapper.Map<ApplyData>(applicationFromAssessor.ApplyData)
-            };
-
+            
             return new RoatpFinancialApplicationViewModel(applicationFromAssessor, financialSections);
         }
 
