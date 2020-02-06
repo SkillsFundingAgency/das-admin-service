@@ -87,7 +87,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
 
-            var vm = await CreateFinancialApplicationViewModel(application, null);
+            var vm = await CreateFinancialApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
         }
@@ -101,7 +101,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            var vm = await CreateFinancialApplicationViewModel(application, null);
+            var vm = await CreateFinancialApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
@@ -183,7 +183,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                var newvm = await CreateFinancialApplicationViewModel(application, vm.Grade);
+                var newvm = await CreateFinancialApplicationViewModel(application);
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
         }
@@ -200,15 +200,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.financialGrade);
         }
 
-        private async Task<RoatpFinancialApplicationViewModel> CreateFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor, FinancialGrade grade)
+        private async Task<RoatpFinancialApplicationViewModel> CreateFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)
         {
             if (applicationFromAssessor is null)
             {
                 return new RoatpFinancialApplicationViewModel();
-            }
-            else if (grade is null)
-            {
-                grade = applicationFromAssessor.financialGrade;
             }
 
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
@@ -238,7 +234,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 ApplyData = Mapper.Map<ApplyData>(applicationFromAssessor.ApplyData)
             };
 
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSections, grade, application);
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.ApplicationId, financialSections, application);
         }
 
         private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)

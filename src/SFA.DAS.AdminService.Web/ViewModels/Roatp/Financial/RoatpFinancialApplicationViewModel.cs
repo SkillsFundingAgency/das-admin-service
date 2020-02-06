@@ -18,7 +18,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public List<Section> Sections { get; }
         public Guid ApplicationId { get; set; }
-        public Guid Id { get; set; }
         public Guid OrgId { get; set; }
 
         public FinancialDueDate OutstandingFinancialDueDate { get; set; }
@@ -28,9 +27,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(Guid id, Guid applicationId, List<Section> sections, FinancialGrade grade, AssessorService.ApplyTypes.Roatp.Apply application)
+        public RoatpFinancialApplicationViewModel(Guid applicationId, List<Section> sections, AssessorService.ApplyTypes.Roatp.Apply application)
         {
-            Id = id;
             if (sections != null && sections.Any())
             {
                 Sections = sections;
