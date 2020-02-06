@@ -40,8 +40,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
 
             OrgId = application.OrganisationId;
-            FinancialReviewDetails = application.ApplyData.FinancialReviewDetails;
-            SetupGradeAndFinancialDueDate();
+            SetupGradeAndFinancialDueDate(application.ApplyData.FinancialReviewDetails);
 
             LegalName = application.ApplyData.ApplyDetails.OrganisationName;
             TradingName = application.ApplyData.ApplyDetails.TradingName;
@@ -49,8 +48,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             ProviderName = application.ApplyData.ApplyDetails.OrganisationName;
         }
 
-        private void SetupGradeAndFinancialDueDate()
+        private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)
         {
+            FinancialReviewDetails = financialReviewDetails;
+
             OutstandingFinancialDueDate = new FinancialDueDate();
             GoodFinancialDueDate = new FinancialDueDate();
             SatisfactoryFinancialDueDate = new FinancialDueDate();
