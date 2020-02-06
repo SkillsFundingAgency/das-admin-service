@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
-        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
+        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);

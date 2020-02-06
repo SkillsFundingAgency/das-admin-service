@@ -176,9 +176,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     Comments = vm.Grade.InadequateMoreInformation
                 };
 
-                var financialReviewStatus = GetApplicableFinancialReviewStatus(financialReviewDetails.SelectedGrade);
-
-                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails, financialReviewStatus);
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
                 return RedirectToAction(nameof(Evaluated), new { vm.Id });
             }
             else
@@ -285,23 +283,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 default:
                     return null;
             }
-        }
-
-        private static string GetApplicableFinancialReviewStatus(string financialGrade)
-        {
-            switch (financialGrade)
-            {
-                case FinancialApplicationSelectedGrade.Outstanding:
-                case FinancialApplicationSelectedGrade.Good:
-                case FinancialApplicationSelectedGrade.Satisfactory:
-                    return FinancialReviewStatus.Approved;
-
-                case FinancialApplicationSelectedGrade.Exempt:
-                    return FinancialReviewStatus.Exempt;
-
-                default:
-                    return FinancialReviewStatus.Rejected;
-            }
-        }
+        }        
     }
 }
