@@ -232,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 ApplyData = Mapper.Map<ApplyData>(applicationFromAssessor.ApplyData)
             };
 
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor.ApplicationId, financialSections, application);
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, financialSections);
         }
 
         private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)

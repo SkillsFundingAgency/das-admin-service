@@ -27,16 +27,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(Guid applicationId, List<Section> sections, AssessorService.ApplyTypes.Roatp.Apply application)
+        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, List<Section> sections)
         {
             if (sections != null && sections.Any())
             {
                 Sections = sections;
-                ApplicationId = applicationId;
+                ApplicationId = application.ApplicationId;
             }
             else
             {
-                ApplicationId = applicationId;
+                ApplicationId = application.ApplicationId;
             }
 
             OrgId = application.OrganisationId;
