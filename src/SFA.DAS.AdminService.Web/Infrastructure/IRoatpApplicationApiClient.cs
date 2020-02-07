@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     public class SnapshotApplicationRequest
     {
         public Guid ApplicationId { get; set; }
-        public Guid NewApplicationId { get; set; }
+        public Guid SnapshotApplicationId { get; set; }
         public List<RoatpApplySequence> Sequences { get; set; }
     }
 }

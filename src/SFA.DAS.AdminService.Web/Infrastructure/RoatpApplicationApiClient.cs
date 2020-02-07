@@ -137,9 +137,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"/Application/{applicationId}/StartAssessorReview", new { reviewer });
         }
 
-        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid newApplicationId, List<RoatpApplySequence> sequences)
+        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
         {
-            return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, NewApplicationId = newApplicationId, Sequences = sequences });
+            return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
         private async Task<T> Get<T>(string uri)
