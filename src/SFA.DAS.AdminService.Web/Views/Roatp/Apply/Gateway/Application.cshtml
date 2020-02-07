@@ -53,7 +53,7 @@
                         </dd>
                     </div>
                 }
-                @if (Model.ApplicationRoute > 0)
+                @if (!String.IsNullOrWhiteSpace(Model.ApplicationRoute))
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
