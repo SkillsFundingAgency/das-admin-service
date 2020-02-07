@@ -14,9 +14,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IQnaApiClient
     {
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
+        Task<StartApplicationResponse> SnapshotApplication(Guid applicationId); // TODO: Update response type when QnA Types is updated from NuGet
         Task<Dictionary<string, object>> GetApplicationData(Guid applicationId);
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId);
+        Task<List<Section>> GetAllApplicationSections(Guid applicationId);
         Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId);
         Task<Sequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo);
         Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId);

@@ -165,6 +165,9 @@
     <Content Update="Views\Roatp\Apply\Applications\Returned.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Roatp\Apply\Snapshot\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Roatp\EnterUkprn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
