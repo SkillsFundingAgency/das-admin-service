@@ -100,7 +100,7 @@
         {
             // NOTE: The FHA Section has a read only view. See ON-1277
             var financialApplication = Model.Grade;
-            var financialApplicationComments = financialApplication.InadequateMoreInformation;
+            var financialApplicationComments = financialApplication.Comments;
 
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -118,7 +118,7 @@
                                 Date reviewed
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @financialApplication.GradedDateTime.ToShortDateString()
+                                @financialApplication.GradedDateTime?.ToShortDateString()
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
