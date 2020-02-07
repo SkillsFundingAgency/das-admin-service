@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     public class RoatpSectionViewModel
     {
         public string ApplicationReference { get; set; }
-        public AssessorService.ApplyTypes.FinancialGrade Grade { get; set; }
+        public FinancialReviewDetails Grade { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }
@@ -35,7 +35,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         {
             ApplicationId = application.ApplicationId;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
-            Grade = application.financialGrade;
+            Grade = application.FinancialGrade;
 
             //LegalName = organisation.OrganisationData.LegalName;
             //TradingName = organisation.OrganisationData.TradingName;

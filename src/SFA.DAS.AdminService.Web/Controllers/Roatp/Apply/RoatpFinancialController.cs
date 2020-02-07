@@ -16,7 +16,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using ApplyData = SFA.DAS.AssessorService.ApplyTypes.Roatp.ApplyData;
 using FinancialEvidence = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialEvidence;
 using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
@@ -190,12 +189,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> Evaluated(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
-            if (application?.financialGrade is null)
+            if (application?.FinancialGrade is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.financialGrade);
+            return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
         private async Task<RoatpFinancialApplicationViewModel> CreateFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)

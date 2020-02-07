@@ -40,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
 
             OrgId = application.OrganisationId;
-            SetupGradeAndFinancialDueDate(application.ApplyData.FinancialReviewDetails);
+            SetupGradeAndFinancialDueDate(application.FinancialGrade);
 
             LegalName = application.ApplyData.ApplyDetails.OrganisationName;
             TradingName = application.ApplyData.ApplyDetails.TradingName;

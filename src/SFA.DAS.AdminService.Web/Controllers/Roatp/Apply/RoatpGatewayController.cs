@@ -139,9 +139,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var application = new AssessorService.ApplyTypes.Roatp.Apply
             {
-                ApplyData = new ApplyData
+                ApplyData = new RoatpApplyData
                 {
-                    ApplyDetails = new ApplyDetails
+                    ApplyDetails = new RoatpApplyDetails
                     {
                         ReferenceNumber = applicationFromRoatp.ApplyData.ApplyDetails.ReferenceNumber,
                         ProviderRoute = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRoute,
@@ -154,7 +154,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 ApplicationId = applicationFromRoatp.ApplicationId,
                 OrganisationId = applicationFromRoatp.OrganisationId,
                 ApplicationStatus = applicationFromRoatp.ApplicationStatus,
-                GatewayReviewStatus = applicationFromRoatp.GatewayReviewStatus
+                GatewayReviewStatus = applicationFromRoatp.GatewayReviewStatus,
+                AssessorReviewStatus = applicationFromRoatp.AssessorReviewStatus,
+                FinancialReviewStatus = applicationFromRoatp.FinancialReviewStatus
             };
 
             return new RoatpGatewayApplicationViewModel(application);
