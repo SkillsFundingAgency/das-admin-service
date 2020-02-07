@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
-            FinancialDueDate = application.financialGrade?.FinancialDueDate;    
+            FinancialDueDate = application.FinancialGrade?.FinancialDueDate;    
             
             foreach(var sequence in applySequences)
             {

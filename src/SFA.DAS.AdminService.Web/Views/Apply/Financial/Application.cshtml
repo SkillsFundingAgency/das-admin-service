@@ -23,6 +23,7 @@
                             <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
+                            <li><a sfa-validation-for="MonitoringFinancialDueDate"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -146,10 +147,11 @@
                     <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
+                    <span class="govuk-error-message" asp-validation-for="MonitoringFinancialDueDate"></span>
 
                     <div class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                            <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
                         </div>
 
@@ -185,7 +187,7 @@
                         </div>
 
                         <div class="govuk-radios__item" data-target="good-more-info">
-                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)"  @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
+                            <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Good)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="good">Good</label>
                         </div>
 
@@ -250,6 +252,42 @@
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Year">Year</label>
                                             <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="SatisfactoryFinancialDueDate.Year" id="SatisfactoryFinancialDueDate.Year" sfa-validation-for="SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="monitoring" data-aria-controls="monitoring-conditional" type="radio" name="Grade.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Monitoring)" @(Model.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Monitoring ? "checked" : "") />
+                            <label class="govuk-label govuk-radios__label" for="monitoring">Monitoring</label>
+                        </div>
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="monitoring-conditional">
+                            <div class="govuk-form-group">
+                                <legend>
+                                    <span class="govuk-label" for="MonitoringFinancialDueDate">
+                                        What is the financial due date?
+                                    </span>
+                                </legend>
+
+                                <div class="govuk-date-input">
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="MonitoringFinancialDueDate.Day">Day</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="MonitoringFinancialDueDate.Day" id="MonitoringFinancialDueDate.Day" sfa-validation-for="MonitoringFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.MonitoringFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="MonitoringFinancialDueDate.Month">Month</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="MonitoringFinancialDueDate.Month" id="MonitoringFinancialDueDate.Month" sfa-validation-for="MonitoringFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.MonitoringFinancialDueDate.Month" type="number" pattern="[0-9]*" />
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" for="MonitoringFinancialDueDate.Year">Year</label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="MonitoringFinancialDueDate.Year" id="MonitoringFinancialDueDate.Year" sfa-validation-for="MonitoringFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.MonitoringFinancialDueDate.Year" type="number" pattern="[0-9]*" />
                                         </div>
                                     </div>
                                 </div>

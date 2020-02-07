@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
-            FinancialDueDate = application.financialGrade?.FinancialDueDate;
+            FinancialDueDate = application.FinancialGrade?.FinancialDueDate;
 
             var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceNo);
             if (roatpSequence != null)
