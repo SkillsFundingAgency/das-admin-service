@@ -268,6 +268,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     return vm.GoodFinancialDueDate?.ToDateTime();
                 case FinancialApplicationSelectedGrade.Satisfactory:
                     return vm.SatisfactoryFinancialDueDate?.ToDateTime();
+                case FinancialApplicationSelectedGrade.Monitoring:
+                    return vm.MonitoringFinancialDueDate?.ToDateTime();
                 default:
                     return null;
             }
