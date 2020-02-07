@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -8,13 +9,17 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class RoatpTaskListViewModel
+    public class RoatpTaskListViewModel : OrganisationDetailsViewModel
     {
         public RoatpTaskListViewModel(RoatpApplicationResponse application, Organisation organisation, List<Sequence> sequences, 
                                       List<RoatpApplySequence> applySequences, List<RoatpSequence> roatpSequences)
         {
             ApplicationId = application.ApplicationId;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
+            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+            OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
+            SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+            Ukprn = application.ApplyData.ApplyDetails.UKPRN;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
             FinancialDueDate = application.FinancialGrade?.FinancialDueDate;    
@@ -48,15 +53,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             return sections.Where(s => requiredSectionsNos.Contains(s.SectionNo)).ToList();
         }
 
-        public string ApplicationReference { get; set; }
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
-
-        public string LegalName { get; set; }
-        public string TradingName { get; set; }
-        public string ProviderName { get; set; }
-        public int? Ukprn { get; set; }
-        public string CompanyNumber { get; set; }
 
         public string Status { get; set; }
         public List<Sequence> Sequences { get; }

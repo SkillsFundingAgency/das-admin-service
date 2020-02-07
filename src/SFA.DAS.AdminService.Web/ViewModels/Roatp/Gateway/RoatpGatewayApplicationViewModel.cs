@@ -1,24 +1,17 @@
-﻿using System;
+﻿using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
+using System;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
-    public class RoatpGatewayApplicationViewModel
+    public class RoatpGatewayApplicationViewModel : OrganisationDetailsViewModel
     {
         public Guid Id { get; }
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; }
-
-        public string ApplicationReference { get; }
-        public string ApplicationRoute { get; }
-
+        
         public string ApplicationStatus { get; }
         public string GatewayReviewStatus { get; }
-
-        public string Ukprn { get; }
-        public string OrganisationName { get; }
         
-        public DateTime? SubmittedDate { get; }  
-
         public bool IsGatewayApproved { get; set; }
 
         public RoatpGatewayApplicationViewModel() { }
@@ -49,8 +42,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
                 OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
                 SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
             }
-
-
         }
     }
 }

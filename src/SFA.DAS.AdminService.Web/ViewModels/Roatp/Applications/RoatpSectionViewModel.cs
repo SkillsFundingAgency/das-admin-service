@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
@@ -9,15 +9,13 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class RoatpSectionViewModel
+    public class RoatpSectionViewModel : OrganisationDetailsViewModel
     {
-        public string ApplicationReference { get; set; }
         public FinancialReviewDetails Grade { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }
         public string ProviderName { get; set; }
-        public int? Ukprn { get; set; }
         public string CompanyNumber { get; set; }
 
         public string Title { get; }
@@ -35,13 +33,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         {
             ApplicationId = application.ApplicationId;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
+            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+            OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
+            SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+            Ukprn = application.ApplyData.ApplyDetails.UKPRN;
             Grade = application.FinancialGrade;
-
-            //LegalName = organisation.OrganisationData.LegalName;
-            //TradingName = organisation.OrganisationData.TradingName;
-            //ProviderName = organisation.OrganisationData.ProviderName;
-            //Ukprn = organisation.EndPointAssessorUkprn;
-            //CompanyNumber = organisation.OrganisationData.CompanyNumber;
 
             Section = section;
             ApplySection = applySection;

@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
-    public class RoatpFinancialApplicationViewModel
+    public class RoatpFinancialApplicationViewModel : OrganisationDetailsViewModel
     {
-        public string ApplicationReference { get; }
-        public string LegalName { get; }
-        public string TradingName { get; }
-        public string ProviderName { get; }
-        public int? Ukprn { get; }
-        public string CompanyNumber { get; }
-
         public List<Section> Sections { get; }
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
@@ -42,10 +36,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             OrgId = application.OrganisationId;
             SetupGradeAndFinancialDueDate(application.FinancialGrade);
 
-            LegalName = application.ApplyData.ApplyDetails.OrganisationName;
-            TradingName = application.ApplyData.ApplyDetails.TradingName;
-            Ukprn = Convert.ToInt32(application.ApplyData.ApplyDetails.UKPRN);
-            ProviderName = application.ApplyData.ApplyDetails.OrganisationName;
+            OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
+            Ukprn = application.ApplyData.ApplyDetails.UKPRN;
+            ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
+            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+            SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
         }
 
         private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)
