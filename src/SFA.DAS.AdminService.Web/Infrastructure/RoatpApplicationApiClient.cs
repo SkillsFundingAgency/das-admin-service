@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails)
         {
-            await Post<FinancialReviewDetails>($"/Financial/Grade/{applicationId}", financialReviewDetails);
+            await Post<FinancialReviewDetails>($"/Financial/{applicationId}/Grade", financialReviewDetails);
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)
