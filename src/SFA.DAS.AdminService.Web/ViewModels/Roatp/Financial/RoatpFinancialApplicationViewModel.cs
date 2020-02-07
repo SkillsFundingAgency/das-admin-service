@@ -50,6 +50,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)
         {
+            if (financialReviewDetails == null)
+            {
+                financialReviewDetails = new FinancialReviewDetails();
+            }
+
             FinancialReviewDetails = financialReviewDetails;
 
             OutstandingFinancialDueDate = new FinancialDueDate();
