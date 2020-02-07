@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AssessorService.ApplyTypes
+﻿namespace SFA.DAS.AdminService.Web.Domain.Apply
 {
     public class OrganisationStandardSortColumn
     {

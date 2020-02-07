@@ -1,7 +1,7 @@
 ﻿@using Newtonsoft.Json;
 @using SFA.DAS.AdminService.Web.ViewModels.Register;
 @using SFA.DAS.AdminService.Web.ViewModels.Shared;
-@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AdminService.Web.Domain.Apply;
 
 @model OrganisationApprovedStandardsViewModel
 
@@ -85,11 +85,10 @@
         <div class="das-flex-space-around">
             <div>
                 @Html.HiddenFor(m => m.OrganisationId)
-                <select 
-                        class=@(Model.PaginationViewModel.Fragment + "-per-page govuk-select govuk-!-margin-right-2") 
+                <select class=@(Model.PaginationViewModel.Fragment + "-per-page govuk-select govuk-!-margin-right-2")
                         data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
-                        name="ItemsPerPage" 
-                        asp-for="PaginationViewModel.ItemsPerPage" 
+                        name="ItemsPerPage"
+                        asp-for="PaginationViewModel.ItemsPerPage"
                         asp-items="Model.PaginationViewModel.ItemsPerPageList">
                 </select>
                 <label for="ApplicationsPerPage">Standards per page</label>
@@ -100,7 +99,7 @@
                         PaginatedList = Model.PaginationViewModel.PaginatedList,
                         ChangePageAction = Model.PaginationViewModel.ChangePageAction,
                         ChangePageController = "Register",
-                        RouteValues = new { organisationId = Model.OrganisationId},
+                        RouteValues = new { organisationId = Model.OrganisationId },
                         Fragment = Model.PaginationViewModel.Fragment
                     });}
             </div>

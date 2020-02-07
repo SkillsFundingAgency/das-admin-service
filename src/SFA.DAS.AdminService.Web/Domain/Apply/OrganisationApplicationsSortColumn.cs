@@ -1,10 +1,9 @@
-﻿namespace SFA.DAS.AssessorService.ApplyTypes
+﻿namespace SFA.DAS.AdminService.Web.Domain.Apply
 {
-    public class StandardApplicationsSortColumn
+    public class OrganisationApplicationsSortColumn
     {
         public const string OrganisationName = "OrganisationName";
-        public const string StandardReference = "StandardReference";
-        public const string StandardName = "StandardName";
+        public const string FinancialStatus = "FinancialStatus";
         public const string Status = "Status";
         public const string SubmittedDate = "SubmittedDate";
         public const string FeedbackAddedDate = "FeedbackAddedDate";
