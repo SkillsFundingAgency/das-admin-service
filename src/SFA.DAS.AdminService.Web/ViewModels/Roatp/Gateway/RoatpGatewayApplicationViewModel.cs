@@ -9,7 +9,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public Guid OrgId { get; }
 
         public string ApplicationReference { get; }
-        public int ApplicationRoute { get; }
+        public string ApplicationRoute { get; }
 
         public string ApplicationStatus { get; }
         public string GatewayReviewStatus { get; }
