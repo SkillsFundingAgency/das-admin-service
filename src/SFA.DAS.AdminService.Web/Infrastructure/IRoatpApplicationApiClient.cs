@@ -39,11 +39,4 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
     }
-
-    public class SnapshotApplicationRequest
-    {
-        public Guid ApplicationId { get; set; }
-        public Guid SnapshotApplicationId { get; set; }
-        public List<RoatpApplySequence> Sequences { get; set; }
-    }
 }
