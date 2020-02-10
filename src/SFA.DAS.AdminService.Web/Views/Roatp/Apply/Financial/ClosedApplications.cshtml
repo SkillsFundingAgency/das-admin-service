@@ -14,13 +14,13 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation">
-                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">New assessments</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Applications</a>
             </li>
-            <li class="app-navigation">
+            @*<li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Rejected assessments</a>
-            </li>
+            </li>*@
             <li class="app-navigation--current-page">
-                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Closed assessments</a>
+                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
             </li>
         </ul>
     </nav>
@@ -31,7 +31,7 @@
         <div class="govuk-grid-column-two-thirds das-no-wrap">
             <h1 class="govuk-heading-xl">
                 <span class="govuk-caption-xl">Financial health assessments</span>
-                Closed assessments
+                Closed RoATP assessments
             </h1>
         </div>
     </div>
@@ -45,6 +45,7 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
+                            <td class="govuk-table__header" scope="col">UKPRN</td>
                             <th class="govuk-table__header" scope="col">Date graded</th>
                             <th class="govuk-table__header" scope="col">Grade</th>
                             <th class="govuk-table__header" scope="col">Current status</th>
@@ -56,6 +57,9 @@
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
+                                </td>
+                                <td class="govuk-table__cell das-no-wrap" data-label="UKPRN" class="nowrap">
+                                    @item.Ukprn
                                 </td>
                                 <td class="govuk-table__cell das-no-wrap" data-label="Date graded">
                                     @item.FinancialReviewDetails?.GradedDateTime?.ToSfaShortDateString()

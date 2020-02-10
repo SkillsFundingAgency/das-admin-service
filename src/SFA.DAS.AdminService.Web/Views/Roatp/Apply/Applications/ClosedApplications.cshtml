@@ -4,7 +4,7 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpDashboardViewModel
 
 @{
-    ViewBag.Title = "Applications - Completed applications";
+    ViewBag.Title = "Assessor - Completed RoATP applications";
     Layout = "_Layout";
 }
 
@@ -14,13 +14,13 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation">
-                <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Mid point assessments</a>
+                <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Applications</a>
             </li>
-            <li class="app-navigation">
+            @*<li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpApplication">Rejected applications</a>
-            </li>
+            </li>*@
             <li class="app-navigation--current-page">
-                <a asp-action="ClosedApplications" asp-controller="RoatpApplication">Completed applications</a>
+                <a asp-action="ClosedApplications" asp-controller="RoatpApplication">Outcome</a>
             </li>
         </ul>
     </nav>
@@ -31,8 +31,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds das-no-wrap">
             <h1 class="govuk-heading-xl">
-                <span class="govuk-caption-xl">Applications</span>
-                Completed applications
+                <span class="govuk-caption-xl">Assessor</span>
+                RoATP applications
             </h1>
         </div>
     </div>
@@ -46,6 +46,7 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
+                            <th class="govuk-table__header" scope="col">UKPRN</th>
                             <th class="govuk-table__header" scope="col">Date closed</th>
                             <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
                         </tr>
@@ -56,6 +57,9 @@
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                     <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                </td>
+                                <td class="govuk-table__cell das-no-wrap" data-label="UKPRN">
+                                    @item.Ukprn
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date closed">
                                     @item.ClosedDate.ToSfaShortDateString()
