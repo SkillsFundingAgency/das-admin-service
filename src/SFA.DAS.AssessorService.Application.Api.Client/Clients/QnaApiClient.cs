@@ -33,12 +33,11 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<StartApplicationResponse> SnapshotApplication(Guid applicationId)
+        public async Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/snapshot"))
             {
-                // TODO: Update response type when QnA Types is updated from NuGet
-                return await RequestAndDeserialiseAsync<StartApplicationResponse>(request, $"Could not snapshot the requested application");
+                return await RequestAndDeserialiseAsync<CreateSnapshotResponse>(request, $"Could not snapshot the requested application");
             }
         }
 
