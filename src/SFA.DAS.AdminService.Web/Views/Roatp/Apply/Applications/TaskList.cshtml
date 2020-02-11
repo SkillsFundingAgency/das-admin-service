@@ -34,7 +34,12 @@
                                     @applicationSequence.Description
                                 </a>
                             </h2>
-
+                            @if (!String.IsNullOrWhiteSpace(applicationSequence.Status))
+                            {
+                                <div class="govuk-tag">
+                                    @Html.Raw(applicationSequence.Status)
+                                </div>
+                            }
                             <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                         </li>
                     }

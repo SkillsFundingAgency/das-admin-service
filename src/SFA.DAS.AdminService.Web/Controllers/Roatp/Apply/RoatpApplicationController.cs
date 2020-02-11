@@ -150,7 +150,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sectionVm = new RoatpSectionViewModel(application, organisation, section, applySection);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.GatewayAssessed, ApplicationStatus.Resubmitted };
-            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
+            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted, ApplicationSequenceStatus.InProgress };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {             
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
@@ -197,7 +197,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, _contextAccessor.HttpContext.User.UserDisplayName());
-            return RedirectToAction("Application", new { applicationId });
+            return RedirectToAction("Sequence", new { applicationId, sequenceNo });
         }
 
         [HttpGet("/Roatp/Applications/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}")]
