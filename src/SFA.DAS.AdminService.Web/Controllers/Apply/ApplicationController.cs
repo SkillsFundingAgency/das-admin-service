@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/{backOrganisationId?}")]
-        public async Task<IActionResult> ActiveSequence(Guid applicationId, string backAction, string backController, string backOrganisationId = null)
+        public async Task<IActionResult> ActiveSequence(Guid applicationId, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -54,13 +54,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                activeApplySequence.Sections, backAction, backController, backOrganisationId);
+                activeApplySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             return View(nameof(Sequence), sequenceVm);
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/{backOrganisationId?}")]
-        public async Task<IActionResult> Sequence(Guid applicationId, string backAction, string backController, int sequenceNo, string backOrganisationId = null)
+        public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                applySequence.Sections, backAction, backController, backOrganisationId);
+                applySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -86,7 +86,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/{backOrganisationId?}")]
-        public async Task<IActionResult> Section(Guid applicationId, string backAction, string backController, int sequenceNo, int sectionNo, string backOrganisationId = null)
+        public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, int sectionNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -97,7 +97,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
-            var sectionVm = new SectionViewModel(application, organisation, section, applySection, backAction, backController, backOrganisationId);
+            var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/{backOrganisationId?}")]
-        public async Task<IActionResult> EvaluateSection(Guid applicationId, string backAction, string backController, int sequenceNo, int sectionNo, bool? isSectionComplete, string backOrganisationId)
+        public async Task<IActionResult> EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool? isSectionComplete, BackViewModel backViewModel)
         {
             var errorMessages = new Dictionary<string, string>();
 
@@ -141,17 +141,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
 
-                var sectionVm = new SectionViewModel(application, organisation, section, applySection, backAction, backController, backOrganisationId);
+                var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
                 return View(nameof(Section), sectionVm);
             }
 
             await _applyApiClient.EvaluateSection(applicationId, sequenceNo, sectionNo, isSectionComplete.Value, _contextAccessor.HttpContext.User.UserDisplayName());
-            return RedirectToAction(nameof(ActiveSequence), new { applicationId, backAction, backController, backOrganisationId });
+            return RedirectToAction(nameof(ActiveSequence), new { applicationId, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId });
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{backOrganisationId?}")]
-        public async Task<IActionResult> Page(Guid applicationId, string backAction, string backController, int sequenceNo, int sectionNo, string pageId, string backOrganisationId)
+        public async Task<IActionResult> Page(Guid applicationId, int sequenceNo, int sectionNo, string pageId, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
 
@@ -167,7 +167,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 page = null;
             }
 
-            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page, backAction, backController, backOrganisationId);
+            var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -182,7 +182,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{backOrganisationId?}")]
-        public async Task<IActionResult> Feedback(Guid applicationId, string backAction, string backController, int sequenceNo, int sectionNo, string pageId, string feedbackMessage, string backOrganisationId)
+        public async Task<IActionResult> Feedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackMessage, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
 
@@ -203,7 +203,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 }
 
                 var page = await _qnaApiClient.GetPage(application.ApplicationId, section.Id, pageId);
-                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page, backAction, backController, backOrganisationId);
+                var pageVm = new PageViewModel(applicationId, sequenceNo, sectionNo, pageId, section, page, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
                 return View(nameof(Page), pageVm);
             }
 
@@ -211,11 +211,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
            await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
 
-           return RedirectToAction(nameof(Section), new { applicationId, backAction, backController, sequenceNo, sectionNo, backOrganisationId });
+           return RedirectToAction(nameof(Section), new { applicationId, backViewModel.BackAction, backViewModel.BackController, sequenceNo, sectionNo, backViewModel.BackOrganisationId });
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}/{backOrganisationId?}")]
-        public async Task<IActionResult> DeleteFeedback(Guid applicationId, string backAction, string backController, int sequenceNo, int sectionNo, string pageId, string feedbackId, string backOrganisationId)
+        public async Task<IActionResult> DeleteFeedback(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string feedbackId, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
 
@@ -226,11 +226,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             else
                 _logger.LogError($"Feedback Id is null or empty - {feedbackId}");
 
-            return RedirectToAction(nameof(Page), new { applicationId, backAction, backController, sequenceNo, sectionNo, pageId, backOrganisationId });
+            return RedirectToAction(nameof(Page), new { applicationId, backViewModel.BackAction, backViewModel.BackController, sequenceNo, sectionNo, pageId, backViewModel.BackOrganisationId });
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Assessment/{backOrganisationId?}")]
-        public async Task<IActionResult> Assessment(Guid applicationId, string backAction, string backController, int sequenceNo, string backOrganisationId)
+        public async Task<IActionResult> Assessment(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
@@ -245,12 +245,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
 
-            var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections, backAction, backController, backOrganisationId);
+            var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
             return View(nameof(Assessment), viewModel);
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId?}")]
-        public async Task<IActionResult> Return(Guid applicationId, string backAction, string backController, int sequenceNo, string returnType, string backOrganisationId)
+        public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
@@ -279,7 +279,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
                     var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
 
-                    var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections, backAction, backController, backOrganisationId);
+                    var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
                     return View(nameof(Assessment), viewModel);
                 }
             }
@@ -326,7 +326,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
             }
 
-            var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages, backAction, backController, backOrganisationId);
+            var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
             return View("Returned", returnedViewModel);
         }
 

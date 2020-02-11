@@ -37,14 +37,7 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
         public bool ShowForRoles(string roles)
         {
             string[] roleArray = roles.Split(',');
-
-            Dictionary<string, bool> roleValidation = roleArray.ToDictionary(role => role, role => _contextAccessor.HttpContext.User.IsInRole(role));
-            if (roleValidation.All(kvp => kvp.Value == false))
-            {
-                return false;
-            }
-
-            return true;
+            return roleArray.Any(role => _contextAccessor.HttpContext.User.IsInRole(role));
         }
     }
 }

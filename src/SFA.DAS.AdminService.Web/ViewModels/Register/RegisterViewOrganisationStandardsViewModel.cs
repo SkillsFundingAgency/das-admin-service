@@ -20,12 +20,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
 
         public OrganisationStandardsApplicationsViewModel FeedbackApplications { get; set; }
 
-        public bool HasStandards
-        {
-            get
-            {
-                return OrganisationStandards.HasStandards || InProgressApplications.HasStandards || FeedbackApplications.HasStandards;
-            }
-        }
+        public bool HasStandards => OrganisationStandards.HasStandards || InProgressApplications.HasStandards || FeedbackApplications.HasStandards;
     }
 }

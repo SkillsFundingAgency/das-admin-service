@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 {
-    public class Given_I_request_view_organiation_page_after_change_per_page_organsation_standards : RegisterBase
+    public class Given_I_request_view_organisation_page_after_change_per_page_organsation_standards : RegisterBase
     {
         private RegisterViewAndEditOrganisationViewModel _viewModelResponse;
 
