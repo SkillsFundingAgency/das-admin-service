@@ -15,7 +15,7 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation--current-page">
-                <a asp-action="MidpointApplications" asp-controller="RoatpApplication">Applications</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpApplication">Applications</a>
             </li>
             @*<li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpApplication">Rejected applications</a>
@@ -115,7 +115,7 @@
 
                     @if (Model.Applications.HasPreviousPage)
                     {
-                        <a asp-action="MidpointApplications"
+                        <a asp-action="OpenApplications"
                         asp-controller="RoatpApplication"
                         asp-route-page="@(Model.Applications.PageIndex - 1)"
                         class="govuk-link previous">
@@ -127,7 +127,7 @@
 
                     @if (Model.Applications.HasNextPage)
                     {
-                        <a asp-action="MidpointApplications"
+                        <a asp-action="OpenApplications"
                         asp-controller="RoatpApplication"
                         asp-route-page="@(Model.Applications.PageIndex + 1)"
                         class="govuk-link next">

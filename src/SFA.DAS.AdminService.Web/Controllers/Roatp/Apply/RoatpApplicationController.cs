@@ -45,15 +45,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _logger = logger;
         }
 
-        [HttpGet("/Roatp/Applications/Midpoint")]
-        public async Task<IActionResult> MidpointApplications(int page = 1)
+        [HttpGet("/Roatp/Applications/Open")]
+        public async Task<IActionResult> OpenApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetOpenApplications();
             var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
             var viewmodel = new RoatpDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Roatp/Apply/Applications/MidpointApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Applications/OpenApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Roatp/Applications/Rejected")]
@@ -158,7 +158,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, _contextAccessor.HttpContext.User.UserDisplayName());
                 }
 
-                return View("~/Views/Roatp//Applications/Section.cshtml", sectionVm);
+                return View("~/Views/Roatp/Apply/Applications/Section.cshtml", sectionVm);
             }
             else
             {
@@ -288,7 +288,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || 
                 activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
-                return RedirectToAction(nameof(MidpointApplications));
+                return RedirectToAction(nameof(OpenApplications));
             }
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);

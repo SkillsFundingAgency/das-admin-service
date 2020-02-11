@@ -5,7 +5,8 @@
 
 @{
     ViewBag.Title = "Application overview";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
+    var BackAction = "OpenApplications";
+
 }
 
 <a class="govuk-back-link" asp-controller="RoatpApplication" asp-action="@BackAction">Back</a>
