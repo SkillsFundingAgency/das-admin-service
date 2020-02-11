@@ -34,9 +34,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             
         }
 
-        public async Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
+        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool sectionCompleted, string reviewer)
         {
-            
+            await Post($"/Application/{applicationId}/AssessorEvaluateSection", new { applicationId, sequenceId, sectionId, sectionCompleted, reviewer });
         }
 
         public async Task<RoatpApplicationResponse> GetApplication(Guid applicationId)
@@ -84,9 +84,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post<FinancialReviewDetails>($"/Financial/{applicationId}/Grade", financialReviewDetails);
         }
 
-        public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)
+        public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
         {
-            
+            await Post($"/Application/{applicationId}/StartAssessorSectionReview", 
+                new { applicationId, sequenceId, sectionId, reviewer });
         }
 
         public async Task StartFinancialReview(Guid applicationId, string reviewer)

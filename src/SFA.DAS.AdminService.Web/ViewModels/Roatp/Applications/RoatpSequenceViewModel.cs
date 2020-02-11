@@ -53,7 +53,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         {
             var requiredSectionsNos = applySections.Where(s => !s.NotRequired).Select(s => s.SectionNo).ToList();
 
-            return sections.Where(s => requiredSectionsNos.Contains(s.SectionNo)).ToList();
+            var requiredSections = sections.Where(s => requiredSectionsNos.Contains(s.SectionNo)).ToList();
+            foreach(var requiredSection in requiredSections)
+            {
+                var applySection = applySections.FirstOrDefault(s => s.SectionNo == requiredSection.SectionNo);
+                requiredSection.Status = applySection.Status;
+            }
+
+            return requiredSections;
         }
         
         public string FinancialReviewStatus { get; set; }
