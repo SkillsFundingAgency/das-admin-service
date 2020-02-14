@@ -46,5 +46,24 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             return applicationColumnName;
         }
+
+        public string StatusColumnValue(string applicationStatus, string applicationReviewStatus)
+        {
+            string statusColumnValue = applicationStatus;
+
+            if(applicationReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                if(applicationStatus == ApplicationStatus.FeedbackAdded)
+                {
+                    statusColumnValue = "Feedback sent";
+                }
+                else if(applicationStatus == ApplicationStatus.Resubmitted)
+                {
+                    statusColumnValue = "Feedback received";
+                }
+            }
+
+            return statusColumnValue;
+        }
     }
 }

@@ -83,7 +83,7 @@
             <td class="govuk-table__cell govuk-table__cell--numeric">@application.FinancialStatus</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
-                <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
             }
             <td class="govuk-table__cell govuk-table__cell--numeric">@application.DateValueForReviewStatus()</td>
         </tr>
