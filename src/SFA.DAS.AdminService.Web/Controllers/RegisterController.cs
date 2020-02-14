@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IHostingEnvironment _env;
 
         private const int DefaultPageIndex = 1;
-        private const int DefaultStandardsPerPage = 2;
+        private const int DefaultStandardsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
         public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)

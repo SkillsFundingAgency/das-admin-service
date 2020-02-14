@@ -72,14 +72,14 @@
         @:<div class="govuk-grid-row">
         }
         @{
-            var organsiationApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
-            if (roleTagHelper.ShowForRoles(organsiationApplicationsRoles)) { sectionsShown++; }
+            var organisationApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(organisationApplicationsRoles)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@organsiationApplicationsRoles" id="organsiation-applications">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@organisationApplicationsRoles" id="organisation-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                Organsiation applications
+                Organisation applications
             </h2>
-            <p class="govuk-body">Review and approve new organsiation applications, check on progress, send and receive feedback.</p>
+            <p class="govuk-body">Review and approve new organisation applications, check on progress, send and receive feedback.</p>
             <ul class="govuk-list">
                 <li>
                     <a class="govuk-link" asp-controller="OrganisationApplication" asp-action="OrganisationApplications" asp-fragment="new">New (@Model.OrganisationApplicationsNew)</a>
@@ -137,7 +137,7 @@
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
                 Financial health assessment
             </h2>
-            <p class="govuk-body">Review financial health of an organsation.</p>
+            <p class="govuk-body">Review financial health of an organisation.</p>
             <ul class="govuk-list">
                 <li>
                     <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">New</a>
