@@ -23,20 +23,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
     public class StandardApplicationController : Controller
     {
         private readonly IControllerSession _controllerSession;
-        private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly ILogger<StandardApplicationController> _logger;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultApplicationsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
-        public StandardApplicationController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, ILogger<StandardApplicationController> logger)
+        public StandardApplicationController(IControllerSession controllerSession, IApplicationApiClient applyApiClient, ILogger<StandardApplicationController> logger)
         {
-            _apiClient = apiClient;
             _controllerSession = controllerSession;
-            _qnaApiClient = qnaApiClient;
             _applyApiClient = applyApiClient;
             _logger = logger;
         }
@@ -54,11 +50,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpGet]
         public IActionResult Index()
         {
-            // reset only the page indexes; retain the sort column, direction and applications per page settings
-            _controllerSession.StandardApplication_NewApplications.PageIndex = 1;
-            _controllerSession.StandardApplication_InProgressApplictions.PageIndex = 1;
-            _controllerSession.StandardApplication_FeedbackApplications.PageIndex = 1;
-            _controllerSession.StandardApplication_ApprovedApplications.PageIndex = 1;
+            // do not reset items per page settings
+            ResetPageIndex();
+            ResetSortColumn();
+            ResetSortDirection();
 
             return RedirectToAction(nameof(StandardApplications));
         }
@@ -375,25 +370,42 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private void SetDefaultSession()
         {
             _controllerSession.StandardApplication_SessionValid = true;
+            
+            ResetPageIndex();
+            ResetItemsPerPage();
+            ResetSortColumn();
+            ResetSortDirection();
+        }
 
+        private void ResetPageIndex()
+        {
             _controllerSession.StandardApplication_NewApplications.PageIndex = DefaultPageIndex;
-            _controllerSession.StandardApplication_NewApplications.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.StandardApplication_NewApplications.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
-            _controllerSession.StandardApplication_NewApplications.SortDirection = SortOrder.Desc;
-
             _controllerSession.StandardApplication_InProgressApplictions.PageIndex = DefaultPageIndex;
-            _controllerSession.StandardApplication_InProgressApplictions.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.StandardApplication_InProgressApplictions.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
-            _controllerSession.StandardApplication_InProgressApplictions.SortDirection = SortOrder.Desc;
-
             _controllerSession.StandardApplication_FeedbackApplications.PageIndex = DefaultPageIndex;
-            _controllerSession.StandardApplication_FeedbackApplications.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.StandardApplication_FeedbackApplications.SortColumn = StandardApplicationsSortColumn.FeedbackAddedDate;
-            _controllerSession.StandardApplication_FeedbackApplications.SortDirection = SortOrder.Desc;
-
             _controllerSession.StandardApplication_ApprovedApplications.PageIndex = DefaultPageIndex;
+        }
+
+        private void ResetItemsPerPage()
+        {
+            _controllerSession.StandardApplication_NewApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_InProgressApplictions.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.StandardApplication_FeedbackApplications.ItemsPerPage = DefaultApplicationsPerPage;
             _controllerSession.StandardApplication_ApprovedApplications.ItemsPerPage = DefaultApplicationsPerPage;
+        }
+
+        private void ResetSortColumn()
+        {
+            _controllerSession.StandardApplication_NewApplications.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
+            _controllerSession.StandardApplication_InProgressApplictions.SortColumn = StandardApplicationsSortColumn.SubmittedDate;
+            _controllerSession.StandardApplication_FeedbackApplications.SortColumn = StandardApplicationsSortColumn.FeedbackAddedDate;
             _controllerSession.StandardApplication_ApprovedApplications.SortColumn = StandardApplicationsSortColumn.ClosedDate;
+        }
+
+        private void ResetSortDirection()
+        {
+            _controllerSession.StandardApplication_NewApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_InProgressApplictions.SortDirection = SortOrder.Desc;
+            _controllerSession.StandardApplication_FeedbackApplications.SortDirection = SortOrder.Desc;
             _controllerSession.StandardApplication_ApprovedApplications.SortDirection = SortOrder.Desc;
         }
     }
