@@ -95,7 +95,7 @@
     line-height: 40px;
 }
 
-.sorted-ascending::after {
+.sorted-descending::after {
     content: "";
     margin-left: 3px;
     display: inline-block;
@@ -109,7 +109,7 @@
     border-top-color: inherit;
 }
 
-.sorted-descending::after {
+.sorted-ascending::after {
     content: "";
     margin-left: 3px;
     display: inline-block;
