@@ -36,6 +36,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 
         Task StartAssessorReview(Guid applicationId, string reviewer);
+
+        Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
     }
-    
 }

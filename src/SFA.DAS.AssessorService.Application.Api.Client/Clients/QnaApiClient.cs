@@ -33,6 +33,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/snapshot"))
+            {
+                return await RequestAndDeserialiseAsync<CreateSnapshotResponse>(request, $"Could not snapshot the requested application");
+            }
+        }
+
         public async Task<Dictionary<string, object>> GetApplicationData(Guid applicationId)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
@@ -56,6 +64,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 return await RequestAndDeserialiseAsync<List<Sequence>>(request,
                     $"Could not find all sequences");
+            }
+        }
+
+        public async Task<List<Section>> GetAllApplicationSections(Guid applicationId)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections"))
+            {
+                return await RequestAndDeserialiseAsync<List<Section>>(request,
+                    $"Could not find all sections");
             }
         }
 

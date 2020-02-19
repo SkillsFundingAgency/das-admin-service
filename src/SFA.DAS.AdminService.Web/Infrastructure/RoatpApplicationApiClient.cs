@@ -137,6 +137,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post($"/Application/{applicationId}/StartAssessorReview", new { reviewer });
         }
 
+        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
+        {
+            return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -156,6 +161,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
+        }
+
+        private async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
+            }
         }
 
         private async Task<U> Put<T, U>(string uri, T model)
