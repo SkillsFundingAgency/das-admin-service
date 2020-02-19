@@ -82,9 +82,10 @@
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">
                 <a class="govuk-link"
-                   asp-action="ActiveSequence"
+                   asp-action="Sequence"
                    asp-controller="Application"
                    asp-route-applicationId="@application.ApplicationId"
+                   asp-route-sequenceNo="@application.SequenceNo"
                    asp-route-backAction="StandardApplications"
                    asp-route-backController="StandardApplication">
                     @application.OrganisationName

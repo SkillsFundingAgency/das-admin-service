@@ -26,9 +26,10 @@
                     <td class="govuk-table__cell govuk-table__cell--numeric">@standardApplication.StandardReference</td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link"
-                           asp-action="ActiveSequence"
+                           asp-action="Sequence"
                            asp-controller="Application"
                            asp-route-applicationId="@standardApplication.ApplicationId"
+                           asp-route-sequenceNo="@standardApplication.SequenceNo"
                            asp-route-backAction="ViewOrganisation"
                            asp-route-backController="Register"
                            asp-route-backOrganisationId="@Model.OrganisationId">
