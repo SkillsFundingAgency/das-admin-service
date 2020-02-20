@@ -90,6 +90,105 @@
         </div>
     </div>
 
+
+    <div class="govuk-grid-column-two-thirds">
+
+        <ol class="app-task-list">
+            <li>
+                <h2 class="app-task-list__section">
+                    <span class="app-task-list__section-number">1. </span> Legal checks
+                </h2>
+                <ul class="app-task-list__items">
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/initial/legalname">Legal checks</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/highrisk/organisation">Organisation high risk</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/highrisk/people">People in control high risk</a>
+                        </span>
+
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <h2 class="app-task-list__section">
+                    <span class="app-task-list__section-number">2. </span> Register checks
+                </h2>
+                <ul class="app-task-list__items">
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/register/roatp">RoATP</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/register/epao">Register of end-point assessment organisations</a>
+                        </span>
+
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <h2 class="app-task-list__section">
+                    <span class="app-task-list__section-number">3. </span> Organisation checks
+                </h2>
+                <ul class="app-task-list__items">
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <!--a href="company/organisation/info/parent-name">Organisation information</a-->
+                            <a href="company/organisation/info/ico">Organisation information</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/organisation/type/type">Organisation type</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/organisation/experience/ofs">Experience and accreditation</a>
+                        </span>
+
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <h2 class="app-task-list__section">
+                    <span class="app-task-list__section-number">4. </span> Criminal and compliance checks
+                </h2>
+                <ul class="app-task-list__items">
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/criminal/organisation">The organisation</a>
+                        </span>
+
+                    </li>
+                    <li class="app-task-list__item">
+                        <span class="app-task-list__task-name">
+                            <a href="company/criminal/peopleincontrol">People in control</a>
+                        </span>
+
+                    </li>
+                </ul>
+            </li>
+
+
+        </ol>
+
+    </div>
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form class="js-disable-on-submit" asp-action="EvaluateGateway" asp-controller="RoatpGateway">
@@ -115,11 +214,11 @@
                                 </label>
                             </div>
                             @*<div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_no" type="radio" value="False" sfa-validation-for="IsGatewayApproved" />
-                                <label class="govuk-label govuk-radios__label" for="options_no">
-                                    Decline
-                                </label>
-                            </div>*@
+                                    <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_no" type="radio" value="False" sfa-validation-for="IsGatewayApproved" />
+                                    <label class="govuk-label govuk-radios__label" for="options_no">
+                                        Decline
+                                    </label>
+                                </div>*@
                         </div>
                     </fieldset>
                 </div>
