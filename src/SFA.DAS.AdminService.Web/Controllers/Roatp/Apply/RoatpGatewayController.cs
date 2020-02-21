@@ -145,6 +145,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     {
                         ReferenceNumber = applicationFromRoatp.ApplyData.ApplyDetails.ReferenceNumber,
                         ProviderRoute = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRoute,
+                        ProviderRouteName = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRouteName,
                         UKPRN = applicationFromRoatp.ApplyData.ApplyDetails.UKPRN,
                         OrganisationName = applicationFromRoatp.ApplyData.ApplyDetails.OrganisationName,
                         ApplicationSubmittedOn = applicationFromRoatp.ApplyData.ApplyDetails.ApplicationSubmittedOn

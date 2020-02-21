@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         {
             ApplicationId = application.ApplicationId;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
-            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
             OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
             SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
             Ukprn = application.ApplyData.ApplyDetails.UKPRN;

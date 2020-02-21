@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
             Ukprn = application.ApplyData.ApplyDetails.UKPRN;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
-            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
             SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
         }
 

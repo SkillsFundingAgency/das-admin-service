@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
             if (application.ApplyData?.ApplyDetails != null)
             {
                 ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
-                ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+                ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
                 Ukprn = application.ApplyData.ApplyDetails.UKPRN;
                 OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
                 SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
