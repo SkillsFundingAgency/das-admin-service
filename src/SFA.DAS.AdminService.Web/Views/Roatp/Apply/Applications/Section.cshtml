@@ -116,6 +116,10 @@
                                             </p>
                                         }
                                     }
+                                    else if (question != null && question.Input.Type == "TabularData")
+                                    {
+                                        await Html.RenderPartialAsync("~/Views/Roatp/Apply/Applications/_TabularData.cshtml", answer.Value);
+                                    }
                                     else
                                     {
                                         if (@answer.Value != ",,")
