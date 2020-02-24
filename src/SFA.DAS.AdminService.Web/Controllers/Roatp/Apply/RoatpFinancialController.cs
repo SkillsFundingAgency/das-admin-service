@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +5,6 @@ using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.QnA.Api.Types;
@@ -16,8 +14,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using FinancialEvidence = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialEvidence;
-using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -75,10 +71,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Roatp/Financial/{Id}")]
-        public async Task<IActionResult> ViewApplication(Guid Id)
+        [HttpGet("/Roatp/Financial/{applicationId}")]
+        public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
@@ -86,26 +82,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
 
-            var vm = await CreateFinancialApplicationViewModel(application);
+            var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
         }
 
-        [HttpGet("/Roatp/Financial/{Id}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid Id)
+        [HttpGet("/Roatp/Financial/{applicationId}/Graded")]
+        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            var vm = await CreateFinancialApplicationViewModel(application);
+            var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
             return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
-        [HttpGet("/Roatp/Financial/Download/Application/{ApplicationId}/Section/{sectionId}")]
+        [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
             var financialSection = await _qnaApiClient.GetSection(applicationId, sectionId);
@@ -155,7 +151,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Financial")]
-        public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
+        public async Task<IActionResult> Grade(RoatpFinancialApplicationViewModel vm)
         {
             var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             if (application is null)
@@ -169,26 +165,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 {
                     GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
-                    SelectedGrade = vm.Grade.SelectedGrade,
+                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
                     FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
-                    Comments = vm.Grade.InadequateMoreInformation
+                    Comments = vm.FinancialReviewDetails.Comments
                 };
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
-                return RedirectToAction(nameof(Evaluated), new { vm.Id });
+                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
             }
             else
             {
-                var newvm = await CreateFinancialApplicationViewModel(application);
+                var newvm = await CreateRoatpFinancialApplicationViewModel(application);
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
         }
 
-        [HttpGet("/Roatp/Financial/{Id}/Evaluated")]
-        public async Task<IActionResult> Evaluated(Guid Id)
+        [HttpGet("/Roatp/Financial/{applicationId}/Evaluated")]
+        public async Task<IActionResult> Evaluated(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(Id);
+            var application = await _applyApiClient.GetApplication(applicationId);
             if (application?.FinancialGrade is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
@@ -197,7 +193,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
-        private async Task<RoatpFinancialApplicationViewModel> CreateFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)
+        private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)
         {
             if (applicationFromAssessor is null)
             {
@@ -258,14 +254,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return listOfEvidence;
         }
 
-        private static DateTime? GetFinancialDueDate(FinancialApplicationViewModel vm)
+        private static DateTime? GetFinancialDueDate(RoatpFinancialApplicationViewModel vm)
         {
             if(vm is null)
             {
                 return null;
             }
 
-            switch (vm?.Grade?.SelectedGrade)
+            switch (vm?.FinancialReviewDetails?.SelectedGrade)
             {
                 case FinancialApplicationSelectedGrade.Outstanding:
                     return vm.OutstandingFinancialDueDate?.ToDateTime();
