@@ -17,13 +17,17 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                     return;
                 }
 
-                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                if (string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
-                    context.AddFailure("FinancialReviewDetails.InadequateMoreInformation", "Enter why the application was graded inadequate");
+                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select a grade for this application");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                {
+                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application was graded inadequate");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
                 {
-                    context.AddFailure("FinancialReviewDetails.ClarificationMoreInformation", "Enter why the application requires clarification");
+                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application requires clarification");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
@@ -41,10 +45,6 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                             ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
                             break;
                     }
-                }
-                else if (string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
-                {
-                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select a grade for this application");
                 }
             });
         }

@@ -89,7 +89,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="Grade" asp-controller="RoatpFinancial">
+            <form class="js-disable-on-submit" asp-action="GradeApplication" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
 
@@ -223,8 +223,8 @@
 
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="clarification-conditional">
                             <div class="govuk-form-group">
-                                <label class="govuk-label" for="FinancialReviewDetails.ClarificationMoreInformation">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.ClarificationMoreInformation" id="FinancialReviewDetails.ClarificationMoreInformation" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
+                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Why is the application inadequate?</label>
+                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
                             </div>
                         </div>
 
@@ -235,8 +235,8 @@
 
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
-                                <label class="govuk-label" for="FinancialReviewDetails.InadequateMoreInformation">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.InadequateMoreInformation" id="FinancialReviewDetails.InadequateMoreInformation" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
+                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Why is the application inadequate?</label>
+                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
                             </div>
                         </div>
 

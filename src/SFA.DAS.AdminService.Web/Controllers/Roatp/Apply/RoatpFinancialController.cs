@@ -87,6 +87,37 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
         }
 
+        [HttpPost("/Roatp/Financial/{applicationId}")]
+        public async Task<IActionResult> GradeApplication(Guid applicationId, RoatpFinancialApplicationViewModel vm)
+        {
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(OpenApplications));
+            }
+
+            if (ModelState.IsValid)
+            {
+                var financialReviewDetails = new FinancialReviewDetails
+                {
+                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                    GradedDateTime = DateTime.UtcNow,
+                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
+                    FinancialDueDate = GetFinancialDueDate(vm),
+                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
+                    Comments = vm.FinancialReviewDetails.Comments
+                };
+
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
+            }
+            else
+            {
+                var newvm = await CreateRoatpFinancialApplicationViewModel(application);
+                return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
+            }
+        }
+
         [HttpGet("/Roatp/Financial/{applicationId}/Graded")]
         public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
         {
@@ -148,37 +179,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return new NotFoundResult();
-        }
-
-        [HttpPost("/Roatp/Financial")]
-        public async Task<IActionResult> Grade(RoatpFinancialApplicationViewModel vm)
-        {
-            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
-            if (application is null)
-            {
-                return RedirectToAction(nameof(OpenApplications));
-            }
-
-            if (ModelState.IsValid)
-            {
-                var financialReviewDetails = new FinancialReviewDetails
-                {
-                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
-                    GradedDateTime = DateTime.UtcNow,
-                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
-                    FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
-                    Comments = vm.FinancialReviewDetails.Comments
-                };
-
-                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
-                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
-            }
-            else
-            {
-                var newvm = await CreateRoatpFinancialApplicationViewModel(application);
-                return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
-            }
         }
 
         [HttpGet("/Roatp/Financial/{applicationId}/Evaluated")]
