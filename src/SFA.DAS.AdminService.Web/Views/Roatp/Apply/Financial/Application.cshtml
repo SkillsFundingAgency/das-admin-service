@@ -35,22 +35,26 @@
 
         </div>
     </div>
+
     @foreach (var section in Model.Sections)
     {
-        @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
-        {
-            <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
-        }
-        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
-        {
-            <p class="govuk-body govuk-!-margin-bottom-8">
-                <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
-            </p>
-        }
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
+                {
+                    <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
+                }
 
-        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
-        {
-            <div class="govuk-grid-row">
+                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+                    </p>
+                }
+            </div>
+
+            @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+            {
                 <div class="govuk-grid-column-full">
                     <table class="govuk-table govuk-table--s">
                         <thead class="govuk-table__head">
@@ -77,8 +81,8 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        }
+            }
+        </div>
     }
 
 
