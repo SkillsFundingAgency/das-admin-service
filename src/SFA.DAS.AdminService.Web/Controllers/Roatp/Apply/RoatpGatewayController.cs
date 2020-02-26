@@ -10,6 +10,8 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
+using SFA.DAS.AdminService.Web.Services;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -20,12 +22,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IGatewayCompositionService _gatewayCompositionService;
 
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IGatewayCompositionService gatewayCompositionService)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
+            _gatewayCompositionService = gatewayCompositionService;
             _qnaApiClient = qnaApiClient;
         }
 
@@ -128,6 +132,80 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
+        }
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
+        public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
+        {
+            //var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+            //if (application is null)
+            //{
+            //    return RedirectToAction(nameof(NewApplications));
+            //}
+
+            //if (!isGatewayApproved.HasValue)
+            //{
+            //    ModelState.AddModelError("IsGatewayApproved", "Please evaluate Gateway");
+            //}
+
+            //if (ModelState.IsValid)
+            //{
+            //    await _applyApiClient.EvaluateGateway(vm.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+            //    return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
+            //}
+            //else
+            //{
+            //    var newvm = CreateGatewayApplicationViewModel(application);
+            //    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
+            //}
+
+            var model = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
+
+            //if (model.NextPageId == "shutter")
+            //{
+            //    //goto to shutter page
+            //}
+
+            //if (model.NextPageId == "tasklist")
+            //{
+            //    //goto to task list
+            //}
+
+
+
+
+            // if it gets here, save it....
+
+            model.Value = vm.Value;
+            if (vm.Value == "Pass")
+            {
+                  model.OptionPassText = vm.OptionPassText;
+            }
+
+            if (vm.Value == "Fail")
+            {
+                model.OptionFailText = vm.OptionFailText;
+            }
+
+            if (vm.Value == "In Progress")
+            {
+                model.OptionInProgressText = vm.OptionInProgressText;
+            }
+
+            //return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+            //return await GatewayPage(vm.ApplicationId, model.NextPageId);
+            return RedirectToAction("GatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
+
+
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
+        public async Task<IActionResult> GatewayPage(Guid applicationId, string pageId)
+        {
+
+            var model = _gatewayCompositionService.GetViewModelForPage(applicationId, pageId);
+
+             
+            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
 
         private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)

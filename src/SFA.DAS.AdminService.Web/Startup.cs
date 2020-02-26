@@ -32,6 +32,7 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
+using SFA.DAS.AdminService.Web.Configuration;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -107,7 +108,8 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-            
+            services.Configure<List<GatewayPageConfiguration>>(Configuration.GetSection("GatewayPages"));
+
             ConfigureDependencyInjection(services);           
         }
 
@@ -170,7 +172,8 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            
+            services.AddTransient<IGatewayCompositionService, GatewayCompositionService>();
+
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
