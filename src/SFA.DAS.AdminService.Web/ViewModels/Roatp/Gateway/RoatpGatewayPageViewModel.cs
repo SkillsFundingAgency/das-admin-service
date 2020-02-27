@@ -41,8 +41,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
     {
         public string Id { get; set; }
         public List<string> Columns { get; set; }
-        public string DetailsHeader { get; set; }
-        public string DetailsBody { get; set; }
+        public string DetailsLabel { get; set; }
+        public string DetailsValue { get; set; }
     }
 
 

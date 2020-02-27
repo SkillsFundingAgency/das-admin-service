@@ -24,149 +24,80 @@ namespace SFA.DAS.AdminService.Web.Services
             model.PageId = pageId;
             model.NextPageId = "shutter"; //shutter page id
             model.TextListing = new TabularData();
+            model.Tables = new List<TabularData>();
             model.SummaryList = new TabularData();
+            
             model.OptionPass = new Option {Label = "Pass", Value = "Pass", Heading = "Add comments (optional)"};
             model.OptionFail = new Option {Label = "Fail", Value = "Fail", Heading = "Add comments"};
             model.OptionInProgress = new Option
                 {Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)"};
 
+          
+            model = BuildPageView(pageId, model);
+            
+            return model;
+        }
 
-            if (pageId == "110")
+        private RoatpGatewayPageViewModel BuildPageView(string pageId, RoatpGatewayPageViewModel model)
+        {
+            var gatewayPageConfiguration = GetConfigurationForPageId(pageId);
+            if (gatewayPageConfiguration== null) return new RoatpGatewayPageViewModel();
+
+            model.NextPageId = gatewayPageConfiguration.NextPageId;
+            model.Caption = gatewayPageConfiguration.Caption;
+            model.Heading = gatewayPageConfiguration.Heading;
+            var textListingConfiguration = gatewayPageConfiguration.TextListing;
+            var textListing = new TabularData {DataRows = RollupDataRows(textListingConfiguration)};
+            var summaryListConfiguration = gatewayPageConfiguration.SummaryList;
+            var summaryList = new TabularData { DataRows = RollupDataRows(summaryListConfiguration) };
+
+            var tableListings = new List<TabularData>();
+            var tablesListingConfiguration = gatewayPageConfiguration.Tables;
+
+            if (tablesListingConfiguration != null)
             {
-
-                var gatewayPageConfiguration = GetConfigurationForPageId(pageId);
-                model.NextPageId = gatewayPageConfiguration.NextPageId;
-                model.Caption = gatewayPageConfiguration.Caption;
-                model.Heading = gatewayPageConfiguration.Heading;
-
-                var textListing = new TabularData();
-                //{
-                //    DataRows = new List<TabularDataRow>
-                //    {
-                //        new TabularDataRow
-                //        {
-                //            Columns = new List<string> {"UKPRN: ", "12345678"}
-
-                //        },
-                //        new TabularDataRow
-                //        {
-                //            Columns = new List<string> {"Application submitted on: ", "17 Oct 2019"}
-
-                //        },
-                //        new TabularDataRow
-                //        {
-                //            Columns = new List<string> {"Sources checked on: ", "27 Nov 2019"}
-
-                //        }
-                //    }
-                //};
-
-                var textListings = gatewayPageConfiguration.TextListings;
-
-                var dataRowsTextListing = new List<TabularDataRow>();
-
-                foreach (var listing in textListings)
+                foreach (var table in tablesListingConfiguration)
                 {
-                    var columns = new List<string>();
-                    foreach (var element in listing.Elements)
+                    var tableToAdd = new TabularData
                     {
-                        if (element.Source == "Text")
-                        {
-                            columns.Add(element.Value);
-                        }
-                        else
-                        {
-                            // needs work
-                            columns.Add("Source: " + element.Source + ": " + element.Key);
-                        }
-                    }
-
-                    dataRowsTextListing.Add(new TabularDataRow {Columns = columns});
-
+                        HeadingTitles = table.HeadingTitles, DataRows = RollupDataRows(table.DataRows)
+                    };
+                    tableListings.Add(tableToAdd);
                 }
-
-                textListing.DataRows = dataRowsTextListing;
-
-
-                var tableListing = new TabularData {HeadingTitles = new List<string> {"Source", "Legal Name"}};
-                var dataRows = new List<TabularDataRow>
-                {
-                    new TabularDataRow
-                    {
-                        Id = pageId + "_1",
-                        Columns = new List<string> {"Submitted application data", "ABC TRAINING LIMITED"}
-                    },
-                    new TabularDataRow
-                    {
-                        Id = pageId + "_2",
-                        Columns = new List<string> {"UKRLP data", "ABC TRAINING LIMITED"}
-                    },
-                    new TabularDataRow
-                    {
-                        Id = pageId + "_3",
-                        Columns = new List<string> {"Companies House data", "ABC TRAINING LIMITED"}
-                    }
-                };
-                tableListing.DataRows = dataRows;
-                model.TextListing = textListing;
-                model.Tables = new List<TabularData> {tableListing};
             }
 
-            ;
-
-            if (pageId == "120")
-            {
-                model.NextPageId =
-                    "120"; //== "tasklist"  // once dev starts, this will be next page or tasklist page....
-
-                model.Caption = "Organisation checks";
-                model.Heading = "Organisation status check";
-                var textListing = new TabularData
-                {
-                    DataRows = new List<TabularDataRow>
-                    {
-                        new TabularDataRow
-                        {
-                            Columns = new List<string> {"UKPRN: ", "12345678"}
-
-                        },
-                        new TabularDataRow
-                        {
-                            Columns = new List<string> {"Application submitted on: ", "17 Oct 2019"}
-
-                        },
-                        new TabularDataRow
-                        {
-                            Columns = new List<string> {"Sources checked on: ", "27 Nov 2019"}
-
-                        }
-                    }
-                };
-
-
-
-                var tableListing = new TabularData {HeadingTitles = new List<string> {"Source", "Status"}};
-                var dataRows = new List<TabularDataRow>
-                {
-                    new TabularDataRow
-                    {
-                        Id = pageId + "_1",
-                        Columns = new List<string> {"UKRLP data", "Active"}
-                    },
-                    new TabularDataRow
-                    {
-                        Id = pageId + "_2",
-                        Columns = new List<string> {"Companies House data", "Dissolved"}
-                    }
-                };
-                tableListing.DataRows = dataRows;
-                model.TextListing = textListing;
-                model.Tables = new List<TabularData> {tableListing};
-            }
-
-            ;
+            model.TextListing = textListing;
+            model.Tables = tableListings;
+            model.SummaryList = summaryList;
 
             return model;
+        }
+
+        private List<TabularDataRow> RollupDataRows(List<DataRow> listing)
+        {
+            var dataRows = new List<TabularDataRow>();
+            if (listing == null) return dataRows;
+
+            foreach (var row in listing)
+            {
+                var columns = new List<string>();
+                foreach (var element in row.Elements)
+                {
+                    if (element.Source == "Text")
+                    {
+                        columns.Add(element.Value);
+                    }
+                    else
+                    {
+                        // needs work to use MappingServices
+                        columns.Add("Source: " + element.Source + ": " + element.Key);
+                    }
+                }
+                
+                dataRows.Add(new TabularDataRow {Columns = columns, DetailsValue = "Source: Apply : " + row.DetailsKey, DetailsLabel = row.DetailsLabel});
+            }
+
+            return dataRows;
         }
 
 
