@@ -17,11 +17,13 @@
         }
     }
 }
+
 <a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
             @*@if (!ViewData.ModelState.IsValid)
                 {
                     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -38,186 +40,231 @@
 
             @if (Model.Caption != null)
             {
-                <caption>
+                <span class="govuk-caption-xl">
                     @Model.Caption
-                </caption>
+                </span>
             }
             <h1 class="govuk-heading-xl">@Model.Heading</h1>
-            @if (Model?.TextListing?.DataRows!=null)
-           {
-                <div>
+
+            @if (Model?.TextListing?.DataRows != null)
+            {
+                <div class="govuk-!-margin-bottom-4">
                     @foreach (var row in Model.TextListing.DataRows)
                     {
-                        <div>
+                        <p class="govuk-body govuk-!-margin-bottom-0">
                             @foreach (var column in row.Columns)
                             {
                                 @Html.Raw(column)
                             }
-                        </div>
+                        </p>
                     }
                 </div>
             }
 
-            @if (Model.Tables != null)
-            {
+        </div>
+    </div>
+
+    @if (Model.Tables != null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
                 @foreach (var table in Model.Tables)
                 {
-                    <table class="govuk-table">
+                    <table class="govuk-table govuk-!-margin-bottom-9">
                         <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            @foreach (var heading in table.HeadingTitles)
-                            {
-                                <th class="govuk-table__header" scope="col">@heading</th>
-                            }
-                        </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                        @foreach (var dataRow in table.DataRows)
-                        {
                             <tr class="govuk-table__row">
-
-                                @foreach (var column in dataRow.Columns)
+                                @foreach (var heading in table.HeadingTitles)
                                 {
-                                    <td class="govuk-table__cell">@column</td>
+                                    <th class="govuk-table__header" scope="col">@heading</th>
                                 }
                             </tr>
-                            @if (!string.IsNullOrEmpty(dataRow.DetailsLabel) && !string.IsNullOrEmpty(dataRow.DetailsValue))
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var dataRow in table.DataRows)
                             {
                                 <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell" colspan="2">
-                                        <details class="govuk-details govuk-!-margin-bottom-0" role="group">
-                                            <summary class="govuk-details__summary" role="button" aria-controls="" aria-expanded="false">
-                                                <span class="govuk-details__summary-text">
-                                                    @dataRow.DetailsLabel
-                                                </span>
-                                            </summary>
-                                            <div class="govuk-details__text" id="details-content-fbdd4dd1-d80b-4902-8295-18d62509f38b" aria-hidden="true">
-                                                @dataRow.DetailsValue
-                                            </div>
-                                        </details>
-
-                                    </td>
+                                    @foreach (var column in dataRow.Columns)
+                                    {
+                                        <td class="govuk-table__cell">@column</td>
+                                    }
                                 </tr>
+                                @if (!string.IsNullOrEmpty(dataRow.DetailsLabel) && !string.IsNullOrEmpty(dataRow.DetailsValue))
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell" colspan="2">
+                                            <details class="govuk-details govuk-!-margin-bottom-0" role="group">
+                                                <summary class="govuk-details__summary govuk-!-margin-bottom-0" role="button" aria-controls="" aria-expanded="false">
+                                                    <span class="govuk-details__summary-text">
+                                                        @dataRow.DetailsLabel
+                                                    </span>
+                                                </summary>
+                                                <!--@* @Mark - What is this id?? *@-->
+                                                <div class="govuk-details__text" id="details-content-fbdd4dd1-d80b-4902-8295-18d62509f38b" aria-hidden="true">
+                                                    @dataRow.DetailsValue
+
+                                                    lkmdgbklmkl
+                                                </div>
+                                            </details>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
+                            @if (Model?.SummaryList?.DataRows != null)
+                            {
+                                @foreach (var dataRow in Model.SummaryList.DataRows)
+                                {
+                                    <tr class="govuk-table__row">
+                                        @foreach (var column in dataRow.Columns)
+                                        {
+                                            <td class="govuk-table__cell">@column</td>
+                                        }
+                                    </tr>
+                                }
+                            }
                         </tbody>
                     </table>
                 }
-            }
-            @if (Model?.SummaryList?.DataRows!=null)
-            {
-                <table class="govuk-table">
-                    <tbody class="govuk-table__body">
-                    @foreach (var dataRow in Model.SummaryList.DataRows)
-                    {
-                        <tr class="govuk-table__row">
-
-                            @foreach (var column in dataRow.Columns)
-                            {
-                                <td class="govuk-table__cell">@column</td>
-                            }
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            }
-            @if (Model.ApplicationId != Guid.Empty)
-            {
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <form class="js-disable-on-submit" asp-action="EvaluatePage" asp-controller="RoatpGateway">
-                            <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
-                            <input type="hidden" name="PageId" value="@Model.PageId"/>
-
-                            <div class="govuk-form-group">
-
-                                <div class="govuk-radios govuk-radios--conditional" data-module="radios">
-                                    @{
-                                        var radioCheckedPassed = Model.Value == Model.OptionPass.Value ? "checked" : "";
-                                        var radioCheckedFailed = Model.Value == Model.OptionFail.Value ? "checked" : "";
-                                        var radioCheckedInProgress = Model.Value == Model.OptionInProgress.Value ? "checked" : "";
-                                        <div class="govuk-radios__item">
-
-
-                                            <input class="govuk-radios__input"
-                                                   type="radio"
-                                                   id="@(Model.PageId)_1"
-                                                   name="Value"
-                                                   value="@Model.OptionPass.Value"
-                                                   data-aria-controls="conditional-@(Model.PageId)_1"
-                                                   @radioCheckedPassed/>
-
-                                            <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_1">@Model.OptionPass.Label</label>
-
-                                            <span id="@(Model.PageId)_1)-hint" class="govuk-hint govuk-radios__hint">
-                                                @Html.Raw(Model.OptionPass.Heading)
-                                            </span>
-
-                                        </div>
-                                        <textarea class="govuk-textarea govuk-!-margin-bottom-0 @isError"
-              id="OptionPassText"
-              name="OptionPassText"
-              rows="5"
-              maxlength="10000">@Model.OptionPassText</textarea>
-
-                                        <div class="govuk-radios__item">
-
-
-                                            <input class="govuk-radios__input"
-                                                   type="radio"
-                                                   id="@(Model.PageId)_2"
-                                                   name="Value"
-                                                   value="@Model.OptionFail.Value"
-                                                   data-aria-controls="conditional-@(Model.PageId)_2"
-                                                   @radioCheckedFailed/>
-
-                                            <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_2">@Model.OptionFail.Label</label>
-
-                                            <span id="@(Model.PageId)_2)-hint" class="govuk-hint govuk-radios__hint">
-                                                @Html.Raw(Model.OptionFail.Heading)
-                                            </span>
-
-                                        </div>
-                                        <textarea class="govuk-textarea govuk-!-margin-bottom-0 @isError"
-              id="OptionFailText"
-              name="OptionFailText"
-              rows="5"
-              maxlength="10000">@Model.OptionFailText</textarea>
-
-
-
-                                        <div class="govuk-radios__item">
-
-
-                                            <input class="govuk-radios__input"
-                                                   type="radio"
-                                                   id="@(Model.PageId)_3"
-                                                   name="Value"
-                                                   value="@Model.OptionInProgress.Value"
-                                                   data-aria-controls="conditional-@(Model.PageId)_3"
-                                                   @radioCheckedInProgress/>
-
-                                            <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_3">@Model.OptionInProgress.Label</label>
-
-                                            <span id="@(Model.PageId)_3)-hint" class="govuk-hint govuk-radios__hint">
-                                                @Html.Raw(Model.OptionInProgress.Heading)
-                                            </span>
-
-                                        </div>
-                                        <textarea class="govuk-textarea govuk-!-margin-bottom-0 @isError"
-              id="OptionInProgressText"
-              name="OptionInProgressText"
-              rows="5"
-              maxlength="10000">@Model.OptionInProgressText</textarea>
-                                    }
-                                </div>
-                            </div>
-
-                            <button class="govuk-button" type="submit">Confirm and submit</button>
-                        </form>
-                    </div>
-                </div>
-            }
+            </div>
         </div>
-    </div>
+    }
+            
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluatePage" asp-controller="RoatpGateway">
+                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
+                    <input type="hidden" name="PageId" value="@Model.PageId"/>
+
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                <h2 class="govuk-fieldset__heading">
+                                    What is the outcome of this check?
+                                </h2>
+                            </legend>
+
+                            <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                                @{
+                                    var radioCheckedPassed = Model.Value == Model.OptionPass.Value ? "checked" : "";
+                                    var radioCheckedFailed = Model.Value == Model.OptionFail.Value ? "checked" : "";
+                                    var radioCheckedInProgress = Model.Value == Model.OptionInProgress.Value ? "checked" : "";
+
+                                    <div class="govuk-radios__item">
+                                        <input 
+                                            class="govuk-radios__input"
+                                            type="radio"
+                                            id="@(Model.PageId)_1"
+                                            name="Value"
+                                            value="@Model.OptionPass.Value"
+                                            data-aria-controls="conditional-@(Model.PageId)_1"
+                                            @radioCheckedPassed
+                                        />
+
+                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_1">
+                                            @Model.OptionPass.Label
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_1">
+                                        <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                            <div class="govuk-form-group">
+                                                <label for="OptionPassText" class="govuk-label">
+                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                </label>
+                                                <textarea 
+                                                    class="govuk-textarea @isError js-character-count"
+                                                    id="OptionPassText"
+                                                    name="OptionPassText"
+                                                    rows="5"
+                                                    maxlength="10000"
+                                                >@Model.OptionPassText</textarea>
+                                            </div>
+
+                                            <span id="word-count-info-@(Model.PageId)_1" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="govuk-radios__item">
+                                        <input 
+                                            class="govuk-radios__input"
+                                            type="radio"
+                                            id="@(Model.PageId)_2"
+                                            name="Value"
+                                            value="@Model.OptionFail.Value"
+                                            data-aria-controls="conditional-@(Model.PageId)_2"
+                                            @radioCheckedFailed
+                                        />
+
+                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_2">
+                                            @Model.OptionFail.Label
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_2">
+                                        <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                            <div class="govuk-form-group">
+                                                <label for="OptionFailText" class="govuk-label">
+                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                </label>
+                                                <textarea
+                                                    class="govuk-textarea @isError js-character-count"
+                                                    id="OptionFailText"
+                                                    name="OptionFailText"
+                                                    rows="5"
+                                                    maxlength="10000"
+                                                >@Model.OptionFailText</textarea>
+                                            </div>
+
+                                            <span id="word-count-info-@(Model.PageId)_2" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="govuk-radios__item">
+                                        <input
+                                            class="govuk-radios__input"
+                                            type="radio"
+                                            id="@(Model.PageId)_3"
+                                            name="Value"
+                                            value="@Model.OptionInProgress.Value"
+                                            data-aria-controls="conditional-@(Model.PageId)_3"
+                                            @radioCheckedInProgress
+                                        />
+
+                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_3">
+                                            @Model.OptionInProgress.Label
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_3">
+                                        <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                            <div class="govuk-form-group">
+                                                <label for="OptionInProgressText" class="govuk-label">
+                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                </label>
+                                                <textarea
+                                                    class="govuk-textarea @isError js-character-count"
+                                                    id="OptionInProgressText"
+                                                    name="OptionInProgressText"
+                                                    rows="5"
+                                                    maxlength="10000"
+                                                >@Model.OptionInProgressText</textarea>
+                                            </div>
+
+                                            <span id="word-count-info-@(Model.PageId)_3" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
 </main>
