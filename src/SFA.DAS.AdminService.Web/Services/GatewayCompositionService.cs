@@ -94,6 +94,7 @@ namespace SFA.DAS.AdminService.Web.Services
                     }
                 }
                 
+                // add in mapping
                 dataRows.Add(new TabularDataRow {Columns = columns, DetailsValue = "Source: Apply : " + row.DetailsKey, DetailsLabel = row.DetailsLabel});
             }
 
