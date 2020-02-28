@@ -25,18 +25,18 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @*@if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                        <h2 class="govuk-error-summary__title" id="error-summary-title">
-                            There is a problem
-                        </h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="IsGatewayApproved"></a></li>
-                            </ul>
-                        </div>
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="IsGatewayApproved"></a></li>
+                        </ul>
                     </div>
-                }*@
+                </div>
+            }*@
 
             @if (Model.Caption != null)
             {
@@ -82,13 +82,15 @@
                         <tbody class="govuk-table__body">
                             @foreach (var dataRow in table.DataRows)
                             {
-                                <tr class="govuk-table__row">
+                                var hasDetails = !string.IsNullOrEmpty(dataRow.DetailsLabel) && !string.IsNullOrEmpty(dataRow.DetailsValue);
+
+                                <tr class="govuk-table__row @(hasDetails ? "govuk-table__row--no-border" : "")">
                                     @foreach (var column in dataRow.Columns)
                                     {
                                         <td class="govuk-table__cell">@column</td>
                                     }
                                 </tr>
-                                @if (!string.IsNullOrEmpty(dataRow.DetailsLabel) && !string.IsNullOrEmpty(dataRow.DetailsValue))
+                                @if (hasDetails)
                                 {
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell" colspan="2">
@@ -98,11 +100,10 @@
                                                         @dataRow.DetailsLabel
                                                     </span>
                                                 </summary>
-                                                <!--@* @Mark - What is this id?? *@-->
+
+                                                @* @Mark - What is this id?? *@
                                                 <div class="govuk-details__text" id="details-content-fbdd4dd1-d80b-4902-8295-18d62509f38b" aria-hidden="true">
                                                     @dataRow.DetailsValue
-
-                                                    lkmdgbklmkl
                                                 </div>
                                             </details>
                                         </td>
@@ -162,7 +163,7 @@
                                         />
 
                                         <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_1">
-                                            @Model.OptionPass.Label
+                                            Pass
                                         </label>
 
                                     </div>
@@ -171,7 +172,7 @@
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionPassText" class="govuk-label">
-                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                    Add comments (optional)
                                                 </label>
                                                 <textarea 
                                                     class="govuk-textarea @isError js-character-count"
@@ -198,7 +199,7 @@
                                         />
 
                                         <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_2">
-                                            @Model.OptionFail.Label
+                                            Fail
                                         </label>
 
                                     </div>
@@ -207,7 +208,7 @@
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionFailText" class="govuk-label">
-                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                    Add comments (mandatory)
                                                 </label>
                                                 <textarea
                                                     class="govuk-textarea @isError js-character-count"
@@ -234,7 +235,7 @@
                                         />
 
                                         <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_3">
-                                            @Model.OptionInProgress.Label
+                                            In progress
                                         </label>
 
                                     </div>
@@ -243,7 +244,7 @@
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionInProgressText" class="govuk-label">
-                                                    @Html.Raw(Model.OptionPass.Heading)
+                                                    Add comments (optional)
                                                 </label>
                                                 <textarea
                                                     class="govuk-textarea @isError js-character-count"
