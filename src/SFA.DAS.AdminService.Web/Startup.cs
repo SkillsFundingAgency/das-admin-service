@@ -33,6 +33,7 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using SFA.DAS.AdminService.Web.Configuration;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -173,6 +174,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
             services.AddTransient<IGatewayCompositionService, GatewayCompositionService>();
+            services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
 
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));

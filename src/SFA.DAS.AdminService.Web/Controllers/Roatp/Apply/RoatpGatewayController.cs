@@ -10,8 +10,10 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -23,13 +25,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IGatewayCompositionService _gatewayCompositionService;
+        private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
 
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IGatewayCompositionService gatewayCompositionService)
+        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IGatewayCompositionService gatewayCompositionService, IRoatpGatewayPageViewModelValidator gatewayValidator)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _gatewayCompositionService = gatewayCompositionService;
+            _gatewayValidator = gatewayValidator;
             _qnaApiClient = qnaApiClient;
         }
 
@@ -136,6 +140,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
         public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
         {
+            var validationResponse =  await _gatewayValidator.Validate(vm);
+
+            vm.ErrorMessages = validationResponse.Errors;
+
+            if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
+            {
+                var vmodel = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
+                vmodel.ErrorMessages = vm.ErrorMessages;
+                vmodel.Value = vm.Value;
+                
+                return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
+            }
             //var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             //if (application is null)
             //{
