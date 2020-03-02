@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Services
             model.SummaryList = new TabularData();
             
             model.OptionPass = new Option {Label = "Pass", Value = "Pass", Heading = "Add comments (optional)"};
-            model.OptionFail = new Option {Label = "Fail", Value = "Fail", Heading = "Add comments"};
+            model.OptionFail = new Option {Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)"};
             model.OptionInProgress = new Option
                 {Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)"};
 

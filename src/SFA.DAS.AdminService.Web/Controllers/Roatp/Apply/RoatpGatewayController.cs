@@ -214,13 +214,70 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/orig-page/{PageId}")]
         public async Task<IActionResult> GatewayPage(Guid applicationId, string pageId)
         {
 
             var model = _gatewayCompositionService.GetViewModelForPage(applicationId, pageId);
 
              
+            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
+        public async Task<IActionResult> AdminGatewayPage(Guid applicationId, string pageId)
+        {
+            const string Caption = "Organisation checks";
+            const string Heading = "Legal name check";
+
+            var model = new RoatpGatewayPageViewModel();
+            model.ApplicationId = applicationId;
+            model.PageId = pageId;
+           // model.NextPageId = "shutter"; //shutter page id
+            model.TextListing = new TabularData();
+            model.Tables = new List<TabularData>();
+            model.SummaryList = new TabularData();
+
+            model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
+            model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
+            model.OptionInProgress = new Option
+            { Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
+
+            model.NextPageId = pageId; /// needs to be actual next page
+            model.Caption = Caption;
+            model.Heading = Heading;
+            var ukprnValue = "ApplyQuestionTag: UKPRN";
+            var applicationSubmittedOn = "ApplySpecial: SubmittedOnDate";
+            var applicationSourcesCheckedOn = "ApplySpecial: CheckedOnDate";
+            var submittedApplicationData = "ApplyQuestionTag: UKRLPLegalName";
+            var ukrlpData = "UKRLP: UKRLPLegalName";
+
+            // these two depend on company etc
+            var companiesHouseData = "CompaniesHouse: LegalName";
+            var charityCommissionData = "CharityCommission: LegalName";
+
+
+            var textListing = new TabularData {DataRows = new List<TabularDataRow>()};
+
+            // building the textListing
+            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"UKPRN: {ukprnValue}" } });
+            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Application submitted on: {applicationSubmittedOn}" }});
+            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Sources checked on: {applicationSourcesCheckedOn}" }});
+            model.TextListing = textListing;
+
+            // building the tables
+            var table = new TabularData {DataRows = new List<TabularDataRow>(),HeadingTitles = new List<string> {"Source","Legal name"}};
+
+            table.DataRows.Add(new TabularDataRow {Columns = new List<string> { "Submitted application data",submittedApplicationData}});
+            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "UKRLP data", ukrlpData } });
+            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Companies House data", companiesHouseData } });
+            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Charity Commission data", charityCommissionData } });
+
+            model.Tables.Add(table);
+
+            // building the summarylist -- this might get rolled into tables? they're just a table without headings maybe???
+            // model.SummaryList not populated in this one
+
             return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
 
