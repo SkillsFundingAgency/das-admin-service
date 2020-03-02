@@ -10,10 +10,12 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.EntityFrameworkCore.Internal;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
+using SFA.DAS.AdminService.Application.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -24,16 +26,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IGatewayCompositionService _gatewayCompositionService;
+        //private readonly IGatewayCompositionService _gatewayCompositionService;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
-
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IGatewayCompositionService gatewayCompositionService, IRoatpGatewayPageViewModelValidator gatewayValidator)
+        private readonly IMediator _mediator;
+        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
-            _gatewayCompositionService = gatewayCompositionService;
+     //       _gatewayCompositionService = gatewayCompositionService;
             _gatewayValidator = gatewayValidator;
+            _mediator = mediator;
             _qnaApiClient = qnaApiClient;
         }
 
@@ -137,147 +140,149 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
         }
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
-        public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
-        {
-            var validationResponse =  await _gatewayValidator.Validate(vm);
 
-            vm.ErrorMessages = validationResponse.Errors;
+        //[HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
+       // public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
+       // {
+       //     var validationResponse =  await _gatewayValidator.Validate(vm);
 
-            if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
-            {
-                var vmodel = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
-                vmodel.ErrorMessages = vm.ErrorMessages;
-                vmodel.Value = vm.Value;
+       //     vm.ErrorMessages = validationResponse.Errors;
+
+       //     //if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
+       //     //{
+       //     //    //var vmodel = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
+       //     //   // vmodel.ErrorMessages = vm.ErrorMessages;
+       //     //   // vmodel.Value = vm.Value;
                 
-                return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
-            }
-            //var application = await _applyApiClient.GetApplication(vm.ApplicationId);
-            //if (application is null)
-            //{
-            //    return RedirectToAction(nameof(NewApplications));
-            //}
+       //     //    return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
+       //     //}
+       //     //var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+       //     //if (application is null)
+       //     //{
+       //     //    return RedirectToAction(nameof(NewApplications));
+       //     //}
 
-            //if (!isGatewayApproved.HasValue)
-            //{
-            //    ModelState.AddModelError("IsGatewayApproved", "Please evaluate Gateway");
-            //}
+       //     //if (!isGatewayApproved.HasValue)
+       //     //{
+       //     //    ModelState.AddModelError("IsGatewayApproved", "Please evaluate Gateway");
+       //     //}
 
-            //if (ModelState.IsValid)
-            //{
-            //    await _applyApiClient.EvaluateGateway(vm.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
-            //    return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
-            //}
-            //else
-            //{
-            //    var newvm = CreateGatewayApplicationViewModel(application);
-            //    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
-            //}
+       //     //if (ModelState.IsValid)
+       //     //{
+       //     //    await _applyApiClient.EvaluateGateway(vm.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+       //     //    return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
+       //     //}
+       //     //else
+       //     //{
+       //     //    var newvm = CreateGatewayApplicationViewModel(application);
+       //     //    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
+       //     //}
 
-            var model = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
+       ////     var model = _gatewayCompositionService.GetViewModelForPage(vm.ApplicationId, vm.PageId);
 
-            //if (model.NextPageId == "shutter")
-            //{
-            //    //goto to shutter page
-            //}
+       //     //if (model.NextPageId == "shutter")
+       //     //{
+       //     //    //goto to shutter page
+       //     //}
 
-            //if (model.NextPageId == "tasklist")
-            //{
-            //    //goto to task list
-            //}
-
-
+       //     //if (model.NextPageId == "tasklist")
+       //     //{
+       //     //    //goto to task list
+       //     //}
 
 
-            // if it gets here, save it....
+       //     var model = new Roatp
 
-            model.Value = vm.Value;
-            if (vm.Value == "Pass")
-            {
-                  model.OptionPassText = vm.OptionPassText;
-            }
+       //     // if it gets here, save it....
 
-            if (vm.Value == "Fail")
-            {
-                model.OptionFailText = vm.OptionFailText;
-            }
+       //     model.Value = vm.Value;
+       //     if (vm.Value == "Pass")
+       //     {
+       //           model.OptionPassText = vm.OptionPassText;
+       //     }
 
-            if (vm.Value == "In Progress")
-            {
-                model.OptionInProgressText = vm.OptionInProgressText;
-            }
+       //     if (vm.Value == "Fail")
+       //     {
+       //         model.OptionFailText = vm.OptionFailText;
+       //     }
 
-            //return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
-            //return await GatewayPage(vm.ApplicationId, model.NextPageId);
-            return RedirectToAction("GatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
+       //     if (vm.Value == "In Progress")
+       //     {
+       //         model.OptionInProgressText = vm.OptionInProgressText;
+       //     }
+
+       //     //return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+       //     //return await GatewayPage(vm.ApplicationId, model.NextPageId);
+       //     return RedirectToAction("GatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
 
 
-        }
+       // }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/orig-page/{PageId}")]
-        public async Task<IActionResult> GatewayPage(Guid applicationId, string pageId)
-        {
+        //[HttpGet("/Roatp/Gateway/{applicationId}/orig-page/{PageId}")]
+        //public async Task<IActionResult> GatewayPage(Guid applicationId, string pageId)
+        //{
 
-            var model = _gatewayCompositionService.GetViewModelForPage(applicationId, pageId);
+        //    var model = _gatewayCompositionService.GetViewModelForPage(applicationId, pageId);
 
              
-            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
-        }
+        //    return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+        //}
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
         public async Task<IActionResult> AdminGatewayPage(Guid applicationId, string pageId)
         {
-            const string Caption = "Organisation checks";
-            const string Heading = "Legal name check";
+            // const string Caption = "Organisation checks";
+            // const string Heading = "Legal name check";
 
-            var model = new RoatpGatewayPageViewModel();
-            model.ApplicationId = applicationId;
-            model.PageId = pageId;
-           // model.NextPageId = "shutter"; //shutter page id
-            model.TextListing = new TabularData();
-            model.Tables = new List<TabularData>();
-            model.SummaryList = new TabularData();
+            // var model = new RoatpGatewayPageViewModel();
+            // model.ApplicationId = applicationId;
+            // model.PageId = pageId;
+            //// model.NextPageId = "shutter"; //shutter page id
+            // model.TextListing = new TabularData();
+            // model.Tables = new List<TabularData>();
+            // model.SummaryList = new TabularData();
 
-            model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
-            model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
-            model.OptionInProgress = new Option
-            { Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
+            // model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
+            // model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
+            // model.OptionInProgress = new Option
+            // { Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
 
-            model.NextPageId = pageId; /// needs to be actual next page
-            model.Caption = Caption;
-            model.Heading = Heading;
-            var ukprnValue = "ApplyQuestionTag: UKPRN";
-            var applicationSubmittedOn = "ApplySpecial: SubmittedOnDate";
-            var applicationSourcesCheckedOn = "ApplySpecial: CheckedOnDate";
-            var submittedApplicationData = "ApplyQuestionTag: UKRLPLegalName";
-            var ukrlpData = "UKRLP: UKRLPLegalName";
+            // model.NextPageId = pageId; /// needs to be actual next page
+            // model.Caption = Caption;
+            // model.Heading = Heading;
+            // var ukprnValue = "ApplyQuestionTag: UKPRN";
+            // var applicationSubmittedOn = "ApplySpecial: SubmittedOnDate";
+            // var applicationSourcesCheckedOn = "ApplySpecial: CheckedOnDate";
+            // var submittedApplicationData = "ApplyQuestionTag: UKRLPLegalName";
+            // var ukrlpData = "UKRLP: UKRLPLegalName";
 
-            // these two depend on company etc
-            var companiesHouseData = "CompaniesHouse: LegalName";
-            var charityCommissionData = "CharityCommission: LegalName";
+            // // these two depend on company etc
+            // var companiesHouseData = "CompaniesHouse: LegalName";
+            // var charityCommissionData = "CharityCommission: LegalName";
 
 
-            var textListing = new TabularData {DataRows = new List<TabularDataRow>()};
+            // var textListing = new TabularData {DataRows = new List<TabularDataRow>()};
 
-            // building the textListing
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"UKPRN: {ukprnValue}" } });
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Application submitted on: {applicationSubmittedOn}" }});
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Sources checked on: {applicationSourcesCheckedOn}" }});
-            model.TextListing = textListing;
+            // // building the textListing
+            // textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"UKPRN: {ukprnValue}" } });
+            // textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Application submitted on: {applicationSubmittedOn}" }});
+            // textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Sources checked on: {applicationSourcesCheckedOn}" }});
+            // model.TextListing = textListing;
 
-            // building the tables
-            var table = new TabularData {DataRows = new List<TabularDataRow>(),HeadingTitles = new List<string> {"Source","Legal name"}};
+            // // building the tables
+            // var table = new TabularData {DataRows = new List<TabularDataRow>(),HeadingTitles = new List<string> {"Source","Legal name"}};
 
-            table.DataRows.Add(new TabularDataRow {Columns = new List<string> { "Submitted application data",submittedApplicationData}});
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "UKRLP data", ukrlpData } });
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Companies House data", companiesHouseData } });
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Charity Commission data", charityCommissionData } });
+            // table.DataRows.Add(new TabularDataRow {Columns = new List<string> { "Submitted application data",submittedApplicationData}});
+            // table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "UKRLP data", ukrlpData } });
+            // table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Companies House data", companiesHouseData } });
+            // table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Charity Commission data", charityCommissionData } });
 
-            model.Tables.Add(table);
+            // model.Tables.Add(table);
 
-            // building the summarylist -- this might get rolled into tables? they're just a table without headings maybe???
-            // model.SummaryList not populated in this one
+            // // building the summarylist -- this might get rolled into tables? they're just a table without headings maybe???
+            // // model.SummaryList not populated in this one
 
+            var model = await _mediator.Send(new LegalNameRequest(applicationId));
             return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
 
