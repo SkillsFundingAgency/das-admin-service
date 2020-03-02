@@ -7,20 +7,6 @@ using SFA.DAS.AdminService.Application.ViewModels;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
-    //public class RoatpGatewayPageViewModelValidator: AbstractValidator<RoatpGatewayPageViewModel>
-    //{
-    //    public RoatpGatewayPageViewModelValidator()
-    //    {
-    //            RuleFor(vm => vm).Custom((vm, context) =>
-    //        {
-    //            if (string.IsNullOrEmpty(vm.Value))
-    //            {
-    //                context.AddFailure("OptionPass.Value", "Please enter a choice");
-    //            }
-    //        });
-    //    }
-
-    //}
     public class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
     {
         public async Task<ValidationResponse> Validate(RoatpGatewayPageViewModel vm)
