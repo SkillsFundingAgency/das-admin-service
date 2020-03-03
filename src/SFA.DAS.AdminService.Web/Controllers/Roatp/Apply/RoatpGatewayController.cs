@@ -186,6 +186,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                model = await _mediator.Send(new GetLegalNameRequest(applicationId));
            }
 
+           if (model.PageId == "NotFound")
+           {
+               return View("~/Views/ErrorPage/PageNotFound.cshtml");
+            }
 
            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
