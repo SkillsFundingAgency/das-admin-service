@@ -47,6 +47,20 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             return applicationColumnName;
         }
 
+        public string FinancialStatusColumnValue(string financialStatus)
+        {
+            if (financialStatus == FinancialReviewStatus.Graded)
+            {
+                return "Passed";
+            }
+            else if (financialStatus == FinancialReviewStatus.New)
+            {
+                return "Not started";
+            }
+
+            return financialStatus;
+        }
+
         public string StatusColumnValue(string applicationStatus, string applicationReviewStatus)
         {
             string statusColumnValue = applicationStatus;
