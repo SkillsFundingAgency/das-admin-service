@@ -143,6 +143,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
+        public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus)
+        {
+            var httpResponse = await _client.PostAsJsonAsync($"/Application/Status", new { applicationId, applicationStatus });
+            return await httpResponse.Content.ReadAsAsync<bool>();
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
