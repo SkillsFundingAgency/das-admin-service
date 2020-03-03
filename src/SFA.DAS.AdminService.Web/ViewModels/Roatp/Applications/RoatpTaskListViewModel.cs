@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
@@ -11,9 +12,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
     public class RoatpTaskListViewModel : OrganisationDetailsViewModel
     {
+        private IRoatpApplicationApprovalService _roatpApplicationApprovalService;
+
         public RoatpTaskListViewModel(RoatpApplicationResponse application, Organisation organisation, List<Sequence> sequences, 
-                                      List<RoatpApplySequence> applySequences, List<RoatpSequence> roatpSequences)
+                                      List<RoatpApplySequence> applySequences, List<RoatpSequence> roatpSequences, 
+                                      IRoatpApplicationApprovalService roatpApplicationApprovalService)
         {
+            _roatpApplicationApprovalService = roatpApplicationApprovalService;
             ApplicationId = application.ApplicationId;
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
             ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
@@ -35,10 +40,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 {
                     sequence.NotRequired = true;
                 }
+                if (sequence.Sections.Count() == sequence.Sections.Count(x => x.NotRequired))
+                {
+                    sequence.NotRequired = true;
+                }
             }
 
             ApplySequences = applySequences.Where(x => !x.NotRequired).ToList();
             Sequences = sequences;
+
+            ApprovedForRegister = _roatpApplicationApprovalService.IsEligibleForRegister(application.GatewayReviewStatus,
+                                                                                         application.FinancialReviewStatus,
+                                                                                         ApplySequences);
         }
 
         private List<RoatpApplySection> GetRequiredApplySections(List<RoatpApplySection> applySections)
@@ -61,5 +74,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public List<RoatpApplySequence> ApplySequences { get; }
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
+
+        public bool ApprovedForRegister { get; set; }
     }
 }

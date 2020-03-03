@@ -45,12 +45,14 @@
                     }
                 </ul>
 
-                @*@if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
+            }
+
+            @if (Model.ApprovedForRegister)
             {
-                <form class="js-disable-on-submit" asp-controller="RoatpApplication" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" method="get">
-                    <button class="govuk-button" type="submit">Complete review</button>
+                <form class="js-disable-on-submit" asp-controller="RoatpApplication" asp-action="ApproveForRoatp" method="get">
+                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                    <button class="govuk-button" type="submit">Approve for RoATP</button>
                 </form>
-            }*@
             }
 
             <p class="govuk-body">
