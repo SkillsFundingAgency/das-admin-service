@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -32,8 +33,10 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
+using MediatR;
 using SFA.DAS.AdminService.Web.Configuration;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
+using SFA.DAS.AdminService.Application.Gateway;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -173,8 +176,10 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            services.AddTransient<IGatewayCompositionService, GatewayCompositionService>();
+            //services.AddTransient<IGatewayCompositionService, GatewayCompositionService>();
             services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
+
+            
 
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
@@ -201,6 +206,10 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<StandardServiceClient>>()));
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
+
+
+            services.AddMediatR(typeof(GetLegalNameHandler).GetTypeInfo().Assembly);
+
         }
 
         private void AddAuthentication(IServiceCollection services)
