@@ -22,5 +22,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public const string Resubmitted = "Resubmitted";
         public const string Declined = "Declined";
         public const string Approved = "Approved";
+        public const string Evaluated = "Evaluated";
     }
 }

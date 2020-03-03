@@ -5,5 +5,6 @@
         public const string New = "";
         public const string InProgress = "In Progress";
         public const string Evaluated = "Evaluated";
+        public const string NotRequired = "Not Required";
     }
 }

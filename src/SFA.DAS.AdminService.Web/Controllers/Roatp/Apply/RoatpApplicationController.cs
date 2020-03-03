@@ -16,6 +16,9 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 // NOTE: For future work, consider if these base types are acceptable or if we need Roatp versions
 using ApplicationSectionStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSectionStatus;
 using ApplicationSequenceStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSequenceStatus;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -30,10 +33,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<RoatpApplicationController> _logger;
+        private readonly IRoatpApplicationApprovalService _roatpApplicationApprovalService;
 
         public RoatpApplicationController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, 
             IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, 
-            IAnswerInjectionService answerInjectionService, ILogger<RoatpApplicationController> logger)
+            IAnswerInjectionService answerInjectionService, ILogger<RoatpApplicationController> logger,
+            IRoatpApplicationApprovalService roatpApplicationApprovalService)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
@@ -43,6 +48,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
             _logger = logger;
+            _roatpApplicationApprovalService = roatpApplicationApprovalService;
         }
 
         [HttpGet("/Roatp/Applications/Open")]
@@ -93,7 +99,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
 
-            var taskListViewModel = new RoatpTaskListViewModel(application, organisation, sequences, application.ApplyData.Sequences, roatpSequences);
+            var taskListViewModel = new RoatpTaskListViewModel(application, organisation, sequences, 
+                                                               application.ApplyData.Sequences, roatpSequences,
+                                                               _roatpApplicationApprovalService);
+
             return View("~/Views/Roatp/Apply/Applications/TaskList.cshtml", taskListViewModel);
         }
 
@@ -150,7 +159,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var sectionVm = new RoatpSectionViewModel(application, organisation, section, applySection);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.GatewayAssessed, ApplicationStatus.Resubmitted };
-            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted, ApplicationSequenceStatus.InProgress };
+            var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted,
+                                                            SequenceReviewStatus.InProgress, SequenceReviewStatus.Evaluated };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
             {             
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
@@ -392,6 +402,59 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var fileStream = await response.Content.ReadAsStreamAsync();
 
             return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
+        }
+
+        [HttpGet("/Roatp/Application/Approval/{applicationId}")]
+        public async Task<IActionResult> ApproveForRoatp(Guid applicationId)
+        {
+            var model = await _roatpApplicationApprovalService.BuildApplicationApprovalViewModel(applicationId);
+
+            return View("~/Views/Roatp/Apply/RoatpApprovalConfirmation.cshtml", model);
+        }
+
+        [HttpPost("/Roatp/Application/ConfirmApproval")]
+        public async Task<IActionResult> ConfirmApproval(Guid applicationId, int determinedDateDay, int determinedDateMonth, int determinedDateYear)
+        {
+            var model = await _roatpApplicationApprovalService.BuildApplicationApprovalViewModel(applicationId);
+            model.DeterminedDateDay = determinedDateDay;
+            model.DeterminedDateMonth = determinedDateMonth;
+            model.DeterminedDateYear = determinedDateYear;
+            model.Username = _contextAccessor.HttpContext.User.UserDisplayName();
+
+            var validationResult = new RoatpApplicationApprovalViewModelValidator(new ApplicationDeterminedDateValidationService()).Validate(model);
+
+            if (validationResult.Errors.Any())
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                foreach(var validationError in validationResult.Errors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail { ErrorMessage = validationError.ErrorMessage, Field = validationError.PropertyName });
+                }
+            }
+            if (model.ErrorMessages != null && model.ErrorMessages.Any())
+            {
+                return View("~/Views/Roatp/Apply/RoatpApprovalConfirmation.cshtml", model);
+            }
+
+            var result = await _roatpApplicationApprovalService.SubmitOrganisationToRoatpRegister(model);
+
+            if (!result)
+            {
+                return View("~/Views/Roatp/Apply/RoatpApprovalConfirmation.cshtml", model);
+            }
+
+            return RedirectToAction("OpenApplications");
+        }
+
+        private List<ValidationErrorDetail> GatherErrorMessagesFromModelState()
+        {
+            return !ModelState.IsValid
+                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                {
+                    ErrorMessage = e.ErrorMessage,
+                    Field = k.Key
+                })).ToList()
+                : null;
         }
     }
 }
