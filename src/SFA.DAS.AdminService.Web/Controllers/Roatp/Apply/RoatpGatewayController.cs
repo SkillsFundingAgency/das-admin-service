@@ -84,7 +84,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var vm = CreateGatewayApplicationViewModel(application);
 
             // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            //application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+            application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
 
             switch (application.GatewayReviewStatus)
