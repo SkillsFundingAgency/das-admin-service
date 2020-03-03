@@ -3,8 +3,7 @@
 @{
     ViewBag.Title = $"Gateway - {Model.Heading}";
     Layout = "_Layout";
-    var isError = Model.ErrorMessages!=null && Model.ErrorMessages.Any() ? "govuk-input--error" : "";
-    var isErrorNoSelection = "";
+    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
     var failTextMessage = "";
@@ -14,13 +13,12 @@
         {
             if (error.Field == "OptionPass")
             {
-                isErrorNoSelection = "form-control-error";
                 noSelectionMessage = error.ErrorMessage;
             }
 
             if (error.Field == "OptionFailText")
             {
-                isErrorFailText = "form-control-error";
+                isErrorFailText = "govuk-textarea--error-override";
                 failTextMessage = error.ErrorMessage;
             }
         }
@@ -28,18 +26,6 @@
 
 
 }
-
-@*@if (ViewData.ModelState.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    foreach (var errorMessage in Model.ErrorMessages)
-    {
-        if (errorMessage.Field == Model.PageId)
-        {
-            <span class="govuk-error-message">@Html.Raw(errorMessage.ErrorMessage)</span>
-        }
-    }
-}*@
-
 
 <a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>
 
@@ -163,13 +149,26 @@
                     <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>
                     <input type="hidden" name="PageId" value="@Model.PageId"/>
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @formGroupError">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                                 <h2 class="govuk-fieldset__heading">
                                     What is the outcome of this check?
                                 </h2>
                             </legend>
+                            
+                            @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                            {
+                                @foreach (var error in Model.ErrorMessages)
+                                {
+                                    @if (error.Field == "OptionPass")
+                                    {
+                                        <span class="govuk-error-message">
+                                            <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                        </span>
+                                    }
+                                }
+                            }
 
                             <div class="govuk-radios govuk-radios--conditional " data-module="radios">
                                 @{
@@ -177,31 +176,33 @@
                                     var radioCheckedFailed = Model.Value == Model.OptionFail.Value ? "checked" : "";
                                     var radioCheckedInProgress = Model.Value == Model.OptionInProgress.Value ? "checked" : "";
 
+                                    <!-- PASS -->
+
                                     <div class="govuk-radios__item">
                                         <input 
-                                            class="govuk-radios__input @isErrorNoSelection"
+                                            class="govuk-radios__input"
                                             type="radio"
                                             id="OptionPass"
                                             name="Value"
                                             value="@Model.OptionPass.Value "
-                                            data-aria-controls="conditional-@(Model.PageId)_1"
+                                            data-aria-controls="conditional-OptionPass"
                                             @radioCheckedPassed
                                         />
 
-                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_1">
+                                        <label class="govuk-label govuk-radios__label" for="OptionPass">
                                             Pass
                                         </label>
 
                                     </div>
 
-                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_1">
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-OptionPass">
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionPassText" class="govuk-label">
                                                     Add comments (optional)
                                                 </label>
                                                 <textarea 
-                                                    class="govuk-textarea @isError js-character-count"
+                                                    class="govuk-textarea js-character-count"
                                                     id="OptionPassText"
                                                     name="OptionPassText"
                                                     rows="5"
@@ -209,35 +210,51 @@
                                                 >@Model.OptionPassText</textarea>
                                             </div>
 
-                                            <span id="word-count-info-@(Model.PageId)_1" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                            <span id="word-count-info-OptionPass" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
                                         </div>
                                     </div>
 
+                                    <!-- FAIL -->
+
                                     <div class="govuk-radios__item">
                                         <input 
-                                            class="govuk-radios__input @isErrorNoSelection"
+                                            class="govuk-radios__input"
                                             type="radio"
-                                            id="@(Model.PageId)_2"
+                                            id="OptionFail"
                                             name="Value"
                                             value="@Model.OptionFail.Value"
-                                            data-aria-controls="conditional-@(Model.PageId)_2"
+                                            data-aria-controls="conditional-OptionFail"
                                             @radioCheckedFailed
                                         />
 
-                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_2">
+                                        <label class="govuk-label govuk-radios__label" for="OptionFail">
                                             Fail
                                         </label>
 
                                     </div>
 
-                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_2">
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-OptionFail">
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionFailText" class="govuk-label">
                                                     Add comments (mandatory)
                                                 </label>
+
+                                                @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                                                {
+                                                    @foreach (var error in Model.ErrorMessages)
+                                                    {
+                                                        @if (error.Field == "OptionFailText")
+                                                        {
+                                                            <span class="govuk-error-message">
+                                                                <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                                            </span>
+                                                        }
+                                                    }
+                                                }
+
                                                 <textarea
-                                                    class="govuk-textarea @isErrorFailText js-character-count"
+                                                    class="govuk-textarea js-character-count @isErrorFailText"
                                                     id="OptionFailText"
                                                     name="OptionFailText"
                                                     rows="5"
@@ -245,35 +262,39 @@
                                                 >@Model.OptionFailText</textarea>
                                             </div>
 
-                                            <span id="word-count-info-@(Model.PageId)_2" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                            <span id="word-count-info-OptionFail" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
                                         </div>
                                     </div>
 
+                                    <div class="govuk-radios__divider">or</div>
+
+                                    <!-- IN PROGRESS -->
+
                                     <div class="govuk-radios__item">
                                         <input
-                                            class="govuk-radios__input @isErrorNoSelection"
+                                            class="govuk-radios__input"
                                             type="radio"
-                                            id="@(Model.PageId)_3"
+                                            id="InProgress"
                                             name="Value"
                                             value="@Model.OptionInProgress.Value"
-                                            data-aria-controls="conditional-@(Model.PageId)_3"
+                                            data-aria-controls="conditional-InProgress"
                                             @radioCheckedInProgress
                                         />
 
-                                        <label class="govuk-label govuk-radios__label" for="@(Model.PageId)_3">
+                                        <label class="govuk-label govuk-radios__label" for="InProgress">
                                             In progress
                                         </label>
 
                                     </div>
 
-                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.PageId)_3">
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-InProgress">
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
                                             <div class="govuk-form-group">
                                                 <label for="OptionInProgressText" class="govuk-label">
                                                     Add comments (optional)
                                                 </label>
                                                 <textarea
-                                                    class="govuk-textarea @isError js-character-count"
+                                                    class="govuk-textarea js-character-count"
                                                     id="OptionInProgressText"
                                                     name="OptionInProgressText"
                                                     rows="5"
@@ -281,7 +302,7 @@
                                                 >@Model.OptionInProgressText</textarea>
                                             </div>
 
-                                            <span id="word-count-info-@(Model.PageId)_3" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                            <span id="word-count-info-InProgress" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
                                         </div>
                                     </div>
                                 }

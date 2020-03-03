@@ -34,14 +34,14 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             if (string.IsNullOrWhiteSpace(vm.Value))
             {
-                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", "Please enter a value"));
+                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", "Select the outcome of this check"));
             }
             else
             {
                 if (vm.Value =="Fail" && string.IsNullOrEmpty(vm.OptionFailText))
                 {
                     validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
-                        "Please  enter fail text"));
+                        "Enter the reasons this check was failed"));
                 }
             }
 
