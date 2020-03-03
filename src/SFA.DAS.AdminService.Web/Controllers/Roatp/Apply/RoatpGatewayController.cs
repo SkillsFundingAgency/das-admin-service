@@ -83,6 +83,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = CreateGatewayApplicationViewModel(application);
 
+            // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
+            //application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+
 
             switch (application.GatewayReviewStatus)
             {
@@ -157,11 +160,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
             }
-           
+            
 
-
-            // needs logic to go to the nextpage, not the current page
-            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId };
+            // this is temporary, the important thing is to save, including user name, then redirect back to overview
+            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId, Value=vm.Value, OptionPassText = vm.OptionPassText, OptionFailText = vm.OptionFailText, OptionInProgressText = vm.OptionInProgressText};
             model.NextPageId = vm.PageId;
 
             // if it gets here, save it....
@@ -169,8 +171,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
 
             // go to overview page
-            return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
-
+            //return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
+            return RedirectToAction("ViewApplication", new {vm.ApplicationId});
 
         }
 

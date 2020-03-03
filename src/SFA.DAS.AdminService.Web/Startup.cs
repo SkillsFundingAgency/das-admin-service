@@ -34,7 +34,6 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
-using SFA.DAS.AdminService.Web.Configuration;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Application.Gateway;
 
@@ -112,8 +111,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-            services.Configure<List<GatewayPageConfiguration>>(Configuration.GetSection("GatewayPages"));
-
+   
             ConfigureDependencyInjection(services);           
         }
 
@@ -176,7 +174,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            //services.AddTransient<IGatewayCompositionService, GatewayCompositionService>();
             services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
 
             

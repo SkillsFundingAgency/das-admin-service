@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Application.Gateway
 
             const string Caption = "Organisation checks";
             const string Heading = "Legal name check";
-            const string PageId = "legal-name";
+            const string PageId = "1-10";
 
             var model = new RoatpGatewayPageViewModel();
             model.ApplicationId = request.ApplicationId;
@@ -29,10 +29,10 @@ namespace SFA.DAS.AdminService.Application.Gateway
             model.SummaryList = new TabularData();
 
             // These can go when Greg has finished with the page
-            model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
-            model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
-            model.OptionInProgress = new Option
-            { Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
+            //model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
+            //model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
+            //model.OptionInProgress = new Option
+            //{ Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
             /////////////////////////////////////////////////
 
             model.NextPageId = PageId; /// needs to be actual next page - will probably need the logic for trading name in this handler to jump over it if not rewuired

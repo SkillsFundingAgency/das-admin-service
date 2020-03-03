@@ -172,9 +172,9 @@
 
                             <div class="govuk-radios govuk-radios--conditional " data-module="radios">
                                 @{
-                                    var radioCheckedPassed = Model.Value == Model.OptionPass.Value ? "checked" : "";
-                                    var radioCheckedFailed = Model.Value == Model.OptionFail.Value ? "checked" : "";
-                                    var radioCheckedInProgress = Model.Value == Model.OptionInProgress.Value ? "checked" : "";
+                                    var radioCheckedPassed = Model.Value == "Pass" ? "checked" : "";
+                                    var radioCheckedFailed = Model.Value == "Fail" ? "checked" : "";
+                                    var radioCheckedInProgress = Model.Value == "In progress" ? "checked" : "";
 
                                     <!-- PASS -->
 
@@ -184,7 +184,7 @@
                                             type="radio"
                                             id="OptionPass"
                                             name="Value"
-                                            value="@Model.OptionPass.Value "
+                                            value="Pass"
                                             data-aria-controls="conditional-OptionPass"
                                             @radioCheckedPassed
                                         />
@@ -222,7 +222,7 @@
                                             type="radio"
                                             id="OptionFail"
                                             name="Value"
-                                            value="@Model.OptionFail.Value"
+                                            value="Fail"
                                             data-aria-controls="conditional-OptionFail"
                                             @radioCheckedFailed
                                         />
@@ -276,7 +276,7 @@
                                             type="radio"
                                             id="InProgress"
                                             name="Value"
-                                            value="@Model.OptionInProgress.Value"
+                                            value="In progress"
                                             data-aria-controls="conditional-InProgress"
                                             @radioCheckedInProgress
                                         />
