@@ -1,8 +1,8 @@
-﻿using MediatR;
-using SFA.DAS.AdminService.Application.ViewModels;
-using System;
+﻿using System;
+using MediatR;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
-namespace SFA.DAS.AdminService.Application.Gateway
+namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
     public class GetLegalNameRequest: IRequest<RoatpGatewayPageViewModel>
     {

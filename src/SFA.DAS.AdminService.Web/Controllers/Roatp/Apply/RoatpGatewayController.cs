@@ -11,9 +11,8 @@ using System;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
-using SFA.DAS.AdminService.Application.Gateway;
-using SFA.DAS.AdminService.Application.ViewModels;
 using System.Linq;
+using SFA.DAS.AdminService.Web.Handlers.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

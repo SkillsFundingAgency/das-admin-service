@@ -1,9 +1,9 @@
-﻿using SFA.DAS.AdminService.Application.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
-namespace SFA.DAS.AdminService.Application.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
     public class RoatpGatewayPageViewModel
     {

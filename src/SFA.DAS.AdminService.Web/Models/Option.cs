@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AdminService.Application.Models
+﻿namespace SFA.DAS.AdminService.Web.Models
 {
     public class Option
     {

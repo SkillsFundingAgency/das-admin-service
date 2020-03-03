@@ -31,8 +31,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Sessio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Application.Interfaces", "SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj", "{465A90A3-35E8-4820-84F2-735CD78BC0AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AdminService.Application", "SFA.DAS.AdminService.Application\SFA.DAS.AdminService.Application.csproj", "{71A31AEA-EA2F-4C92-8797-FD49E8680190}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,10 +85,6 @@ Global
 		{465A90A3-35E8-4820-84F2-735CD78BC0AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{465A90A3-35E8-4820-84F2-735CD78BC0AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{465A90A3-35E8-4820-84F2-735CD78BC0AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71A31AEA-EA2F-4C92-8797-FD49E8680190}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71A31AEA-EA2F-4C92-8797-FD49E8680190}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71A31AEA-EA2F-4C92-8797-FD49E8680190}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71A31AEA-EA2F-4C92-8797-FD49E8680190}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

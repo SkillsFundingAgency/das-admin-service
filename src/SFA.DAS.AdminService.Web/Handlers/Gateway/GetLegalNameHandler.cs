@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.AdminService.Application.Models;
-using SFA.DAS.AdminService.Application.ViewModels;
+using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
-namespace SFA.DAS.AdminService.Application.Gateway
+namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
     public class GetLegalNameHandler : IRequestHandler<GetLegalNameRequest, RoatpGatewayPageViewModel>
     {
