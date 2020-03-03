@@ -148,7 +148,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId};
 
-                if (vm.PageId == "legal-name")
+                if (vm.PageId == "1-10")
                 {
                     vmodel = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
                 }
@@ -166,24 +166,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             // if it gets here, save it....
 
-            model.Value = vm.Value;
-            if (vm.Value == "Pass")
-            {
-                model.OptionPassText = vm.OptionPassText;
-            }
 
-            if (vm.Value == "Fail")
-            {
-                model.OptionFailText = vm.OptionFailText;
-            }
 
-            if (vm.Value == "In Progress")
-            {
-                model.OptionInProgressText = vm.OptionInProgressText;
-            }
-
-            //return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
-            //return await GatewayPage(vm.ApplicationId, model.NextPageId);
+            // go to overview page
             return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
 
 
@@ -196,7 +181,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
            var model = new RoatpGatewayPageViewModel {ApplicationId = applicationId, PageId = "NotFound"};
 
 
-           if (pageId == "legal-name")
+           if (pageId == "1-10")
            {
                model = await _mediator.Send(new GetLegalNameRequest(applicationId));
            }
