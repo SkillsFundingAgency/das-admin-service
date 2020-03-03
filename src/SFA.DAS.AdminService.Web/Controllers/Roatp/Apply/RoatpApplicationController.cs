@@ -421,6 +421,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             model.DeterminedDateYear = determinedDateYear;
             model.Username = _contextAccessor.HttpContext.User.UserDisplayName();
 
+            // this should use the abstract validation, refactor if possible
             var validationResult = new RoatpApplicationApprovalViewModelValidator(new ApplicationDeterminedDateValidationService()).Validate(model);
 
             if (validationResult.Errors.Any())
@@ -444,17 +445,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return RedirectToAction("OpenApplications");
-        }
-
-        private List<ValidationErrorDetail> GatherErrorMessagesFromModelState()
-        {
-            return !ModelState.IsValid
-                ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
-                {
-                    ErrorMessage = e.ErrorMessage,
-                    Field = k.Key
-                })).ToList()
-                : null;
         }
     }
 }
