@@ -176,8 +176,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
             services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
 
-            
-
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
@@ -204,9 +202,7 @@ namespace SFA.DAS.AdminService.Web
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
 
-
             services.AddMediatR(typeof(GetLegalNameHandler).GetTypeInfo().Assembly);
-
         }
 
         private void AddAuthentication(IServiceCollection services)
