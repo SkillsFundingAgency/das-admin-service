@@ -196,7 +196,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(FinancialReviewStatus.InProgress)]
         [TestCase(FinancialReviewStatus.New)]
         [TestCase(FinancialReviewStatus.Draft)]
-        [TestCase(FinancialReviewStatus.Required)]
         public void Organisation_not_eligible_if_not_passed_financial_health_checks(string financialHealthStatus)
         {
             var eligible = _service.IsEligibleForRegister(ApplicationStatus.GatewayAssessed, financialHealthStatus, _sequences);
