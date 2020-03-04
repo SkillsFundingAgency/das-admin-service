@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
 
@@ -14,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
 
-        public FinancialDueDate OutstandingFinancialDueDate { get; set; }
+        public FinancialDueDate OutstandingFinancialDueDate { get; set; } // TODO: CREATE RoatpFinancialDueDate
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
@@ -45,12 +44,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)
         {
-            if (financialReviewDetails == null)
-            {
-                financialReviewDetails = new FinancialReviewDetails();
-            }
-
-            FinancialReviewDetails = financialReviewDetails;
+            FinancialReviewDetails = financialReviewDetails ?? new FinancialReviewDetails();
 
             OutstandingFinancialDueDate = new FinancialDueDate();
             GoodFinancialDueDate = new FinancialDueDate();
