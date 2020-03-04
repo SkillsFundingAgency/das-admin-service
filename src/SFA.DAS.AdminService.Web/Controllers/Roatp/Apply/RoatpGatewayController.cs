@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var vm = CreateGatewayApplicationViewModel(application);
 
             // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+            //application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
 
             switch (application.GatewayReviewStatus)
@@ -148,29 +148,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId};
+                //var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId};
 
-                if (vm.PageId == "1-10")
+                if (vm.PageId == "1-10")   //maybe have a lookup that maps coes to types, eg 1-10 to LegalName, and roll this up? 
                 {
-                    vmodel = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
-                }
-                vmodel.ErrorMessages = vm.ErrorMessages;
-                vmodel.Value = vm.Value;
+                    var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
+                    model.ErrorMessages = vm.ErrorMessages;
+                    model.Value = vm.Value;
 
-                return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
+                    return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
+                }
             }
             
+            // if it gets here, save it.... username, applicationid, pageid, value, comments gleaned from value and text passed in
 
-            // this is temporary, the important thing is to save, including user name, then redirect back to overview
-            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId, Value=vm.Value, OptionPassText = vm.OptionPassText, OptionFailText = vm.OptionFailText, OptionInProgressText = vm.OptionInProgressText};
-            model.NextPageId = vm.PageId;
-
-            // if it gets here, save it....
-
-
-
-            // go to overview page
-            //return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
             return RedirectToAction("ViewApplication", new {vm.ApplicationId});
 
         }
@@ -179,20 +170,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
         public async Task<IActionResult> GetGatewayPage(Guid applicationId, string pageId)
         {
-           var model = new RoatpGatewayPageViewModel {ApplicationId = applicationId, PageId = "NotFound"};
-
-
-           if (pageId == "1-10")
-           {
-               model = await _mediator.Send(new GetLegalNameRequest(applicationId));
-           }
-
-           if (model.PageId == "NotFound")
-           {
-               return View("~/Views/ErrorPage/PageNotFound.cshtml");
+            if (pageId == "1-10") //maybe have a lookup that maps coes to types, eg 1-10 to LegalName, and roll this up?
+            {
+               var model = await _mediator.Send(new GetLegalNameRequest(applicationId));
+               return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
 
-           return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+           return View("~/Views/ErrorPage/PageNotFound.cshtml");
         }
 
         private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)

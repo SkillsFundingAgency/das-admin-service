@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {

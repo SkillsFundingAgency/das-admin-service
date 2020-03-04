@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayPageViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayPageViewModel
 
 @{
     ViewBag.Title = $"Gateway - {Model.Heading}";
@@ -58,20 +59,31 @@
             }
             <h1 class="govuk-heading-xl">@Model.Heading</h1>
 
-            @if (Model?.TextListing?.DataRows != null)
-            {
+            
                 <div class="govuk-!-margin-bottom-4">
-                    @foreach (var row in Model.TextListing.DataRows)
+                    @if (Model.Ukrpn!=null)
                     {
-                        <p class="govuk-body govuk-!-margin-bottom-0">
-                            @foreach (var column in row.Columns)
-                            {
-                                @Html.Raw(column)
-                            }
-                        </p>
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        UKPRN: @Model.Ukrpn
+                    </p>
                     }
+                    
+                    @*@if (Model.ApplicationSubmittedOn!=null)
+                    {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
+                    </p>
+                    }
+                    
+                    
+                    @if (Model.SourcesCheckedOn!=null)
+                    {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
+                    </p>
+                    }*@
                 </div>
-            }
+            
 
         </div>
     </div>

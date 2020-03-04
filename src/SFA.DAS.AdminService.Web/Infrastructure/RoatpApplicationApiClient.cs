@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
