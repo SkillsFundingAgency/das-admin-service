@@ -20,7 +20,7 @@
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header govuk-!-width-one-half">
-                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@OrganisationApplicationsSortColumn.OrganisationName"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="OrganisationApplication"
@@ -30,7 +30,7 @@
                                             sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
             </th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
-                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@OrganisationApplicationsSortColumn.FinancialStatus"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="OrganisationApplication"
@@ -42,7 +42,7 @@
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">
-                    <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                    <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                                 data-sortColumn="@OrganisationApplicationsSortColumn.Status"
                                                 asp-action="@Model.SortColumnAction"
                                                 asp-controller="OrganisationApplication"
@@ -53,7 +53,7 @@
                 </th>
             }
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
-                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link")
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@Model.DateSortColumnNameForReviewStatus()"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="OrganisationApplication"
@@ -86,7 +86,7 @@
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
             }
-            <td class="govuk-table__cell govuk-table__cell--numeric">@application.DateValueForReviewStatus()</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap">@application.DateValueForReviewStatus()</td>
         </tr>
             }
         }
