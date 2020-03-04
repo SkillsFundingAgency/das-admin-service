@@ -13,6 +13,7 @@ using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -148,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId};
+                var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId };
 
                 if (vm.PageId == "1-10")
                 {
@@ -159,10 +160,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
             }
-            
+
 
             // this is temporary, the important thing is to save, including user name, then redirect back to overview
-            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId, Value=vm.Value, OptionPassText = vm.OptionPassText, OptionFailText = vm.OptionFailText, OptionInProgressText = vm.OptionInProgressText};
+            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId, Value = vm.Value, OptionPassText = vm.OptionPassText, OptionFailText = vm.OptionFailText, OptionInProgressText = vm.OptionInProgressText };
             model.NextPageId = vm.PageId;
 
             // if it gets here, save it....
@@ -171,7 +172,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             // go to overview page
             //return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
-            return RedirectToAction("ViewApplication", new {vm.ApplicationId});
+            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
 
         }
 
@@ -179,20 +180,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
         public async Task<IActionResult> GetGatewayPage(Guid applicationId, string pageId)
         {
-           var model = new RoatpGatewayPageViewModel {ApplicationId = applicationId, PageId = "NotFound"};
+            var model = new RoatpGatewayPageViewModel { ApplicationId = applicationId, PageId = "NotFound" };
 
 
-           if (pageId == "1-10")
-           {
-               model = await _mediator.Send(new GetLegalNameRequest(applicationId));
-           }
-
-           if (model.PageId == "NotFound")
-           {
-               return View("~/Views/ErrorPage/PageNotFound.cshtml");
+            if (pageId == "1-10")
+            {
+                model = await _mediator.Send(new GetLegalNameRequest(applicationId));
             }
 
-           return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
+            if (model.PageId == "NotFound")
+            {
+                return View("~/Views/ErrorPage/PageNotFound.cshtml");
+            }
+
+            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
 
         private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
@@ -225,7 +226,67 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 FinancialReviewStatus = applicationFromRoatp.FinancialReviewStatus
             };
 
-            return new RoatpGatewayApplicationViewModel(application);
+            var returnedModel = new RoatpGatewayApplicationViewModel(application);
+
+            // APR-1467 Code
+            returnedModel.ConfirmReady = false;
+
+            var LegalNameStatus = "";
+            var TradingNameStatus = "";
+            var OrganisationStatus = "";
+            var AddressStatus = "";
+            var IcoRegistrationNumberStatus = "";
+            var WebsiteAddressStatus = SectionReviewStatus.NotRequired;
+            var OrganisationHighRiskStatus = "";
+
+            var OfficeForStudentStatus = "";
+            var InitialTeacherTrainingStatus = "";
+            var OfstedStatus = "";
+            var SubcontractorDeclarationStatus = "";
+
+
+            returnedModel.Sequences = new List<GatewaySequence>
+            {
+                new GatewaySequence
+                {
+                    SequenceNumber = 1,
+                    SequenceTitle = "Organisation checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = "1-10", LinkTitle = "Legal name", HiddenText = "", Status = LegalNameStatus },
+                        new GatewaySection { SectionNumber = 2, PageId = "1-20", LinkTitle = "Trading name", HiddenText = "", Status = TradingNameStatus },
+                        new GatewaySection { SectionNumber = 3, PageId = "1-30", LinkTitle = "Organisation status", HiddenText = "", Status = OrganisationStatus },
+                        new GatewaySection { SectionNumber = 4, PageId = "1-40", LinkTitle = "Address", HiddenText = "", Status = AddressStatus },
+                        new GatewaySection { SectionNumber = 5, PageId = "1-50", LinkTitle = "ICO registration number", HiddenText = "", Status = IcoRegistrationNumberStatus },
+                        new GatewaySection { SectionNumber = 6, PageId = "1-60", LinkTitle = "Website address", HiddenText = "", Status = WebsiteAddressStatus },
+                        new GatewaySection { SectionNumber = 7, PageId = "1-70", LinkTitle = "Organisation high risk", HiddenText = "", Status = OrganisationHighRiskStatus }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 2,
+                    SequenceTitle = "People in control checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = "2-10", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "2-20", LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 3,
+                    SequenceTitle = "Register checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = "3-10", LinkTitle = "RoATP", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "3-20", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                    }
+                }
+            };
+
+            return returnedModel; //new RoatpGatewayApplicationViewModel(application);
         }
     }
 }

@@ -90,141 +90,58 @@
         </div>
     </div>
 
-
-    <div class="govuk-grid-column-two-thirds">
-
-        <ol class="app-task-list">
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">1. </span> Organisation Checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="/Roatp/Gateway/@Model.ApplicationId/Page/1-10">Legal name</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="/Roatp/Gateway/@Model.ApplicationId/Page/1-20">Trading name</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/highrisk/people">People in control high risk</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">2. </span> Register checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/register/roatp">RoATP</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/register/epao">Register of end-point assessment organisations</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">3. </span> Organisation checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <!--a href="company/organisation/info/parent-name">Organisation information</a-->
-                            <a href="company/organisation/info/ico">Organisation information</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/organisation/type/type">Organisation type</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/organisation/experience/ofs">Experience and accreditation</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">4. </span> Criminal and compliance checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/criminal/organisation">The organisation</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/criminal/peopleincontrol">People in control</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-
-
-        </ol>
-
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateGateway" asp-controller="RoatpGateway">
-                <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <input type="hidden" name="OrgId" value="@Model.OrgId" />
-
-                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <fieldset class="govuk-fieldset">
-                        <legend id="IsGatewayApproved">
-                            <h2 class="govuk-heading-l">
-                                What is the grade for this Gateway?
+    @if (Model.Sequences.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <ol class="app-task-list">
+                    @foreach (var sequence in Model.Sequences)
+                    {
+                        <li>
+                            <h2 class="app-task-list__section">
+                                <span class="app-task-list__section-number">@sequence.SequenceNumber. </span>@sequence.SequenceTitle
                             </h2>
-                        </legend>
-
-                        <span class="govuk-error-message" asp-validation-for="IsGatewayApproved"></span>
-
-                        <div class="govuk-radios govuk-radios--inline">
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="IsGatewayApproved" id="options_yes" type="radio" value="True" sfa-validation-for="IsGatewayApproved" />
-                                <label class="govuk-label govuk-radios__label" for="options_yes">
-                                    Approve
-                                </label>
-                            </div>
-                            @*<div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_no" type="radio" value="False" sfa-validation-for="IsGatewayApproved" />
-                                    <label class="govuk-label govuk-radios__label" for="options_no">
-                                        Decline
-                                    </label>
-                                </div>*@
-                        </div>
-                    </fieldset>
-                </div>
-
-                <button class="govuk-button" type="submit">Confirm and submit</button>
-            </form>
+                            <ul class="app-task-list__items">
+                                @foreach (var currentSection in sequence.Sections)
+                                {
+                                    <li class="app-task-list__item">
+                                        <span class="app-task-list__task-name">
+                                            @if (currentSection.Status.Equals(SectionReviewStatus.NotRequired))
+                                            {
+                                                @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\">" + currentSection.HiddenText + "</span>"))
+                                            }
+                                            else
+                                            {
+                                                <a href="/Roatp/Gateway/@Model.ApplicationId/Page/@currentSection.PageId">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\">" + currentSection.HiddenText + "</span>"))</a>
+                                            }
+                                        </span>
+                                        <span>@currentSection.Status</span>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                    <li>
+                        <h2 class="app-task-list__section">
+                            <span class="app-task-list__section-number">7. </span>Overall gateway outcome
+                        </h2>
+                        <ul class="app-task-list__items">
+                            <li class="app-task-list__item">
+                                <span class="app-task-list__task-name">
+                                    @if (Model.ConfirmReady)
+                                    {
+                                        <a href="/Roatp/Gateway/GoAndConfirm/@Model.ApplicationId">Confirm gateway outcome</a>
+                                    }
+                                    else
+                                    {
+                                        <text>Confirm gateway outcome</text>
+                                    }
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
         </div>
-    </div>
+    }
 </main>
