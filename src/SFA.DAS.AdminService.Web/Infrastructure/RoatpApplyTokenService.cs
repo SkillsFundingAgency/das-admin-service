@@ -19,10 +19,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.RoatpApplyApiAuthentication.TenantId;
-            var clientId = _configuration.RoatpApplyApiAuthentication.ClientId;
-            var appKey = _configuration.RoatpApplyApiAuthentication.ClientSecret;
-            var resourceId = _configuration.RoatpApplyApiAuthentication.ResourceId;
+            var tenantId = _configuration.ApplyApiAuthentication.TenantId;
+            var clientId = _configuration.ApplyApiAuthentication.ClientId;
+            var appKey = _configuration.ApplyApiAuthentication.ClientSecret;
+            var resourceId = _configuration.ApplyApiAuthentication.ResourceId;
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);

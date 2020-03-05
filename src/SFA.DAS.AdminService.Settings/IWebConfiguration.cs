@@ -20,6 +20,5 @@
 
         ClientApiAuthentication QnaApiAuthentication { get; set; }
 
-        ClientApiAuthentication RoatpApplyApiAuthentication { get; set; }
     }
 }

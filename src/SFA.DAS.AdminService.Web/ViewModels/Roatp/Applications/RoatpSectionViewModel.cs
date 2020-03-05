@@ -88,5 +88,25 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             return answer.Value;
         }
+
+        public bool QuestionContainsPredefinedOptions(QnA.Api.Types.Page.Question question)
+        {
+            if (question?.Input?.Type == null)
+            {
+                return false;
+            }
+
+            switch (question.Input.Type)
+            {
+                case "CheckBox":
+                case "CheckBoxList":
+                case "ComplexCheckBoxList":
+                case "ComplexRadio":
+                case "Radio":
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
-@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
@@ -14,13 +14,13 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation">
-                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">New assessments</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Applications</a>
             </li>
             <li class="app-navigation--current-page">
                 <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Rejected assessments</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Closed assessments</a>
+                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
             </li>
         </ul>
     </nav>
@@ -55,7 +55,7 @@
                         {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="RoatpFinancial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
+                                <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
                             <td class="govuk-table__cell" data-label="Date rejected">
                                 @item.FeedbackAddedDate.ToSfaShortDateString()
