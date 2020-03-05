@@ -93,15 +93,15 @@
                                     {
                                         <p class="govuk-body">
                                             <a class="govuk-link" href="@Url.Action("DownloadFile", "RoatpApplication",
-                                                new
-                                                {
-                                                    Id = Model.ApplicationId,
-                                                    sequenceNo = Model.SequenceNo,
-                                                    sectionNo = Model.SectionNo,
-                                                    pageId = pg.PageId,
-                                                    questionId = answer.QuestionId,
-                                                    filename = answer.Value
-                                                })">
+                         new
+                         {
+                             Id = Model.ApplicationId,
+                             sequenceNo = Model.SequenceNo,
+                             sectionNo = Model.SectionNo,
+                             pageId = pg.PageId,
+                             questionId = answer.QuestionId,
+                             filename = answer.Value
+                         })">
                                                 @answer.Value
                                             </a>
                                         </p>
@@ -124,7 +124,14 @@
                                     {
                                         if (@answer.Value != ",,")
                                         {
-                                            <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                            @if (Model.QuestionContainsPredefinedOptions(question))
+                                            {
+                                                <p class="govuk-body">@Html.Raw(Model.DisplayAnswerValue(answer, question))</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>                                            
+                                            }
                                         }
                                     }
                                 }
