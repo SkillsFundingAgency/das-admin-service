@@ -139,8 +139,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
-        public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
+        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
         {
             var validationResponse = await _gatewayValidator.Validate(vm);
 
@@ -148,35 +148,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                //var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId};
-
-                if (vm.PageId == "1-10")   //maybe have a lookup that maps coes to types, eg 1-10 to LegalName, and roll this up? 
-                {
-                    var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
+                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
                     model.ErrorMessages = vm.ErrorMessages;
                     model.Value = vm.Value;
-
                     return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
-                }
             }
             
-            // if it gets here, save it.... username, applicationid, pageid, value, comments gleaned from value and text passed in
+            // if it gets here, save it.... username, applicationid, pageid, value, pageview stored
 
             return RedirectToAction("ViewApplication", new {vm.ApplicationId});
 
         }
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
-        public async Task<IActionResult> GetGatewayPage(Guid applicationId, string pageId)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
+        public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
-            if (pageId == "1-10") //maybe have a lookup that maps coes to types, eg 1-10 to LegalName, and roll this up?
-            {
-               var model = await _mediator.Send(new GetLegalNameRequest(applicationId));
-               return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
-            }
-
-           return View("~/Views/ErrorPage/PageNotFound.cshtml");
+            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId)));
         }
 
         private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)

@@ -49,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             //MFCMFC DO THE SHUTTER PAGE IF THE LINK IS DOWN
             // go get UKPRN
-            // use cache
+            // use cacheC:\dev\das-admin-service\src\SFA.DAS.AssessorService.Application.Api.Client\Azure\
             var ukprn = await  _qnaApiClient.GetQuestionTag(model.ApplicationId, "UKPRN");
 
             var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
