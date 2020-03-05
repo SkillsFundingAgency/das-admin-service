@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public Guid OrgId { get; }
 
         public string ApplicationStatus { get; }
-        public string GatewayReviewStatus { get; }
+        public string GatewayReviewStatus { get; set; }
 
         public bool IsGatewayApproved { get; set; }
 

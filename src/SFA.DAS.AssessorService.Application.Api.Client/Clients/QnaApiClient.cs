@@ -50,6 +50,15 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData/{questionTag}"))
+            {
+                return await RequestAndDeserialiseAsync<string>(request,
+                    $"Could not find the question tag");
+            }
+        }
+
         public async Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))

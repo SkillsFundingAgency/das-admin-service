@@ -203,6 +203,7 @@ namespace SFA.DAS.AdminService.Web
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
 
             services.AddMediatR(typeof(GetLegalNameHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(GetApplicationOverviewHandler).GetTypeInfo().Assembly);
         }
 
         private void AddAuthentication(IServiceCollection services)

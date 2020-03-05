@@ -75,22 +75,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}")]
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            if (application is null)
+            var vm = await _mediator.Send(new GetApplicationOverviewRequest(applicationId));
+            if (vm is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            var vm = CreateGatewayApplicationViewModel(application);
-
             // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+            vm.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
-
-            switch (application.GatewayReviewStatus)
+            switch (vm.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
-                    await _applyApiClient.StartGatewayReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                    await _applyApiClient.StartGatewayReview(vm.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
@@ -123,7 +120,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                var newvm = CreateGatewayApplicationViewModel(application);
+                var newvm = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId));
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
             }
         }
@@ -196,97 +193,5 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }
 
-        private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
-        {
-            if (applicationFromRoatp is null)
-            {
-                return new RoatpGatewayApplicationViewModel();
-            }
-
-            var application = new AssessorService.ApplyTypes.Roatp.Apply
-            {
-                ApplyData = new RoatpApplyData
-                {
-                    ApplyDetails = new RoatpApplyDetails
-                    {
-                        ReferenceNumber = applicationFromRoatp.ApplyData.ApplyDetails.ReferenceNumber,
-                        ProviderRoute = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRoute,
-                        ProviderRouteName = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRouteName,
-                        UKPRN = applicationFromRoatp.ApplyData.ApplyDetails.UKPRN,
-                        OrganisationName = applicationFromRoatp.ApplyData.ApplyDetails.OrganisationName,
-                        ApplicationSubmittedOn = applicationFromRoatp.ApplyData.ApplyDetails.ApplicationSubmittedOn
-                    }
-                },
-                Id = applicationFromRoatp.Id,
-                ApplicationId = applicationFromRoatp.ApplicationId,
-                OrganisationId = applicationFromRoatp.OrganisationId,
-                ApplicationStatus = applicationFromRoatp.ApplicationStatus,
-                GatewayReviewStatus = applicationFromRoatp.GatewayReviewStatus,
-                AssessorReviewStatus = applicationFromRoatp.AssessorReviewStatus,
-                FinancialReviewStatus = applicationFromRoatp.FinancialReviewStatus
-            };
-
-            var returnedModel = new RoatpGatewayApplicationViewModel(application);
-
-            // APR-1467 Code
-            returnedModel.ConfirmReady = false;
-
-            var LegalNameStatus = "";
-            var TradingNameStatus = "";
-            var OrganisationStatus = "";
-            var AddressStatus = "";
-            var IcoRegistrationNumberStatus = "";
-            var WebsiteAddressStatus = SectionReviewStatus.NotRequired;
-            var OrganisationHighRiskStatus = "";
-
-            var OfficeForStudentStatus = "";
-            var InitialTeacherTrainingStatus = "";
-            var OfstedStatus = "";
-            var SubcontractorDeclarationStatus = "";
-
-
-            returnedModel.Sequences = new List<GatewaySequence>
-            {
-                new GatewaySequence
-                {
-                    SequenceNumber = 1,
-                    SequenceTitle = "Organisation checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = "1-10", LinkTitle = "Legal name", HiddenText = "", Status = LegalNameStatus },
-                        new GatewaySection { SectionNumber = 2, PageId = "1-20", LinkTitle = "Trading name", HiddenText = "", Status = TradingNameStatus },
-                        new GatewaySection { SectionNumber = 3, PageId = "1-30", LinkTitle = "Organisation status", HiddenText = "", Status = OrganisationStatus },
-                        new GatewaySection { SectionNumber = 4, PageId = "1-40", LinkTitle = "Address", HiddenText = "", Status = AddressStatus },
-                        new GatewaySection { SectionNumber = 5, PageId = "1-50", LinkTitle = "ICO registration number", HiddenText = "", Status = IcoRegistrationNumberStatus },
-                        new GatewaySection { SectionNumber = 6, PageId = "1-60", LinkTitle = "Website address", HiddenText = "", Status = WebsiteAddressStatus },
-                        new GatewaySection { SectionNumber = 7, PageId = "1-70", LinkTitle = "Organisation high risk", HiddenText = "", Status = OrganisationHighRiskStatus }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 2,
-                    SequenceTitle = "People in control checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = "2-10", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "2-20", LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 3,
-                    SequenceTitle = "Register checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = "3-10", LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "3-20", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
-                    }
-                }
-            };
-
-            return returnedModel; //new RoatpGatewayApplicationViewModel(application);
-        }
     }
 }
