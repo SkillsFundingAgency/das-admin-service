@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -142,6 +144,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
         {
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
+        }
+
+        public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
+        {
+            return await Get<CompaniesHouseSummary>($"/companies-house-lookup?companyNumber={companiesHouseNumber}");
+        }
+
+        public async Task<Charity> GetCharityDetails(string charityNumber)
+        {
+            return await Get<Charity>($"/charity-commission-lookup?charityNumber={charityNumber}");
         }
 
         private async Task<T> Get<T>(string uri)

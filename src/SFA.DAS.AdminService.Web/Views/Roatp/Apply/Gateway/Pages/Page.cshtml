@@ -2,7 +2,9 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayPageViewModel
 
 @{
-    ViewBag.Title = $"Gateway - {Model.Heading}";
+    var heading = "heading";
+    var caption = "caption";
+    ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
@@ -51,13 +53,11 @@
                 </div>
             }
 
-            @if (Model.Caption != null)
-            {
                 <span class="govuk-caption-xl">
-                    @Model.Caption
+                    @caption
                 </span>
-            }
-            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+
+            <h1 class="govuk-heading-xl">@heading</h1>
 
             
                 <div class="govuk-!-margin-bottom-4">
@@ -97,9 +97,9 @@
                     <table class="govuk-table govuk-!-margin-bottom-9">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                @foreach (var heading in table.HeadingTitles)
+                                @foreach (var headingTitle in table.HeadingTitles)
                                 {
-                                    <th class="govuk-table__header" scope="col">@heading</th>
+                                    <th class="govuk-table__header" scope="col">@headingTitle</th>
                                 }
                             </tr>
                         </thead>
