@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -35,33 +34,37 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             const string Caption = "Organisation checks";
             const string Heading = "Legal name check";
-            const string PageId = "1-10";
+
 
             var model = new LegalNamePageViewModel();
             model.ApplicationId = request.ApplicationId;
-            model.PageId = PageId;
+            
 
-            model.Tables = new List<TabularData>();
-            model.SummaryList = new TabularData();
-
-            model.Caption = Caption;
-            model.Heading = Heading;
-
-            //MFCMFC DO THE SHUTTER PAGE IF THE LINK IS DOWN
             // go get UKPRN
-            // use cacheC:\dev\das-admin-service\src\SFA.DAS.AssessorService.Application.Api.Client\Azure\
+            // use cache?
             var ukprn = await  _qnaApiClient.GetQuestionTag(model.ApplicationId, "UKPRN");
+            model.Ukrpn = ukprn;
 
+
+            // go get submitted on
             var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
 
             DateTime? applicationSubmittedOn = null;
-
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 applicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+            model.ApplicationSubmittedOn = applicationSubmittedOn;
 
+
+            //go get Legal name stored in qna
+            // use cache?
             var legalName = await _qnaApiClient.GetQuestionTag(model.ApplicationId, "UKRLPLegalName");
+            model.ApplyLegalName = legalName;
 
 
+
+
+            // go get Legal name from ukrlp
+            // use cache?
             var ukrlpLegalName = "";
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
@@ -70,32 +73,24 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var ukrlpDetail = ukrlpData.First();
                 ukrlpLegalName = ukrlpDetail.ProviderName;
             }
+            model.UkrlpLegalName = ukrlpLegalName;
 
 
 
-            //var x= _applyApiClient.Get
-            model.Ukrpn = ukprn;
-            model.ApplicationSubmittedOn = applicationSubmittedOn;
             model.SourcesCheckedOn = DateTime.Now;
 
-            // building the tables
-            //var table = new TabularData { DataRows = new List<TabularDataRow>(), HeadingTitles = new List<string> { "Source", "Legal name" } };
-
-            //table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Submitted application data", legalName } });
-            //table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "UKRLP data", ukrlpData } });
-            var companiesHouseData = "CompaniesHouse: LegalName";
-
-            var charityCommissionData = "CharityCommission: LegalName";
-            model.ApplyLegalName = legalName;
-            model.UkrlpLegalName = ukrlpLegalName;
-            model.CompaniesHouseLegalName = companiesHouseData;
-            model.CharityCommissionLegalName = charityCommissionData;
+            
+           
+        
 
 
             // the following 2 will be dynamic, depending on whether its a company or charity
             // these two depend on company etc
-          
-           
+            var companiesHouseData = "CompaniesHouse: LegalName";
+
+            var charityCommissionData = "CharityCommission: LegalName";
+            model.CompaniesHouseLegalName = companiesHouseData;
+            model.CharityCommissionLegalName = charityCommissionData;
 
             // write this model straight to the database, and then return it
 

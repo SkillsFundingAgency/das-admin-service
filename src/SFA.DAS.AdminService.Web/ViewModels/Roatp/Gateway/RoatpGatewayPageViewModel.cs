@@ -13,8 +13,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string PageId { get; set; }
 
 
-        public string Caption { get; set; }
-        public string Heading { get; set; }
+        //public string Caption { get; set; }
+        //public string Heading { get; set; }
 
        public string Ukrpn { get; set; }
         //public DateTime? ApplicationSubmittedOn { get; set; }

@@ -2,9 +2,12 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.LegalNamePageViewModel
 
 @{
-    ViewBag.Title = $"Gateway - {Model.Heading}";
+    var heading = "Legal name check";
+
+    ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
-    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+    var caption = "Organisation checks";
+     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
     var failTextMessage = "";
@@ -51,13 +54,11 @@
             </div>
             }
 
-            @if (Model.Caption != null)
-            {
             <span class="govuk-caption-xl">
-                @Model.Caption
+                @caption
             </span>
-            }
-            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+
+            <h1 class="govuk-heading-xl">@heading</h1>
 
 
             <div class="govuk-!-margin-bottom-4">
