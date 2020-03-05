@@ -39,6 +39,7 @@
             }
 
             <h1 class="govuk-heading-xl">Application assessment overview</h1>
+
             <h2 class="govuk-heading-m">Organisation details</h2>
 
             <dl class="govuk-summary-list">
@@ -119,14 +120,22 @@
                                         <span class="app-task-list__task-name">
                                             @if (currentSection.Status.Equals(SectionReviewStatus.NotRequired))
                                             {
-                                                @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\">" + currentSection.HiddenText + "</span>"))
+                                                @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))
                                             }
                                             else
                                             {
-                                                <a href="/Roatp/Gateway/@Model.ApplicationId/Page/@currentSection.PageId">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\">" + currentSection.HiddenText + "</span>"))</a>
+                                                <a class="govuk-link" href="/Roatp/Gateway/@Model.ApplicationId/Page/@currentSection.PageId">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))</a>
                                             }
                                         </span>
-                                        <span>@currentSection.Status</span>
+                                        @if(!string.IsNullOrWhiteSpace(currentSection.Status))
+                                        {
+                                            @if (currentSection.Status.Equals(SectionReviewStatus.NotRequired))
+                                            {
+                                                <strong class="govuk-tag app-task-list__task-completed">@currentSection.Status</strong>
+                                            }
+                                        }
+
+
                                     </li>
                                 }
                             </ul>
