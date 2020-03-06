@@ -365,17 +365,52 @@
   }
 }
 
-.app-task-list__task-completed {
+.app-task-list__task-completed,
+.app-task-list__task-inprogress,
+.app-task-list__task-next,
+.app-task-list__task-notrequired {
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
 @media (min-width: 28.125em) {
-  .app-task-list__task-completed {
+  .app-task-list__task-completed,
+  .app-task-list__task-inprogress,
+  .app-task-list__task-next,
+  .app-task-list__task-notrequired {
     float: right;
     margin-top: 0;
     margin-bottom: 0;
   }
+}
+
+.app-task-list__task-pass {
+  background-color: #00703c;
+}
+
+.app-task-list__task-fail {
+  background-color: #d4351c;
+}
+
+.app-task-list__task-inprogress {
+  background-color: #005ea5;
+}
+
+.app-task-list__task-notrequired {
+  background-color: #6f777b;
+}
+
+.app-task-list__task-next {
+  background-color: #ffbf47;
+  color: #0b0c0c;
+}
+
+.app-task-list__task-name--inactive {
+  color: #6f777b;
+}
+
+.app-task-list__task-hidden {
+  display: none;
 }
 
 .das-user-panel {
