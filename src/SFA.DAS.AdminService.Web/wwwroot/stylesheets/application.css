@@ -234,6 +234,8 @@
   }
 }
 
+/* Task list */
+
 .app-task-list {
   list-style-type: none;
   padding-left: 0;
@@ -249,7 +251,7 @@
 
 .app-task-list__section {
   display: table;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -291,7 +293,7 @@
 }
 
 .app-task-list__items {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -334,14 +336,10 @@
   .app-task-list__items {
     padding-left: 30px;
   }
-
-  .app-task-list__items--no-number {
-    padding-left: 0;
-  }
 }
 
 .app-task-list__item {
-  border-bottom: 1px solid #bfc1c3;
+  border-bottom: 1px solid #b1b4b6;
   margin-bottom: 0 !important;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -353,6 +351,10 @@
   clear: both;
 }
 
+.app-task-list__item:first-child {
+  border-top: 1px solid #b1b4b6;
+}
+
 .app-task-list__task-name {
   display: block;
 }
@@ -360,7 +362,6 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
-    width: 75%;
   }
 }
 
