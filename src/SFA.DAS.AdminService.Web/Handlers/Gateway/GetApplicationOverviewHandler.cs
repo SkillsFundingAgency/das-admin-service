@@ -58,6 +58,22 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
 
+            // TODO:
+            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
+            {
+                // Do the checks
+                // Create record for each Section/page by populating the following: (Update GatewayReviewStatus to InProgress)
+                // ApplicationId, PageId (It holds previous Sequence & Section Numbers), SectionReviewStatus
+
+                // Update 
+            }
+            else
+            {
+                // Get List<> by ApplicationId, 
+                // It will return List<PageId (It holds previous two), SectionReviewStatus>
+                // Inject the statuses into viewmodel
+            }
+
             // APR-1467 
             // NotRequired checks
             var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
@@ -71,9 +87,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var WebsiteAddressStatus = string.IsNullOrWhiteSpace(WebsiteAddressUkrlp) && string.IsNullOrWhiteSpace(WebsiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
 
-            //var ProviderRoutePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "2");
-            //var ProviderRouteAnswer = ProviderRoutePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-1").FirstOrDefault().Value;
-            
             var ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute;
 
             var OfficeForStudentStatus = SectionReviewStatus.NotRequired;

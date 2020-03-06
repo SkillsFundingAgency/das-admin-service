@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            vm.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+            // vm.GatewayReviewStatus = GatewayReviewStatus.InProgress;
 
             switch (vm.GatewayReviewStatus)
             {
