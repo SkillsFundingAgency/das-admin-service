@@ -14,14 +14,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     public class GetApplicationOverviewHandler : IRequestHandler<GetApplicationOverviewRequest, RoatpGatewayApplicationViewModel>
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        //private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
 
 
         public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
         {
             _applyApiClient = applyApiClient;
-            //_apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
         }
         public async Task<RoatpGatewayApplicationViewModel> Handle(GetApplicationOverviewRequest request, CancellationToken cancellationToken)
@@ -223,10 +221,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-40").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
                     // Upsert record
-                }
-
-                // Create record for each Section/page by populating the following: (Update GatewayReviewStatus to InProgress)
-                // ApplicationId, PageId (It holds previous Sequence & Section Numbers), SectionReviewStatus           
+                }       
             }
             else
             {
@@ -239,8 +234,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             }
 
 
-            // TODO: Logic to check whether the Gateway Application is Ready to Confirm gateway outcome
-            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel); // Flag to set the final 'Confirm gateway outcome' section
+            // Check whether the Gateway Application is Ready to Confirm gateway outcome
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel); 
 
             return viewmodel;
         }
