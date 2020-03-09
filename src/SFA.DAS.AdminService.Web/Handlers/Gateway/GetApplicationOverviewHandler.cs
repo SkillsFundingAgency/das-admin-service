@@ -14,14 +14,14 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     public class GetApplicationOverviewHandler : IRequestHandler<GetApplicationOverviewRequest, RoatpGatewayApplicationViewModel>
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IRoatpOrganisationApiClient _apiClient;
+        //private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
 
 
-        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IRoatpOrganisationApiClient apiClient, IQnaApiClient qnaApiClient)
+        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
         {
             _applyApiClient = applyApiClient;
-            _apiClient = apiClient;
+            //_apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
         }
         public async Task<RoatpGatewayApplicationViewModel> Handle(GetApplicationOverviewRequest request, CancellationToken cancellationToken)
@@ -119,9 +119,9 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = SectionReviewStatus.Pass },
-                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = SectionReviewStatus.Fail },
-                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = SectionReviewStatus.InProgress },
+                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = "5-50", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = "5-60", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },

@@ -81,14 +81,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            // vm.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-
             switch (vm.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
-                    //await _applyApiClient.StartGatewayReview(vm.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.Approved:
@@ -135,6 +130,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
+        }
+
+        [HttpGet("/Roatp/GatewayCheckStatus/{applicationId}/Page/{PageId}/Status/{gatewayReviewStatus}")]
+        public async Task<IActionResult> CheckStatus(Guid applicationId, string PageId, string gatewayReviewStatus)
+        {
+            if (gatewayReviewStatus.Equals(GatewayReviewStatus.New)) 
+            {
+                await _applyApiClient.StartGatewayReview(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+            }
+
+            return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
