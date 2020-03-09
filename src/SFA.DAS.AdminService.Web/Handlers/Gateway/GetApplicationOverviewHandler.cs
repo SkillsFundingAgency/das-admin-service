@@ -119,9 +119,9 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = SectionReviewStatus.Pass },
+                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = SectionReviewStatus.Fail },
+                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = SectionReviewStatus.InProgress },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = "5-50", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = "5-60", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
