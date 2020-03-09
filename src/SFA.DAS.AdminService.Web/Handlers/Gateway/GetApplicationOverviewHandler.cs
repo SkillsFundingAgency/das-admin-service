@@ -58,57 +58,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
 
-            // TODO:
-            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
-            {
-                // Do the checks
-                // Create record for each Section/page by populating the following: (Update GatewayReviewStatus to InProgress)
-                // ApplicationId, PageId (It holds previous Sequence & Section Numbers), SectionReviewStatus
-
-                // Update 
-            }
-            else
-            {
-                // Get List<> by ApplicationId, 
-                // It will return List<PageId (It holds previous two), SectionReviewStatus>
-                // Inject the statuses into viewmodel
-            }
-
-            // APR-1467 
-            // NotRequired checks
-            var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
-            var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-46").FirstOrDefault().Value;
-            var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
-
-            var WebsiteAddressUkrlp = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-30").FirstOrDefault().Value;
-
-            var WebsiteAddressApplyPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 2, "40");
-            var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-41").FirstOrDefault().Value;
-
-            var WebsiteAddressStatus = string.IsNullOrWhiteSpace(WebsiteAddressUkrlp) && string.IsNullOrWhiteSpace(WebsiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
-
-            var ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute;
-
-            var OfficeForStudentStatus = SectionReviewStatus.NotRequired;
-            var InitialTeacherTrainingStatus = SectionReviewStatus.NotRequired;
-
-            if (ProviderRoute.Equals(1) || ProviderRoute.Equals(2))
-            {
-                var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "235");
-                var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault().Value;
-                if (OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
-
-                var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "240");
-                var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault().Value;
-                if (InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
-            }
-
-            var OfstedStatus = ProviderRoute.Equals(3) ? SectionReviewStatus.NotRequired : string.Empty;
-            var SubcontractorDeclarationStatus = ProviderRoute.Equals(3) ? string.Empty : SectionReviewStatus.NotRequired;
-
-
-            viewmodel.ConfirmReady = false; // Flag to set the final 'Confirm gateway outcome' section
-
             // APR-1467 Code Stubbing Data - TODO: Store it somewhere 
             #region Sequences Stubbed Data
             viewmodel.Sequences = new List<GatewaySequence>
@@ -120,11 +69,11 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     Sections = new List<GatewaySection>
                     {
                         new GatewaySection { SectionNumber = 1, PageId = "1-10", LinkTitle = "Legal name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "1-20", LinkTitle = "Trading name", HiddenText = "", Status = TradingNameStatus },
+                        new GatewaySection { SectionNumber = 2, PageId = "1-20", LinkTitle = "Trading name", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = "1-30", LinkTitle = "Organisation status", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "1-40", LinkTitle = "Address", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = "1-50", LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "1-60", LinkTitle = "Website address", HiddenText = "", Status = WebsiteAddressStatus },
+                        new GatewaySection { SectionNumber = 6, PageId = "1-60", LinkTitle = "Website address", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = "1-70", LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
                     }
                 },
@@ -157,10 +106,10 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "Experience and accreditation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "4-10", LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = OfficeForStudentStatus },
-                        new GatewaySection { SectionNumber = 2, PageId = "4-20", LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = InitialTeacherTrainingStatus },
-                        new GatewaySection { SectionNumber = 3, PageId = "4-30", LinkTitle = "Ofsted", HiddenText = "", Status = OfstedStatus },
-                        new GatewaySection { SectionNumber = 4, PageId = "4-40", LinkTitle = "Subcontractor declaration", HiddenText = "", Status = SubcontractorDeclarationStatus }
+                        new GatewaySection { SectionNumber = 1, PageId = "4-10", LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "4-20", LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = "4-30", LinkTitle = "Ofsted", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = "4-40", LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -170,9 +119,9 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = "5-10", LinkTitle = "Composition with creditors", HiddenText = "", Status = SectionReviewStatus.Pass },
+                        new GatewaySection { SectionNumber = 2, PageId = "5-20", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = SectionReviewStatus.Fail },
+                        new GatewaySection { SectionNumber = 3, PageId = "5-30", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = SectionReviewStatus.InProgress },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = "5-50", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = "5-60", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
@@ -185,7 +134,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     }
                 },
 
-                                new GatewaySequence
+                new GatewaySequence
                 {
                     SequenceNumber = 6,
                     SequenceTitle = "People in control’s criminal and compliance checks",
@@ -205,7 +154,114 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             };
             #endregion
 
+
+            // TODO:
+            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
+            {
+                // NotRequired checks
+                var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
+                // TradingName
+                var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-46").FirstOrDefault().Value;
+                var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
+                if (TradingNameStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "1-20").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+
+                // WebsiteAddress
+                var WebsiteAddressUkrlp = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-30").FirstOrDefault().Value;
+
+                var WebsiteAddressApplyPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 2, "40");
+                var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-41").FirstOrDefault().Value;
+
+                var WebsiteAddressStatus = string.IsNullOrWhiteSpace(WebsiteAddressUkrlp) && string.IsNullOrWhiteSpace(WebsiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
+                if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "1-60").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+
+                var ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+
+                // OfficeForStudent & InitialTeacherTraining
+                var OfficeForStudentStatus = SectionReviewStatus.NotRequired;
+                var InitialTeacherTrainingStatus = SectionReviewStatus.NotRequired;
+
+                if (ProviderRoute.Equals(1) || ProviderRoute.Equals(2))
+                {
+                    var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "235");
+                    var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault().Value;
+                    if (OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
+
+                    var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "240");
+                    var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault().Value;
+                    if (InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
+                }
+                if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-10").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+                if (InitialTeacherTrainingStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-20").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+
+                // Ofsted
+                var OfstedStatus = ProviderRoute.Equals(3) ? SectionReviewStatus.NotRequired : string.Empty;
+                if (OfstedStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-30").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+
+                // SubcontractorDeclaration
+                var SubcontractorDeclarationStatus = ProviderRoute.Equals(3) ? string.Empty : SectionReviewStatus.NotRequired;
+                if (SubcontractorDeclarationStatus.Equals(SectionReviewStatus.NotRequired))
+                {
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-40").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+                    // Upsert record
+                }
+
+                // Create record for each Section/page by populating the following: (Update GatewayReviewStatus to InProgress)
+                // ApplicationId, PageId (It holds previous Sequence & Section Numbers), SectionReviewStatus           
+            }
+            else
+            {
+                // Get List<> by ApplicationId, 
+                // It will return List<PageId (It holds previous two), SectionReviewStatus>
+                // Inject the statuses into viewmodel
+
+                //viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-40").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+
+            }
+
+
+            // TODO: Logic to check whether the Gateway Application is Ready to Confirm gateway outcome
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel); // Flag to set the final 'Confirm gateway outcome' section
+
             return viewmodel;
+        }
+    
+        public bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
+        {
+            bool IsReadyToConfirm = true;
+
+            foreach(var sequence in viewmodel.Sequences)
+            {
+                foreach(var section in sequence.Sections)
+                {
+                    if(!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired))
+                    {
+                        IsReadyToConfirm = false;
+                        break;
+                    } 
+                }
+            }
+
+            return IsReadyToConfirm;
         }
     }
 }
