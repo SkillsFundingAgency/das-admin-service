@@ -1,12 +1,14 @@
-﻿@using SFA.DAS.AssessorService.Domain.Extensions
+﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+@using SFA.DAS.AssessorService.Domain.Extensions
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.LegalNamePageViewModel
 
 @{
     var heading = "Legal name check";
+    var caption = "Organisation checks";
 
     ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
-    var caption = "Organisation checks";
+
      var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
@@ -31,8 +33,22 @@
 
 }
 
-<a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>
-
+@*<a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>*@
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@(Model.GatewayReviewStatus.Equals(GatewayReviewStatus.New) || Model.GatewayReviewStatus.Equals(GatewayReviewStatus.InProgress) ? Model.GatewayReviewStatus.Replace(" ", "") : "Closed")">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+        </li>
+        
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">@heading</li>
+    </ol>
+</div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
@@ -62,10 +78,10 @@
 
 
             <div class="govuk-!-margin-bottom-4">
-                @if (Model.Ukrpn!=null)
+                @if (Model.Ukprn!=null)
                     {
                 <p class="govuk-body govuk-!-margin-bottom-0">
-                    UKPRN: @Model.Ukrpn
+                    UKPRN: @Model.Ukprn
                 </p>
                     }
 
@@ -135,6 +151,15 @@
             <form class="js-disable-on-submit" asp-action="EvaluateLegalNamePage" asp-controller="RoatpGateway">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="PageId" value="@Model.PageId" />
+                <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
+                <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
+                <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
+                <input type="hidden" name="UkrlpLegalName" value="@Model.UkrlpLegalName" />
+                <input type="hidden" name="ApplyLegalName" value="@Model.ApplyLegalName" />
+                <input type="hidden" name="CharityCommissionLegalName" value="@Model.CharityCommissionLegalName" />
+                <input type="hidden" name="CompaniesHouseLegalName" value="@Model.CompaniesHouseLegalName" />
+
+
 
                 <div class="govuk-form-group @formGroupError">
                     <fieldset class="govuk-fieldset">
@@ -145,31 +170,31 @@
                         </legend>
 
                         @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                        {
+                            @foreach (var error in Model.ErrorMessages)
                             {
-                        @foreach (var error in Model.ErrorMessages)
+                                @if (error.Field == "OptionPass")
                                 {
-                        @if (error.Field == "OptionPass")
-                                    {
-                        <span class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
-                        </span>
-                                    }
+                                    <span class="govuk-error-message">
+                                        <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                    </span>
                                 }
                             }
+                        }
 
                         <div class="govuk-radios govuk-radios--conditional " data-module="radios">
                             @{
-                                    var radioCheckedPassed = Model.Value == "Pass" ? "checked" : "";
-                                    var radioCheckedFailed = Model.Value == "Fail" ? "checked" : "";
-                                    var radioCheckedInProgress = Model.Value == "In progress" ? "checked" : "";
+                                var radioCheckedPassed = Model.Status == "Pass" ? "checked" : "";
+                                var radioCheckedFailed = Model.Status == "Fail" ? "checked" : "";
+                                var radioCheckedInProgress = Model.Status == "In progress" ? "checked" : "";
 
- <!-- PASS -->
+                                <!-- PASS -->
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input"
                                            type="radio"
                                            id="OptionPass"
-                                           name="Value"
+                                           name="Status"
                                            value="Pass"
                                            data-aria-controls="conditional-OptionPass"
                                            @radioCheckedPassed />
@@ -197,13 +222,13 @@
                                     </div>
                                 </div>
 
- <!-- FAIL -->
+                                <!-- FAIL -->
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input"
                                            type="radio"
                                            id="OptionFail"
-                                           name="Value"
+                                           name="Status"
                                            value="Fail"
                                            data-aria-controls="conditional-OptionFail"
                                            @radioCheckedFailed />
@@ -222,17 +247,17 @@
                                             </label>
 
                                             @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                                            {
+                                                @foreach (var error in Model.ErrorMessages)
                                                 {
-                                            @foreach (var error in Model.ErrorMessages)
+                                                    @if (error.Field == "OptionFailText")
                                                     {
-                                            @if (error.Field == "OptionFailText")
-                                                        {
-                                            <span class="govuk-error-message">
-                                                <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
-                                            </span>
-                                                        }
+                                                        <span class="govuk-error-message">
+                                                            <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                                        </span>
                                                     }
                                                 }
+                                            }
 
                                             <textarea class="govuk-textarea js-character-count @isErrorFailText"
                                                       id="OptionFailText"
@@ -247,13 +272,13 @@
 
                                 <div class="govuk-radios__divider">or</div>
 
- <!-- IN PROGRESS -->
+                                <!-- IN PROGRESS -->
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input"
                                            type="radio"
                                            id="InProgress"
-                                           name="Value"
+                                           name="Status"
                                            value="In progress"
                                            data-aria-controls="conditional-InProgress"
                                            @radioCheckedInProgress />

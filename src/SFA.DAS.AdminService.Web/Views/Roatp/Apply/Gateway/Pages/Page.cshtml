@@ -61,10 +61,10 @@
 
             
                 <div class="govuk-!-margin-bottom-4">
-                    @if (Model.Ukrpn!=null)
+                    @if (Model.Ukprn!=null)
                     {
                     <p class="govuk-body govuk-!-margin-bottom-0">
-                        UKPRN: @Model.Ukrpn
+                        UKPRN: @Model.Ukprn
                     </p>
                     }
                     
@@ -184,9 +184,9 @@
 
                             <div class="govuk-radios govuk-radios--conditional " data-module="radios">
                                 @{
-                                    var radioCheckedPassed = Model.Value == "Pass" ? "checked" : "";
-                                    var radioCheckedFailed = Model.Value == "Fail" ? "checked" : "";
-                                    var radioCheckedInProgress = Model.Value == "In progress" ? "checked" : "";
+                                    var radioCheckedPassed = Model.Status == "Pass" ? "checked" : "";
+                                    var radioCheckedFailed = Model.Status == "Fail" ? "checked" : "";
+                                    var radioCheckedInProgress = Model.Status == "In progress" ? "checked" : "";
 
                                     <!-- PASS -->
 

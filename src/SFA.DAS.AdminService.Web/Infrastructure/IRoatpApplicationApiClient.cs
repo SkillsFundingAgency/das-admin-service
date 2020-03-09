@@ -45,5 +45,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber);
 
         Task<Charity> GetCharityDetails(string charityNumber);
+         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
+
+        Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
+
+        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string gatewayPageData);
     }
 }

@@ -3,9 +3,15 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -15,41 +21,58 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
-
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
+            _contextAccessor = contextAccessor;
         }
 
 
         public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
 
         {
-            // go get the record for this application/pageId and dump this in the viewmodel and return it straight away if it exists
-            // else get gathering
+            var pageId = "1-10";
 
-            var model = new LegalNamePageViewModel {ApplicationId = request.ApplicationId};
+            var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId};
+ 
+            var currentRecord = await _applyApiClient.GetGatewayPageAnswer(request.ApplicationId, pageId);
+            var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
 
+            var gatewayReviewStatus = string.Empty;
+            if (applicationDetails?.GatewayReviewStatus != null)
+            {
+                gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
+            }
 
-            // go get UKPRN
-            // use cache?
-            var ukprn = await  _qnaApiClient.GetQuestionTag(model.ApplicationId, "UKPRN");
-            model.Ukrpn = ukprn;
-
+            if (currentRecord?.GatewayPageData != null)
+            {
+                model = JsonConvert.DeserializeObject<LegalNamePageViewModel>(currentRecord.GatewayPageData);
+                model.Status = currentRecord.Status;
+                model.GatewayReviewStatus = gatewayReviewStatus;
+                return model;
+            }
 
             // go get submitted on
-            var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
-            
+
+            model.GatewayReviewStatus = gatewayReviewStatus;
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
 
+            model.SourcesCheckedOn = DateTime.Now;
 
-            //go get Legal name stored in qna
+            var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
+
+            // go get various question tags
             // use cache?
-            model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(model.ApplicationId, "UKRLPLegalName");
-            
+            var ukprn = GetValueFromQuestionTag(qnaApplyData, "UKPRN");
+            model.Ukprn = ukprn;
+            model.ApplyLegalName = GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
+            var companyNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
+            var charityNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
+
 
             // go get Legal name from ukrlp
             // use cache?
@@ -64,36 +87,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             model.UkrlpLegalName = ukrlpLegalName;
 
 
-
-            model.SourcesCheckedOn = DateTime.Now;
-
-
-            // get company information
-            // companies house
-
-            var companyNumber = "";
-            var charityNumber = "";
-
-            var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
-          
-            foreach (var variable in qnaApplyData)
-            {
-                if (variable.Value == null) continue;
-
-                // put into cache???
-                if (variable.Key == "UKRLPVerificationCompanyNumber" )
-                {
-                    companyNumber = variable.Value.ToString();
-                }
-
-                // pout into cache????
-                if (variable.Key == "UKRLPVerificationCharityRegNumber")
-                {
-                    charityNumber = variable.Value.ToString();
-                }
-            }
-
-    
+            // get company name from company number
             if (!string.IsNullOrEmpty(companyNumber))
             {
                 var companyDetails = await _applyApiClient.GetCompanyDetails(companyNumber);
@@ -102,18 +96,35 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     model.CompaniesHouseLegalName  = companyDetails.CompanyName;
             }
 
+            // get charity name from charity number
             if (!string.IsNullOrEmpty(charityNumber))
             {
                 var charityDetails = await _applyApiClient.GetCharityDetails(charityNumber);
 
                 if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
                     model.CharityCommissionLegalName = charityDetails.Name;
-            } 
-         
-            // write this model straight to the database, and then return it
+            }
 
+            var pageData = JsonConvert.SerializeObject(model);
 
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, username, pageData);
+            
             return model;
+        }
+
+    
+
+        // this is a candidate for an injected service.
+        // It may be best to have the direct retrieval for the qnaApplyData within such a service, and maybe have caching per session/applicationId?
+        private static string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey)
+        {
+            foreach (var variable in qnaApplyData.Where(variable => variable.Value != null).Where(variable => variable.Key == tagKey))
+            {
+                return variable.Value.ToString();
+            }
+
+            return string.Empty;
         }
     }
 }

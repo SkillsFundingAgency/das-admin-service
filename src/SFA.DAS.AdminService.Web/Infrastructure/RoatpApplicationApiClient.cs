@@ -156,6 +156,24 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Charity>($"/charity-commission-lookup?charityNumber={charityNumber}");
         }
 
+        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
+        {
+            return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
+        }
+
+        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+            return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
+
+        }
+
+        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string gatewayPageData)
+        {
+            await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

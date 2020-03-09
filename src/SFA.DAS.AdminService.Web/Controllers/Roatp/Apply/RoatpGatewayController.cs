@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
+using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
@@ -142,6 +143,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
         {
+            vm.OptionInProgressText = vm.Status.ToLower() == "in progress" ? vm.OptionInProgressText : string.Empty;
+            vm.OptionPassText = vm.Status == "Pass" ? vm.OptionPassText : string.Empty;
+            vm.OptionFailText = vm.Status == "Fail" ? vm.OptionFailText : string.Empty;
+       
             var validationResponse = await _gatewayValidator.Validate(vm);
 
             vm.ErrorMessages = validationResponse.Errors;
@@ -150,11 +155,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
                     model.ErrorMessages = vm.ErrorMessages;
-                    model.Value = vm.Value;
+                    model.Status = vm.Status;
+                    model.OptionInProgressText = vm.OptionInProgressText;
+                    model.OptionFailText = vm.OptionFailText;
+                    model.OptionPassText = vm.OptionPassText;
                     return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
-            
-            // if it gets here, save it.... username, applicationid, pageid, value, pageview stored
+
+            vm.SourcesCheckedOn = DateTime.Now;
+
+            var pageData = JsonConvert.SerializeObject(vm);
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
 
             return RedirectToAction("ViewApplication", new {vm.ApplicationId});
 
