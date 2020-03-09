@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -141,6 +144,32 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
         {
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
+        }
+
+        public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
+        {
+            return await Get<CompaniesHouseSummary>($"/companies-house-lookup?companyNumber={companiesHouseNumber}");
+        }
+
+        public async Task<Charity> GetCharityDetails(string charityNumber)
+        {
+            return await Get<Charity>($"/charity-commission-lookup?charityNumber={charityNumber}");
+        }
+
+        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
+        {
+            return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
+        }
+
+        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+            return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
+        }
+
+        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string gatewayPageData)
+        {
+            await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
         }
 
         private async Task<T> Get<T>(string uri)

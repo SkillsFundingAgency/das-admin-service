@@ -4,7 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
-    public class GetLegalNameRequest: IRequest<RoatpGatewayPageViewModel>
+    public class GetLegalNameRequest: IRequest<LegalNamePageViewModel>
     {
         public Guid ApplicationId { get; }
         public GetLegalNameRequest(Guid applicationId)

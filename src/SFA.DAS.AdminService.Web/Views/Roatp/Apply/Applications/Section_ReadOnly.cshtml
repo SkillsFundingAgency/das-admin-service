@@ -114,9 +114,16 @@
                                             }
                                             else
                                             {
-                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                                @if (Model.QuestionContainsPredefinedOptions(question))
+                                                {
+                                                    <p class="govuk-body">@Html.Raw(Model.DisplayAnswerValue(answer, question))</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                                }
                                             }
-                                    }
+                                        }
                                     }
                                 </dd>
 

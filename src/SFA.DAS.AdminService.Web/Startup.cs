@@ -162,12 +162,12 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IRoatpApplyTokenService, RoatpApplyTokenService>();
 
             services.AddTransient<IRoatpApplicationApiClient>(x => new RoatpApplicationApiClient(
-                ApplicationConfiguration.RoatpApplyApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpApplicationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
-                ApplicationConfiguration.RoatpApplyApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
             

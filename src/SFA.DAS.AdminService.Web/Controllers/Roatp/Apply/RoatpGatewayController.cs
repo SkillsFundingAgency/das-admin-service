@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
+using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using System.Collections.Generic;
 
@@ -146,55 +147,52 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
         public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
         {
+            SetupGatewayPageOptionTexts(vm);
+
             var validationResponse = await _gatewayValidator.Validate(vm);
 
             vm.ErrorMessages = validationResponse.Errors;
 
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                var vmodel = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId };
-
-                if (vm.PageId == "1-10")
-                {
-                    vmodel = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
-                }
-                vmodel.ErrorMessages = vm.ErrorMessages;
-                vmodel.Value = vm.Value;
-
-                return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", vmodel);
+                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
+                    SetupGatewayViewModelErrorMessagesAndValues(model, vm);
+                    return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
 
+            vm.SourcesCheckedOn = DateTime.Now;
 
-            // this is temporary, the important thing is to save, including user name, then redirect back to overview
-            var model = new RoatpGatewayPageViewModel { ApplicationId = vm.ApplicationId, PageId = vm.PageId, Value = vm.Value, OptionPassText = vm.OptionPassText, OptionFailText = vm.OptionFailText, OptionInProgressText = vm.OptionInProgressText };
-            model.NextPageId = vm.PageId;
+            var pageData = JsonConvert.SerializeObject(vm);
 
-            // if it gets here, save it....
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
 
-
-
-            // go to overview page
-            //return RedirectToAction("GetGatewayPage", new { model.ApplicationId, pageId = model.NextPageId });
-            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
+            return RedirectToAction("ViewApplication", new {vm.ApplicationId});
 
         }
 
-
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
-        public async Task<IActionResult> GetGatewayPage(Guid applicationId, string pageId)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
+        public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
-            var model = new RoatpGatewayPageViewModel { ApplicationId = applicationId, PageId = "NotFound" };
+            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId)));
+        }
 
+        private static void SetupGatewayViewModelErrorMessagesAndValues(LegalNamePageViewModel model, LegalNamePageViewModel vm)
+        {
+            model.ErrorMessages = vm.ErrorMessages;
+            model.Status = vm.Status;
+            model.OptionInProgressText = vm.OptionInProgressText;
+            model.OptionFailText = vm.OptionFailText;
+            model.OptionPassText = vm.OptionPassText;
+        }
 
-            if (pageId == "1-10")
-            {
-                model = await _mediator.Send(new GetLegalNameRequest(applicationId));
-            }
-
-            if (model.PageId == "NotFound")
-            {
-                return View("~/Views/ErrorPage/PageNotFound.cshtml");
-            }
+        private static void SetupGatewayPageOptionTexts(LegalNamePageViewModel vm)
+        {
+            if (vm?.Status == null) return;
+            vm.OptionInProgressText = vm.Status.ToLower() == "in progress" && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;
+            vm.OptionPassText = vm.Status == "Pass" && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
+            vm.OptionFailText = vm.Status == "Fail" && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
+        }
 
             return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
         }

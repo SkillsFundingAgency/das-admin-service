@@ -1,81 +1,125 @@
-﻿using System.Collections.Generic;
+﻿using MediatR;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Domain;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
-    public class GetLegalNameHandler : IRequestHandler<GetLegalNameRequest, RoatpGatewayPageViewModel>
+    public class GetLegalNameHandler : IRequestHandler<GetLegalNameRequest, LegalNamePageViewModel>
     {
-        public async Task<RoatpGatewayPageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
+
+        private readonly IRoatpApplicationApiClient _applyApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor)
+        {
+            _applyApiClient = applyApiClient;
+            _qnaApiClient = qnaApiClient;
+            _roatpApiClient = roatpApiClient;
+            _contextAccessor = contextAccessor;
+        }
+
+
+        public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
 
         {
+            var pageId = "1-10";
+
+            var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId};
+ 
+            var currentRecord = await _applyApiClient.GetGatewayPageAnswer(request.ApplicationId, pageId);
+            var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
+
+            var gatewayReviewStatus = string.Empty;
+            if (applicationDetails?.GatewayReviewStatus != null)
+            {
+                gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
+            }
+
+            if (currentRecord?.GatewayPageData != null)
+            {
+                model = JsonConvert.DeserializeObject<LegalNamePageViewModel>(currentRecord.GatewayPageData);
+                model.Status = currentRecord.Status;
+                model.GatewayReviewStatus = gatewayReviewStatus;
+                return model;
+            }
+
+            model.GatewayReviewStatus = gatewayReviewStatus;
+            if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
+                model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+
+            model.SourcesCheckedOn = DateTime.Now;
+
+            var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
+
+            // go get various question tags
+            // use session cache?
+            var ukprn = GetValueFromQuestionTag(qnaApplyData, "UKPRN");
+            model.Ukprn = ukprn;
+            model.ApplyLegalName = GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
+            var companyNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
+            var charityNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
 
 
-            // go get the record for this application/pageId and dump this in the viewmodel and return it straight away if it exists
+            // go get Legal name from ukrlp
+            // use seesion cache?
+            var ukrlpLegalName = "";
 
-            const string Caption = "Organisation checks";
-            const string Heading = "Legal name check";
-            const string PageId = "1-10";
-
-            var model = new RoatpGatewayPageViewModel();
-            model.ApplicationId = request.ApplicationId;
-            model.PageId = PageId;
-
-            model.TextListing = new TabularData();
-            model.Tables = new List<TabularData>();
-            model.SummaryList = new TabularData();
-
-            // These can go when Greg has finished with the page
-            //model.OptionPass = new Option { Label = "Pass", Value = "Pass", Heading = "Add comments (optional)" };
-            //model.OptionFail = new Option { Label = "Fail", Value = "Fail", Heading = "Add comments (mandatory)" };
-            //model.OptionInProgress = new Option
-            //{ Label = "In progress", Value = "In Progress", Heading = "Add comments (optional)" };
-            /////////////////////////////////////////////////
-
-            model.NextPageId = PageId; /// needs to be actual next page - will probably need the logic for trading name in this handler to jump over it if not rewuired
-            model.Caption = Caption;
-            model.Heading = Heading;
-            var ukprnValue = "ApplyQuestionTag: UKPRN";
-            var applicationSubmittedOn = "ApplySpecial: SubmittedOnDate";
-            var applicationSourcesCheckedOn = "ApplySpecial: CheckedOnDate";
-            var submittedApplicationData = "ApplyQuestionTag: UKRLPLegalName";
-            var ukrlpData = "UKRLP: UKRLPLegalName";
-
-           
+            var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
+            if (ukrlpData.Any())
+            {
+                var ukrlpDetail = ukrlpData.First();
+                ukrlpLegalName = ukrlpDetail.ProviderName;
+            }
+            model.UkrlpLegalName = ukrlpLegalName;
 
 
-            var textListing = new TabularData { DataRows = new List<TabularDataRow>() };
+            // get company name from company number
+            // use session cache?
+            if (!string.IsNullOrEmpty(companyNumber))
+            {
+                var companyDetails = await _applyApiClient.GetCompanyDetails(companyNumber);
 
-            // building the textListing
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"UKPRN: {ukprnValue}" } });
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Application submitted on: {applicationSubmittedOn}" } });
-            textListing.DataRows.Add(new TabularDataRow { Columns = new List<string> { $"Sources checked on: {applicationSourcesCheckedOn}" } });
-            model.TextListing = textListing;
+                if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
+                    model.CompaniesHouseLegalName  = companyDetails.CompanyName;
+            }
 
-            // building the tables
-            var table = new TabularData { DataRows = new List<TabularDataRow>(), HeadingTitles = new List<string> { "Source", "Legal name" } };
+            // get charity name from charity number
+            // use session cache?
+            if (!string.IsNullOrEmpty(charityNumber))
+            {
+                var charityDetails = await _applyApiClient.GetCharityDetails(charityNumber);
 
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Submitted application data", submittedApplicationData } });
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "UKRLP data", ukrlpData } });
+                if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
+                    model.CharityCommissionLegalName = charityDetails.Name;
+            }
 
+            var pageData = JsonConvert.SerializeObject(model);
 
-            // the following 2 will be dynamic, depending on whether its a company or charity
-            // these two depend on company etc
-            var companiesHouseData = "CompaniesHouse: LegalName";
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Companies House data", companiesHouseData } });
-
-            var charityCommissionData = "CharityCommission: LegalName";
-            table.DataRows.Add(new TabularDataRow { Columns = new List<string> { "Charity Commission data", charityCommissionData } });
-
-            model.Tables.Add(table);
-
-            // write this model straight to the database, and then return it
-
-
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, username, pageData);
+            
             return model;
+        }
+
+        
+        private static string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey)
+        {
+            foreach (var variable in qnaApplyData.Where(variable => variable.Value != null).Where(variable => variable.Key == tagKey))
+            {
+                return variable.Value.ToString();
+            }
+
+            return string.Empty;
         }
     }
 }

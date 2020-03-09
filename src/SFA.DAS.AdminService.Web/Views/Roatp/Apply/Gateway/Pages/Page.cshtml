@@ -1,7 +1,10 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayPageViewModel
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayPageViewModel
 
 @{
-    ViewBag.Title = $"Gateway - {Model.Heading}";
+    var heading = "heading";
+    var caption = "caption";
+    ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
@@ -50,28 +53,37 @@
                 </div>
             }
 
-            @if (Model.Caption != null)
-            {
                 <span class="govuk-caption-xl">
-                    @Model.Caption
+                    @caption
                 </span>
-            }
-            <h1 class="govuk-heading-xl">@Model.Heading</h1>
 
-            @if (Model?.TextListing?.DataRows != null)
-            {
+            <h1 class="govuk-heading-xl">@heading</h1>
+
+            
                 <div class="govuk-!-margin-bottom-4">
-                    @foreach (var row in Model.TextListing.DataRows)
+                    @if (Model.Ukprn!=null)
                     {
-                        <p class="govuk-body govuk-!-margin-bottom-0">
-                            @foreach (var column in row.Columns)
-                            {
-                                @Html.Raw(column)
-                            }
-                        </p>
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        UKPRN: @Model.Ukprn
+                    </p>
                     }
+                    
+                    @*@if (Model.ApplicationSubmittedOn!=null)
+                    {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
+                    </p>
+                    }
+                    
+                    
+                    @if (Model.SourcesCheckedOn!=null)
+                    {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
+                    </p>
+                    }*@
                 </div>
-            }
+            
 
         </div>
     </div>
@@ -85,9 +97,9 @@
                     <table class="govuk-table govuk-!-margin-bottom-9">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                @foreach (var heading in table.HeadingTitles)
+                                @foreach (var headingTitle in table.HeadingTitles)
                                 {
-                                    <th class="govuk-table__header" scope="col">@heading</th>
+                                    <th class="govuk-table__header" scope="col">@headingTitle</th>
                                 }
                             </tr>
                         </thead>
@@ -172,9 +184,9 @@
 
                             <div class="govuk-radios govuk-radios--conditional " data-module="radios">
                                 @{
-                                    var radioCheckedPassed = Model.Value == "Pass" ? "checked" : "";
-                                    var radioCheckedFailed = Model.Value == "Fail" ? "checked" : "";
-                                    var radioCheckedInProgress = Model.Value == "In progress" ? "checked" : "";
+                                    var radioCheckedPassed = Model.Status == "Pass" ? "checked" : "";
+                                    var radioCheckedFailed = Model.Status == "Fail" ? "checked" : "";
+                                    var radioCheckedInProgress = Model.Status == "In progress" ? "checked" : "";
 
                                     <!-- PASS -->
 
