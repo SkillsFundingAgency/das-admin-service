@@ -87,7 +87,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             switch (vm.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
-                    await _applyApiClient.StartGatewayReview(vm.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                    //await _applyApiClient.StartGatewayReview(vm.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
