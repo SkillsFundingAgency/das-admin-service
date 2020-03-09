@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Domain;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -15,12 +17,14 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IHttpContextAccessor _contextAccessor;
 
 
-        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
+        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
+            _contextAccessor = contextAccessor;
         }
         public async Task<RoatpGatewayApplicationViewModel> Handle(GetApplicationOverviewRequest request, CancellationToken cancellationToken)
         {
@@ -156,6 +160,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             // TODO:
             if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
             {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+
                 // NotRequired checks
                 var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
                 // TradingName
@@ -163,8 +169,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
                 if (TradingNameStatus.Equals(SectionReviewStatus.NotRequired))
                 {
-                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "1-20").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "1-20").FirstOrDefault().Status = SectionReviewStatus.NotRequired;                    
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "1-20", SectionReviewStatus.NotRequired, username, null);
                 }
 
                 // WebsiteAddress
@@ -177,7 +183,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "1-60").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "1-60", SectionReviewStatus.NotRequired, username, null);
                 }
 
                 var ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute;
@@ -199,12 +205,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-10").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "4-10", SectionReviewStatus.NotRequired, username, null);
                 }
                 if (InitialTeacherTrainingStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-20").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "4-20", SectionReviewStatus.NotRequired, username, null);
                 }
 
                 // Ofsted
@@ -212,7 +218,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (OfstedStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-30").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "4-30", SectionReviewStatus.NotRequired, username, null);
                 }
 
                 // SubcontractorDeclaration
@@ -220,19 +226,18 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (SubcontractorDeclarationStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-40").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    // Upsert record
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, "4-40", SectionReviewStatus.NotRequired, username, null);
                 }       
             }
             else
             {
-                // Get List<> by ApplicationId, 
-                // It will return List<PageId (It holds previous two), SectionReviewStatus>
-                // Inject the statuses into viewmodel
-
-                //viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == "4-40").FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-
+                var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+                foreach(var currentStatus in savedStatuses)
+                {
+                    // Inject the statuses into viewmodel
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == currentStatus.PageId).FirstOrDefault().Status = currentStatus.Status;
+                }
             }
-
 
             // Check whether the Gateway Application is Ready to Confirm gateway outcome
             viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel); 
@@ -248,7 +253,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             {
                 foreach(var section in sequence.Sections)
                 {
-                    if(!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired))
+                    if(section.Status == null || (!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired)))
                     {
                         IsReadyToConfirm = false;
                         break;

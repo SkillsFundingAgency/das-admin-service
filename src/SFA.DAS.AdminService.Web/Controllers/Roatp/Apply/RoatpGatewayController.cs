@@ -144,8 +144,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/{PageId}")]
-        public async Task<IActionResult> EvaluatePage(RoatpGatewayPageViewModel vm)
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
+        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
         {
             SetupGatewayPageOptionTexts(vm);
 
@@ -156,8 +156,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
                 var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
-                    SetupGatewayViewModelErrorMessagesAndValues(model, vm);
-                    return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
+                SetupGatewayViewModelErrorMessagesAndValues(model, vm);
+                return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
 
             vm.SourcesCheckedOn = DateTime.Now;
@@ -167,8 +167,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
 
-            return RedirectToAction("ViewApplication", new {vm.ApplicationId});
-
+            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
@@ -193,9 +192,5 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             vm.OptionPassText = vm.Status == "Pass" && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
             vm.OptionFailText = vm.Status == "Fail" && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
         }
-
-            return View("~/Views/Roatp/Apply/Gateway/Page.cshtml", model);
-        }
-
     }
 }
