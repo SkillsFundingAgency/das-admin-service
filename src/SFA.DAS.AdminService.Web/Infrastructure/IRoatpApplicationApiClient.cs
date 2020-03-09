@@ -43,13 +43,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
 
         Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber);
-
         Task<Charity> GetCharityDetails(string charityNumber);
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
-
-        Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
-
-        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
+         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string gatewayPageData);
     }
 }

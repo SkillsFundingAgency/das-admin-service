@@ -83,10 +83,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = CreateGatewayApplicationViewModel(application);
 
-            // MFCMFC temporary measure to aid us to get on with stuff without needing to do a full application
-            //application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-
-
             switch (application.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
@@ -143,10 +139,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
         {
-            vm.OptionInProgressText = vm.Status.ToLower() == "in progress" ? vm.OptionInProgressText : string.Empty;
-            vm.OptionPassText = vm.Status == "Pass" ? vm.OptionPassText : string.Empty;
-            vm.OptionFailText = vm.Status == "Fail" ? vm.OptionFailText : string.Empty;
-       
+            SetupGatewayPageOptionTexts(vm);
+
             var validationResponse = await _gatewayValidator.Validate(vm);
 
             vm.ErrorMessages = validationResponse.Errors;
@@ -154,11 +148,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
                 var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
-                    model.ErrorMessages = vm.ErrorMessages;
-                    model.Status = vm.Status;
-                    model.OptionInProgressText = vm.OptionInProgressText;
-                    model.OptionFailText = vm.OptionFailText;
-                    model.OptionPassText = vm.OptionPassText;
+                    SetupGatewayViewModelErrorMessagesAndValues(model, vm);
                     return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
 
@@ -173,12 +163,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         }
 
-
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
             return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId)));
         }
+
+        private static void SetupGatewayViewModelErrorMessagesAndValues(LegalNamePageViewModel model, LegalNamePageViewModel vm)
+        {
+            model.ErrorMessages = vm.ErrorMessages;
+            model.Status = vm.Status;
+            model.OptionInProgressText = vm.OptionInProgressText;
+            model.OptionFailText = vm.OptionFailText;
+            model.OptionPassText = vm.OptionPassText;
+        }
+
+        private static void SetupGatewayPageOptionTexts(LegalNamePageViewModel vm)
+        {
+            vm.OptionInProgressText = vm.Status.ToLower() == "in progress" ? vm.OptionInProgressText : string.Empty;
+            vm.OptionPassText = vm.Status == "Pass" ? vm.OptionPassText : string.Empty;
+            vm.OptionFailText = vm.Status == "Fail" ? vm.OptionFailText : string.Empty;
+        }
+
 
         private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
         {

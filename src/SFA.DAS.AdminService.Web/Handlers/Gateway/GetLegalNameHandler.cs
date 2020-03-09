@@ -8,10 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -55,8 +53,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 return model;
             }
 
-            // go get submitted on
-
             model.GatewayReviewStatus = gatewayReviewStatus;
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
@@ -66,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
 
             // go get various question tags
-            // use cache?
+            // use session cache?
             var ukprn = GetValueFromQuestionTag(qnaApplyData, "UKPRN");
             model.Ukprn = ukprn;
             model.ApplyLegalName = GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
@@ -75,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
 
             // go get Legal name from ukrlp
-            // use cache?
+            // use seesion cache?
             var ukrlpLegalName = "";
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
@@ -88,6 +84,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
 
             // get company name from company number
+            // use session cache?
             if (!string.IsNullOrEmpty(companyNumber))
             {
                 var companyDetails = await _applyApiClient.GetCompanyDetails(companyNumber);
@@ -97,6 +94,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             }
 
             // get charity name from charity number
+            // use session cache?
             if (!string.IsNullOrEmpty(charityNumber))
             {
                 var charityDetails = await _applyApiClient.GetCharityDetails(charityNumber);
@@ -113,10 +111,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             return model;
         }
 
-    
-
-        // this is a candidate for an injected service.
-        // It may be best to have the direct retrieval for the qnaApplyData within such a service, and maybe have caching per session/applicationId?
+        
         private static string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey)
         {
             foreach (var variable in qnaApplyData.Where(variable => variable.Value != null).Where(variable => variable.Key == tagKey))

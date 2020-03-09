@@ -12,6 +12,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string UkrlpLegalName { get; set; }
         public string CompaniesHouseLegalName { get; set; }
         public string CharityCommissionLegalName { get; set; }
-       
     }
 }
