@@ -365,19 +365,23 @@
   }
 }
 
-.app-task-list__task-completed,
+.app-task-list__task-pass,
+.app-task-list__task-fail,
 .app-task-list__task-inprogress,
+.app-task-list__task-notrequired,
 .app-task-list__task-next,
-.app-task-list__task-notrequired {
+.app-task-list__task-completed {
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
 @media (min-width: 28.125em) {
-  .app-task-list__task-completed,
+  .app-task-list__task-pass,
+  .app-task-list__task-fail,
   .app-task-list__task-inprogress,
+  .app-task-list__task-notrequired,
   .app-task-list__task-next,
-  .app-task-list__task-notrequired {
+  .app-task-list__task-completed {
     float: right;
     margin-top: 0;
     margin-bottom: 0;
