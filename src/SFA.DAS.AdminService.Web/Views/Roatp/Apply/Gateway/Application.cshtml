@@ -40,8 +40,6 @@
 
             <h1 class="govuk-heading-xl">Application assessment overview</h1>
 
-            <h2 class="govuk-heading-m">Organisation details</h2>
-
             <dl class="govuk-summary-list">
                 @if (!string.IsNullOrWhiteSpace(Model.Ukprn))
                 {
@@ -117,7 +115,7 @@
                                 @foreach (var currentSection in sequence.Sections)
                                 {
                                     <li class="app-task-list__item">
-                                        <span class="app-task-list__task-name">
+                                        <span class="app-task-list__task-name app-task-list__task-name--inactive">
                                             @if (currentSection.Status.Equals(SectionReviewStatus.NotRequired))
                                             {
                                                 @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))
@@ -129,9 +127,10 @@
                                         </span>
                                         @if(!string.IsNullOrWhiteSpace(currentSection.Status))
                                         {
+                                            var cssModifierClassName = currentSection.Status.ToLower().Replace(" ", "");
                                             @if (currentSection.Status.Equals(SectionReviewStatus.NotRequired))
                                             {
-                                                <strong class="govuk-tag app-task-list__task-completed">@currentSection.Status</strong>
+                                                <strong class="govuk-tag app-task-list__task-@cssModifierClassName">@currentSection.Status</strong>
                                             }
                                         }
 
@@ -147,8 +146,8 @@
                         </h2>
                         <ul class="app-task-list__items">
                             <li class="app-task-list__item">
-                                <span class="app-task-list__task-name">
-                                    @if (Model.ReadyToConfirm)
+                                <span class="app-task-list__task-name app-task-list__task-name--inactive">
+                                    @if (Model.ConfirmReady)
                                     {
                                         <a href="/Roatp/Gateway/GoAndConfirm/@Model.ApplicationId">Confirm gateway outcome</a>
                                     }
