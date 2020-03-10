@@ -110,8 +110,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             {
                 var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
 
-                if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
-                    model.CharityCommissionLegalName = charityDetails.Name;
+                if  (!string.IsNullOrEmpty(charityDetails?.Response?.Name))
+                    model.CharityCommissionLegalName = charityDetails.Response.Name;
             }
 
             var pageData = JsonConvert.SerializeObject(model);

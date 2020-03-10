@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -28,12 +29,22 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<Charity> GetCharityDetails(int charityNumber)
+        public async Task<ApiResponse<Charity>> GetCharityDetails(int charityNumber)
         {
-            var requestMessage =
+            var responseMessage =
                 await _httpClient.GetAsync($"/charity-commission-lookup?charityNumber={charityNumber}");
 
-            return await requestMessage.Content.ReadAsAsync<Charity>();
+            if (responseMessage.StatusCode == HttpStatusCode.InternalServerError ||
+                responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                return new ApiResponse<Charity> { Success = false };
+            }
+
+            return new ApiResponse<Charity>
+            {
+                Success = true,
+                Response = await responseMessage.Content.ReadAsAsync<Charity>()
+            };
         }
     }
 }
