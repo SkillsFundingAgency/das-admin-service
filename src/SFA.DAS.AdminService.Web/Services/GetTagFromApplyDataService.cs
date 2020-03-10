@@ -19,9 +19,4 @@ namespace SFA.DAS.AdminService.Web.Services
             return string.Empty;
         }
     }
-
-    public interface IGetTagFromApplyDataService
-    {
-        string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey);
-    }
 }

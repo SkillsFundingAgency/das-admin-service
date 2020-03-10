@@ -4,9 +4,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -42,8 +40,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
 
-        Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber);
-        Task<Charity> GetCharityDetails(string charityNumber);
+       
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,

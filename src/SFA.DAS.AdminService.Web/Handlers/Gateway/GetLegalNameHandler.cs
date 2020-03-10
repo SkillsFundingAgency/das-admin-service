@@ -23,13 +23,15 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IGetTagFromApplyDataService _getTagFromApplyDataService;
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IGetTagFromApplyDataService getTagFromApplyDataService)
+        private readonly IApplyServicePassthroughApiClient _applyServicePassthroughApiClient;
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IGetTagFromApplyDataService getTagFromApplyDataService, IApplyServicePassthroughApiClient applyServicePassthroughApiClient)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _contextAccessor = contextAccessor;
             _getTagFromApplyDataService = getTagFromApplyDataService;
+            _applyServicePassthroughApiClient = applyServicePassthroughApiClient;
         }
 
 
@@ -65,17 +67,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
 
-            // go get various question tags
-            // use session cache?
             var ukprn = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKPRN");
             model.Ukprn = ukprn;
             model.ApplyLegalName = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
             var companyNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
             var charityNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
 
-
-            // go get Legal name from ukrlp
-            // use seesion cache?
             var ukrlpLegalName = "";
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
@@ -87,21 +84,17 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             model.UkrlpLegalName = ukrlpLegalName;
 
 
-            // get company name from company number
-            // use session cache?
             if (!string.IsNullOrEmpty(companyNumber))
             {
-                var companyDetails = await _applyApiClient.GetCompanyDetails(companyNumber);
+                var companyDetails = await _applyServicePassthroughApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
                     model.CompaniesHouseLegalName  = companyDetails.CompanyName;
             }
 
-            // get charity name from charity number
-            // use session cache?
             if (!string.IsNullOrEmpty(charityNumber))
             {
-                var charityDetails = await _applyApiClient.GetCharityDetails(charityNumber);
+                var charityDetails = await _applyServicePassthroughApiClient.GetCharityDetails(charityNumber);
 
                 if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
                     model.CharityCommissionLegalName = charityDetails.Name;

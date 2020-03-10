@@ -170,7 +170,11 @@ namespace SFA.DAS.AdminService.Web
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
-            
+
+            services.AddTransient<IApplyServicePassthroughApiClient>(x => new ApplyServicePassthroughApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
