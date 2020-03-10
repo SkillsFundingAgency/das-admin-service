@@ -17,14 +17,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
 
 
-        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
-            _contextAccessor = contextAccessor;
         }
         public async Task<RoatpGatewayApplicationViewModel> Handle(GetApplicationOverviewRequest request, CancellationToken cancellationToken)
         {
@@ -160,8 +158,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             // TODO:
             if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
             {
-                var username = _contextAccessor.HttpContext.User.UserDisplayName();
-
                 // NotRequired checks
                 var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
                 // TradingName
@@ -170,7 +166,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (TradingNameStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.TradingName).FirstOrDefault().Status = SectionReviewStatus.NotRequired;                    
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.TradingName, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.TradingName, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
 
                 // WebsiteAddress
@@ -183,7 +179,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.WebsiteAddress, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.WebsiteAddress, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
 
                 var ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute;
@@ -205,12 +201,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.OfficeForStudent).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.OfficeForStudent, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.OfficeForStudent, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
                 if (InitialTeacherTrainingStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.InitialTeacherTraining).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.InitialTeacherTraining, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.InitialTeacherTraining, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
 
                 // Ofsted
@@ -218,7 +214,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (OfstedStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.Ofsted).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.Ofsted, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.Ofsted, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
 
                 // SubcontractorDeclaration
@@ -226,7 +222,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (SubcontractorDeclarationStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.SubcontractorDeclaration).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, SectionReviewStatus.NotRequired, username, null);
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, SectionReviewStatus.NotRequired, request.UserName, null);
                 }       
             }
             else

@@ -76,7 +76,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}")]
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
-            var vm = await _mediator.Send(new GetApplicationOverviewRequest(applicationId));
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var vm = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
             if (vm is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -116,7 +117,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                var newvm = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId));
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var newvm = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
             }
         }
@@ -153,9 +155,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             vm.ErrorMessages = validationResponse.Errors;
 
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
+                
+                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId, username));
                 SetupGatewayViewModelErrorMessagesAndValues(model, vm);
                 return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
@@ -163,8 +167,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             vm.SourcesCheckedOn = DateTime.Now;
 
             var pageData = JsonConvert.SerializeObject(vm);
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
             await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
 
             return RedirectToAction("ViewApplication", new { vm.ApplicationId });
@@ -173,7 +175,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
-            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId)));
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId, username)));
         }
 
         private static void SetupGatewayViewModelErrorMessagesAndValues(LegalNamePageViewModel model, LegalNamePageViewModel vm)

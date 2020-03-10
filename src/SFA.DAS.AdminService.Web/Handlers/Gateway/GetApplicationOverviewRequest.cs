@@ -10,9 +10,11 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     public class GetApplicationOverviewRequest : IRequest<RoatpGatewayApplicationViewModel>
     {
         public Guid ApplicationId { get; }
-        public GetApplicationOverviewRequest(Guid applicationId)
+        public string UserName { get; }
+        public GetApplicationOverviewRequest(Guid applicationId, string userName)
         {
             ApplicationId = applicationId;
+            UserName = userName;
         }
     }
 }
