@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
@@ -23,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
             }
             else
             {
-                if (vm.Status =="Fail" && string.IsNullOrEmpty(vm.OptionFailText))
+                if (vm.Status ==SectionReviewStatus.Fail && string.IsNullOrEmpty(vm.OptionFailText))
                 {
                     validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
                         "Enter the reasons this check was failed"));
@@ -35,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
             const string tooManyWordsMessage = "Your comments must be 150 words or less";
             switch (vm.Status)
             {
-                case "Pass" when !string.IsNullOrEmpty(vm.OptionPassText):
+                case SectionReviewStatus.Pass when !string.IsNullOrEmpty(vm.OptionPassText):
                 {
                     var wordCount = vm.OptionPassText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
                     if (wordCount > 150)
@@ -46,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
                     break;
                 }
-                case "Fail" when !string.IsNullOrEmpty(vm.OptionFailText):
+                case SectionReviewStatus.Fail when !string.IsNullOrEmpty(vm.OptionFailText):
                 {
                     var wordCount = vm.OptionFailText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
                     if (wordCount > 150)
@@ -57,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
                     break;
                 }
-                case "In progress" when !string.IsNullOrEmpty(vm.OptionInProgressText):
+                case SectionReviewStatus.InProgress when !string.IsNullOrEmpty(vm.OptionInProgressText):
                 {
                     var wordCount = vm.OptionInProgressText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)
                         .Length;
