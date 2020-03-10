@@ -146,15 +146,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
-        public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
-        {
-            return await Get<CompaniesHouseSummary>($"/companies-house-lookup?companyNumber={companiesHouseNumber}");
-        }
-
-        public async Task<Charity> GetCharityDetails(string charityNumber)
-        {
-            return await Get<Charity>($"/charity-commission-lookup?charityNumber={charityNumber}");
-        }
+      
 
         public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
         {

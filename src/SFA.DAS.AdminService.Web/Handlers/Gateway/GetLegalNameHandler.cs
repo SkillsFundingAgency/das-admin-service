@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
@@ -21,12 +22,18 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor)
+ 
+        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor,   ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _contextAccessor = contextAccessor;
+            _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiClient;
         }
 
 
@@ -60,19 +67,26 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             model.SourcesCheckedOn = DateTime.Now;
 
-            var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
-
-            // go get various question tags
-            // use session cache?
-            var ukprn = GetValueFromQuestionTag(qnaApplyData, "UKPRN");
+            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
             model.Ukprn = ukprn;
-            model.ApplyLegalName = GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
-            var companyNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
-            var charityNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
+
+            model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPLegalName");
+            var companyNumber = string.Empty;
+            var charityNumber = string.Empty;
+
+           
+            try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCompanyNumber"); }
+            catch
+            { // not robust to tag not being present, throws a 404
+            }
 
 
-            // go get Legal name from ukrlp
-            // use seesion cache?
+            try
+            { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCharityRegNumber"); }
+            catch { // not robust to tag not being present, throws a 404
+            }
+
+
             var ukrlpLegalName = "";
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
@@ -84,24 +98,20 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             model.UkrlpLegalName = ukrlpLegalName;
 
 
-            // get company name from company number
-            // use session cache?
             if (!string.IsNullOrEmpty(companyNumber))
             {
-                var companyDetails = await _applyApiClient.GetCompanyDetails(companyNumber);
+                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
                     model.CompaniesHouseLegalName  = companyDetails.CompanyName;
             }
 
-            // get charity name from charity number
-            // use session cache?
-            if (!string.IsNullOrEmpty(charityNumber))
+            if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
             {
-                var charityDetails = await _applyApiClient.GetCharityDetails(charityNumber);
+                var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
 
-                if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
-                    model.CharityCommissionLegalName = charityDetails.Name;
+                if  (!string.IsNullOrEmpty(charityDetails?.Response?.Name))
+                    model.CharityCommissionLegalName = charityDetails.Response.Name;
             }
 
             var pageData = JsonConvert.SerializeObject(model);
@@ -113,14 +123,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         }
 
         
-        private static string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey)
-        {
-            foreach (var variable in qnaApplyData.Where(variable => variable.Value != null).Where(variable => variable.Key == tagKey))
-            {
-                return variable.Value.ToString();
-            }
-
-            return string.Empty;
-        }
+        
     }
 }
