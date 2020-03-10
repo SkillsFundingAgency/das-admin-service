@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
@@ -21,12 +22,14 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor)
+        private readonly IGetTagFromApplyDataService _getTagFromApplyDataService;
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IGetTagFromApplyDataService getTagFromApplyDataService)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _contextAccessor = contextAccessor;
+            _getTagFromApplyDataService = getTagFromApplyDataService;
         }
 
 
@@ -64,11 +67,11 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             // go get various question tags
             // use session cache?
-            var ukprn = GetValueFromQuestionTag(qnaApplyData, "UKPRN");
+            var ukprn = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKPRN");
             model.Ukprn = ukprn;
-            model.ApplyLegalName = GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
-            var companyNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
-            var charityNumber = GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
+            model.ApplyLegalName = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
+            var companyNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
+            var charityNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
 
 
             // go get Legal name from ukrlp
@@ -113,14 +116,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         }
 
         
-        private static string GetValueFromQuestionTag(Dictionary<string, object> qnaApplyData, string tagKey)
-        {
-            foreach (var variable in qnaApplyData.Where(variable => variable.Value != null).Where(variable => variable.Key == tagKey))
-            {
-                return variable.Value.ToString();
-            }
-
-            return string.Empty;
-        }
+        
     }
 }
