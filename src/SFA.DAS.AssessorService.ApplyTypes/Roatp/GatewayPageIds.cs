@@ -6,6 +6,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
     public static class GatewayPageIds
     {
-        public static string LegalName => "1-10";
+        public static string LegalName = "1-10";
     }
 }

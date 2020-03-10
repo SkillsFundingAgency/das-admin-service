@@ -22,14 +22,18 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IApplyServicePassthroughApiClient _applyServicePassthroughApiClient;
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor,  IApplyServicePassthroughApiClient applyServicePassthroughApiClient)
+ 
+        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor,   ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _contextAccessor = contextAccessor;
-            _applyServicePassthroughApiClient = applyServicePassthroughApiClient;
+            _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiClient;
         }
 
 
@@ -96,15 +100,15 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             if (!string.IsNullOrEmpty(companyNumber))
             {
-                var companyDetails = await _applyServicePassthroughApiClient.GetCompanyDetails(companyNumber);
+                var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
                     model.CompaniesHouseLegalName  = companyDetails.CompanyName;
             }
 
-            if (!string.IsNullOrEmpty(charityNumber))
+            if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
             {
-                var charityDetails = await _applyServicePassthroughApiClient.GetCharityDetails(charityNumber);
+                var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
 
                 if (charityDetails != null && !string.IsNullOrEmpty(charityDetails.Name))
                     model.CharityCommissionLegalName = charityDetails.Name;

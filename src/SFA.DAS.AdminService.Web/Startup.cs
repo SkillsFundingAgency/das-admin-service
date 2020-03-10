@@ -149,6 +149,19 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
+            //services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
+
+            services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CompaniesHouseApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<ICharityCommissionApiClient>(x => new CharityCommissionApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CharityCommissionApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
@@ -169,10 +182,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
-            services.AddTransient<IApplyServicePassthroughApiClient>(x => new ApplyServicePassthroughApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IValidationService, ValidationService>();
