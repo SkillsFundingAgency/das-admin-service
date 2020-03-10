@@ -149,8 +149,6 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
-            //services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
-
             services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<CompaniesHouseApiClient>>(),
