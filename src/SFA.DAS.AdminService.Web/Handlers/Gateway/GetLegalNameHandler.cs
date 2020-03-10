@@ -22,15 +22,13 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IGetTagFromApplyDataService _getTagFromApplyDataService;
         private readonly IApplyServicePassthroughApiClient _applyServicePassthroughApiClient;
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IGetTagFromApplyDataService getTagFromApplyDataService, IApplyServicePassthroughApiClient applyServicePassthroughApiClient)
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, IHttpContextAccessor contextAccessor,  IApplyServicePassthroughApiClient applyServicePassthroughApiClient)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _contextAccessor = contextAccessor;
-            _getTagFromApplyDataService = getTagFromApplyDataService;
             _applyServicePassthroughApiClient = applyServicePassthroughApiClient;
         }
 
@@ -65,13 +63,25 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             model.SourcesCheckedOn = DateTime.Now;
 
-            var qnaApplyData = await _qnaApiClient.GetApplicationData(model.ApplicationId);
-
-            var ukprn = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKPRN");
+            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
             model.Ukprn = ukprn;
-            model.ApplyLegalName = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPLegalName");
-            var companyNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCompanyNumber");
-            var charityNumber = _getTagFromApplyDataService.GetValueFromQuestionTag(qnaApplyData, "UKRLPVerificationCharityRegNumber");
+
+            model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPLegalName");
+            var companyNumber = string.Empty;
+            var charityNumber = string.Empty;
+
+           
+            try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCompanyNumber"); }
+            catch
+            { // not robust to tag not being present, throws a 404
+            }
+
+
+            try
+            { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCharityRegNumber"); }
+            catch { // not robust to tag not being present, throws a 404
+            }
+
 
             var ukrlpLegalName = "";
 
