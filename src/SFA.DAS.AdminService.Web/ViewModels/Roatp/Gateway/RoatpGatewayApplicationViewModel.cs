@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
@@ -8,11 +9,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public Guid Id { get; }
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; }
-        
+
         public string ApplicationStatus { get; }
-        public string GatewayReviewStatus { get; }
-        
+        public string GatewayReviewStatus { get; set; }
+
         public bool IsGatewayApproved { get; set; }
+
+        public List<GatewaySequence> Sequences { get; set; }
+        public bool ReadyToConfirm { get; set; }
 
         public RoatpGatewayApplicationViewModel() { }
 
@@ -43,5 +47,21 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
                 SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
             }
         }
+    }
+
+    public class GatewaySequence
+    {
+        public int SequenceNumber { get; set; }
+        public string SequenceTitle { get; set; }
+        public List<GatewaySection> Sections { get; set; }
+    }
+
+    public class GatewaySection
+    {
+        public int SectionNumber { get; set; }
+        public string PageId { get; set; }
+        public string HiddenText { get; set; }
+        public string LinkTitle { get; set; }
+        public string Status { get; set; }       
     }
 }

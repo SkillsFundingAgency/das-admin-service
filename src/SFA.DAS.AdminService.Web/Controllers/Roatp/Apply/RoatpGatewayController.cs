@@ -14,6 +14,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -75,19 +76,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Gateway/{applicationId}")]
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            if (application is null)
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var vm = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
+            if (vm is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            var vm = CreateGatewayApplicationViewModel(application);
-
-            switch (application.GatewayReviewStatus)
+            switch (vm.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
-                    await _applyApiClient.StartGatewayReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
                 case GatewayReviewStatus.Approved:
@@ -119,7 +117,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                var newvm = CreateGatewayApplicationViewModel(application);
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var newvm = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
             }
         }
@@ -136,6 +135,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/Evaluated.cshtml");
         }
 
+        [HttpGet("/Roatp/GatewayCheckStatus/{applicationId}/Page/{PageId}/Status/{gatewayReviewStatus}")]
+        public async Task<IActionResult> CheckStatus(Guid applicationId, string PageId, string gatewayReviewStatus)
+        {
+            if (gatewayReviewStatus.Equals(GatewayReviewStatus.New)) 
+            {
+                await _applyApiClient.StartGatewayReview(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+            }
+
+            return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
+        }
+
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
         {
@@ -145,28 +155,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             vm.ErrorMessages = validationResponse.Errors;
 
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
             {
-                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId));
-                    SetupGatewayViewModelErrorMessagesAndValues(model, vm);
-                    return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
+                
+                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId, username));
+                SetupGatewayViewModelErrorMessagesAndValues(model, vm);
+                return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
             }
 
             vm.SourcesCheckedOn = DateTime.Now;
 
             var pageData = JsonConvert.SerializeObject(vm);
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
             await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
 
-            return RedirectToAction("ViewApplication", new {vm.ApplicationId});
-
+            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
-            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId)));
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId, username)));
         }
 
         private static void SetupGatewayViewModelErrorMessagesAndValues(LegalNamePageViewModel model, LegalNamePageViewModel vm)
@@ -184,40 +194,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             vm.OptionInProgressText = vm.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;
             vm.OptionPassText = vm.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
             vm.OptionFailText = vm.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
-        }
-
-
-        private RoatpGatewayApplicationViewModel CreateGatewayApplicationViewModel(RoatpApplicationResponse applicationFromRoatp)
-        {
-            if (applicationFromRoatp is null)
-            {
-                return new RoatpGatewayApplicationViewModel();
-            }
-
-            var application = new AssessorService.ApplyTypes.Roatp.Apply
-            {
-                ApplyData = new RoatpApplyData
-                {
-                    ApplyDetails = new RoatpApplyDetails
-                    {
-                        ReferenceNumber = applicationFromRoatp.ApplyData.ApplyDetails.ReferenceNumber,
-                        ProviderRoute = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRoute,
-                        ProviderRouteName = applicationFromRoatp.ApplyData.ApplyDetails.ProviderRouteName,
-                        UKPRN = applicationFromRoatp.ApplyData.ApplyDetails.UKPRN,
-                        OrganisationName = applicationFromRoatp.ApplyData.ApplyDetails.OrganisationName,
-                        ApplicationSubmittedOn = applicationFromRoatp.ApplyData.ApplyDetails.ApplicationSubmittedOn
-                    }
-                },
-                Id = applicationFromRoatp.Id,
-                ApplicationId = applicationFromRoatp.ApplicationId,
-                OrganisationId = applicationFromRoatp.OrganisationId,
-                ApplicationStatus = applicationFromRoatp.ApplicationStatus,
-                GatewayReviewStatus = applicationFromRoatp.GatewayReviewStatus,
-                AssessorReviewStatus = applicationFromRoatp.AssessorReviewStatus,
-                FinancialReviewStatus = applicationFromRoatp.FinancialReviewStatus
-            };
-
-            return new RoatpGatewayApplicationViewModel(application);
         }
     }
 }
