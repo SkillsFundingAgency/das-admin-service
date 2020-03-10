@@ -181,9 +181,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private static void SetupGatewayPageOptionTexts(LegalNamePageViewModel vm)
         {
             if (vm?.Status == null) return;
-            vm.OptionInProgressText = vm.Status.ToLower() == "in progress" && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;
-            vm.OptionPassText = vm.Status == "Pass" && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
-            vm.OptionFailText = vm.Status == "Fail" && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
+            vm.OptionInProgressText = vm.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;
+            vm.OptionPassText = vm.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
+            vm.OptionFailText = vm.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
         }
 
 

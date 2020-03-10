@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -32,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
 
         {
-            var pageId = "1-10";
+            var pageId = GatewayPageIds.LegalName;
 
             var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId};
  
