@@ -39,7 +39,17 @@ The Admin service does not have a database it accesses both the EPAO and ATP dat
 - Create a Configuration table in your (Development) local Azure Storage account.
 - Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.AdminService_1.0, Data: {{The contents of the local config json file}}.
 
-##### Run the solution
+##### To run a local copy you will also require 
+To use EAPO or RoATP admin functionality; you will need to have the SFA.DAS.AssessorService.Application.Api and SFA.DAS.RoATPService.Application.Api projects running, from the das-assessor-service and das-roatp-service projects respectively.
+
+- [Assessor Service](https://github.com/SkillsFundingAgency/das-assessor-service)
+- [RoATP Service](https://github.com/SkillsFundingAgency/das-roatp-service)
+
+To access the assessment functionality for training providers, organisations or standards:
+
+- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
+
+#### Run the solution
 
 - Set SFA.DAS.AdminService.Web as the startup project
 - Running the solution will launch the site and API in your browser
@@ -51,16 +61,6 @@ The Admin service does not have a database it accesses both the EPAO and ATP dat
 - run `dotnet restore`
 - run `dotnet run`
 - Open https://localhost:44347
-
-#### To run a local copy you will also require 
-To use EAPO or RoATP admin functionality; you will need to have the SFA.DAS.AssessorService.Application.Api and SFA.DAS.RoATPService.Application.Api projects running, from the das-assessor-service and das-roatp-service projects respectively.
-
-- [Assessor Service](https://github.com/SkillsFundingAgency/das-assessor-service)
-- [RoATP Service](https://github.com/SkillsFundingAgency/das-roatp-service)
-
-To access the assessment functionality for training providers, organisations or standards:
-
-- [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
 
 #### Getting Started
 
