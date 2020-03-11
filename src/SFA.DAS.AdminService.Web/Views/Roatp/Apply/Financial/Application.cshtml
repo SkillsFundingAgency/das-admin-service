@@ -1,15 +1,25 @@
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
 @{
-    ViewBag.Title = "Financial health evaluation";
+    ViewBag.Title = "Financial health assessment overview";
     Layout = "_Layout";
 }
 
-<a asp-action="OpenApplications" asp-controller="RoatpFinancial" class="govuk-back-link">Back</a>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="OpenApplications" asp-controller="RoatpFinancial">RoATP assessments</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
+    </ol>
+</div>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-
+        <div class="govuk-grid-column-full">
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -28,11 +38,14 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Financial health evaluation</h1>
-            <h2 class="govuk-heading-m">Organisation details</h2>
+            <h1 class="govuk-heading-xl">Financial health assessment overview</h1>
+        </div>
+    </div>
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-l">Organisation details</h2>
             <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
-
         </div>
     </div>
 
@@ -40,31 +53,17 @@
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
-                @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
-                {
-                    <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
-                }
-
-                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
-                {
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
-                    </p>
-                }
+                <h2 class="govuk-heading-l govuk-!-margin-top-9">@Html.Raw(section.LinkTitle)</h2>
             </div>
 
             @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
             {
                 <div class="govuk-grid-column-full">
-                    <table class="govuk-table govuk-table--s">
+                    <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">
-                                    Questions
-                                </th>
-                                <th class="govuk-table__header" scope="col">
-                                    Answers
-                                </th>
+                                <th class="govuk-table__header" scope="col">Application question</th>
+                                <th class="govuk-table__header" scope="col">Applicant's answer</th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -74,7 +73,13 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
-                                        <td class="govuk-table__cell">@Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)</td>
+                                        <td class="govuk-table__cell">
+                                            @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                            {
+                                                <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                            }
+                                            @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -82,13 +87,20 @@
                     </table>
                 </div>
             }
+
+            <div class="govuk-grid-column-full">
+                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+                    </p>
+                }
+            </div>
         </div>
     }
 
-
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row govuk-!-margin-top-9">
+        <div class="govuk-grid-column-full">
             <form class="js-disable-on-submit" asp-action="GradeApplication" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
@@ -97,7 +109,7 @@
 
                     <legend>
                         <h2 class="govuk-heading-l">
-                            What is the grade for this application?
+                            What is the outcome of this financial health assessment?
                         </h2>
                     </legend>
 
@@ -217,18 +229,6 @@
                         </div>
 
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="clarification" data-aria-controls="clarification-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Clarification)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification ? "checked" : "") />
-                            <label class="govuk-label govuk-radios__label" for="clarification">Clarification</label>
-                        </div>
-
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="clarification-conditional">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Why is the application requiring clarification?</label>
-                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="inadequate" data-aria-controls="inadequate-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                             <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
                         </div>
@@ -243,6 +243,21 @@
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="exempt" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
                             <label class="govuk-label govuk-radios__label" for="exempt">Exempt</label>
+                        </div>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="clarification" data-aria-controls="clarification-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Clarification)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification ? "checked" : "") />
+                            <label class="govuk-label govuk-radios__label" for="clarification">Ask for clarification</label>
+                        </div>
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="clarification-conditional">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Enter your clarification comments</label>
+                                <span id="pmo-abc-clarification-hint" class="govuk-hint">
+                                    The applicant can use this information to change and resubmit their application.
+                                </span>
+                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
