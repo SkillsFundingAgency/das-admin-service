@@ -9,8 +9,14 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
-    public class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
+    public  class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
     {
+
+        private  string SelectAnOutcome => "Select the outcome of this check";
+
+        private string FailDetailsRequired => "Enter the reasons this check was failed";
+        private string TooManyWords => "Your comments must be 150 words or less";
+
         public async Task<ValidationResponse> Validate(RoatpGatewayPageViewModel vm)
         {
             var validationResponse = new ValidationResponse
@@ -20,20 +26,20 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             if (string.IsNullOrWhiteSpace(vm.Status))
             {
-                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", "Select the outcome of this check"));
+                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", SelectAnOutcome));
             }
             else
             {
                 if (vm.Status ==SectionReviewStatus.Fail && string.IsNullOrEmpty(vm.OptionFailText))
                 {
                     validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
-                        "Enter the reasons this check was failed"));
+                        FailDetailsRequired));
                 }
             }
 
             if (validationResponse.Errors.Any()) return await Task.FromResult(validationResponse);
 
-            const string tooManyWordsMessage = "Your comments must be 150 words or less";
+       
             switch (vm.Status)
             {
                 case SectionReviewStatus.Pass when !string.IsNullOrEmpty(vm.OptionPassText):
@@ -42,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
                     if (wordCount > 150)
                     {
                         validationResponse.Errors.Add(new ValidationErrorDetail("OptionPassText",
-                            tooManyWordsMessage));
+                            TooManyWords));
                     }
 
                     break;
@@ -53,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
                     if (wordCount > 150)
                     {
                         validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
-                            tooManyWordsMessage));
+                            TooManyWords));
                     }
 
                     break;
@@ -65,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
                     if (wordCount > 150)
                     {
                         validationResponse.Errors.Add(new ValidationErrorDetail("OptionInProgressText",
-                            tooManyWordsMessage));
+                            TooManyWords));
                     }
 
                     break;
@@ -74,6 +80,8 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             return await Task.FromResult(validationResponse);
         }
+
+      
     }
 
     public interface IRoatpGatewayPageViewModelValidator

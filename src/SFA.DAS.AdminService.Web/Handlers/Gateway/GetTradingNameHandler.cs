@@ -56,8 +56,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
 
-            model.SourcesCheckedOn = DateTime.Now;
-
             var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
             model.Ukprn = ukprn;
 
