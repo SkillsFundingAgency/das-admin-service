@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         public GetTradingNameRequest(Guid applicationId, string userName)
         {
             ApplicationId = applicationId;
-            UserName = UserName;
+            UserName = userName;
         }
     }
 }

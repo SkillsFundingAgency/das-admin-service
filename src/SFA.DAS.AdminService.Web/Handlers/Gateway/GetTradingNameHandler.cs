@@ -62,20 +62,17 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             model.Ukprn = ukprn;
 
             var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
-            // TradingName
-            var tradingName = tradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-46").FirstOrDefault().Value;
-
-            model.ApplyTradingName = tradingName;
-
-            var ukrlpTradingName = "";
+            model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == "PRE-46")?.Value;
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
-            if (ukrlpData.Any())
+            if (ukrlpData != null && ukrlpData.Any())
             {
                 var ukrlpDetail = ukrlpData.First();
-                ukrlpTradingName = ukrlpDetail.ProviderName;
+                if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
+                {
+                    model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
+                }
             }
-            model.UkrlpTradingName = ukrlpTradingName;
 
             var pageData = JsonConvert.SerializeObject(model);
 
