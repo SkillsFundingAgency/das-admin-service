@@ -276,7 +276,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                     if (!roatpSequence.ExcludeSections.Contains(section.SectionNo.ToString()))
                     {
-                        financialSections.Add(section);
+                        // Ensure at least one active page is answered
+                        if (section.QnAData.Pages.Any(p => p.Active && p.Complete))
+                        {
+                            financialSections.Add(section);
+                        }
                     }
                 }
             }
