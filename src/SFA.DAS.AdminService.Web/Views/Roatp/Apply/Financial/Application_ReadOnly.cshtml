@@ -1,0 +1,114 @@
+@using Microsoft.EntityFrameworkCore.Internal
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
+
+@{
+    ViewBag.Title = "Financial health evaluation";
+    Layout = "_Layout";
+
+    var backAction = FinancialApplicationSelectedGrade.Inadequate.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "RejectedApplications" : "ClosedApplications";
+}
+
+<a asp-action="@backAction" asp-controller="RoatpFinancial" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Financial health evaluation</h1>
+            <h2 class="govuk-heading-m">Organisation details</h2>
+
+            <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" /> 
+
+            <h2 class="govuk-heading-m">Application details</h2>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Grade
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FinancialReviewDetails.SelectedGrade
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date reviewed
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
+                        {
+                            @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToShortDateString())
+                        }
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Comments
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.FinancialReviewDetails.Comments ?? "")
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Reviewer
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FinancialReviewDetails.GradedBy
+                    </dd>
+                </div>
+            </dl>
+
+
+        </div>
+    </div>
+    @foreach (var section in Model.Sections)
+    {
+        @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
+        {
+            <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
+        }
+
+        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+        {
+            <p class="govuk-body">
+                <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { pplicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+            </p>
+        }
+
+        if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+        {
+
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table govuk-table--s">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">
+                                    Questions
+                                </th>
+                                <th class="govuk-table__header" scope="col">
+                                    Answers
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var pg in section.QnAData.Pages)
+                            {
+                                foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
+                                        <td class="govuk-table__cell">@Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</main>

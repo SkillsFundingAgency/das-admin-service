@@ -2,7 +2,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
-using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
 {
     public class Application : ApplyTypeBase
     {
-        public Organisation ApplyingOrganisation { get; set; }
+        public Domain.Entities.Organisation ApplyingOrganisation { get; set; }
         public Guid ApplyingOrganisationId { get; set; }
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }
