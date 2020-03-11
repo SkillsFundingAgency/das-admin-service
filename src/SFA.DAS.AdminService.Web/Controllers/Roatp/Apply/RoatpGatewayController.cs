@@ -21,20 +21,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpGatewayController : Controller
     {
-        private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
         private readonly IMediator _mediator;
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator)
+        public RoatpGatewayController( IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _gatewayValidator = gatewayValidator;
             _mediator = mediator;
-            _qnaApiClient = qnaApiClient;
         }
 
         [HttpGet("/Roatp/Gateway/New")]
@@ -153,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var validationResponse = await _gatewayValidator.Validate(vm);
 
-            vm.ErrorMessages = validationResponse.Errors;
+            vm.ErrorMessages = validationResponse?.Errors;
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
@@ -188,45 +184,45 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-20")]
-        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel vm)
+        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
         {
-            SetupGatewayPageOptionTexts(vm);
+            SetupGatewayPageOptionTexts(viewModel);
 
-            var validationResponse = await _gatewayValidator.Validate(vm);
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
 
-            vm.ErrorMessages = validationResponse.Errors;
+            viewModel.ErrorMessages = validationResponse?.Errors;
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
+            if (viewModel.ErrorMessages != null && viewModel.ErrorMessages.Any())
             {
 
-                var model = await _mediator.Send(new GetTradingNameRequest(vm.ApplicationId, username));
-                SetupGatewayViewModelErrorMessagesAndValues(model, vm);
+                var model = await _mediator.Send(new GetTradingNameRequest(viewModel.ApplicationId, username));
+                SetupGatewayViewModelErrorMessagesAndValues(model, viewModel);
                 return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", model);
             }
 
-            vm.SourcesCheckedOn = DateTime.Now;
+            viewModel.SourcesCheckedOn = DateTime.Now;
 
-            var pageData = JsonConvert.SerializeObject(vm);
-            await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
+            var pageData = JsonConvert.SerializeObject(viewModel);
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
 
-            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
+            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
-        private static void SetupGatewayViewModelErrorMessagesAndValues(RoatpGatewayPageViewModel model, RoatpGatewayPageViewModel vm)
+        private static void SetupGatewayViewModelErrorMessagesAndValues(RoatpGatewayPageViewModel model, RoatpGatewayPageViewModel viewModel)
         {
-            model.ErrorMessages = vm.ErrorMessages;
-            model.Status = vm.Status;
-            model.OptionInProgressText = vm.OptionInProgressText;
-            model.OptionFailText = vm.OptionFailText;
-            model.OptionPassText = vm.OptionPassText;
+            model.ErrorMessages = viewModel.ErrorMessages;
+            model.Status = viewModel.Status;
+            model.OptionInProgressText = viewModel.OptionInProgressText;
+            model.OptionFailText = viewModel.OptionFailText;
+            model.OptionPassText = viewModel.OptionPassText;
         }
 
-        private static void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel vm)
+        public  void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
-            if (vm?.Status == null) return;
-            vm.OptionInProgressText = vm.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;
-            vm.OptionPassText = vm.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(vm.OptionPassText) ? vm.OptionPassText : string.Empty;
-            vm.OptionFailText = vm.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(vm.OptionFailText) ? vm.OptionFailText : string.Empty;
+            if (viewModel?.Status == null) return;
+            viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
+            viewModel.OptionPassText = viewModel.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
+            viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
         }
     }
 }
