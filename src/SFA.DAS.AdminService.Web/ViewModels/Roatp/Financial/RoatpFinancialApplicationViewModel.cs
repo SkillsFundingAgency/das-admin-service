@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
@@ -13,26 +12,19 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
 
-        public FinancialDueDate OutstandingFinancialDueDate { get; set; } // TODO: CREATE RoatpFinancialDueDate
+        public FinancialDueDate OutstandingFinancialDueDate { get; set; }
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, List<Section> sections)
+        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
         {
-            if (sections != null && sections.Any())
-            {
-                Sections = sections;
-                ApplicationId = application.ApplicationId;
-            }
-            else
-            {
-                ApplicationId = application.ApplicationId;
-            }
-
+            ApplicationId = application.ApplicationId;
             OrgId = application.OrganisationId;
+
+            Sections = SetupSections(parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
             SetupGradeAndFinancialDueDate(application.FinancialGrade);
 
             OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
@@ -40,6 +32,33 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
             ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
             SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+        }
+
+        private List<Section> SetupSections(Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
+        {
+            var sections = new List<Section>();
+
+            if (parentCompanySection != null)
+            {
+                sections.Add(parentCompanySection);
+            }
+
+            if (activelyTradingSection != null)
+            {
+                sections.Add(activelyTradingSection);
+            }
+
+            if (organisationTypeSection != null)
+            {
+                sections.Add(organisationTypeSection);
+            }
+
+            if (financialSections != null)
+            {
+                sections.AddRange(financialSections);
+            }
+
+            return sections;
         }
 
         private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)

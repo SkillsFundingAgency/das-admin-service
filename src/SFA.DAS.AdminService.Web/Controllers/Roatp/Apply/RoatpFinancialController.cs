@@ -200,14 +200,69 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return new RoatpFinancialApplicationViewModel();
             }
 
+            var parentCompanySection = await GetParentCompanySection(applicationFromAssessor.ApplicationId);
+            var activelyTradingSection = await GetActivelyTradingSection(applicationFromAssessor.ApplicationId);
+            var organisationTypeSection = await GetOrganisationTypeSection(applicationFromAssessor.ApplicationId);
+            var financialSections = await GetFinancialSections(applicationFromAssessor.ApplicationId);
+
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
+        }
+
+        private async Task<Section> GetParentCompanySection(Guid applicationId)
+        {
+            // change to : lookup YO-20 or HasParentCompany
+            Section parentCompanySection = null;
+
+            var hasParentCompany = true;
+
+            if (hasParentCompany)
+            {
+                var HasParentCompanyPageId = "20";
+                var ParentCompanyDetailsPageId = "21";
+
+                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
+                parentCompanySection.Title = "UK ultimate parent company";
+                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == HasParentCompanyPageId || page.PageId == ParentCompanyDetailsPageId).ToList();
+            }
+
+            return parentCompanySection;
+        }
+
+        private async Task<Section> GetActivelyTradingSection(Guid applicationId)
+        {
+            var TradingForPageId = "50";
+
+            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
+            activelyTradingSection.Title = "Actively trading";
+            activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForPageId).ToList();
+
+            return activelyTradingSection;
+        }
+
+        private async Task<Section> GetOrganisationTypeSection(Guid applicationId)
+        {
+            var OrganisationTypeMainSupportingPageId = "140";
+            var OrganisationTypeEmployerPageId = "150";
+
+            Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 4);
+            organisationTypeSection.Title = "Organisation type";
+            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == OrganisationTypeMainSupportingPageId || page.PageId == OrganisationTypeEmployerPageId).ToList();
+
+            return organisationTypeSection;
+        }
+
+        private async Task<List<Section>> GetFinancialSections(Guid applicationId)
+        {
+            var financialSections = new List<Section>();
+
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
             var financialSequences = roatpSequences.Where(x => x.Roles.Contains(Roles.ProviderRiskAssuranceTeam));
-            var financialSections = new List<Section>();
-            foreach(var sequence in financialSequences)
+           
+            foreach (var sequence in financialSequences)
             {
-                var qnaSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationFromAssessor.ApplicationId, sequence.Id);
-                var sections = await _qnaApiClient.GetSections(applicationFromAssessor.ApplicationId, qnaSequence.Id);
-                foreach(var section in sections)
+                var qnaSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, sequence.Id);
+                var sections = await _qnaApiClient.GetSections(applicationId, qnaSequence.Id);
+                foreach (var section in sections)
                 {
                     var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.Id);
 
@@ -218,10 +273,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 }
             }
 
-            var orgId = applicationFromAssessor.OrganisationId;
-            var organisation = await _apiClient.GetOrganisation(orgId);
-            
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, financialSections);
+            return financialSections;
         }
 
         private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)
