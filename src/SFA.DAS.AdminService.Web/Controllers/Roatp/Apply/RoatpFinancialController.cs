@@ -210,18 +210,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         private async Task<Section> GetParentCompanySection(Guid applicationId)
         {
-            // change to : lookup YO-20 or HasParentCompany
+            const string ParentCompanySectionTitle = "UK ultimate parent company";
+            const string HasParentCompanyQuestionTag = "HasParentCompany";
+            const string HasParentCompanyPageId = "20";
+            const string ParentCompanyDetailsPageId = "21";
+
             Section parentCompanySection = null;
 
-            var hasParentCompany = true;
+            var hasParentCompanyTagValue = await _qnaApiClient.GetQuestionTag(applicationId, HasParentCompanyQuestionTag);
 
-            if (hasParentCompany)
-            {
-                var HasParentCompanyPageId = "20";
-                var ParentCompanyDetailsPageId = "21";
-
+            if ("Yes".Equals(hasParentCompanyTagValue, StringComparison.OrdinalIgnoreCase))
+            {                
                 parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
-                parentCompanySection.Title = "UK ultimate parent company";
+                parentCompanySection.LinkTitle = ParentCompanySectionTitle;
+                parentCompanySection.Title = ParentCompanySectionTitle;
                 parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == HasParentCompanyPageId || page.PageId == ParentCompanyDetailsPageId).ToList();
             }
 
@@ -230,10 +232,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         private async Task<Section> GetActivelyTradingSection(Guid applicationId)
         {
-            var TradingForPageId = "50";
+            const string ActivelyTradingSectionTitle = "Actively trading";
+            const string TradingForPageId = "50";
 
             Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
-            activelyTradingSection.Title = "Actively trading";
+            activelyTradingSection.LinkTitle = ActivelyTradingSectionTitle;
+            activelyTradingSection.Title = ActivelyTradingSectionTitle;
             activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForPageId).ToList();
 
             return activelyTradingSection;
@@ -241,11 +245,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         private async Task<Section> GetOrganisationTypeSection(Guid applicationId)
         {
-            var OrganisationTypeMainSupportingPageId = "140";
-            var OrganisationTypeEmployerPageId = "150";
+            const string OrganisationTypeSectionTitle = "Organisation type";
+            const string OrganisationTypeMainSupportingPageId = "140";
+            const string OrganisationTypeEmployerPageId = "150";
 
             Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 4);
-            organisationTypeSection.Title = "Organisation type";
+            organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
+            organisationTypeSection.Title = OrganisationTypeSectionTitle;
             organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == OrganisationTypeMainSupportingPageId || page.PageId == OrganisationTypeEmployerPageId).ToList();
 
             return organisationTypeSection;
