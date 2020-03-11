@@ -124,7 +124,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             if (application is null)
             {
-                return RedirectToAction(nameof(OpenApplications));
+                return RedirectToAction(nameof(ClosedApplications));
             }
 
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
@@ -233,12 +233,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private async Task<Section> GetActivelyTradingSection(Guid applicationId)
         {
             const string ActivelyTradingSectionTitle = "Actively trading";
-            const string TradingForPageId = "50";
+            const string TradingForMainPageId = "50";
+            const string TradingForEmployerPageId = "51";
+            const string TradingForSupportingPageId = "60";
 
             Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
             activelyTradingSection.LinkTitle = ActivelyTradingSectionTitle;
             activelyTradingSection.Title = ActivelyTradingSectionTitle;
-            activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForPageId).ToList();
+            activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForMainPageId || page.PageId == TradingForEmployerPageId || page.PageId == TradingForSupportingPageId).ToList();
 
             return activelyTradingSection;
         }
