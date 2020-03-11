@@ -179,7 +179,40 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId, username)));
         }
 
-        private static void SetupGatewayViewModelErrorMessagesAndValues(LegalNamePageViewModel model, LegalNamePageViewModel vm)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-20")]
+        public async Task<IActionResult> GetGatewayTradingNamePage(Guid applicationId, string pageId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", await _mediator.Send(new GetTradingNameRequest(applicationId, username)));
+        }
+
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-20")]
+        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel vm)
+        {
+            SetupGatewayPageOptionTexts(vm);
+
+            var validationResponse = await _gatewayValidator.Validate(vm);
+
+            vm.ErrorMessages = validationResponse.Errors;
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
+            {
+
+                var model = await _mediator.Send(new GetTradingNameRequest(vm.ApplicationId, username));
+                SetupGatewayViewModelErrorMessagesAndValues(model, vm);
+                return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", model);
+            }
+
+            vm.SourcesCheckedOn = DateTime.Now;
+
+            var pageData = JsonConvert.SerializeObject(vm);
+            await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
+
+            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
+        }
+        private static void SetupGatewayViewModelErrorMessagesAndValues(RoatpGatewayPageViewModel model, RoatpGatewayPageViewModel vm)
         {
             model.ErrorMessages = vm.ErrorMessages;
             model.Status = vm.Status;
@@ -188,7 +221,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             model.OptionPassText = vm.OptionPassText;
         }
 
-        private static void SetupGatewayPageOptionTexts(LegalNamePageViewModel vm)
+        private static void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel vm)
         {
             if (vm?.Status == null) return;
             vm.OptionInProgressText = vm.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(vm.OptionInProgressText) ? vm.OptionInProgressText : string.Empty;

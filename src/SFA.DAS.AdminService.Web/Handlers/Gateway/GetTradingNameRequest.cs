@@ -4,14 +4,14 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
-    public class GetLegalNameRequest: IRequest<LegalNamePageViewModel>
+    public class GetTradingNameRequest : IRequest<TradingNamePageViewModel>
     {
         public Guid ApplicationId { get; }
         public string UserName { get; }
-        public GetLegalNameRequest(Guid applicationId, string userName)
+        public GetTradingNameRequest(Guid applicationId, string userName)
         {
             ApplicationId = applicationId;
-            UserName = userName;
+            UserName = UserName;
         }
     }
 }
