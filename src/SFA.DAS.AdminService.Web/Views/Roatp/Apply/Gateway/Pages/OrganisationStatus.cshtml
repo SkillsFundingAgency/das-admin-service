@@ -29,17 +29,6 @@
             }
         }
     }
-
-    var applicationsListTab = "New";
-
-    if (Model.GatewayReviewStatus != null && (Model.GatewayReviewStatus.Equals(GatewayReviewStatus.New) || Model.GatewayReviewStatus.Equals(GatewayReviewStatus.InProgress)))
-    {
-        applicationsListTab = Model.GatewayReviewStatus.Replace(" ", "");
-    }
-    else if (Model.GatewayReviewStatus != null)
-    {
-        applicationsListTab = "Closed";
-    }
 }
 
 <div class="govuk-breadcrumbs">
@@ -48,7 +37,7 @@
             <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@applicationsListTab">RoATP applications</a>
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
@@ -113,25 +102,25 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    @if (!string.IsNullOrEmpty(Model.UkrlpData))
+                    @if (!string.IsNullOrEmpty(Model.UkrlpStatus))
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">UKRLP data</td>
-                            <td class="govuk-table__cell">@Model.UkrlpData</td>
+                            <td class="govuk-table__cell">@Model.UkrlpStatus</td>
                         </tr>
                     }
-                    @if (!string.IsNullOrEmpty(Model.CompaniesHouseData))
+                    @if (!string.IsNullOrEmpty(Model.CompaniesHouseStatus))
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">Companies House data</td>
-                            <td class="govuk-table__cell">@Model.CompaniesHouseData</td>
+                            <td class="govuk-table__cell">@Model.CompaniesHouseStatus</td>
                         </tr>
                     }
-                    @if (!string.IsNullOrEmpty(Model.CharityCommissionData))
+                    @if (!string.IsNullOrEmpty(Model.CharityCommissionStatus))
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">Charity Commission data</td>
-                            <td class="govuk-table__cell">@Model.CharityCommissionData</td>
+                            <td class="govuk-table__cell">@Model.CharityCommissionStatus</td>
                         </tr>
                     }
                 </tbody>
@@ -149,9 +138,9 @@
                     <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
                     <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
                     <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                    <input type="hidden" name="UkrlpData" value="@Model.UkrlpData" />
-                    <input type="hidden" name="CompaniesHouseData" value="@Model.CompaniesHouseData" />
-                    <input type="hidden" name="CompaniesHouseLegalName" value="@Model.CharityCommissionData" />
+                    <input type="hidden" name="UkrlpStatus" value="@Model.UkrlpStatus" />
+                    <input type="hidden" name="CompaniesHouseStatus" value="@Model.CompaniesHouseStatus" />
+                    <input type="hidden" name="CharityCommissionStatus" value="@Model.CharityCommissionStatus" />
                     <div class="govuk-form-group @formGroupError">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">

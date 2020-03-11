@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
             if (ukrlpData.Any())
             {
-                model.UkrlpData = ukrlpData.FirstOrDefault().ProviderStatus.CapitaliseFirstLetter(); // 
+                model.UkrlpStatus = ukrlpData.FirstOrDefault().ProviderStatus.CapitaliseFirstLetter(); // 
             }
 
             if (!string.IsNullOrEmpty(companyNumber))
@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.Status))
-                    model.CompaniesHouseData = companyDetails.Status.CapitaliseFirstLetter();
+                    model.CompaniesHouseStatus = companyDetails.Status.CapitaliseFirstLetter();
             }
 
             if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
 
                 if (!string.IsNullOrEmpty(charityDetails?.Response?.Status))
-                    model.CharityCommissionData = charityDetails.Response.Status.CapitaliseFirstLetter();
+                    model.CharityCommissionStatus = charityDetails.Response.Status.CapitaliseFirstLetter();
             }
 
             var pageData = JsonConvert.SerializeObject(model);

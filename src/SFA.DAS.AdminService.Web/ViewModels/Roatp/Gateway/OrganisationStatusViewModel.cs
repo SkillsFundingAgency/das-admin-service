@@ -10,8 +10,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public DateTime? ApplicationSubmittedOn { get; set; }
         public DateTime SourcesCheckedOn { get; set; }
 
-        public string UkrlpData { get; set; }
-        public string CompaniesHouseData { get; set; }
-        public string CharityCommissionData { get; set; }
+        public string UkrlpStatus { get; set; }
+        public string CompaniesHouseStatus { get; set; }
+        public string CharityCommissionStatus { get; set; }
     }
 }
