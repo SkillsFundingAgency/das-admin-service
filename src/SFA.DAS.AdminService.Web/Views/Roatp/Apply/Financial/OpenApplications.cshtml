@@ -4,7 +4,7 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
 @{
-    ViewBag.Title = "RoATP - Financial health assessments";
+    ViewBag.Title = "RoATP financial applications";
     Layout = "_Layout";
 }
 
@@ -14,10 +14,10 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation--current-page">
-                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Applications</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Current applications</a>
             </li>
             @*<li class="app-navigation">
-                <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Rejected assessments</a>
+                <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Clarifications</a>
             </li>*@
             <li class="app-navigation">
                 <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
@@ -30,8 +30,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds das-no-wrap">
             <h1 class="govuk-heading-xl">
-                <span class="govuk-caption-xl">Financial health assessments</span>
-                RoATP assessments
+                <span class="govuk-caption-xl">RoATP financial applications</span>
+                Current applications
             </h1>
         </div>
     </div>
@@ -46,8 +46,9 @@
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
                             <th class="govuk-table__header" scope="col">UKPRN</th>
-                            <th class="govuk-table__header" scope="col">Date submitted</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
+                            <th class="govuk-table__header" scope="col">Provider route</th>
+                            <th class="govuk-table__header" scope="col">Submitted date</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Application status</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -60,37 +61,14 @@
                             <td class="govuk-table__cell das-no-wrap" data-label="UKPRN" class="nowrap">
                                 @item.Ukprn
                             </td>
-                            <td class="govuk-table__cell" data-label="Date submitted">
+                            <td class="govuk-table__cell" data-label="Provider route">
+                                TO ADD AT LATER DATE
+                            </td>
+                            <td class="govuk-table__cell" data-label="Submitted date">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                @{
-                                    switch (item.AssessorReviewStatus)
-                                    {
-                                        case ApplicationReviewStatus.New:
-                                            if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
-                                            {
-                                                <div class="govuk-tag govuk-tag--updated">
-                                                    updated
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="govuk-tag govuk-tag--inactive">
-                                                    unassigned
-                                                </div>
-                                            }
-                                            break;
-                                        case ApplicationReviewStatus.InProgress:
-                                            <div class="govuk-tag">
-                                                in progress
-                                            </div>
-                                            break;
-                                        default:
-                                            <text>---</text>
-                                            break;
-                                    }
-                                }
+                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Application status">
+                                @item.FinancialReviewStatus
                             </td>
                         </tr>
                         }
@@ -99,7 +77,7 @@
             }
             else
             {
-                <p class="govuk-body-l">There are no new assessments at this time.</p>
+                <p class="govuk-body-l">There are no new applications at this time.</p>
             }
 
         </div>
