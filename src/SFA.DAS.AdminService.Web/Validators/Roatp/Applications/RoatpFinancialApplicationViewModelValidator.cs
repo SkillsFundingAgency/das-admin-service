@@ -12,12 +12,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Exempt)
-                {
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
+                if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
                     context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
@@ -27,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
                 {
-                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less error message");
+                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
                 {
