@@ -151,7 +151,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
-        public async Task<IActionResult> EvaluateLegalNamePage([FromBody]LegalNamePageViewModel viewModel)
+        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
             SetupGatewayPageOptionTexts(viewModel);
 
@@ -193,7 +193,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> EvaluateOrganisationStatus([FromBody]OrganisationStatusViewModel viewModel)
+        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
