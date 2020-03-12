@@ -15,6 +15,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -27,7 +28,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
         private readonly IMediator _mediator;
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator)
+        private readonly ILogger<RoatpGatewayController> _logger;
+
+        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator, ILogger<RoatpGatewayController> logger)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
@@ -35,6 +38,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _gatewayValidator = gatewayValidator;
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
+            _logger = logger;
         }
 
         [HttpGet("/Roatp/Gateway/New")]
@@ -167,7 +171,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             viewModel.SourcesCheckedOn = DateTime.Now;
 
             var pageData = JsonConvert.SerializeObject(viewModel);
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+
+            _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
@@ -194,7 +207,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             SetupGatewayPageOptionTexts(viewModel);
 
             var pageData = JsonConvert.SerializeObject(viewModel);
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatus-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController - EvaluateOrganisationStatus - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }

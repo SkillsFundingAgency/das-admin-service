@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -22,13 +23,16 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
 
-        public GetOrganisationStatusHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+        private readonly ILogger<GetOrganisationStatusHandler> _logger;
+
+        public GetOrganisationStatusHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, ILogger<GetOrganisationStatusHandler> logger)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _logger = logger;
         }
 
         public async Task<OrganisationStatusViewModel> Handle(GetOrganisationStatusRequest request, CancellationToken cancellationToken)
@@ -102,7 +106,15 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             }
 
             var pageData = JsonConvert.SerializeObject(model);
-            await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
+            _logger.LogInformation($"GetOrganisationStatusHandler-SubmitGatewayPageAnswer - ApplicationId '{model.ApplicationId}' - PageId '{model.PageId}' - Status '{model.Status}' - UserName '{request.UserName}' - PageData '{pageData}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "GetOrganisationStatusHandler - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return model;
         }
