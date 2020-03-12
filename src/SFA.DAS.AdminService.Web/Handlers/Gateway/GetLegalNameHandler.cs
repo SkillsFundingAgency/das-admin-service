@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 {
@@ -25,13 +26,16 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
 
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+        private readonly ILogger<GetLegalNameHandler> _logger;
+
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, ILogger<GetLegalNameHandler> logger)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _logger = logger;
         }
 
 
@@ -113,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             }
 
             var pageData = JsonConvert.SerializeObject(model);
-
+            _logger.LogInformation($"GetLegalNameHandler-SubmitGatewayPageAnswer - ApplicationId '{model.ApplicationId}' - PageId '{model.PageId}' - Status '{model.Status}' - UserName '{request.UserName}' - PageData '{pageData}'");
             await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
             
             return model;
