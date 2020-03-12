@@ -161,7 +161,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string gatewayPageData)
         {
-            await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - PageData '{gatewayPageData}'");
+
+            try
+            {
+                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "RoatpApplicationApiClient - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
+            
         }
 
         private async Task<T> Get<T>(string uri)
