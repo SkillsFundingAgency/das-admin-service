@@ -232,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        private static void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+        public  void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
             if (viewModel?.Status == null) return;
             viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
