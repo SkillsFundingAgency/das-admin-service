@@ -29,8 +29,6 @@
             }
         }
     }
-
-
 }
 
 @*<a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>*@
@@ -40,7 +38,7 @@
             <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@(Model.GatewayReviewStatus.Equals(GatewayReviewStatus.New) || Model.GatewayReviewStatus.Equals(GatewayReviewStatus.InProgress) ? Model.GatewayReviewStatus.Replace(" ", "") : "Closed")">RoATP applications</a>
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>

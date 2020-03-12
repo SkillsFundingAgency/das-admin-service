@@ -40,9 +40,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
+            var viewModel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Roatp/Apply/Gateway/NewApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Gateway/NewApplications.cshtml", viewModel);
         }
 
         [HttpGet("/Roatp/Gateway/InProgress")]
@@ -52,9 +52,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
+            var viewModel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Roatp/Apply/Gateway/InProgressApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Gateway/InProgressApplications.cshtml", viewModel);
         }
 
         [HttpGet("/Roatp/Gateway/Closed")]
@@ -64,38 +64,38 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var paginatedApplications = new PaginatedList<RoatpApplicationSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
+            var viewModel = new RoatpGatewayDashboardViewModel { Applications = paginatedApplications };
 
-            return View("~/Views/Roatp/Apply/Gateway/ClosedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Gateway/ClosedApplications.cshtml", viewModel);
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}")]
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var vm = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
-            if (vm is null)
+            var viewModel = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
+            if (viewModel is null)
             {
                 return RedirectToAction(nameof(NewApplications));
             }
 
-            switch (vm.GatewayReviewStatus)
+            switch (viewModel.GatewayReviewStatus)
             {
                 case GatewayReviewStatus.New:
                 case GatewayReviewStatus.InProgress:
-                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", vm);
+                    return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", viewModel);
                 case GatewayReviewStatus.Approved:
                 case GatewayReviewStatus.Declined:
-                    return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", vm);
+                    return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", viewModel);
                 default:
                     return RedirectToAction(nameof(NewApplications));
             }
         }
 
         [HttpPost("/Roatp/Gateway")]
-        public async Task<IActionResult> EvaluateGateway(RoatpGatewayApplicationViewModel vm, bool? isGatewayApproved)
+        public async Task<IActionResult> EvaluateGateway(RoatpGatewayApplicationViewModel viewModel, bool? isGatewayApproved)
         {
-            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+            var application = await _applyApiClient.GetApplication(viewModel.ApplicationId);
             if (application is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -108,14 +108,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                await _applyApiClient.EvaluateGateway(vm.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
-                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
+                await _applyApiClient.EvaluateGateway(viewModel.ApplicationId, isGatewayApproved.Value, _contextAccessor.HttpContext.User.UserDisplayName());
+                return RedirectToAction(nameof(Evaluated), new { viewModel.ApplicationId });
             }
             else
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var newvm = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
-                return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newvm);
+                var newViewModel = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
+                return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newViewModel);
             }
         }
 
@@ -142,37 +142,36 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
-        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel vm)
-        {
-            SetupGatewayPageOptionTexts(vm);
-
-            var validationResponse = await _gatewayValidator.Validate(vm);
-
-            vm.ErrorMessages = validationResponse?.Errors;
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            if (vm.ErrorMessages != null && vm.ErrorMessages.Any())
-            {
-                
-                var model = await _mediator.Send(new GetLegalNameRequest(vm.ApplicationId, username));
-                SetupGatewayViewModelErrorMessagesAndValues(model, vm);
-                return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", model);
-            }
-
-            vm.SourcesCheckedOn = DateTime.Now;
-
-            var pageData = JsonConvert.SerializeObject(vm);
-            await _applyApiClient.SubmitGatewayPageAnswer(vm.ApplicationId, vm.PageId, vm.Status, username, pageData);
-
-            return RedirectToAction("ViewApplication", new { vm.ApplicationId });
-        }
+     
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId, username)));
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
+        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
+        {
+            SetupGatewayPageOptionTexts(viewModel);
+
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+
+            viewModel.SourcesCheckedOn = DateTime.Now;
+
+            var pageData = JsonConvert.SerializeObject(viewModel);
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+
+            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-20")]
@@ -190,16 +189,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
-            viewModel.ErrorMessages = validationResponse?.Errors;
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            if (viewModel.ErrorMessages != null && viewModel.ErrorMessages.Any())
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
-
-                var model = await _mediator.Send(new GetTradingNameRequest(viewModel.ApplicationId, username));
-                SetupGatewayViewModelErrorMessagesAndValues(model, viewModel);
-                return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", model);
+                viewModel.ErrorMessages = validationResponse?.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", viewModel);
             }
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
             viewModel.SourcesCheckedOn = DateTime.Now;
 
@@ -208,16 +203,36 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
-        private static void SetupGatewayViewModelErrorMessagesAndValues(RoatpGatewayPageViewModel model, RoatpGatewayPageViewModel viewModel)
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
+        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
         {
-            model.ErrorMessages = viewModel.ErrorMessages;
-            model.Status = viewModel.Status;
-            model.OptionInProgressText = viewModel.OptionInProgressText;
-            model.OptionFailText = viewModel.OptionFailText;
-            model.OptionPassText = viewModel.OptionPassText;
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+            if(validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
+            }
+
+            SetupGatewayPageOptionTexts(viewModel);
+
+            var pageData = JsonConvert.SerializeObject(viewModel);
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+
+            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
 
-        public  void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-30")]
+        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
+        }
+
+
+        private static void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
             if (viewModel?.Status == null) return;
             viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
