@@ -63,8 +63,21 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
             model.Ukprn = ukprn;
 
-            var companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCompanyNumber");
-            var charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCharityRegNumber");
+            var companyNumber = string.Empty;
+            var charityNumber = string.Empty;
+
+
+            try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCompanyNumber"); }
+            catch
+            { // not robust to tag not being present, throws a 404
+            }
+
+
+            try
+            { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCharityRegNumber"); }
+            catch
+            { // not robust to tag not being present, throws a 404
+            }
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
             if (ukrlpData.Any())
