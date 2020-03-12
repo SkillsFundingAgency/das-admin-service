@@ -107,7 +107,14 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var pageData = JsonConvert.SerializeObject(model);
             _logger.LogInformation($"GetOrganisationStatusHandler-SubmitGatewayPageAnswer - ApplicationId '{model.ApplicationId}' - PageId '{model.PageId}' - Status '{model.Status}' - UserName '{request.UserName}' - PageData '{pageData}'");
-            await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "GetOrganisationStatusHandler - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return model;
         }

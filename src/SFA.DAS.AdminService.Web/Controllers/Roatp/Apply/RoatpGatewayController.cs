@@ -173,7 +173,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var pageData = JsonConvert.SerializeObject(viewModel);
 
             _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController - EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
@@ -201,7 +208,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var pageData = JsonConvert.SerializeObject(viewModel);
             _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatus-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController - EvaluateOrganisationStatus - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
