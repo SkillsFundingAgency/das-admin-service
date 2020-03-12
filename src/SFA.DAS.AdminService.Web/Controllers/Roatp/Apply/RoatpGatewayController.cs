@@ -179,7 +179,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "RoatpGatewayController - EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                _logger.LogError(ex, "RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
