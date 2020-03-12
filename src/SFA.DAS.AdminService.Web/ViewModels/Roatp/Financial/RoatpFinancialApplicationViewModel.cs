@@ -12,10 +12,15 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
 
+        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+
         public FinancialDueDate OutstandingFinancialDueDate { get; set; }
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+
+        public string InadequateComments { get; set; }
+        public string ClarificationComments { get; set; }
+        
 
         public RoatpFinancialApplicationViewModel() { }
 
@@ -90,7 +95,15 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                         break;
                 }
             }
+
+            if(FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+            {
+                InadequateComments = FinancialReviewDetails.Comments;
+            }
+            else if (FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
+            {
+                ClarificationComments = FinancialReviewDetails.Comments;
+            }
         }
     }
-
 }

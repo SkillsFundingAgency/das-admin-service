@@ -105,7 +105,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
                     FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
-                    Comments = vm.FinancialReviewDetails.Comments
+                    Comments = GetFinancialReviewComments(vm)
                 };
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
@@ -336,6 +336,24 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 default:
                     return null;
             }
-        }        
+        }
+
+        private static string GetFinancialReviewComments(RoatpFinancialApplicationViewModel vm)
+        {
+            if (vm is null)
+            {
+                return null;
+            }
+
+            switch (vm?.FinancialReviewDetails?.SelectedGrade)
+            {
+                case FinancialApplicationSelectedGrade.Clarification:
+                    return vm.ClarificationComments;
+                case FinancialApplicationSelectedGrade.Inadequate:
+                    return vm.InadequateComments;
+                default:
+                    return null;
+            }
+        }
     }
 }

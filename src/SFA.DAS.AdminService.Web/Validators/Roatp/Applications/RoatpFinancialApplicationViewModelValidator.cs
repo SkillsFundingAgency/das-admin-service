@@ -19,15 +19,23 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 
                 if (string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
-                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select a grade for this application");
+                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateComments))
                 {
-                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application was graded inadequate");
+                    context.AddFailure("InadequateComments", "Enter your comments");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
                 {
-                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application requires clarification");
+                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less error message");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
+                {
+                    context.AddFailure("ClarificationComments", "Enter your clarification comments");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
+                {
+                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less error message");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
@@ -79,6 +87,22 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
             {
                 context.AddFailure(propertyName, "Financial due date must be a future date");
             }
+        }
+
+        private static bool HasExceededWordCount(string input, int maxWordcount = 500)
+        {
+            bool hasExceeded = false;
+
+            var text = input?.Trim();
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                var wordCount = text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+                hasExceeded = (wordCount > maxWordcount);
+            }
+
+            return hasExceeded;
         }
     }
 }
