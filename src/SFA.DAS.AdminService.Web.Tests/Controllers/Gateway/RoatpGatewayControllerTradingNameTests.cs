@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -29,6 +30,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         private  Mock<IHttpContextAccessor> _contextAccessor;
         private  Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private  Mock<IMediator> _mediator;
+        private Mock<ILogger<RoatpGatewayController>> _logger;
         private string username => "mark cain";
         private string givenName => "mark";
         private string surname => "cain";
@@ -39,10 +41,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
            _contextAccessor = new Mock<IHttpContextAccessor>();
            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
            _mediator = new Mock<IMediator>();
+           _logger = new Mock<ILogger<RoatpGatewayController>>();
 
-           //_contextAccessor.Setup(x=>x.HttpContext.)
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+           var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, "1"),
                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
@@ -60,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                         Errors = new List<ValidationErrorDetail>()
                     }
                 );
-            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object);
+            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object, _logger.Object);
         }
 
         [Test]

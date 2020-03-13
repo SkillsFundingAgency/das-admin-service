@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -26,6 +27,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         private  Mock<IHttpContextAccessor> _contextAccessor;
         private  Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private  Mock<IMediator> _mediator;
+        private Mock<ILogger<RoatpGatewayController>> _logger;
+
         private string username => "mark cain";
         private string givenName => "mark";
         private string surname => "cain";
@@ -36,8 +39,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
            _contextAccessor = new Mock<IHttpContextAccessor>();
            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
            _mediator = new Mock<IMediator>();
-
-           //_contextAccessor.Setup(x=>x.HttpContext.)
+           _logger = new Mock<ILogger<RoatpGatewayController>>();
+            //_contextAccessor.Setup(x=>x.HttpContext.)
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -55,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                     }
                 );
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object);
+            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object,_logger.Object);
         }
 
         [Test]

@@ -22,22 +22,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpGatewayController : Controller
     {
-        private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
         private readonly IMediator _mediator;
         private readonly ILogger<RoatpGatewayController> _logger;
 
-        public RoatpGatewayController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator, ILogger<RoatpGatewayController> logger)
+        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator, ILogger<RoatpGatewayController> logger)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _gatewayValidator = gatewayValidator;
             _mediator = mediator;
-            _qnaApiClient = qnaApiClient;
             _logger = logger;
         }
 

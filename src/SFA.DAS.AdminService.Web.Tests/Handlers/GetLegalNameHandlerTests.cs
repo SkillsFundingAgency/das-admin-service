@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
@@ -27,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Handlers
 
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
-
+        private Mock<ILogger<GetLegalNameHandler>> _logger;
         private static string PageId => "1-10";
         private GatewayPageAnswer _gatewayPageAnswer;
         private static string ukprn => "12344321";
@@ -53,8 +54,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Handlers
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
             _gatewayPageAnswer = new GatewayPageAnswer();
-
-            _handler = new GetLegalNameHandler(_applyApiClient.Object,_qnaApiClient.Object,_roatpApiClient.Object,_companiesHouseApiClient.Object,_charityCommissionApiClient.Object);
+            _logger  = new Mock<ILogger<GetLegalNameHandler>>();
+            _handler = new GetLegalNameHandler(_applyApiClient.Object,_qnaApiClient.Object,_roatpApiClient.Object,_companiesHouseApiClient.Object,_charityCommissionApiClient.Object, _logger.Object);
         }
 
         [Test]
