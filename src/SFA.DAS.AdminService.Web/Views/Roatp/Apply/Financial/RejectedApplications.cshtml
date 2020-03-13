@@ -1,5 +1,4 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
-@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
@@ -8,16 +7,23 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">RoATP assessments</li>
+    </ol>
+</div>
 
 <div>
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation">
-                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Applications</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Current applications</a>
             </li>
             <li class="app-navigation--current-page">
-                <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Rejected assessments</a>
+                <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Clarifications</a>
             </li>
             <li class="app-navigation">
                 <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
@@ -30,24 +36,24 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds das-no-wrap">
             <h1 class="govuk-heading-xl">
-                <span class="govuk-caption-xl">Financial health assessments</span>
-                Rejected assessments
+                <span class="govuk-caption-xl">RoATP financial applications</span>
+                Clarifications
             </h1>
         </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
             @if (@Model.Applications.Items.Any())
             {
                 <table class="govuk-table govuk-table--s das-table--responsive">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">Date rejected</th>
-                            <th class="govuk-table__header" scope="col">Grade</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Current status</th>
+                            <th class="govuk-table__header" scope="col">UKPRN</th>
+                            <th class="govuk-table__header" scope="col">Provider route</th>
+                            <th class="govuk-table__header" scope="col">Submitted date</th>
+                            <th class="govuk-table__header" scope="col">Clarification date</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -57,37 +63,17 @@
                             <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                 <a class="govuk-link" asp-action="ViewGradedApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td class="govuk-table__cell" data-label="Date rejected">
-                                @item.FeedbackAddedDate.ToSfaShortDateString()
+                            <td class="govuk-table__cell das-no-wrap" data-label="UKPRN">
+                                @item.Ukprn
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
-                                @{
-                                    switch (item.AssessorReviewStatus)
-                                    {
-                                        case ApplicationReviewStatus.New:
-                                            if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
-                                            {
-                                                <div class="govuk-tag govuk-tag--updated">
-                                                    updated
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="govuk-tag govuk-tag--inactive">
-                                                    unassigned
-                                                </div>
-                                            }
-                                            break;
-                                        case ApplicationReviewStatus.InProgress:
-                                            <div class="govuk-tag">
-                                                in progress
-                                            </div>
-                                            break;
-                                        default:
-                                            <text>---</text>
-                                            break;
-                                    }
-                                }
+                            <td class="govuk-table__cell das-no-wrap" data-label="Provider route">
+                                TO ADD AT LATER DATE
+                            </td>
+                            <td class="govuk-table__cell" data-label="Submitted date">
+                                @item.SubmittedDate.ToSfaShortDateString()
+                            </td>
+                            <td class="govuk-table__cell" data-label="Clarification date">
+                                @item.FeedbackAddedDate.ToSfaShortDateString()
                             </td>
                         </tr>
                         }
@@ -96,9 +82,8 @@
             }
             else
             {
-                <p class="govuk-body-l">There are no rejected assessments at this time.</p>
+                <p class="govuk-body-l">There are no clarifications at this time.</p>
             }
-
         </div>
     </div>
 
@@ -107,10 +92,9 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="page-navigation">
-
                     @if (Model.Applications.HasPreviousPage)
                     {
-                        <a asp-action="OpenApplications"
+                        <a asp-action="RejectedApplications"
                         asp-controller="RoatpFinancial"
                         asp-route-page="@(Model.Applications.PageIndex - 1)"
                         class="govuk-link previous">
@@ -122,7 +106,7 @@
 
                     @if (Model.Applications.HasNextPage)
                     {
-                        <a asp-action="OpenApplications"
+                        <a asp-action="RejectedApplications"
                         asp-controller="RoatpFinancial"
                         asp-route-page="@(Model.Applications.PageIndex + 1)"
                         class="govuk-link next">
