@@ -48,7 +48,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             }));
 
             var context = new DefaultHttpContext{ User = user };
-
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
+                .ReturnsAsync(new ValidationResponse
+                    {
+                        Errors = new List<ValidationErrorDetail>()
+                    }
+                );
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
             _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object);
         }
@@ -109,12 +114,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 
             _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
-                    {
-                        Errors = new List<ValidationErrorDetail>
+                {
+                    Errors = new List<ValidationErrorDetail>
                         {
                             new ValidationErrorDetail {Field = "OptionFail", ErrorMessage = "needs text"}
                         }
-                    }
+                }
                 );
 
             vm.ApplicationId = applicationId;
@@ -133,7 +138,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var result = _controller.EvaluateLegalNamePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _mediator.Verify(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+            _mediator.Verify(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
         }
     }
 }

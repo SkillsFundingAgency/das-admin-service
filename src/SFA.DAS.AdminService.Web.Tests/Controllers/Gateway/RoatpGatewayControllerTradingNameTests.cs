@@ -53,6 +53,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var context = new DefaultHttpContext{ User = user };
 
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
+
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<TradingNamePageViewModel>()))
+                .ReturnsAsync(new ValidationResponse
+                    {
+                        Errors = new List<ValidationErrorDetail>()
+                    }
+                );
             _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object);
         }
 
@@ -69,7 +76,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var _result = _controller.GetGatewayTradingNamePage(applicationId, pageId).Result;
             _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Once());
         }
-
 
         [Test]
         public void post_trading_name_happy_path()
@@ -93,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 
             var result = _controller.EvaluateTradingNamePage(vm).Result;
 
-            _applyApiClient.Verify(x=>x.SubmitGatewayPageAnswer(It.IsAny<Guid>(),It.IsAny<string>(),It.IsAny<string>(),It.IsAny<string>(),It.IsAny<string>()),Times.Once);
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
         }
 
@@ -109,17 +115,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
-                
+
             };
 
             _gatewayValidator.Setup(v => v.Validate(It.IsAny<TradingNamePageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
-                    {
-                        Errors = new List<ValidationErrorDetail>
+                {
+                    Errors = new List<ValidationErrorDetail>
                         {
                             new ValidationErrorDetail {Field = "OptionFail", ErrorMessage = "needs text"}
                         }
-                    }
+                }
                 );
 
             vm.ApplicationId = applicationId;
@@ -137,8 +143,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 
             var result = _controller.EvaluateTradingNamePage(vm).Result;
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),Times.Never);
-            _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
         }
     }
 }
