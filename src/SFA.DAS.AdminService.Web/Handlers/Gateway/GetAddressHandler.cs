@@ -18,10 +18,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
-
-        //private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
-        //private readonly ICharityCommissionApiClient _charityCommissionApiClient;
-
         private readonly ILogger<GetOrganisationStatusHandler> _logger;
 
         public GetAddressHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ILogger<GetOrganisationStatusHandler> logger)
@@ -37,31 +33,26 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             var pageId = GatewayPageIds.AddressCheck;
 
             var model = new AddressCheckViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
-            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
-            model.Heading = RoatpGatewayConstants.Headings.AddressCheck;
-
+           
             var currentRecord = await _applyApiClient.GetGatewayPageAnswer(request.ApplicationId, pageId);
             var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
-
-            var gatewayReviewStatus = string.Empty;
-            if (applicationDetails?.GatewayReviewStatus != null)
-            {
-                gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
-            }
 
             if (currentRecord?.GatewayPageData != null)
             {
                 model = JsonConvert.DeserializeObject<AddressCheckViewModel>(currentRecord.GatewayPageData);
                 model.Status = currentRecord.Status;
-                model.GatewayReviewStatus = gatewayReviewStatus;
+                model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+                model.Heading = RoatpGatewayConstants.Headings.AddressCheck;
                 return model;
             }
 
-            model.GatewayReviewStatus = gatewayReviewStatus;
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
 
+            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+            model.Heading = RoatpGatewayConstants.Headings.AddressCheck;
             model.SourcesCheckedOn = DateTime.Now;
+
 
             var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.Ukprn);
             model.Ukprn = ukprn;
