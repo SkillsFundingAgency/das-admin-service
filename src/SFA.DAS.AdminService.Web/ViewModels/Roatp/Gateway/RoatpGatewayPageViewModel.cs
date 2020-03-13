@@ -13,6 +13,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string Status { get; set; }
 
         public string Ukprn { get; set; }
+        public string UkrlpLegalName { get; set; }
 
         public string GatewayReviewStatus { get; set; }
 
@@ -26,5 +27,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 
         public string OptionInProgressText { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+        public string Heading { get; set; }
+        public string Caption { get; set; }
     }
 }

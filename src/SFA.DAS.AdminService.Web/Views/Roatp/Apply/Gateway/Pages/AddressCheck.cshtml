@@ -1,0 +1,137 @@
+﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.AddressCheckViewModel
+
+@{
+    //var heading = "Address check";
+    //var caption = "Organisation checks";
+
+    ViewBag.Title = $"Gateway - {Model.Heading}";
+    Layout = "_Layout";
+
+    //var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+    //var isErrorFailText = "";
+    //var noSelectionMessage = "";
+    //var failTextMessage = "";
+    //if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+    //{
+    //    foreach (var error in Model.ErrorMessages)
+    //    {
+    //        if (error.Field == "OptionPass")
+    //        {
+    //            noSelectionMessage = error.ErrorMessage;
+    //        }
+
+    //        if (error.Field == "OptionFailText")
+    //        {
+    //            isErrorFailText = "govuk-textarea--error-override";
+    //            failTextMessage = error.ErrorMessage;
+    //        }
+    //    }
+    //}
+}
+
+@*<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+        </li>
+
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">@heading</li>
+    </ol>
+</div>*@
+
+@{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @*@if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+        {
+            <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <h2 class="govuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list">
+                        @foreach (var error in Model.ErrorMessages)
+                        {
+                            <li><a href="#@error.Field">@error.ErrorMessage</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }*@
+
+            @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+
+            <span class="govuk-caption-xl">
+                @Model.Caption
+            </span>
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+            <div class="govuk-!-margin-bottom-4">
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    UKPRN: @Model.Ukprn
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Legal name: @Model.UkrlpLegalName
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Source</th>
+                        <th class="govuk-table__header" scope="col">Address</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Submitted application data</td>
+                        <td class="govuk-table__cell">@Model.SubmittedApplicationAddress</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">UKRLP data</td>
+                        <td class="govuk-table__cell">@Model.UkrlpAddress</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateOrganisationStatus" asp-controller="RoatpGateway">
+                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                    <input type="hidden" name="PageId" value="@Model.PageId" />
+                    <input type="hidden" name="GatewayReviewStatus" value="@Model.GatewayReviewStatus" />
+                    <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
+                    <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
+                    <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
+                    <input type="hidden" name="UkrlpLegalName" value="@Model.UkrlpLegalName" />
+                    <input type="hidden" name="SubmittedApplicationAddress" value="@Model.SubmittedApplicationAddress" />
+                    <input type="hidden" name="UkrlpAddress" value="@Model.UkrlpAddress" />
+                    @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>

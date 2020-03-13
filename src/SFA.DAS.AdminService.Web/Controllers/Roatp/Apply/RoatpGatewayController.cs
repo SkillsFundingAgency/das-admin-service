@@ -217,6 +217,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
 
+        #region 1.3 - OrganisationStatus
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-30")]
+        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
+        }
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
         public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
         {
@@ -244,16 +251,46 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
+        #endregion
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
+        #region 1.4 - AddressCheck
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-40")]
+        public async Task<IActionResult> GetAddressCheck(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
+            return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", await _mediator.Send(new GetAddressRequest(applicationId, username)));
         }
 
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-40")]
+        public async Task<IActionResult> EvaluateAddressCheck(AddressCheckViewModel viewModel)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
-        public  void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", viewModel);
+            }
+
+            SetupGatewayPageOptionTexts(viewModel);
+
+            var pageData = JsonConvert.SerializeObject(viewModel);
+            _logger.LogInformation($"RoatpGatewayController-EvaluateAddressCheck-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController - EvaluateAddressCheck - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+            }
+
+            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
+        }
+        #endregion
+
+        public void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
             if (viewModel?.Status == null) return;
             viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;

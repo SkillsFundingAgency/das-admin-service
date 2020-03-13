@@ -162,7 +162,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
             {
                 // NotRequired checks
-                var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
+                var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.PageId);
                 // TradingName
                 var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName).FirstOrDefault().Value;
                 var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
@@ -174,10 +174,10 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 }
 
                 // WebsiteAddress
-                var WebsiteAddressUkrlp = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-30").FirstOrDefault().Value;
+                var WebsiteAddressUkrlp = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.YourOrganisation.QuestionIds.OrganisationWebsiteAddressUkrlp).FirstOrDefault().Value;
 
-                var WebsiteAddressApplyPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 2, "40");
-                var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-41").FirstOrDefault().Value;
+                var WebsiteAddressApplyPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 2, RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationWebsite);
+                var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.YourOrganisation.QuestionIds.OrganisationWebsiteAddressApply).FirstOrDefault().Value;
 
                 var WebsiteAddressStatus = string.IsNullOrWhiteSpace(WebsiteAddressUkrlp) && string.IsNullOrWhiteSpace(WebsiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
                 if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
@@ -195,12 +195,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
                 if (ProviderRoute.Equals(1) || ProviderRoute.Equals(2))
                 {
-                    var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "235");
-                    var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault().Value;
+                    var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.FundedByOfficeForStudents);
+                    var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.YourOrganisation.QuestionIds.FundedByOfficeForStudents).FirstOrDefault().Value;
                     if (OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
 
-                    var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "240");
-                    var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault().Value;
+                    var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.InitialTeacherTraining);
+                    var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.YourOrganisation.QuestionIds.InitialTeacherTraining).FirstOrDefault().Value;
                     if (InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
                 }
                 if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))

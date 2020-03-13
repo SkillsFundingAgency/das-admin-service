@@ -9,7 +9,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public DateTime? ApplicationSubmittedOn { get; set; }
         public DateTime SourcesCheckedOn { get; set; }
         public string ApplyLegalName { get; set; }
-        public string UkrlpLegalName { get; set; }
+        //public string UkrlpLegalName { get; set; } // Moved to RoatpGatewayPageViewModel as it's reused elsewhere
         public string CompaniesHouseLegalName { get; set; }
         public string CharityCommissionLegalName { get; set; }
     }
