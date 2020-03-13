@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers
 
         private readonly List<string> _controllersThatDoNotRequireAuthorize = new List<string>()
         {
-            "AccountController", "ExcelAwareController", "HomeController", "ErrorPageController", "TestErrorController", "RoatpGatewayController"
+            "AccountController", "ExcelAwareController", "HomeController", "ErrorPageController", "TestErrorController"
         };
 
         [Test]

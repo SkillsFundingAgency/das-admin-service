@@ -3,14 +3,10 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using Microsoft.Extensions.Logging;
 
@@ -37,7 +33,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             _charityCommissionApiClient = charityCommissionApiClient;
             _logger = logger;
         }
-
 
         public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
 
@@ -69,22 +64,21 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             model.SourcesCheckedOn = DateTime.Now;
 
-            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
+            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.Ukprn);
             model.Ukprn = ukprn;
 
-            model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPLegalName");
+            model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPLegalName);
             var companyNumber = string.Empty;
             var charityNumber = string.Empty;
 
            
-            try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCompanyNumber"); }
+            try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCompanyNumber); }
             catch
             { // not robust to tag not being present, throws a 404
             }
 
-
             try
-            { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKRLPVerificationCharityRegNumber"); }
+            { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCharityRegNumber); }
             catch { // not robust to tag not being present, throws a 404
             }
 

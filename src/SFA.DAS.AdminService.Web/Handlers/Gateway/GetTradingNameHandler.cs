@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -18,8 +16,6 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
-
-
         public GetTradingNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient)
         {
             _applyApiClient = applyApiClient;
@@ -56,11 +52,11 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
                 model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
 
-            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, "UKPRN");
+            var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.Ukprn);
             model.Ukprn = ukprn;
 
-            var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
-            model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == "PRE-46")?.Value;
+            var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
+            model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
 
             var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
             if (ukrlpData != null && ukrlpData.Any())
@@ -78,8 +74,5 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             return model;
         }
-
-
-
     }
 }
