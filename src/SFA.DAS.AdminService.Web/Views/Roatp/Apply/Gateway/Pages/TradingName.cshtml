@@ -1,15 +1,15 @@
 ﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
 @using SFA.DAS.AssessorService.Domain.Extensions
-@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.LegalNamePageViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.TradingNamePageViewModel
 
 @{
-    var heading = "Legal name check";
+    var heading = "Trading name check";
     var caption = "Organisation checks";
 
     ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
 
-     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
     var failTextMessage = "";
@@ -115,26 +115,12 @@
 
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">Submitted application data</td>
-                        <td class="govuk-table__cell">@Model.ApplyLegalName</td>
+                        <td class="govuk-table__cell">@Model.ApplyTradingName</td>
                     </tr>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">UKRLP data</td>
-                    <td class="govuk-table__cell">@Model.UkrlpLegalName</td>
+                    <td class="govuk-table__cell">@Model.UkrlpTradingName</td>
                 </tr>
-                @if (!string.IsNullOrEmpty(Model.CompaniesHouseLegalName))
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Companies House data</td>
-                        <td class="govuk-table__cell">@Model.CompaniesHouseLegalName</td>
-                    </tr>
-                }
-                @if (!string.IsNullOrEmpty(Model.CharityCommissionLegalName))
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Charity Commission data</td>
-                        <td class="govuk-table__cell">@Model.CharityCommissionLegalName</td>
-                    </tr>
-                }
                 </tbody>
             </table>
                 
@@ -145,19 +131,14 @@
     {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateLegalNamePage" asp-controller="RoatpGateway">
+            <form class="js-disable-on-submit" asp-action="EvaluateTradingNamePage" asp-controller="RoatpGateway">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="PageId" value="@Model.PageId" />
                 <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
                 <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
                 <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                <input type="hidden" name="UkrlpLegalName" value="@Model.UkrlpLegalName" />
-                <input type="hidden" name="ApplyLegalName" value="@Model.ApplyLegalName" />
-                <input type="hidden" name="CharityCommissionLegalName" value="@Model.CharityCommissionLegalName" />
-                <input type="hidden" name="CompaniesHouseLegalName" value="@Model.CompaniesHouseLegalName" />
-
-
-
+                <input type="hidden" name="UkrlpTradlngName" value="@Model.UkrlpTradingName" />
+                <input type="hidden" name="ApplyTradingName" value="@Model.ApplyTradingName" />
                 <div class="govuk-form-group @formGroupError">
                     <fieldset class="govuk-fieldset">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">

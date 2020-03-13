@@ -162,9 +162,9 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
             {
                 // NotRequired checks
-                var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, "1");
+                var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
                 // TradingName
-                var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-46").FirstOrDefault().Value;
+                var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName).FirstOrDefault().Value;
                 var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
                 if (TradingNameStatus.Equals(SectionReviewStatus.NotRequired))
                 {

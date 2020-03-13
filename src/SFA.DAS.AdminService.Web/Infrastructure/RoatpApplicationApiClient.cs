@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
@@ -145,8 +146,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
-
-      
+  
 
         public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
         {
@@ -158,6 +158,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
         }
 
+        [ValidateAntiForgeryToken()]
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string gatewayPageData)
         {
