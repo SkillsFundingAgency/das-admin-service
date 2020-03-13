@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _qnaApiClient = qnaApiClient;
         }
 
-        [HttpGet("/Roatp/Financial/Open")]
+        [HttpGet("/Roatp/Financial/Current")]
         public async Task<IActionResult> OpenApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetOpenFinancialApplications();
@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Roatp/Financial/Rejected")]
+        [HttpGet("/Roatp/Financial/Clarification")]
         public async Task<IActionResult> RejectedApplications(int page = 1)
         {
             // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/RejectedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Roatp/Financial/Closed")]
+        [HttpGet("/Roatp/Financial/Outcome")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
             var applications = await _applyApiClient.GetClosedFinancialApplications();
@@ -80,11 +80,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
-            return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
+            var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
+
+            if (activeFinancialReviewStatuses.Contains(application.FinancialReviewStatus))
+            {
+                await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
+            }
+            else
+            {
+                return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+            }
         }
 
         [HttpPost("/Roatp/Financial/{applicationId}")]
@@ -109,27 +117,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 };
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
-                return RedirectToAction(nameof(Evaluated), new { vm.ApplicationId });
+                return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
             }
             else
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
-        }
-
-        [HttpGet("/Roatp/Financial/{applicationId}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid applicationId)
-        {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            if (application is null)
-            {
-                return RedirectToAction(nameof(ClosedApplications));
-            }
-
-            var vm = await CreateRoatpFinancialApplicationViewModel(application);
-
-            return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
@@ -181,8 +175,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return new NotFoundResult();
         }
 
-        [HttpGet("/Roatp/Financial/{applicationId}/Evaluated")]
-        public async Task<IActionResult> Evaluated(Guid applicationId)
+        [HttpGet("/Roatp/Financial/{applicationId}/Graded")]
+        public async Task<IActionResult> Graded(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             if (application?.FinancialGrade is null)
