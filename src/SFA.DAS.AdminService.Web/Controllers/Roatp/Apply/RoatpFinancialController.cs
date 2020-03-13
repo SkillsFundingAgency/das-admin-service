@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.RoatpFinancialAssessorTeam)]
     public class RoatpFinancialController : Controller
     {
         private readonly IRoatpOrganisationApiClient _apiClient;

@@ -58,9 +58,9 @@
         </div>
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">Financial</a>
+                <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">EPAO financial applications</a>
             </h2>
-            <p class="govuk-body">Financial</p>
+            <p class="govuk-body">Assess applications and view outcomes.</p>
         </div>
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
@@ -68,13 +68,13 @@
             </h2>
             <p class="govuk-body">Review Applications</p>
         </div>
-        <!-- need to assign to RoATP roles -->
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam)">
+        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.RoatpFinancialAssessorTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">Financial</a>
+                <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">RoATP financial applications</a>
             </h2>
-            <p class="govuk-body">RoATP Financial</p>
+            <p class="govuk-body">Assess applications and view outcomes.</p>
         </div>
+        <!-- need to assign to RoATP roles -->
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
                 <a class="govuk-link" asp-controller="RoatpApplication" asp-action="OpenApplications">Applications</a>
