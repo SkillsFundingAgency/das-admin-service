@@ -1,5 +1,4 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
-@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
@@ -8,7 +7,14 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">RoATP assessments</li>
+    </ol>
+</div>
 
 <div>
     <nav class="app-navigation govuk-clearfix">
@@ -16,9 +22,9 @@
             <li class="app-navigation--current-page">
                 <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Current applications</a>
             </li>
-            @*<li class="app-navigation">
+            <li class="app-navigation">
                 <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Clarifications</a>
-            </li>*@
+            </li>
             <li class="app-navigation">
                 <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
             </li>
@@ -38,7 +44,6 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
             @if (@Model.Applications.Items.Any())
             {
                 <table class="govuk-table govuk-table--s das-table--responsive">
@@ -48,26 +53,26 @@
                             <th class="govuk-table__header" scope="col">UKPRN</th>
                             <th class="govuk-table__header" scope="col">Provider route</th>
                             <th class="govuk-table__header" scope="col">Submitted date</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Application status</th>
+                            <th class="govuk-table__header" scope="col">Application status</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                         @foreach (var item in Model.Applications.Items)
                         {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
+                            <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
                                 <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
                             </td>
-                            <td class="govuk-table__cell das-no-wrap" data-label="UKPRN" class="nowrap">
+                            <td class="govuk-table__cell das-no-wrap" data-label="UKPRN">
                                 @item.Ukprn
                             </td>
-                            <td class="govuk-table__cell" data-label="Provider route">
+                            <td class="govuk-table__cell das-no-wrap" data-label="Provider route">
                                 TO ADD AT LATER DATE
                             </td>
-                            <td class="govuk-table__cell" data-label="Submitted date">
+                            <td class="govuk-table__cell das-no-wrap" data-label="Submitted date">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Application status">
+                            <td class="govuk-table__cell das-no-wrap" data-label="Application status">
                                 @item.FinancialReviewStatus
                             </td>
                         </tr>
@@ -79,7 +84,6 @@
             {
                 <p class="govuk-body-l">There are no new applications at this time.</p>
             }
-
         </div>
     </div>
 
@@ -88,7 +92,6 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
                 <div class="page-navigation">
-
                     @if (Model.Applications.HasPreviousPage)
                     {
                         <a asp-action="OpenApplications"
