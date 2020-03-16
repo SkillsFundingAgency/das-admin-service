@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
@@ -158,6 +159,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
         }
 
+        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName)
+        {
+            return await (await _client.GetAsync(
+                $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}")).Content.ReadAsStringAsync();
+        }
+
         [ValidateAntiForgeryToken()]
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string gatewayPageData)
@@ -186,6 +193,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
+        
         private async Task Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
