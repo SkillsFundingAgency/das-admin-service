@@ -1,0 +1,298 @@
+﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.OrganisationCriminalCompliancePageViewModel
+
+@{
+    var heading = "Legal name check";
+    var caption = "Organisation checks";
+
+    ViewBag.Title = $"Gateway - {heading}";
+    Layout = "_Layout";
+
+     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+    var isErrorFailText = "";
+    var noSelectionMessage = "";
+    var failTextMessage = "";
+    if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+    {
+        foreach (var error in Model.ErrorMessages)
+        {
+            if (error.Field == "OptionPass")
+            {
+                noSelectionMessage = error.ErrorMessage;
+            }
+
+            if (error.Field == "OptionFailText")
+            {
+                isErrorFailText = "govuk-textarea--error-override";
+                failTextMessage = error.ErrorMessage;
+            }
+        }
+    }
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+        </li>
+        
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">@Model.PageTitle</li>
+    </ol>
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var error in Model.ErrorMessages)
+                            {
+                                <li><a href="#@error.Field">@error.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <span class="govuk-caption-xl">
+                Organisation's criminal and compliance checks
+            </span>
+
+            <h1 class="govuk-heading-xl">@Model.PageTitle</h1>
+
+            <div class="govuk-!-margin-bottom-4">
+                @if (Model.Ukprn != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        UKPRN: @Model.Ukprn
+                    </p>
+                }
+            </div>
+
+            <div class="govuk-!-margin-bottom-4">
+                @if (Model.ApplyLegalName != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Legal name: @Model.ApplyLegalName
+                    </p>
+                }
+            </div>
+
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                @*<thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Source</th>
+                        <th class="govuk-table__header" scope="col">Legal name</th>
+                    </tr>
+                </thead>*@
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Application question</td>
+                        <td class="govuk-table__cell">@Model.QuestionText</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__header">Applicant's answer</td>
+                        <td class="govuk-table__cell">@Model.ComplianceCheckAnswer</td>
+                    </tr>
+                    @if (!String.IsNullOrWhiteSpace(Model.FurtherInformationAnswer))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__header">Applicant's detailed answer</td>
+                            <td class="govuk-table__cell">@Model.FurtherInformationAnswer</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+                
+        </div>
+    </div>
+
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="js-disable-on-submit" asp-action="EvaluateOrganisationCompositionCreditorsPage" asp-controller="RoatpOrganisationCriminalComplianceChecks">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.PageId)
+                @Html.HiddenFor(x => x.PageTitle)
+                @Html.HiddenFor(x => x.Ukprn)
+                @Html.HiddenFor(x => x.ApplyLegalName)
+                @Html.HiddenFor(x => x.QuestionText)
+                @Html.HiddenFor(x => x.ComplianceCheckAnswer)
+                @Html.HiddenFor(x => x.ComplianceCheckQuestionId)
+                @Html.HiddenFor(x => x.FurtherInformationAnswer)
+                @Html.HiddenFor(x => x.FurtherInformationQuestionId)
+
+                <div class="govuk-form-group @formGroupError">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h2 class="govuk-fieldset__heading">
+                                What is the outcome of this check?
+                            </h2>
+                        </legend>
+
+                        @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                        {
+                            @foreach (var error in Model.ErrorMessages)
+                            {
+                                @if (error.Field == "OptionPass")
+                                {
+                                    <span class="govuk-error-message">
+                                        <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                    </span>
+                                }
+                            }
+                        }
+
+                        <div class="govuk-radios govuk-radios--conditional " data-module="radios">
+                            @{
+                                var radioCheckedPassed = Model.Status == "Pass" ? "checked" : "";
+                                var radioCheckedFailed = Model.Status == "Fail" ? "checked" : "";
+                                var radioCheckedInProgress = Model.Status == "In progress" ? "checked" : "";
+
+                                <!-- PASS -->
+
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input"
+                                           type="radio"
+                                           id="OptionPass"
+                                           name="Status"
+                                           value="Pass"
+                                           data-aria-controls="conditional-OptionPass"
+                                           @radioCheckedPassed />
+
+                                    <label class="govuk-label govuk-radios__label" for="OptionPass">
+                                        Pass
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-OptionPass">
+                                    <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                        <div class="govuk-form-group">
+                                            <label for="OptionPassText" class="govuk-label">
+                                                Add comments (optional)
+                                            </label>
+                                            <textarea class="govuk-textarea js-character-count"
+                                                      id="OptionPassText"
+                                                      name="OptionPassText"
+                                                      rows="5"
+                                                      maxlength="10000">@Model.OptionPassText</textarea>
+                                        </div>
+
+                                        <span id="word-count-info-OptionPass" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                    </div>
+                                </div>
+
+                                <!-- FAIL -->
+
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input"
+                                           type="radio"
+                                           id="OptionFail"
+                                           name="Status"
+                                           value="Fail"
+                                           data-aria-controls="conditional-OptionFail"
+                                           @radioCheckedFailed />
+
+                                    <label class="govuk-label govuk-radios__label" for="OptionFail">
+                                        Fail
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-OptionFail">
+                                    <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                        <div class="govuk-form-group">
+                                            <label for="OptionFailText" class="govuk-label">
+                                                Add comments (mandatory)
+                                            </label>
+
+                                            @if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+                                            {
+                                                @foreach (var error in Model.ErrorMessages)
+                                                {
+                                                    @if (error.Field == "OptionFailText")
+                                                    {
+                                                        <span class="govuk-error-message">
+                                                            <span class="govuk-visually-hidden">Error:</span> @error.ErrorMessage
+                                                        </span>
+                                                    }
+                                                }
+                                            }
+
+                                            <textarea class="govuk-textarea js-character-count @isErrorFailText"
+                                                      id="OptionFailText"
+                                                      name="OptionFailText"
+                                                      rows="5"
+                                                      maxlength="10000">@Model.OptionFailText</textarea>
+                                        </div>
+
+                                        <span id="word-count-info-OptionFail" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                    </div>
+                                </div>
+
+                                <div class="govuk-radios__divider">or</div>
+
+                                <!-- IN PROGRESS -->
+
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input"
+                                           type="radio"
+                                           id="InProgress"
+                                           name="Status"
+                                           value="In progress"
+                                           data-aria-controls="conditional-InProgress"
+                                           @radioCheckedInProgress />
+
+                                    <label class="govuk-label govuk-radios__label" for="InProgress">
+                                        In progress
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-InProgress">
+                                    <div class="govuk-character-count" data-module="character-count" data-maxwords="150">
+                                        <div class="govuk-form-group">
+                                            <label for="OptionInProgressText" class="govuk-label">
+                                                Add comments (optional)
+                                            </label>
+                                            <textarea class="govuk-textarea js-character-count"
+                                                      id="OptionInProgressText"
+                                                      name="OptionInProgressText"
+                                                      rows="5"
+                                                      maxlength="10000">@Model.OptionInProgressText</textarea>
+                                        </div>
+
+                                        <span id="word-count-info-InProgress" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+
+                <button class="govuk-button" type="submit">Save and continue</button>
+            </form>
+        </div>
+    </div>
+    }
+</main>

@@ -9,6 +9,7 @@
         {
             public static int Preamble = 0;
             public static int YourOrganisation = 1;
+            public static int CriminalComplianceChecks = 3;
         }
 
         public static class RoatpSections
@@ -51,6 +52,22 @@
                     public static string PublicBodyTypeEmployer = "YO-171";
                     public static string EducationalInstituteTypeMainSupporting = "YO-160";
                     public static string EducationalInstituteTypeEmployer = "YO-161";
+                }
+            }
+
+            public static class CriminalComplianceChecks
+            {
+                public static int OrganisationComplianceChecks = 2;
+                public static int WhosInControlComplianceChecks = 4;
+
+                public static class PageIds
+                {
+                    public static string CompositionCreditors = "3100";
+                }
+
+                public static class QuestionIds
+                {
+                    public static string CompositionCreditors = "CC-20";
                 }
             }
         }

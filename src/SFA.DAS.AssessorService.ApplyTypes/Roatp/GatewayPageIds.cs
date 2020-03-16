@@ -17,5 +17,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string InitialTeacherTraining = "4-20";
         public const string Ofsted = "4-30";
         public const string SubcontractorDeclaration = "4-40";
+
+        public const string CCOrganisationCompositionCreditors = "5-10";
+
     }
 }
