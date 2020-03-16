@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             var companyNumber = string.Empty;
             var charityNumber = string.Empty;
 
-           
+
             try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCompanyNumber); }
             catch
             { // not robust to tag not being present, throws a 404
@@ -79,7 +79,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             try
             { charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCharityRegNumber); }
-            catch { // not robust to tag not being present, throws a 404
+            catch
+            { // not robust to tag not being present, throws a 404
             }
 
 
@@ -99,14 +100,14 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
 
                 if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
-                    model.CompaniesHouseLegalName  = companyDetails.CompanyName;
+                    model.CompaniesHouseLegalName = companyDetails.CompanyName;
             }
 
             if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
             {
                 var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
 
-                if  (!string.IsNullOrEmpty(charityDetails?.Response?.Name))
+                if (!string.IsNullOrEmpty(charityDetails?.Response?.Name))
                     model.CharityCommissionLegalName = charityDetails.Response.Name;
             }
 
