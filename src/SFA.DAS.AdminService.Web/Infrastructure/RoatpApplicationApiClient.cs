@@ -159,10 +159,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
         }
 
-        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName)
+        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName)
         {
             return await (await _client.GetAsync(
-                $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}")).Content.ReadAsStringAsync();
+                $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
         }
 
         [ValidateAntiForgeryToken()]

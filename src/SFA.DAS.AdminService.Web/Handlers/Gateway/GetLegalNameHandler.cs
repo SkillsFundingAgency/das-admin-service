@@ -43,8 +43,23 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             //MFCMFC remove magic words
 
-            var applyLegalName =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, "ApplyLegalName");
+
+         //   model.ApplyLegalName = "Wealdon";
+            model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName, "OrganisationName");
+            model.Ukprn =
+                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
+                    "UKPRN");
+
+            model.UkrlpLegalName =
+                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
+                    "UkrlpLegalName");
+            var applicationSubmittedOn =
+                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName, "ApplicationSubmittedOn");
+
+            if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn,out var submittedOn))
+                model.ApplicationSubmittedOn = submittedOn;
+
+
             var currentRecord = await _applyApiClient.GetGatewayPageAnswer(request.ApplicationId, pageId);
 
 
