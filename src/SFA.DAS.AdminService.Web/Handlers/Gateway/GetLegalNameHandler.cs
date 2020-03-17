@@ -1,12 +1,9 @@
 ﻿using MediatR;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using Microsoft.Extensions.Logging;
 
@@ -16,36 +13,30 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
     {
 
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
-        private readonly IRoatpApiClient _roatpApiClient;
- 
-        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
-        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+        
 
         private readonly ILogger<GetLegalNameHandler> _logger;
 
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient, ILogger<GetLegalNameHandler> logger)
+        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, ILogger<GetLegalNameHandler> logger)
         {
             _applyApiClient = applyApiClient;
-            _qnaApiClient = qnaApiClient;
-            _roatpApiClient = roatpApiClient;
-            _companiesHouseApiClient = companiesHouseApiClient;
-            _charityCommissionApiClient = charityCommissionApiClient;
             _logger = logger;
         }
 
-        public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request, CancellationToken cancellationToken)
+        public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request,
+            CancellationToken cancellationToken)
 
         {
             var pageId = GatewayPageIds.LegalName;
 
-            var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId};
+            var model = new LegalNamePageViewModel {ApplicationId = request.ApplicationId, PageId = pageId};
 
             //MFCMFC remove magic words
+            model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
+                request.UserName, "GatewayReviewStatus");
 
-
-         //   model.ApplyLegalName = "Wealdon";
-            model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName, "OrganisationName");
+            model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
+                request.UserName, "OrganisationName");
             model.Ukprn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
                     "UKPRN");
@@ -53,99 +44,58 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             model.UkrlpLegalName =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
                     "UkrlpLegalName");
-            var applicationSubmittedOn =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName, "ApplicationSubmittedOn");
 
-            if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn,out var submittedOn))
+
+            var applicationSubmittedOn =
+                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
+                    "ApplicationSubmittedOn");
+
+            if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
                 model.ApplicationSubmittedOn = submittedOn;
 
+            var sourcesCheckedOn =
+                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
+                    "SourcesCheckedOn");
 
-            var currentRecord = await _applyApiClient.GetGatewayPageAnswer(request.ApplicationId, pageId);
+            if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
+                model.SourcesCheckedOn = checkedOn;
+
+            model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
+                pageId,
+                request.UserName, "CompaniesHouseName");
 
 
-            var applicationDetails = await _applyApiClient.GetApplication(model.ApplicationId);
+            model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
+                pageId,
+                request.UserName, "CharityCommissionName");
 
-            var gatewayReviewStatus = string.Empty;
-            if (applicationDetails?.GatewayReviewStatus != null)
+
+            var currentStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
+                request.UserName, "Status");
+
+            model.Status = currentStatus;
+
+            if (string.IsNullOrEmpty(currentStatus)) return model;
+            switch (currentStatus)
             {
-                gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
+                case SectionReviewStatus.Pass:
+                    model.OptionPassText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
+                        pageId,
+                        request.UserName, "OptionPassText");
+                    break;
+                case SectionReviewStatus.Fail:
+                    model.OptionFailText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
+                        pageId,
+                        request.UserName, "OptionFailText");
+                    break;
+                case SectionReviewStatus.InProgress:
+                    model.OptionInProgressText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
+                        pageId,
+                        request.UserName, "OptionInProgressText");
+                    break;
             }
-
-            if (currentRecord?.GatewayPageData != null)
-            {
-                model = JsonConvert.DeserializeObject<LegalNamePageViewModel>(currentRecord.GatewayPageData);
-                model.Status = currentRecord.Status;
-                model.GatewayReviewStatus = gatewayReviewStatus;
-                return model;
-            }
-
-            //model.GatewayReviewStatus = gatewayReviewStatus;
-            //if (applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn != null)
-            //    model.ApplicationSubmittedOn = applicationDetails.ApplyData.ApplyDetails.ApplicationSubmittedOn;
-
-            //model.SourcesCheckedOn = DateTime.Now;
-
-            //var ukprn = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.Ukprn);
-            //model.Ukprn = ukprn;
-
-            //model.ApplyLegalName = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPLegalName);
-            //var companyNumber = string.Empty;
-            //var charityNumber = string.Empty;
-
-           
-            //try { companyNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCompanyNumber); }
-            //catch
-            //{ // not robust to tag not being present, throws a 404
-            //}
-
-            //try
-            //{ charityNumber = await _qnaApiClient.GetQuestionTag(request.ApplicationId, RoatpQnaConstants.QnaQuestionTags.UKRLPVerificationCharityRegNumber); }
-            //catch { // not robust to tag not being present, throws a 404
-            //}
-
-
-            //var ukrlpLegalName = "";
-
-            //var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn);
-            //if (ukrlpData.Any())
-            //{
-            //    var ukrlpDetail = ukrlpData.First();
-            //    ukrlpLegalName = ukrlpDetail.ProviderName;
-            //}
-            //model.UkrlpLegalName = ukrlpLegalName;
-
-
-            //if (!string.IsNullOrEmpty(companyNumber))
-            //{
-            //    var companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companyNumber);
-
-            //    if (companyDetails != null && !string.IsNullOrEmpty(companyDetails.CompanyName))
-            //        model.CompaniesHouseLegalName  = companyDetails.CompanyName;
-            //}
-
-            //if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
-            //{
-            //    var charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumberNumeric);
-
-            //    if  (!string.IsNullOrEmpty(charityDetails?.Response?.Name))
-            //        model.CharityCommissionLegalName = charityDetails.Response.Name;
-            //}
-
-            //var pageData = JsonConvert.SerializeObject(model);
-            //_logger.LogInformation($"GetLegalNameHandler-SubmitGatewayPageAnswer - ApplicationId '{model.ApplicationId}' - PageId '{model.PageId}' - Status '{model.Status}' - UserName '{request.UserName}' - PageData '{pageData}'");
-            //try
-            //{
-            //    await _applyApiClient.SubmitGatewayPageAnswer(model.ApplicationId, pageId, model.Status, request.UserName, pageData);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, "GetLegalNameHandler - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-            //}
 
             return model;
         }
-
-        
-        
     }
 }

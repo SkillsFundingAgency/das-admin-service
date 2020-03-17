@@ -165,15 +165,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
         }
 
-        [ValidateAntiForgeryToken()]
+
+        //MFCMFC this will be invalid once work done
+        //[ValidateAntiForgeryToken()]
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-            string gatewayPageData)
+            string comments)
         {
-            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - PageData '{gatewayPageData}'");
+            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - Comments '{comments}'");
 
             try
             {
-                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, comments, username });
             }
             catch(Exception ex)
             {
@@ -181,6 +183,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
             
         }
+
 
         private async Task<T> Get<T>(string uri)
         {

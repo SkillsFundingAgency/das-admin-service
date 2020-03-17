@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -158,7 +159,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
-            SetupGatewayPageOptionTexts(viewModel);
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
@@ -170,18 +171,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
-            viewModel.SourcesCheckedOn = DateTime.Now;
-
-            var pageData = JsonConvert.SerializeObject(viewModel);
-
-            _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
+            _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
             {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                _logger.LogError(ex,"RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
 
             return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
@@ -253,12 +250,24 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        public  void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+        public  string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
-            if (viewModel?.Status == null) return;
+            if (viewModel?.Status == null) return string.Empty;
             viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
             viewModel.OptionPassText = viewModel.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
             viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
+
+            switch (viewModel.Status)
+            {
+                case SectionReviewStatus.Pass:
+                    return viewModel.OptionPassText;
+                case SectionReviewStatus.Fail:
+                    return viewModel.OptionFailText;
+                case SectionReviewStatus.InProgress:
+                    return viewModel.OptionInProgressText;
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

@@ -44,7 +44,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
          Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName);
+        //Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+        //    string pageData);
+
+
         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-            string gatewayPageData);
+            string comments);
+
     }
 }
