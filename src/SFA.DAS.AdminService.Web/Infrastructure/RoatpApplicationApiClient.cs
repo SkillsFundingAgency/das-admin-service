@@ -9,9 +9,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -158,15 +155,25 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
         }
 
-        [ValidateAntiForgeryToken()]
-        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-            string gatewayPageData)
+        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName)
         {
-            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - PageData '{gatewayPageData}'");
+            return await (await _client.GetAsync(
+                $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
+        }
+
+        public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
+        {
+            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+        }
+
+        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string comments)
+        {
+            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - Comments '{comments}'");
 
             try
             {
-                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, comments, username });
             }
             catch(Exception ex)
             {
@@ -174,6 +181,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
             
         }
+
 
         private async Task<T> Get<T>(string uri)
         {
@@ -186,6 +194,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
+        
         private async Task Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =

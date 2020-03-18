@@ -177,7 +177,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 var WebsiteAddressUkrlp = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "PRE-30").FirstOrDefault().Value;
 
                 var WebsiteAddressApplyPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 2, "40");
-                var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-41").FirstOrDefault().Value;
+                var WebsiteAddressApply = WebsiteAddressApplyPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-41").FirstOrDefault()?.Value;
 
                 var WebsiteAddressStatus = string.IsNullOrWhiteSpace(WebsiteAddressUkrlp) && string.IsNullOrWhiteSpace(WebsiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
                 if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
@@ -196,12 +196,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 if (ProviderRoute.Equals(1) || ProviderRoute.Equals(2))
                 {
                     var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "235");
-                    var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault().Value;
-                    if (OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
+                    var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault()?.Value;
+                    if (OfficeForStudent!=null && OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
 
                     var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "240");
-                    var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault().Value;
-                    if (InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
+                    var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault()?.Value;
+                    if (InitialTeacherTraining!=null && InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
                 }
                 if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
                 {
