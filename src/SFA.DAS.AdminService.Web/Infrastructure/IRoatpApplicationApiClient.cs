@@ -45,7 +45,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
          Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName);
-         Task<GatewayCommonDetails> GetGatewayPageHeaderDetails(Guid applicationId, string pageId, string userName);
+         Task<GatewayCommonDetails> GetPageHeaderCommonDetails(Guid applicationId, string pageId, string userName);
          Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,

@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             var pageId = GatewayPageIds.LegalName;
 
             var headerDetails =
-                await _applyApiClient.GetGatewayPageHeaderDetails(request.ApplicationId, pageId, request.UserName);
+                await _applyApiClient.GetPageHeaderCommonDetails(request.ApplicationId, pageId, request.UserName);
 
             var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
 
