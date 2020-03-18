@@ -25,31 +25,28 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var pageId = GatewayPageIds.LegalName;
 
+            var headerDetails =
+                await _applyApiClient.GetGatewayPageHeaderDetails(request.ApplicationId, pageId, request.UserName);
+
             var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
+
+            model.ApplyLegalName = headerDetails.LegalName;
+            model.Ukprn = headerDetails.Ukprn;
+            model.Status = headerDetails.Status;
 
             model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
                 request.UserName, GatewayFields.GatewayReviewStatus);
 
-            model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, GatewayFields.OrganisationName);
-            model.Ukprn =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    GatewayFields.UKPRN);
-
             model.UkrlpLegalName =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
                     GatewayFields.UkrlpLegalName);
-            
-            var applicationSubmittedOn =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    GatewayFields.ApplicationSubmittedOn);
+
+            var applicationSubmittedOn = headerDetails.ApplicationSubmittedOn;
 
             if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
                 model.ApplicationSubmittedOn = submittedOn;
 
-            var sourcesCheckedOn =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    GatewayFields.SourcesCheckedOn);
+            var sourcesCheckedOn = headerDetails.CheckedOn;
 
             if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
                 model.SourcesCheckedOn = checkedOn;
@@ -58,35 +55,24 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 pageId,
                 request.UserName, GatewayFields.CompaniesHouseName);
 
-
             model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
                 request.UserName, GatewayFields.CharityCommissionName);
 
-
-            var currentStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, GatewayFields.Status);
-
-            model.Status = currentStatus;
-
-            if (string.IsNullOrEmpty(currentStatus)) return model;
-            switch (currentStatus)
+            switch (model.Status)
             {
+                case null:
+                    break;
                 case SectionReviewStatus.Pass:
-                    model.OptionPassText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                        pageId,
-                        request.UserName, "OptionPassText");
+                    model.OptionPassText = headerDetails.OptionPassText;
                     break;
                 case SectionReviewStatus.Fail:
-                    model.OptionFailText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                        pageId,
-                        request.UserName, "OptionFailText");
+                    model.OptionFailText = headerDetails.OptionFailText;
                     break;
                 case SectionReviewStatus.InProgress:
-                    model.OptionInProgressText = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                        pageId,
-                        request.UserName, "OptionInProgressText");
+                    model.OptionInProgressText = headerDetails.OptionInProgressText;
                     break;
+               
             }
 
             return model;

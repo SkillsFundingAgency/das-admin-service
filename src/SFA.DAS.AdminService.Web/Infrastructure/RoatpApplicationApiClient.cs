@@ -161,6 +161,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
         }
 
+        public async Task<GatewayCommonDetails> GetGatewayPageHeaderDetails(Guid applicationId, string pageId, string userName)
+        {
+            return await Get<GatewayCommonDetails>($"Gateway/Page/HeaderDetails?applicationId={applicationId}&pageId={pageId}&userName={userName}");
+
+        }
+
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
             await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
