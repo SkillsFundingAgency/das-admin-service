@@ -152,18 +152,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
         {
-            return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
+            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
         }
 
         public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName)
         {
             return await (await _client.GetAsync(
-                $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
+                $"/Gateway/Page/Value/{applicationId}/{pageId}/{userName}/{fieldName}")).Content.ReadAsStringAsync();
         }
 
         public async Task<GatewayCommonDetails> GetPageHeaderCommonDetails(Guid applicationId, string pageId, string userName)
         {
-            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails?applicationId={applicationId}&pageId={pageId}&userName={userName}");
+            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
 
         }
 
