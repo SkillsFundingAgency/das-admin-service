@@ -12,4 +12,5 @@
     public const string OptionPassText = "OptionPassText";
     public const string OptionFailText = "OptionFailText";
     public const string OptionInProgressText = "OptionInProgressText";
+    public const string Address = "Address";
 }
