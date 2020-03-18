@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -21,13 +19,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
     [TestFixture]
     public class RoatpGatewayControllerLegalNameTests
     {
-
-        private RoatpGatewayController _controller;
-        private  Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private  Mock<IHttpContextAccessor> _contextAccessor;
-        private  Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
-        private  Mock<IMediator> _mediator;
-        private Mock<ILogger<RoatpGatewayController>> _logger;
+        private RoatpGatewayOrganisationChecksController _controller;
+        private Mock<IRoatpApplicationApiClient> _applyApiClient;
+        private Mock<IHttpContextAccessor> _contextAccessor;
+        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
+        private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
+        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
         private string username => "mark cain";
         private string givenName => "mark";
@@ -38,11 +35,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
            _contextAccessor = new Mock<IHttpContextAccessor>();
            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-           _mediator = new Mock<IMediator>();
-           _logger = new Mock<ILogger<RoatpGatewayController>>();
-            //_contextAccessor.Setup(x=>x.HttpContext.)
+           _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+           _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+           var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, "1"),
                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
@@ -58,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                     }
                 );
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object,_logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object, _orchestrator.Object,_logger.Object);
         }
 
         [Test]
@@ -67,12 +63,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var applicationId = Guid.NewGuid();
             var pageId = "1-10";
 
-            _mediator.Setup(x => x.Send(new GetLegalNameRequest(applicationId, username), It.IsAny<CancellationToken>()))
+            _orchestrator.Setup(x => x.GetLegalNameViewModel(new GetLegalNameRequest(applicationId, username)))
                 .ReturnsAsync(new LegalNamePageViewModel())
                 .Verifiable("view model not returned");
 
             var _result =  _controller.GetGatewayLegalNamePage(applicationId, pageId).Result;
-            _mediator.Verify(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Once());
         }
 
         [Test]
@@ -98,7 +94,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var result = _controller.EvaluateLegalNamePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
         }
 
         [Test]
@@ -129,7 +125,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             vm.PageId = vm.PageId;
             vm.SourcesCheckedOn = DateTime.Now;
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()))
+            _orchestrator.Setup(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
@@ -141,7 +137,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var result = _controller.EvaluateLegalNamePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _mediator.Verify(x => x.Send(It.IsAny<GetLegalNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
         }
     }
 }

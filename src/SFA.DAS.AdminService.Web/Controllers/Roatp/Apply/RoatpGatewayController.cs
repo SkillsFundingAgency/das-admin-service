@@ -147,42 +147,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
 
-     
-
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-10")]
-        public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", await _mediator.Send(new GetLegalNameRequest(applicationId, username)));
-        }
-
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-10")]
-        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
-        {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-
-            if (validationResponse.Errors != null && validationResponse.Errors.Any())
-            {
-                viewModel.ErrorMessages = validationResponse.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", viewModel);
-            }
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-
-            _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
-            try
-            {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex,"RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-            }
-
-            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
-        }
+    
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-20")]
         public async Task<IActionResult> GetGatewayTradingNamePage(Guid applicationId, string pageId)
