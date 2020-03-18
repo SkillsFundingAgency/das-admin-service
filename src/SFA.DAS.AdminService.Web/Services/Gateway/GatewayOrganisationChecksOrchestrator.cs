@@ -1,80 +1,71 @@
-﻿using MediatR;
+﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Handlers.Gateway
+namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
-    public class GetLegalNameHandler : IRequestHandler<GetLegalNameRequest, LegalNamePageViewModel>
+    public class GatewayOrganisationChecksOrchestrator : IGatewayOrganisationChecksOrchestrator
     {
-
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        
+        private readonly ILogger<GatewayOrganisationChecksOrchestrator> _logger;
 
-        private readonly ILogger<GetLegalNameHandler> _logger;
-
-        public GetLegalNameHandler(IRoatpApplicationApiClient applyApiClient, ILogger<GetLegalNameHandler> logger)
+        public GatewayOrganisationChecksOrchestrator(IRoatpApplicationApiClient applyApiClient,
+                                                     ILogger<GatewayOrganisationChecksOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
         }
 
-        public async Task<LegalNamePageViewModel> Handle(GetLegalNameRequest request,
-            CancellationToken cancellationToken)
-
+        public async Task<LegalNamePageViewModel> GetLegalNameViewModel(GetLegalNameRequest request)
         {
+            _logger.LogInformation($"Retrieving legal name details for application {request.ApplicationId}");
+
             var pageId = GatewayPageIds.LegalName;
 
-            var model = new LegalNamePageViewModel {ApplicationId = request.ApplicationId, PageId = pageId};
+            var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
 
-            // MFCMFC remove this, it needs to go in overview handler/orchestrator
-            // await _applyApiClient.TriggerGatewayDataGathering(request.ApplicationId, request.UserName);
-
-            //MFCMFC remove magic words
             model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, "GatewayReviewStatus");
+                request.UserName, GatewayFields.GatewayReviewStatus);
 
             model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, "OrganisationName");
+                request.UserName, GatewayFields.OrganisationName);
             model.Ukprn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    "UKPRN");
+                    GatewayFields.UKPRN);
 
             model.UkrlpLegalName =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    "UkrlpLegalName");
-
-
+                    GatewayFields.UkrlpLegalName);
+            
             var applicationSubmittedOn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    "ApplicationSubmittedOn");
+                    GatewayFields.ApplicationSubmittedOn);
 
             if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
                 model.ApplicationSubmittedOn = submittedOn;
 
             var sourcesCheckedOn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    "SourcesCheckedOn");
+                    GatewayFields.SourcesCheckedOn);
 
             if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
                 model.SourcesCheckedOn = checkedOn;
 
             model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
-                request.UserName, "CompaniesHouseName");
+                request.UserName, GatewayFields.CompaniesHouseName);
 
 
             model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
-                request.UserName, "CharityCommissionName");
+                request.UserName, GatewayFields.CharityCommissionName);
 
 
             var currentStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, "Status");
+                request.UserName, GatewayFields.Status);
 
             model.Status = currentStatus;
 
