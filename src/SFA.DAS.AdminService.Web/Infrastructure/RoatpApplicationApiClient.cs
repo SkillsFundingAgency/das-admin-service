@@ -9,10 +9,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -165,9 +161,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 $"/Gateway/Page/Value?applicationId={applicationId}&pageId={pageId}&fieldName={fieldName}&userName={userName}")).Content.ReadAsStringAsync();
         }
 
+        public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
+        {
+            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+        }
 
-        //MFCMFC this will be invalid once work done
-        //[ValidateAntiForgeryToken()]
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments)
         {

@@ -31,6 +31,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
 
             var model = new LegalNamePageViewModel {ApplicationId = request.ApplicationId, PageId = pageId};
 
+            await _applyApiClient.TriggerGatewayDataGathering(request.ApplicationId, request.UserName);
+
             //MFCMFC remove magic words
             model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
                 request.UserName, "GatewayReviewStatus");

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 
+
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public interface IRoatpApplicationApiClient
@@ -44,11 +45,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
          Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName);
-        //Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-        //    string pageData);
 
+         Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
-        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);
 
     }
