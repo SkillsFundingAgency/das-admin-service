@@ -37,27 +37,33 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
                 request.UserName, GatewayFields.GatewayReviewStatus);
 
-            model.UkrlpLegalName =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    GatewayFields.UkrlpLegalName);
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+
+            model.UkrlpLegalName = ukrlpDetails.ProviderName;
 
             var applicationSubmittedOn = headerDetails.ApplicationSubmittedOn;
 
             if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
                 model.ApplicationSubmittedOn = submittedOn;
 
-            var sourcesCheckedOn = headerDetails.CheckedOn;
+            var sourcesCheckedOn = await _applyApiClient.GetSourcesCheckedOnDate(request.ApplicationId);
 
-            if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
-                model.SourcesCheckedOn = checkedOn;
+            if (sourcesCheckedOn.HasValue)
+            {
+                model.SourcesCheckedOn = sourcesCheckedOn.Value;
+            }
 
-            model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                pageId,
-                request.UserName, GatewayFields.CompaniesHouseName);
+            var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+            if (companiesHouseDetails != null)
+            {
+                model.CompaniesHouseLegalName = companiesHouseDetails.CompanyName;
+            }
 
-            model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                pageId,
-                request.UserName, GatewayFields.CharityCommissionName);
+            var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+            if (charityCommissionDetails != null)
+            {
+                model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
+            }
 
             switch (model.Status)
             {
