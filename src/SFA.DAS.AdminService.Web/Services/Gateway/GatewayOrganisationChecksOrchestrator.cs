@@ -28,44 +28,44 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
 
             model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, RoatpGatewayFields.GatewayReviewStatus);
+                request.UserName, GatewayFields.GatewayReviewStatus);
 
             model.ApplyLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, RoatpGatewayFields.OrganisationName);
+                request.UserName, GatewayFields.OrganisationName);
             model.Ukprn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    RoatpGatewayFields.UKPRN);
+                    GatewayFields.UKPRN);
 
             model.UkrlpLegalName =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    RoatpGatewayFields.UkrlpLegalName);
+                    GatewayFields.UkrlpLegalName);
             
             var applicationSubmittedOn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    RoatpGatewayFields.ApplicationSubmittedOn);
+                    GatewayFields.ApplicationSubmittedOn);
 
             if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
                 model.ApplicationSubmittedOn = submittedOn;
 
             var sourcesCheckedOn =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    RoatpGatewayFields.SourcesCheckedOn);
+                    GatewayFields.SourcesCheckedOn);
 
             if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
                 model.SourcesCheckedOn = checkedOn;
 
             model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
-                request.UserName, RoatpGatewayFields.CompaniesHouseName);
+                request.UserName, GatewayFields.CompaniesHouseName);
 
 
             model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
-                request.UserName, RoatpGatewayFields.CharityCommissionName);
+                request.UserName, GatewayFields.CharityCommissionName);
 
 
             var currentStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, RoatpGatewayFields.Status);
+                request.UserName, GatewayFields.Status);
 
             model.Status = currentStatus;
 
