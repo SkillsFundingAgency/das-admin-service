@@ -73,13 +73,13 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "Organisation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "1-10", UrlTag ="legal-name", LinkTitle = "Legal name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "1-20", UrlTag = "trading-name",LinkTitle = "Trading name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = "1-10", UrlTag = "legal-name", LinkTitle = "Legal name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "1-20", UrlTag = "trading-name", LinkTitle = "Trading name", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = "1-30", UrlTag = "organisation-status", LinkTitle = "Organisation status", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "1-40", UrlTag="Address",LinkTitle = "Address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "1-50", UrlTag = "ico-number",LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "1-60", UrlTag="website",  LinkTitle = "Website address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = "1-70", UrlTag="organisation-risk", LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 4, PageId = "1-40", UrlTag = "address", LinkTitle = "Address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = "1-50", UrlTag = "ico-number", LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = "1-60", UrlTag = "website", LinkTitle = "Website address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = "1-70", UrlTag = "organisation-risk", LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
                     }
                 },
 

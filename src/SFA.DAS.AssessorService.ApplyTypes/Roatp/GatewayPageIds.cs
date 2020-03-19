@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string LegalName = "1-10";
         public const string TradingName = "1-20";
         public const string OrganisationStatus = "1-30";
+        public const string AddressCheck = "1-40";
 
         public const string WebsiteAddress = "1-60";
 

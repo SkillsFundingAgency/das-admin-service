@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
@@ -45,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-            model.UkrlpLegalName = ukrlpDetails.ProviderName;
+            model.UkrlpLegalName = ukrlpDetails?.ProviderName;
 
             var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
             if (companiesHouseDetails != null)
@@ -58,6 +59,84 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             {
                 model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
             }
+
+            return model;
+        }
+
+        public async Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request)
+        {
+            _logger.LogInformation($"Retrieving address check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.AddressCheck;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new AddressCheckViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.AddressCheck
+            //GatewayReviewStatus = commonDetails.GatewayReviewStatus
+        };
+
+            //var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+
+            //model.UkrlpLegalName = ukrlpDetails.ProviderName;
+
+            //var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+            //if (companiesHouseDetails != null)
+            //{
+            //    model.CompaniesHouseLegalName = companiesHouseDetails.CompanyName;
+            //}
+
+            //var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+            //if (charityCommissionDetails != null)
+            //{
+            //    model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
+            //}
+
+
+            //var PreamblePage = await _applyApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.PageId);
+            //var applyAddressLine1 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine1).FirstOrDefault().Value;
+            //var applyAddressLine2 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine2).FirstOrDefault().Value;
+            //var applyAddressLine3 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine3).FirstOrDefault().Value;
+            //var applyAddressLine4 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine4).FirstOrDefault().Value;
+            //var applyTown = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressTown).FirstOrDefault().Value;
+            //var applyPostcode = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressPostcode).FirstOrDefault().Value;
+
+            //var applyAarray = new[] { applyAddressLine1, applyAddressLine2, applyAddressLine3, applyAddressLine4, applyTown, applyPostcode };
+            //var applyAddress = string.Join(", ", applyAarray.Where(s => !string.IsNullOrEmpty(s)));
+            //model.SubmittedApplicationAddress = applyAddress;
+
+            //var ukrlpData = await _applyApiClient.GetUkrlpDetails(ukprn);
+            //if (ukrlpData.Any())
+            //{
+            //    var ukrlpAddressLine1 = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.Address1;
+            //    var ukrlpAddressLine2 = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.Address2;
+            //    var ukrlpAddressLine3 = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.Address3;
+            //    var ukrlpAddressLine4 = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.Address4;
+            //    var ukrlpTown = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.Town;
+            //    var ukrlpPostCode = ukrlpData.FirstOrDefault().ContactDetails.FirstOrDefault().ContactAddress.PostCode;
+
+            //    var ukrlpAarray = new[] { ukrlpAddressLine1, ukrlpAddressLine2, ukrlpAddressLine3, ukrlpAddressLine4, ukrlpTown, ukrlpPostCode };
+            //    var ukrlpAddress = string.Join(", ", ukrlpAarray.Where(s => !string.IsNullOrEmpty(s)));
+            //    model.UkrlpAddress = ukrlpAddress;
+            //}
+
+
+
+
+
 
             return model;
         }
