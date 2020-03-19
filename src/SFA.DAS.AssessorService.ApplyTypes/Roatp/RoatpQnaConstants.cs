@@ -20,6 +20,12 @@
 
                 public static class QuestionIds
                 {
+                    public static string UKRLPLegalAddressLine1 = "PRE-40";
+                    public static string UKRLPLegalAddressLine2 = "PRE-41";
+                    public static string UKRLPLegalAddressLine3 = "PRE-42";
+                    public static string UKRLPLegalAddressLine4 = "PRE-43";
+                    public static string UKRLPLegalAddressTown = "PRE-44";
+                    public static string UKRLPLegalAddressPostcode = "PRE-45";
                     public static string UKPRN = "PRE-10";
                     public static string LegalName = "PRE-20";
                     public static string TradingName = "PRE-46";
