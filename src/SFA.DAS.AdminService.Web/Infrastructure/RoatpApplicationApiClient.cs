@@ -153,21 +153,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
         }
 
+        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
         public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
         {
             return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
         }
 
-        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName)
-        {
-            return await (await _client.GetAsync(
-                $"/Gateway/Page/Value/{applicationId}/{pageId}/{userName}/{fieldName}")).Content.ReadAsStringAsync();
-        }
-
-        public async Task<GatewayCommonDetails> GetPageHeaderCommonDetails(Guid applicationId, string pageId, string userName)
+        public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
             return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
-
         }
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)

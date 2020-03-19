@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
@@ -14,9 +13,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -145,38 +142,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
-        }
-
-    
-
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-20")]
-        public async Task<IActionResult> GetGatewayTradingNamePage(Guid applicationId, string pageId)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", await _mediator.Send(new GetTradingNameRequest(applicationId, username)));
-        }
-
-
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-20")]
-        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
-        {
-            SetupGatewayPageOptionTexts(viewModel);
-
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-
-            if (validationResponse.Errors != null && validationResponse.Errors.Any())
-            {
-                viewModel.ErrorMessages = validationResponse?.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", viewModel);
-            }
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-
-            viewModel.SourcesCheckedOn = DateTime.Now;
-
-            var pageData = JsonConvert.SerializeObject(viewModel);
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
-
-            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
