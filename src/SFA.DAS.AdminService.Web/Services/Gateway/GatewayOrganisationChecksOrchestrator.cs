@@ -43,17 +43,21 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
-            model.UkrlpLegalName =
-                await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
-                    GatewayFields.UkrlpLegalName);
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-            model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                pageId,
-                request.UserName, GatewayFields.CompaniesHouseName);
+            model.UkrlpLegalName = ukrlpDetails.ProviderName;
 
-            model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
-                pageId,
-                request.UserName, GatewayFields.CharityCommissionName);
+            var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+            if (companiesHouseDetails != null)
+            {
+                model.CompaniesHouseLegalName = companiesHouseDetails.CompanyName;
+            }
+
+            var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+            if (charityCommissionDetails != null)
+            {
+                model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
+            }
 
             return model;
         }

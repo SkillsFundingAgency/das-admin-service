@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
@@ -14,9 +13,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

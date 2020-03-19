@@ -1,5 +1,8 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
@@ -43,13 +46,24 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
        
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
+
+         //MFCMFC THIS NEEDS TO GO ONCE ALL TIDY UP IS DONE
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
-         Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string userName, string fieldName);
+
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
          Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);
 
+        Task<ProviderDetails> GetUkrlpDetails(Guid applicationId);
+
+        Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId);
+
+        Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId);
+
+        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId);
+
+        Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId);
     }
 }
