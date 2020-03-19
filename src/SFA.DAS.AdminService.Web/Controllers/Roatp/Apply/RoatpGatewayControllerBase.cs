@@ -8,7 +8,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize]
     public class RoatpGatewayControllerBase : Controller
     {
-        protected string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+        public string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
             if (viewModel?.Status == null) return string.Empty;
             viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;

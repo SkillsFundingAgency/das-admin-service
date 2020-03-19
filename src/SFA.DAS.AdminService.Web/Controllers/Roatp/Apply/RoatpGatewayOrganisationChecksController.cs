@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                                         IHttpContextAccessor contextAccessor, 
                                                         IRoatpGatewayPageViewModelValidator gatewayValidator, 
                                                         IGatewayOrganisationChecksOrchestrator orchestrator, 
-                                                        ILogger<RoatpGatewayOrganisationChecksController> logger)
+                                                        ILogger<RoatpGatewayOrganisationChecksController> logger):base()
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
