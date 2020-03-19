@@ -66,6 +66,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
+                // MFCMFC Shutter page? throw again?
                 _logger.LogError(ex,"RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
 

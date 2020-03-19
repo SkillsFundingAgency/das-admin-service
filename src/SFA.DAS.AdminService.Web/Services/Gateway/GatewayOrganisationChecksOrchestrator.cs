@@ -25,31 +25,27 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var pageId = GatewayPageIds.LegalName;
 
-            var headerDetails =
-                await _applyApiClient.GetPageHeaderCommonDetails(request.ApplicationId, pageId, request.UserName);
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
 
-            var model = new LegalNamePageViewModel { ApplicationId = request.ApplicationId, PageId = pageId };
-
-            model.ApplyLegalName = headerDetails.LegalName;
-            model.Ukprn = headerDetails.Ukprn;
-            model.Status = headerDetails.Status;
-
-            model.GatewayReviewStatus = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId,
-                request.UserName, GatewayFields.GatewayReviewStatus);
+            var model = new LegalNamePageViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                ApplyLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+            };
 
             model.UkrlpLegalName =
                 await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId, pageId, request.UserName,
                     GatewayFields.UkrlpLegalName);
-
-            var applicationSubmittedOn = headerDetails.ApplicationSubmittedOn;
-
-            if (applicationSubmittedOn != null && DateTime.TryParse(applicationSubmittedOn, out var submittedOn))
-                model.ApplicationSubmittedOn = submittedOn;
-
-            var sourcesCheckedOn = headerDetails.CheckedOn;
-
-            if (applicationSubmittedOn != null && DateTime.TryParse(sourcesCheckedOn, out var checkedOn))
-                model.SourcesCheckedOn = checkedOn;
 
             model.CompaniesHouseLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
@@ -58,22 +54,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.CharityCommissionLegalName = await _applyApiClient.GetGatewayPageAnswerValue(request.ApplicationId,
                 pageId,
                 request.UserName, GatewayFields.CharityCommissionName);
-
-            switch (model.Status)
-            {
-                case null:
-                    break;
-                case SectionReviewStatus.Pass:
-                    model.OptionPassText = headerDetails.OptionPassText;
-                    break;
-                case SectionReviewStatus.Fail:
-                    model.OptionFailText = headerDetails.OptionFailText;
-                    break;
-                case SectionReviewStatus.InProgress:
-                    model.OptionInProgressText = headerDetails.OptionInProgressText;
-                    break;
-               
-            }
 
             return model;
         }
