@@ -1,10 +1,8 @@
-﻿using MediatR;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using System;
+﻿using System;
 
-namespace SFA.DAS.AdminService.Web.Handlers.Gateway
+namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
-    public class GetCriminalComplianceCheckRequest : IRequest<OrganisationCriminalCompliancePageViewModel>
+    public class GetCriminalComplianceCheckRequest 
     {
         public Guid ApplicationId { get; }
         public string UserName { get; }

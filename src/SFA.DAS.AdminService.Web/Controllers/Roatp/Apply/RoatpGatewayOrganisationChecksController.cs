@@ -15,7 +15,7 @@ using SFA.DAS.AdminService.Web.Services.Gateway;
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
-    public class RoatpGatewayOrganisationChecksController : Controller
+    public class RoatpGatewayOrganisationChecksController : RoatpGatewayControllerBase
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                                         IHttpContextAccessor contextAccessor, 
                                                         IRoatpGatewayPageViewModelValidator gatewayValidator, 
                                                         IGatewayOrganisationChecksOrchestrator orchestrator, 
-                                                        ILogger<RoatpGatewayOrganisationChecksController> logger)
+                                                        ILogger<RoatpGatewayOrganisationChecksController> logger) : base()
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
@@ -72,24 +72,5 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
 
-        private string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
-        {
-            if (viewModel?.Status == null) return string.Empty;
-            viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
-            viewModel.OptionPassText = viewModel.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
-            viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
-
-            switch (viewModel.Status)
-            {
-                case SectionReviewStatus.Pass:
-                    return viewModel.OptionPassText;
-                case SectionReviewStatus.Fail:
-                    return viewModel.OptionFailText;
-                case SectionReviewStatus.InProgress:
-                    return viewModel.OptionInProgressText;
-                default:
-                    return string.Empty;
-            }
-        }
     }
 }

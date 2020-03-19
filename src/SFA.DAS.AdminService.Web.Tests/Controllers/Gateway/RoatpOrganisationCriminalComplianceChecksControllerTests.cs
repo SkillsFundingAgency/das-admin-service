@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply.Gateway;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
+using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<IHttpContextAccessor> _contextAccessor;
         private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
-        private Mock<IMediator> _mediator;
+        private Mock<IGatewayCriminalComplianceChecksOrchestrator> _orchestrator;
         private Mock<ILogger<RoatpOrganisationCriminalComplianceChecksController>> _logger;
 
         private string username => "Gateway User";
@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _contextAccessor = new Mock<IHttpContextAccessor>();
             _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _mediator = new Mock<IMediator>();
+            _orchestrator = new Mock<IGatewayCriminalComplianceChecksOrchestrator>();
             _logger = new Mock<ILogger<RoatpOrganisationCriminalComplianceChecksController>>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -53,21 +53,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var context = new DefaultHttpContext { User = user };
             
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpOrganisationCriminalComplianceChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _mediator.Object, _logger.Object);
+            _controller = new RoatpOrganisationCriminalComplianceChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
         }
 
         [Test]
         public void Check_Composition_Creditors_Request_Is_Sent()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "5-10";
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetCriminalComplianceCheckRequest>(), It.IsAny<CancellationToken>()))
+            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()))
                 .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
                 .Verifiable("view model not returned");
 
             var result = _controller.GetOrganisationCompositionCreditorsPage(applicationId).GetAwaiter().GetResult();
-            _mediator.Verify(x => x.Send(It.IsAny<GetCriminalComplianceCheckRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+            _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
         }
 
         [Test]

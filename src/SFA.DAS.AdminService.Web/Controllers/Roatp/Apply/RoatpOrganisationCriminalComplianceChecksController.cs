@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -14,25 +15,26 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply.Gateway
+namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
-    public class RoatpOrganisationCriminalComplianceChecksController : Controller
+    public class RoatpOrganisationCriminalComplianceChecksController : RoatpGatewayControllerBase
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
-        private readonly IMediator _mediator;
+        private readonly IGatewayCriminalComplianceChecksOrchestrator _orchestrator;
         private readonly ILogger<RoatpOrganisationCriminalComplianceChecksController> _logger;
 
         public RoatpOrganisationCriminalComplianceChecksController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor,
-                                                              IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator,
-                                                              ILogger<RoatpOrganisationCriminalComplianceChecksController> logger)
+                                                              IRoatpGatewayPageViewModelValidator gatewayValidator,
+                                                              IGatewayCriminalComplianceChecksOrchestrator orchestrator,
+                                                              ILogger<RoatpOrganisationCriminalComplianceChecksController> logger) : base()
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _gatewayValidator = gatewayValidator;
-            _mediator = mediator;
+            _orchestrator = orchestrator;
             _logger = logger;
         }
 
@@ -41,14 +43,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply.Gateway
         public async Task<IActionResult> GetOrganisationCompositionCreditorsPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var viewModel = await _mediator.Send(new GetCriminalComplianceCheckRequest(applicationId, GatewayPageIds.CCOrganisationCompositionCreditors, username));
+            var viewModel = await _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(applicationId, GatewayPageIds.CCOrganisationCompositionCreditors, username));
             return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/5-10")]
         public async Task<IActionResult> EvaluateOrganisationCompositionCreditorsPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
-            SetupGatewayPageOptionTexts(viewModel);
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
@@ -59,18 +61,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply.Gateway
             }
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
-            var pageData = JsonConvert.SerializeObject(viewModel);
-            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
-        }
-
-        public void SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
-        {
-            if (viewModel?.Status == null) return;
-            viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
-            viewModel.OptionPassText = viewModel.Status == SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
-            viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
         }
     }
 }
