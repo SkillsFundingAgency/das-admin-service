@@ -11,7 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
-namespace SFA.DAS.AdminService.Web.Tests.Handlers
+namespace SFA.DAS.AdminService.Web.Tests.Services
 {
     [TestFixture]
     public class GatewayOrganisationChecksOrchestratorTests
@@ -48,12 +48,36 @@ namespace SFA.DAS.AdminService.Web.Tests.Handlers
         public void check_legal_name_handler_builds_with_company_and_charity_details()
         {
             var applicationId = Guid.NewGuid();
-                 
+
+            var headerDetails = new GatewayCommonDetails
+            {
+                ApplicationSubmittedOn = DateTime.Now.AddDays(-3).ToString(),
+                CheckedOn = DateTime.Now.ToString(),
+                LegalName = UKRLPLegalName,
+                Ukprn = ukprn
+            };
+            _applyApiClient.Setup(x => x.GetPageHeaderCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(headerDetails);
+
+            var ukrlpDetails = new ProviderDetails
+            {
+                ProviderName = ProviderName
+            };
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+
+            var companiesHouseDetails = new CompaniesHouseSummary
+            {
+                CompanyName = CompanyName
+            };
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+
+            var charityDetails = new CharityCommissionSummary
+            {
+                CharityName = CharityName
+            };
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.OrganisationName)).ReturnsAsync(UKRLPLegalName);
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UKPRN)).ReturnsAsync(ukprn);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UkrlpLegalName)).ReturnsAsync(ProviderName);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CompaniesHouseName)).ReturnsAsync(CompanyName);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CharityCommissionName)).ReturnsAsync(CharityName);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 
@@ -73,12 +97,32 @@ namespace SFA.DAS.AdminService.Web.Tests.Handlers
         {
             var applicationId = Guid.NewGuid();
 
+            var headerDetails = new GatewayCommonDetails
+            {
+                ApplicationSubmittedOn = DateTime.Now.AddDays(-3).ToString(),
+                CheckedOn = DateTime.Now.ToString(),
+                LegalName = UKRLPLegalName,
+                Ukprn = ukprn
+            };
+            _applyApiClient.Setup(x => x.GetPageHeaderCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(headerDetails);
+
+            var ukrlpDetails = new ProviderDetails
+            {
+                ProviderName = ProviderName
+            };
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+
+            var companiesHouseDetails = new CompaniesHouseSummary
+            {
+                CompanyName = CompanyName
+            };
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+
+            CharityCommissionSummary charityDetails = null;
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.OrganisationName)).ReturnsAsync(UKRLPLegalName);
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UKPRN)).ReturnsAsync(ukprn);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UkrlpLegalName)).ReturnsAsync(ProviderName);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CompaniesHouseName)).ReturnsAsync(CompanyName);
-            string nullCharityName = null;
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CharityCommissionName)).ReturnsAsync(nullCharityName);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 
@@ -98,12 +142,32 @@ namespace SFA.DAS.AdminService.Web.Tests.Handlers
         {
             var applicationId = Guid.NewGuid();
 
+            var headerDetails = new GatewayCommonDetails
+            {
+                ApplicationSubmittedOn = DateTime.Now.AddDays(-3).ToString(),
+                CheckedOn = DateTime.Now.ToString(),
+                LegalName = UKRLPLegalName,
+                Ukprn = ukprn
+            };
+            _applyApiClient.Setup(x => x.GetPageHeaderCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(headerDetails);
+
+            var ukrlpDetails = new ProviderDetails
+            {
+                ProviderName = ProviderName
+            };
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+
+            CompaniesHouseSummary companiesHouseDetails = null;
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+
+            var charityDetails = new CharityCommissionSummary
+            {
+                CharityName = CharityName
+            };
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.OrganisationName)).ReturnsAsync(UKRLPLegalName);
             _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UKPRN)).ReturnsAsync(ukprn);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.UkrlpLegalName)).ReturnsAsync(ProviderName);
-            string nullCompanyName = null;
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CompaniesHouseName)).ReturnsAsync(nullCompanyName);
-            _applyApiClient.Setup(c => c.GetGatewayPageAnswerValue(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), GatewayFields.CharityCommissionName)).ReturnsAsync(CharityName);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 

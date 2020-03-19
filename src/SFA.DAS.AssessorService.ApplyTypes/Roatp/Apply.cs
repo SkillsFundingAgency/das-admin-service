@@ -115,4 +115,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public List<string> ExcludeSections { get; set; }
         public List<string> Roles { get; set; }
     }
+
+    public class OrganisationRegisterStatus
+    {
+        public bool UkprnOnRegister { get; set; }
+        public Guid? OrganisationId { get; set; }
+        public int? ProviderTypeId { get; set; }
+        public int? StatusId { get; set; }
+        public int? RemovedReasonId { get; set; }
+        public DateTime? StatusDate { get; set; }
+    }
 }
