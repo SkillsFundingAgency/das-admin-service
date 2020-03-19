@@ -3,13 +3,12 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.OrganisationCriminalCompliancePageViewModel
 
 @{
-    var heading = "Legal name check";
-    var caption = "Organisation checks";
-
+    var heading = "Organisation's criminal and compliance checks";
     ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
 
-     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+
+    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
     var failTextMessage = "";
@@ -68,7 +67,7 @@
             }
 
             <span class="govuk-caption-xl">
-                Organisation's criminal and compliance checks
+                @heading
             </span>
 
             <h1 class="govuk-heading-xl">@Model.PageTitle</h1>
