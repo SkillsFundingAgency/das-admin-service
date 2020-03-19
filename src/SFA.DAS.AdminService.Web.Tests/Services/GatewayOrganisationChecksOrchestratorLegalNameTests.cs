@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -14,11 +13,12 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
     [TestFixture]
-    public class GatewayOrganisationChecksOrchestratorTests
+    public class GatewayOrganisationChecksOrchestratorLegalNameTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
+        private Mock<IQnaApiClient> _qnaApiClient;
 
         private static string PageId => "1-10";
         private GatewayPageAnswer _gatewayPageAnswer;
@@ -40,7 +40,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
+            _qnaApiClient = new Mock<IQnaApiClient>();
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _qnaApiClient.Object, _logger.Object);
         }
 
         [Test]

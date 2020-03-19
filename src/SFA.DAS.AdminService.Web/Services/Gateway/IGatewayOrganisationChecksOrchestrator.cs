@@ -8,6 +8,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     public interface IGatewayOrganisationChecksOrchestrator
     {
         Task<LegalNamePageViewModel> GetLegalNameViewModel(GetLegalNameRequest getLegalNameRequest);
+        Task<TradingNamePageViewModel> GetTradingNameViewModel(GetTradingNameRequest getTradingNameRequest);
         Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request);
     }
 }

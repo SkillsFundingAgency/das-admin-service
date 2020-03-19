@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Mime;
 using System.Security.Claims;
-using System.Threading;
-using MediatR;
-using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -22,15 +17,15 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
     [TestFixture]
-    public class RoatpGatewayControllerTradingNameTests
+    public class RoatpGatewayOrganisationChecksControllerLegalNameTests
     {
+        private RoatpGatewayOrganisationChecksController _controller;
+        private Mock<IRoatpApplicationApiClient> _applyApiClient;
+        private Mock<IHttpContextAccessor> _contextAccessor;
+        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
+        private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
+        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
-        private RoatpGatewayController _controller;
-        private  Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private  Mock<IHttpContextAccessor> _contextAccessor;
-        private  Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
-        private  Mock<IMediator> _mediator;
-        private Mock<ILogger<RoatpGatewayController>> _logger;
         private string username => "mark cain";
         private string givenName => "mark";
         private string surname => "cain";
@@ -40,8 +35,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
            _contextAccessor = new Mock<IHttpContextAccessor>();
            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-           _mediator = new Mock<IMediator>();
-           _logger = new Mock<ILogger<RoatpGatewayController>>();
+           _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+           _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
 
            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
@@ -52,39 +47,37 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             }));
 
             var context = new DefaultHttpContext{ User = user };
-
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<TradingNamePageViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                     {
                         Errors = new List<ValidationErrorDetail>()
                     }
                 );
-            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object, _logger.Object);
+            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
+            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object, _orchestrator.Object,_logger.Object);
         }
 
         [Test]
-        public void check_trading_name_request_is_sent()
+        public  void check_legal_name_request_is_sent()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-20";
+            var pageId = "1-10";
 
-            _mediator.Setup(x => x.Send(new GetTradingNameRequest(applicationId, username), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new TradingNamePageViewModel())
+            _orchestrator.Setup(x => x.GetLegalNameViewModel(new GetLegalNameRequest(applicationId, username)))
+                .ReturnsAsync(new LegalNamePageViewModel())
                 .Verifiable("view model not returned");
 
-            var _result = _controller.GetGatewayTradingNamePage(applicationId, pageId).Result;
-            _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+            var _result =  _controller.GetGatewayLegalNamePage(applicationId, pageId).Result;
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Once());
         }
 
         [Test]
-        public void post_trading_name_happy_path()
+        public void post_legal_name_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-20";
+            var pageId = "1-10";
 
-            var vm = new TradingNamePageViewModel
+            var vm = new LegalNamePageViewModel
             {
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
@@ -98,20 +91,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             _applyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateTradingNamePage(vm).Result;
+            var result = _controller.EvaluateLegalNamePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
         }
 
-
         [Test]
-        public void post_trading_name_path_with_errors()
+        public void post_legal_name_path_with_errors()
         {
             var applicationId = Guid.NewGuid();
             var pageId = "1-20";
 
-            var vm = new TradingNamePageViewModel
+            var vm = new LegalNamePageViewModel
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
@@ -119,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<TradingNamePageViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -133,7 +125,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             vm.PageId = vm.PageId;
             vm.SourcesCheckedOn = DateTime.Now;
 
-            _mediator.Setup(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()))
+            _orchestrator.Setup(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
@@ -142,10 +134,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             _applyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateTradingNamePage(vm).Result;
+            var result = _controller.EvaluateLegalNamePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _mediator.Verify(x => x.Send(It.IsAny<GetTradingNameRequest>(), It.IsAny<CancellationToken>()), Times.Never());
+            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
         }
     }
 }

@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                                         IHttpContextAccessor contextAccessor, 
                                                         IRoatpGatewayPageViewModelValidator gatewayValidator, 
                                                         IGatewayOrganisationChecksOrchestrator orchestrator, 
-                                                        ILogger<RoatpGatewayOrganisationChecksController> logger) : base()
+                                                        ILogger<RoatpGatewayOrganisationChecksController> logger):base()
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
@@ -73,9 +73,31 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
 
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/trading-name")]
+        public async Task<IActionResult> GetGatewayTradingNamePage(Guid applicationId, string pageId)
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/address")]
         public async Task<IActionResult> GetGatewayAddressPage(Guid applicationId)
         {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetTradingNameViewModel(new GetTradingNameRequest(applicationId, username));
+            return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/trading-name")]
+        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
+        {
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetAddressViewModel(new GetAddressRequest(applicationId, username));
             return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", viewModel);
@@ -96,6 +118,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
+            _logger.LogInformation($"RoatpGatewayController-EvaluateTradingNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
             _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateAddressPage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
             {
@@ -103,6 +131,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
+                // MFCMFC Shutter page? throw again?
+                _logger.LogError(ex, "RoatpGatewayController-EvaluateTradingNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
                 // MFCMFC Shutter page? throw again?
                 _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateAddressPage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
