@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
+    [Authorize]
     public class RoatpGatewayControllerBase : Controller
     {
         protected string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
