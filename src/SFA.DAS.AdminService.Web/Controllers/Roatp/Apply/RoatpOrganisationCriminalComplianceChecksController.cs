@@ -1,11 +1,8 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
@@ -39,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/5-10")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
         public async Task<IActionResult> GetOrganisationCompositionCreditorsPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -47,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/5-10")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
         public async Task<IActionResult> EvaluateOrganisationCompositionCreditorsPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
