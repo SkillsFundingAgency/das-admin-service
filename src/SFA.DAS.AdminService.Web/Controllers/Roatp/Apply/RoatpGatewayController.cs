@@ -14,6 +14,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -23,16 +24,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
-        private readonly IMediator _mediator;
+        private readonly IGatewayOverviewOrchestrator _orchestrator;
         private readonly ILogger<RoatpGatewayController> _logger;
-
-        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator, ILogger<RoatpGatewayController> logger)
+        private readonly IMediator _mediator;
+        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IGatewayOverviewOrchestrator orchestrator, ILogger<RoatpGatewayController> logger, IMediator mediator)
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _gatewayValidator = gatewayValidator;
-            _mediator = mediator;
+            _orchestrator = orchestrator;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet("/Roatp/Gateway/New")]
@@ -75,7 +77,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var viewModel = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
+
+            var viewModel =
+                await _orchestrator.GetOverviewViewModel(new GetApplicationOverviewRequest(applicationId, username));
+
             if (viewModel is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -116,7 +121,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var newViewModel = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
+                var newViewModel = await _orchestrator.GetOverviewViewModel(new GetApplicationOverviewRequest(application.ApplicationId, username));
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newViewModel);
             }
         }
