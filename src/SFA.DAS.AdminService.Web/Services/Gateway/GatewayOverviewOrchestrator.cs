@@ -87,8 +87,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "People in control checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "2-10", UrlTag="2-10", UrlTag ="people-in-control", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "2-20", UrlTag="2-20", UrlTag="people-in-control-risk",  LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = "2-10",  UrlTag ="people-in-control", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "2-20",  UrlTag="people-in-control-risk",  LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
                     }
                 },
 
