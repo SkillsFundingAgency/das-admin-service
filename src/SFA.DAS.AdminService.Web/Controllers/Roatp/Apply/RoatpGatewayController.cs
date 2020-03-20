@@ -143,6 +143,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             if (gatewayReviewStatus.Equals(GatewayReviewStatus.New)) 
             {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                await _applyApiClient.TriggerGatewayDataGathering(applicationId, username);
                 await _applyApiClient.StartGatewayReview(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
             }
 

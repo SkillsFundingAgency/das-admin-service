@@ -32,9 +32,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 return null;
             }
 
-            await _applyApiClient.TriggerGatewayDataGathering(request.ApplicationId, request.UserName);
-
-
             // Setting Application Data => TODO: To be stored in session.
             var applicationData = new AssessorService.ApplyTypes.Roatp.Apply
             {
