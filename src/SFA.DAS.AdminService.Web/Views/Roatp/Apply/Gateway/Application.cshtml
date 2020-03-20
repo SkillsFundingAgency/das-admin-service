@@ -122,7 +122,7 @@
                                             }
                                             else
                                             {
-                                                <a class="govuk-link" href="/Roatp/GatewayCheckStatus/@Model.ApplicationId/Page/@currentSection.PageId/Status/@Model.GatewayReviewStatus">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))</a>
+                                                <a class="govuk-link" href="/Roatp/GatewayCheckStatus/@Model.ApplicationId/Page/@currentSection.UrlTag/Status/@Model.GatewayReviewStatus">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))</a>
                                             }
                                         </span>
                                         @if(!string.IsNullOrWhiteSpace(currentSection.Status))

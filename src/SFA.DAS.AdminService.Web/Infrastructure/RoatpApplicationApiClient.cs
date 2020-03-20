@@ -10,8 +10,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -153,26 +153,61 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
         }
 
+        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
         public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
         {
-            return await Get<GatewayPageAnswer>($"/Gateway/Page?applicationId={applicationId}&pageId={pageId}");
+            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
         }
 
-        [ValidateAntiForgeryToken()]
-        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-            string gatewayPageData)
+        public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
-            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - PageData '{gatewayPageData}'");
+            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+        }
+
+        public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
+        {
+            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+        }
+
+        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string comments)
+        {
+            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - Comments '{comments}'");
 
             try
             {
-                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, gatewayPageData, username });
+                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, comments, username });
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, "RoatpApplicationApiClient - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
             
+        }
+
+        public async Task<ProviderDetails> GetUkrlpDetails(Guid applicationId)
+        {
+            return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
+        }
+
+        public async Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId)
+        {
+            return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+        }
+
+        public async Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId)
+        {
+            return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+        }
+
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId)
+        {
+            return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+        }
+
+        public async Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId)
+        {
+            return await Get<DateTime?>($"Gateway/SourcesCheckedOn/{applicationId}");
         }
 
         private async Task<T> Get<T>(string uri)
@@ -186,6 +221,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
+        
         private async Task Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
