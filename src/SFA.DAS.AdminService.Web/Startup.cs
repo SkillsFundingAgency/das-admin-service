@@ -210,7 +210,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-
+            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
@@ -220,7 +220,7 @@ namespace SFA.DAS.AdminService.Web
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
 
-            services.AddMediatR(typeof(GetApplicationOverviewHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(GetOrganisationStatusHandler).GetTypeInfo().Assembly);
         }
 
         private void AddAuthentication(IServiceCollection services)
