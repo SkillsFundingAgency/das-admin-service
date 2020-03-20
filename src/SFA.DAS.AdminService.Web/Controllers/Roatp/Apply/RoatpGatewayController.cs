@@ -144,40 +144,40 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+        //[HttpPost("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        //public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
+        //{
+        //    var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-            if(validationResponse.Errors != null && validationResponse.Errors.Any())
-            {
-                viewModel.ErrorMessages = validationResponse.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
-            }
+        //    var validationResponse = await _gatewayValidator.Validate(viewModel);
+        //    if(validationResponse.Errors != null && validationResponse.Errors.Any())
+        //    {
+        //        viewModel.ErrorMessages = validationResponse.Errors;
+        //        return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
+        //    }
 
-            SetupGatewayPageOptionTexts(viewModel);
+        //    SetupGatewayPageOptionTexts(viewModel);
 
-            var pageData = JsonConvert.SerializeObject(viewModel);
-            _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatus-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
-            try
-            {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "RoatpGatewayController - EvaluateOrganisationStatus - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-            }
+        //    var pageData = JsonConvert.SerializeObject(viewModel);
+        //    _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatus-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
+        //    try
+        //    {
+        //        await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        _logger.LogError(ex, "RoatpGatewayController - EvaluateOrganisationStatus - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+        //    }
 
-            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
-        }
+        //    return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
+        //}
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
-        }
+        //[HttpGet("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        //public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
+        //{
+        //    var username = _contextAccessor.HttpContext.User.UserDisplayName();
+        //    return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
+        //}
 
 
         public  string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
