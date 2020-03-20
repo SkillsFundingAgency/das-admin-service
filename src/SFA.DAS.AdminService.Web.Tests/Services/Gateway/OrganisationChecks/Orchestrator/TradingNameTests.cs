@@ -7,18 +7,14 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using SFA.DAS.QnA.Api.Types.Page;
 using Answer = SFA.DAS.QnA.Api.Types.Page.Answer;
 using PageOfAnswers = SFA.DAS.QnA.Api.Types.Page.PageOfAnswers;
 
-namespace SFA.DAS.AdminService.Web.Tests.Services
+namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
     [TestFixture]
-    public class GatewayOrganisationChecksOrchestratorTradingNameTests
+    public class TradingNameTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
@@ -44,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         }
 
         [Test]
-        public void check_trading_name_handler_builds_with_expected_details()
+        public void check_trading_name_orchestrator_builds_with_expected_details()
         {
             var applicationId = Guid.NewGuid();
 

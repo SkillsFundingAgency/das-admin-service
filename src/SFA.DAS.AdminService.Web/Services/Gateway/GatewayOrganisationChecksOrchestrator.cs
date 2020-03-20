@@ -2,11 +2,9 @@
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Extensions;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
@@ -98,7 +96,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
                 }
 
-
             var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
             model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
 
@@ -107,7 +104,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<OrganisationStatusViewModel> GetOrganisationStatusViewModel(GetOrganisationStatusRequest request)
         {
-            _logger.LogInformation($"Retrieving trading name details for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving organisation status details for application {request.ApplicationId}");
 
             var pageId = GatewayPageIds.OrganisationStatus;
 

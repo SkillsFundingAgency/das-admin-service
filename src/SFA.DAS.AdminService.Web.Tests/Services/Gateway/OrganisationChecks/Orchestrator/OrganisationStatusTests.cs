@@ -10,10 +10,10 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
-namespace SFA.DAS.AdminService.Web.Tests.Services
+namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
     [TestFixture]
-    public class GatewayOrganisationChecksOrchestratorLegalNameTests
+    public class OrganisationStatusTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
@@ -29,11 +29,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private static string CharityNumber => "123456";
 
         private static string ProviderName => "Mark's other workshop";
-        private static string CompanyName => "Companies House Name";
+        private static string CompanyStatus => "active";
+        private static string CompanyStatusWithCapitalisation => "Active";
 
-        private static string CharityName => "Charity commission Name";
+        private static string CharityStatus => "closed";
+        private static string CharityStatusWithCapitalisation => "Closed";
+        private static string ProviderStatus = "registered";
+        private static string ProviderStatusWithCapitalisation = "Registered";
+
 
         private static string UserName = "GatewayUser";
+
+       
 
         [SetUp]
         public void Setup()
@@ -45,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_company_and_charity_details()
+        public void check_organisation_status_orchestrator_builds_with_company_and_charity_details()
         {
             var applicationId = Guid.NewGuid();
 
@@ -60,37 +67,37 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                ProviderStatus = ProviderStatus
             };
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
 
             var companiesHouseDetails = new CompaniesHouseSummary
             {
-                CompanyName = CompanyName
+                Status = CompanyStatus
             };
             _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
 
             var charityDetails = new CharityCommissionSummary
             {
-                CharityName = CharityName
+                Status = CharityStatus
             };
             _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
 
-            var request = new GetLegalNameRequest(applicationId, UserName);
+            var request = new GetOrganisationStatusRequest(applicationId, UserName);
 
-            var response = _orchestrator.GetLegalNameViewModel(request);
+            var response = _orchestrator.GetOrganisationStatusViewModel(request);
 
             var viewModel = response.Result;
 
-            Assert.AreEqual(UKRLPLegalName, viewModel.ApplyLegalName);
-            Assert.AreEqual(ProviderName, viewModel.UkrlpLegalName);
-            Assert.AreEqual(CompanyName, viewModel.CompaniesHouseLegalName);
-            Assert.AreEqual(CharityName, viewModel.CharityCommissionLegalName);
+            Assert.AreEqual(ProviderStatusWithCapitalisation, viewModel.UkrlpStatus);
+            Assert.AreEqual(CompanyStatusWithCapitalisation, viewModel.CompaniesHouseStatus);
+            Assert.AreEqual(CharityStatusWithCapitalisation, viewModel.CharityCommissionStatus);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_company_details_only()
+        public void check_organisation_status_orchestrator_builds_with_company_details_only()
         {
             var applicationId = Guid.NewGuid();
 
@@ -105,34 +112,38 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                ProviderStatus = ProviderStatus
             };
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
 
             var companiesHouseDetails = new CompaniesHouseSummary
             {
-                CompanyName = CompanyName
+                Status = CompanyStatus
             };
             _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
 
-            CharityCommissionSummary charityDetails = null;
+            var charityDetails = new CharityCommissionSummary
+            {
+                Status = null
+            };
+
             _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
 
-            var request = new GetLegalNameRequest(applicationId, UserName);
+            var request = new GetOrganisationStatusRequest(applicationId, UserName);
 
-            var response = _orchestrator.GetLegalNameViewModel(request);
+            var response = _orchestrator.GetOrganisationStatusViewModel(request);
 
             var viewModel = response.Result;
 
-            Assert.AreEqual(UKRLPLegalName, viewModel.ApplyLegalName);
-            Assert.AreEqual(ProviderName, viewModel.UkrlpLegalName);
-            Assert.AreEqual(CompanyName, viewModel.CompaniesHouseLegalName);
-            Assert.IsNull(viewModel.CharityCommissionLegalName);
+            Assert.AreEqual(ProviderStatusWithCapitalisation, viewModel.UkrlpStatus);
+            Assert.AreEqual(CompanyStatusWithCapitalisation, viewModel.CompaniesHouseStatus);
+            Assert.AreEqual(string.Empty,viewModel.CharityCommissionStatus);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_charity_details_only()
+        public void check_organisation_status_orchestrator_builds_with_charity_details_only()
         {
             var applicationId = Guid.NewGuid();
 
@@ -147,31 +158,34 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                ProviderStatus = ProviderStatus
             };
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
 
-            CompaniesHouseSummary companiesHouseDetails = null;
+            var companiesHouseDetails = new CompaniesHouseSummary
+            {
+                Status = null
+            };
             _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
 
             var charityDetails = new CharityCommissionSummary
             {
-                CharityName = CharityName
+                Status = CharityStatus
             };
+
             _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
 
-            var request = new GetLegalNameRequest(applicationId, UserName);
+            var request = new GetOrganisationStatusRequest(applicationId, UserName);
 
-            var response = _orchestrator.GetLegalNameViewModel(request);
+            var response = _orchestrator.GetOrganisationStatusViewModel(request);
 
             var viewModel = response.Result;
 
-            Assert.AreEqual(UKRLPLegalName, viewModel.ApplyLegalName);
-            Assert.AreEqual(ProviderName, viewModel.UkrlpLegalName);
-            Assert.IsNull(viewModel.CompaniesHouseLegalName);
-            Assert.AreEqual(CharityName, viewModel.CharityCommissionLegalName);
+            Assert.AreEqual(ProviderStatusWithCapitalisation, viewModel.UkrlpStatus);
+            Assert.AreEqual(string.Empty, viewModel.CompaniesHouseStatus);
+            Assert.AreEqual(CharityStatusWithCapitalisation, viewModel.CharityCommissionStatus);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
         }
-
     }
 }

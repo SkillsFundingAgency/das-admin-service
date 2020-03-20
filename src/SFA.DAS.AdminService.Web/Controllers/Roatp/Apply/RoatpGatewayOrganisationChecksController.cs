@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
@@ -115,7 +114,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
-        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId, string pageId)
+        public async Task<IActionResult> GetOrganisationStatusPage(Guid applicationId, string pageId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetOrganisationStatusViewModel(new GetOrganisationStatusRequest(applicationId, username));
