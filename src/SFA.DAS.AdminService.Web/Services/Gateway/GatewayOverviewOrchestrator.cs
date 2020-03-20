@@ -87,8 +87,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "People in control checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "2-10", UrlTag="2-10", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "2-20", UrlTag="2-20",   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = "2-10", UrlTag="2-10", UrlTag ="people-in-control", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "2-20", UrlTag="2-20", UrlTag="people-in-control-risk",  LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -99,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     Sections = new List<GatewaySection>
                     {
                         new GatewaySection { SectionNumber = 1, PageId = "3-10", UrlTag= "roatp", LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "3-20", UrlTag = "RoEPAO", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 2, PageId = "3-20", UrlTag = "repao", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -126,7 +126,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                         new GatewaySection { SectionNumber = 2, PageId = "5-20", UrlTag = "pay-back",  LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = "5-30", UrlTag = "contract-term", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", UrlTag = "withdrawn", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "5-50", UrlTag = "Roto", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = "5-50", UrlTag = "roto", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = "5-60", UrlTag  ="funding-removed", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = "5-70", UrlTag = "removed-professional-register", LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 8, PageId = "5-80", UrlTag="itt-accreditation", LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
