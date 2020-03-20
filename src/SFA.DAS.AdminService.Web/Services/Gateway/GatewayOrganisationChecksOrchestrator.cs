@@ -130,17 +130,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                //GatewayReviewStatus = commonDetails.GatewayReviewStatus
         };
 
-            var PreamblePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.PageId);
-            var applyAddressLine1 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine1).FirstOrDefault().Value;
-            var applyAddressLine2 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine2).FirstOrDefault().Value;
-            var applyAddressLine3 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine3).FirstOrDefault().Value;
-            var applyAddressLine4 = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressLine4).FirstOrDefault().Value;
-            var applyTown = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressTown).FirstOrDefault().Value;
-            var applyPostcode = PreamblePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.UKRLPLegalAddressPostcode).FirstOrDefault().Value;
-
-            var applyAarray = new[] { applyAddressLine1, applyAddressLine2, applyAddressLine3, applyAddressLine4, applyTown, applyPostcode };
-            var applyAddress = string.Join(", ", applyAarray.Where(s => !string.IsNullOrEmpty(s)));
-            model.SubmittedApplicationAddress = applyAddress;
+            model.SubmittedApplicationAddress = await _applyApiClient.GetQnaCompanyAddress(request.ApplicationId);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetails != null)

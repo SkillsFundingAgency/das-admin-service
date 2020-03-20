@@ -51,6 +51,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
+         Task<string> GetQnaCompanyAddress(Guid applicationId);
          Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,

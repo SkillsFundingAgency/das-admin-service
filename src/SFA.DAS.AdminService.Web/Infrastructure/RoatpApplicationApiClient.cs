@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using System.Net.Http.Formatting;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -164,6 +165,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
         }
 
+        public async Task<string> GetQnaCompanyAddress(Guid applicationId)
+        {
+            var result = await Get<GetQnaCompanyAddressResult>($"Gateway/Page/QnaCompanyAddress/{applicationId}");
+            return result.Address;
+        }
+
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
             await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
@@ -221,7 +228,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
-        
+
         private async Task Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -258,5 +265,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
+    }
+
+    public class GetQnaCompanyAddressResult
+    {
+        public string Address { get; set; }
     }
 }
