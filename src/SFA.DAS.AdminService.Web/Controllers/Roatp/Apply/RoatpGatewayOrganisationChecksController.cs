@@ -47,8 +47,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/legal-name")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
+     
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
@@ -58,6 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
@@ -85,9 +85,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/trading-name")]
         public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
         {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
+              var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
@@ -96,6 +94,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             _logger.LogInformation($"RoatpGatewayController-EvaluateTradingNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
@@ -124,8 +123,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
         public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
         {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
@@ -135,6 +132,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatusPage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
