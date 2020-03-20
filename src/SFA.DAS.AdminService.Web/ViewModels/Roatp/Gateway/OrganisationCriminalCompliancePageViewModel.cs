@@ -14,12 +14,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 
         public string ComplianceCheckAnswer { get; set; }
         public string FurtherInformationAnswer { get; set; }
-    }
 
-    public class CriminalCompliancePageDetails
-    {
-        public string Title { get; set; }
-        public string PageId { get; set; }
-        public string QuestionId { get; set; }
+        public string PostBackAction { get; set; }
     }
 }

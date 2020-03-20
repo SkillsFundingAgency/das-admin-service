@@ -54,22 +54,6 @@
                     public static string EducationalInstituteTypeEmployer = "YO-161";
                 }
             }
-
-            public static class CriminalComplianceChecks
-            {
-                public static int OrganisationComplianceChecks = 2;
-                public static int WhosInControlComplianceChecks = 4;
-
-                public static class PageIds
-                {
-                    public static string CompositionCreditors = "3100";
-                }
-
-                public static class QuestionIds
-                {
-                    public static string CompositionCreditors = "CC-20";
-                }
-            }
         }
 
         public static class QnaQuestionTags

@@ -7,7 +7,6 @@
     ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
 
-
     var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
     var isErrorFailText = "";
     var noSelectionMessage = "";
@@ -128,7 +127,7 @@
     {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateOrganisationCompositionCreditorsPage" asp-controller="RoatpOrganisationCriminalComplianceChecks">
+            <form class="js-disable-on-submit" asp-action="@Model.PostBackAction" asp-controller="RoatpOrganisationCriminalComplianceChecks">
                 @Html.HiddenFor(x => x.ApplicationId)
                 @Html.HiddenFor(x => x.PageId)
                 @Html.HiddenFor(x => x.PageTitle)
