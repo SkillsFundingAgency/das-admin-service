@@ -2,10 +2,9 @@
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
+using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
@@ -69,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<TradingNamePageViewModel> GetTradingNameViewModel(GetTradingNameRequest request)
         {
-            _logger.LogInformation($"Retrieving legal name details for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving trading name details for application {request.ApplicationId}");
 
             var pageId = GatewayPageIds.TradingName;
 
@@ -97,9 +96,49 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
                 }
 
-
             var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
             model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
+
+            return model;
+        }
+
+        public async Task<OrganisationStatusViewModel> GetOrganisationStatusViewModel(GetOrganisationStatusRequest request)
+        {
+            _logger.LogInformation($"Retrieving organisation status details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.OrganisationStatus;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new OrganisationStatusViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+            };
+
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            model.UkrlpStatus = ukrlpDetails.ProviderStatus.CapitaliseFirstLetter();
+
+            var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+            if (companiesHouseDetails != null)
+            {
+                model.CompaniesHouseStatus = companiesHouseDetails?.Status.CapitaliseFirstLetter();
+            }
+
+            var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+            if (charityCommissionDetails != null)
+            {
+                model.CharityCommissionStatus = charityCommissionDetails?.Status.CapitaliseFirstLetter();
+            }
 
             return model;
         }
