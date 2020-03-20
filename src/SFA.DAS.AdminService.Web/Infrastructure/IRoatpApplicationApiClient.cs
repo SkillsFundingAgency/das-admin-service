@@ -40,5 +40,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
+        Task CompleteAssessorReview(Guid applicationId, string reviewer);
     }
 }

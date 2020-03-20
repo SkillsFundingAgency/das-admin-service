@@ -149,6 +149,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await httpResponse.Content.ReadAsAsync<bool>();
         }
 
+        public async Task CompleteAssessorReview(Guid applicationId, string reviewer)
+        {
+            await Post($"/Application/{applicationId}/CompleteAssessorReview", new { reviewer });
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

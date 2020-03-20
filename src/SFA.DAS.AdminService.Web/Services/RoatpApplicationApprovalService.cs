@@ -119,12 +119,15 @@ namespace SFA.DAS.AdminService.Web.Services
         public async Task<bool> SubmitOrganisationToRoatpRegister(RoatpApplicationApprovalViewModel roatpApplicationModel)
         {
             var request = Mapper.Map<CreateRoatpOrganisationRequest>(roatpApplicationModel);
+            request.StatusDate = DateTime.Now;
 
             var result = await _roatpApiClient.CreateOrganisation(request);
 
             if (result)
             {
-                return await _roatpApplicationApiClient.UpdateApplicationStatus(roatpApplicationModel.ApplicationId, ApplicationStatus.Approved);
+                await _roatpApplicationApiClient.CompleteAssessorReview(roatpApplicationModel.ApplicationId, roatpApplicationModel.Username);
+                
+                return await _roatpApplicationApiClient.UpdateApplicationStatus(roatpApplicationModel.ApplicationId, ApplicationStatus.Approved);               
             }
 
             return await Task.FromResult(false);
