@@ -437,7 +437,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return View("~/Views/Roatp/Apply/RoatpApprovalConfirmation.cshtml", model);
             }
 
-            var result = await _roatpApplicationApprovalService.SubmitOrganisationToRoatpRegister(model);
+            var result = _roatpApplicationApprovalService.SubmitOrganisationToRoatpRegister(model);
 
             if (!result)
             {

@@ -116,21 +116,21 @@ namespace SFA.DAS.AdminService.Web.Services
             return await Task.FromResult(model);
         }
 
-        public async Task<bool> SubmitOrganisationToRoatpRegister(RoatpApplicationApprovalViewModel roatpApplicationModel)
+        public bool SubmitOrganisationToRoatpRegister(RoatpApplicationApprovalViewModel roatpApplicationModel)
         {
             var request = Mapper.Map<CreateRoatpOrganisationRequest>(roatpApplicationModel);
             request.StatusDate = DateTime.Now;
 
-            var result = await _roatpApiClient.CreateOrganisation(request);
+            var result = _roatpApiClient.CreateOrganisation(request).GetAwaiter().GetResult();
 
             if (result)
             {
-                await _roatpApplicationApiClient.CompleteAssessorReview(roatpApplicationModel.ApplicationId, roatpApplicationModel.Username);
+                _roatpApplicationApiClient.CompleteAssessorReview(roatpApplicationModel.ApplicationId, roatpApplicationModel.Username).GetAwaiter().GetResult();
                 
-                return await _roatpApplicationApiClient.UpdateApplicationStatus(roatpApplicationModel.ApplicationId, ApplicationStatus.Approved);               
+                return _roatpApplicationApiClient.UpdateApplicationStatus(roatpApplicationModel.ApplicationId, ApplicationStatus.Approved).GetAwaiter().GetResult();               
             }
 
-            return await Task.FromResult(false);
+            return false;
         }
 
         private async Task<int> MapOrganisationDetailsQuestionsToRoatpOrganisationType(Guid applicationId, int providerTypeId)

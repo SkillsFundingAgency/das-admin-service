@@ -12,6 +12,6 @@ namespace SFA.DAS.AdminService.Web.Services
 
         Task<RoatpApplicationApprovalViewModel> BuildApplicationApprovalViewModel(Guid applicationId);
 
-        Task<bool> SubmitOrganisationToRoatpRegister(RoatpApplicationApprovalViewModel roatpApplicationModel);
+        bool SubmitOrganisationToRoatpRegister(RoatpApplicationApprovalViewModel roatpApplicationModel);
     }
 }
