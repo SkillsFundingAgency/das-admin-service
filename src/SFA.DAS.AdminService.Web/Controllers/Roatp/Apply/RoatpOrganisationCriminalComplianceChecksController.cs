@@ -41,8 +41,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(applicationId, GatewayPageIds.CCOrganisationCompositionCreditors, username));
-            viewModel.PageTitle = "Composition with creditors check";
-            viewModel.PostBackAction = "EvaluateOrganisationCompositionCreditorsPage";
+
+            viewModel.PageTitle = CriminalCompliancePageTitles.OrganisationCompositionCreditors;
+            viewModel.PostBackAction = CriminalCompliancePagePostActions.OrganisationCompositionCreditors;
+
             return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
         }
 

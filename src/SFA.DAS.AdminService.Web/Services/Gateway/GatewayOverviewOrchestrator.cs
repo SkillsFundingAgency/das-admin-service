@@ -119,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "5-10", UrlTag = "composition-with-creditors", LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = "CompositionWithCreditors", UrlTag = "composition-with-creditors", LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 2, PageId = "5-20", UrlTag = "pay-back",  LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = "5-30", UrlTag = "contract-term", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", UrlTag = "withdrawn", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
