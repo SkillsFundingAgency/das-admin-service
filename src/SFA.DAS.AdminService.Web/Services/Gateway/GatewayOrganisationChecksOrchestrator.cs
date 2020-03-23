@@ -92,10 +92,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-                if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
-                {
-                    model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
-                }
+            if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
+            {
+                model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
+            }
 
 
             var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
@@ -127,10 +127,15 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
                 Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
                 Heading = RoatpGatewayConstants.Headings.AddressCheck
-               //GatewayReviewStatus = commonDetails.GatewayReviewStatus
-        };
+                //GatewayReviewStatus = commonDetails.GatewayReviewStatus
+            };
 
-            model.SubmittedApplicationAddress = await _applyApiClient.GetQnaCompanyAddress(request.ApplicationId);
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.SubmittedApplicationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetails != null)

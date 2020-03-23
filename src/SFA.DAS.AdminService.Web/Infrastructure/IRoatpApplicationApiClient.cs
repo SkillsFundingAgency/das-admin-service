@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
+﻿using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
@@ -51,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
-         Task<string> GetQnaCompanyAddress(Guid applicationId);
+         Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
          Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,

@@ -111,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/address")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/Address")]
         public async Task<IActionResult> GetGatewayAddressPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -119,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/address")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/Address")]
         public async Task<IActionResult> EvaluateAddressPage(AddressCheckViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
