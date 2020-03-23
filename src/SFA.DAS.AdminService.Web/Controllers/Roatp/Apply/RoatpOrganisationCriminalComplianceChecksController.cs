@@ -23,6 +23,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IGatewayCriminalComplianceChecksOrchestrator _orchestrator;
         private readonly ILogger<RoatpOrganisationCriminalComplianceChecksController> _logger;
 
+        private const string CriminalComplianceView = "~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml";
+
         public RoatpOrganisationCriminalComplianceChecksController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor,
                                                               IRoatpGatewayPageViewModelValidator gatewayValidator,
                                                               IGatewayCriminalComplianceChecksOrchestrator orchestrator,
@@ -45,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             viewModel.PageTitle = CriminalCompliancePageTitles.OrganisationCompositionCreditors;
             viewModel.PostBackAction = CriminalCompliancePagePostActions.OrganisationCompositionCreditors;
 
-            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
+            return View(CriminalComplianceView, viewModel);
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
@@ -58,7 +60,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
                 viewModel.ErrorMessages = validationResponse?.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
+                return View(CriminalComplianceView, viewModel);
             }
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
@@ -76,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             viewModel.PageTitle = CriminalCompliancePageTitles.OrganisationFailedToRepayFunds;
             viewModel.PostBackAction = CriminalCompliancePagePostActions.OrganisationFailedToRepayFunds;
 
-            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
+            return View(CriminalComplianceView, viewModel);
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/pay-back")]
@@ -89,7 +91,38 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
                 viewModel.ErrorMessages = validationResponse?.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
+                return View(CriminalComplianceView, viewModel);
+            }
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/contract-term")]
+        public async Task<IActionResult> GetOrganisationContractTerminationPage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(applicationId, GatewayPageIds.CCOrganisationContractTermination, username));
+
+            viewModel.PageTitle = CriminalCompliancePageTitles.OrganisationContractTerminatedByPublicBody;
+            viewModel.PostBackAction = CriminalCompliancePagePostActions.OrganisationContractTerminatedByPublicBody;
+
+            return View(CriminalComplianceView, viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/contract-term")]
+        public async Task<IActionResult> EvaluateOrganisationContractTerminationPage(OrganisationCriminalCompliancePageViewModel viewModel)
+        {
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse?.Errors;
+                return View(CriminalComplianceView, viewModel);
             }
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
 
