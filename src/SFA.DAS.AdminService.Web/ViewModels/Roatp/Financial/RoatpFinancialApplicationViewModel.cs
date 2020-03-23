@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.QnA.Api.Types;
@@ -11,6 +12,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public List<Section> Sections { get; }
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
+
+        public string DeclaredInApplication { get; set; }
 
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
 
@@ -37,6 +40,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
             ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
             SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+
+            SetupDeclaredInApplication(application.ApplyData);
         }
 
         private List<Section> SetupSections(Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
@@ -104,6 +109,37 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             {
                 ClarificationComments = FinancialReviewDetails.Comments;
             }
+        }
+
+        private void SetupDeclaredInApplication(RoatpApplyData applyData)
+        {
+            const int fhaSequenceNo = 2;
+            var fhaSequence = applyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == fhaSequenceNo);
+
+            if (fhaSequence != null)
+            {
+                DeclaredInApplication = fhaSequence.NotRequired ? "Exempt" : "Not exempt";
+            }
+        }
+
+        public string GetDownloadFilesLinkText(int sequenceNo, int sectionNo)
+        {
+            string linkText;
+
+            if (sequenceNo == 2 && sectionNo == 2)
+            {
+                linkText = "Download organisation's financial statements";
+            }
+            else if (sequenceNo == 2 && sectionNo == 3)
+            {
+                linkText = "Download parent company's financial statements";
+            }
+            else
+            {
+                linkText = "Download financial statements";
+            }
+            
+            return linkText;
         }
     }
 }

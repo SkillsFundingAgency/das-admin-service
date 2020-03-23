@@ -122,6 +122,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
+
+                // For now, only replace selected grade with whatever was selected
+                newvm.FinancialReviewDetails.SelectedGrade = vm.FinancialReviewDetails.SelectedGrade;
+
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
         }
@@ -255,6 +259,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         private async Task<List<Section>> GetFinancialSections(Guid applicationId)
         {
+            const string CompanyFhaSectionTitle = "Organisation's financial health";
+            const string ParentCompanyFhaSectionTitle = "UK ultimate parent company's financial health";
+
             var financialSections = new List<Section>();
 
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
@@ -273,6 +280,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                         // Ensure at least one active page is answered
                         if (section.QnAData.Pages.Any(p => p.Active && p.Complete))
                         {
+                            // APR-1477 - adjust title for Assessor
+                            if(section.SequenceNo == 2 && section.SectionNo == 2)
+                            {
+                                section.LinkTitle = CompanyFhaSectionTitle;
+                                section.Title = CompanyFhaSectionTitle;
+                            }
+                            else if (section.SequenceNo == 2 && section.SectionNo == 3)
+                            {
+                                section.LinkTitle = ParentCompanyFhaSectionTitle;
+                                section.Title = ParentCompanyFhaSectionTitle;
+                            }
+
                             financialSections.Add(section);
                         }
                     }

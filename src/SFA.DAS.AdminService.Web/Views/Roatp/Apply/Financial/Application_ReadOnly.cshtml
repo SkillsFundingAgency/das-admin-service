@@ -31,8 +31,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Organisation details</h2>
-            <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
+            <partial name="~/Views/Roatp/Apply/Financial/_OrganisationDetails.cshtml" />
         </div>
     </div>
 
@@ -79,7 +78,7 @@
                 @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
                 {
                     <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)</a>
                     </p>
                 }
             </div>

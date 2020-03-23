@@ -45,8 +45,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Organisation details</h2>
-            <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
+            <partial name="~/Views/Roatp/Apply/Financial/_OrganisationDetails.cshtml" />
         </div>
     </div>
 
@@ -93,7 +92,7 @@
                 @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
                 {
                     <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)</a>
                     </p>
                 }
             </div>
@@ -121,7 +120,7 @@
                     <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
                     <span class="govuk-error-message" asp-validation-for="ClarificationComments"></span>
 
-                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                    <div id="FinancialReviewDetails.SelectedGrade" class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
@@ -135,7 +134,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="OutstandingFinancialDueDate.Day">Day</label>
@@ -171,7 +170,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="GoodFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="GoodFinancialDueDate.Day">Day</label>
@@ -207,7 +206,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Day">Day</label>

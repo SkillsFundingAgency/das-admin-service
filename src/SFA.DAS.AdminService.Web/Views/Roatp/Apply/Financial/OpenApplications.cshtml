@@ -1,4 +1,5 @@
 @using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
@@ -73,7 +74,24 @@
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
                             <td class="govuk-table__cell das-no-wrap" data-label="Application status">
-                                @item.FinancialReviewStatus
+                                @{
+                                    switch (item.FinancialReviewStatus)
+                                    {
+                                        case FinancialReviewStatus.New:
+                                            <div class="govuk-tag govuk-tag--startreview">
+                                                new
+                                            </div>
+                                            break;
+                                        case FinancialReviewStatus.InProgress:
+                                            <div class="govuk-tag">
+                                                in progress
+                                            </div>
+                                            break;
+                                        default:
+                                            <text>---</text>
+                                            break;
+                                    }
+                                }
                             </td>
                         </tr>
                         }
