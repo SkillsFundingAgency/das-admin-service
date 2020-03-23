@@ -65,5 +65,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId);
 
         Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId);
+        Task<string> GetTradingName(Guid applicationId);
     }
 }

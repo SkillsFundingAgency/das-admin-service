@@ -68,12 +68,12 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "1-10", UrlTag ="legal-name", LinkTitle = "Legal name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "1-20", UrlTag = "trading-name",LinkTitle = "Trading name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "1-30", UrlTag = "organisation-status", LinkTitle = "Organisation status", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = "LegalName", UrlTag ="LegalName", LinkTitle = "Legal name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "TradingName", UrlTag = "TradingName",LinkTitle = "Trading name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = "OrganisationStatus", UrlTag = "OrganisationStatus", LinkTitle = "Organisation status", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "1-40", UrlTag="Address",LinkTitle = "Address", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = "1-50", UrlTag = "ico-number",LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "1-60", UrlTag="website",  LinkTitle = "Website address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = "WebsiteAddress", UrlTag="WebsiteAddress",  LinkTitle = "Website address", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = "1-70", UrlTag="organisation-risk", LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
                     }
                 },
@@ -106,10 +106,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Experience and accreditation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "4-10", UrlTag="ofs", LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "4-20", UrlTag="itt", LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "4-30", UrlTag = "ofsted", LinkTitle = "Ofsted", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "4-40", UrlTag = "subcontractor",LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = "OfficeForStudents", UrlTag="OfficeForStudents", LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "InitialTeacherTraining", UrlTag="InitialTeacherTraining", LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = "Ofsted", UrlTag = "Ofsted", LinkTitle = "Ofsted", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = "SubcontractorDeclaration", UrlTag = "SubcontractorDeclaration",LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -161,7 +161,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 // NotRequired checks
                 var TradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
                 // TradingName
-                var TradingName = TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName).FirstOrDefault().Value;
+                var TradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
+                    /* TradingNameAndWebsitePage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName).FirstOrDefault().Value;*/
                 var TradingNameStatus = string.IsNullOrWhiteSpace(TradingName) ? SectionReviewStatus.NotRequired : string.Empty;
                 if (TradingNameStatus.Equals(SectionReviewStatus.NotRequired))
                 {
@@ -180,6 +181,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 if (WebsiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
                 {
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
+
                     _logger.LogInformation($"GetApplicationOverviewHandler-SubmitGatewayPageAnswer - ApplicationId '{request.ApplicationId}' - PageId '{GatewayPageIds.WebsiteAddress}' - Status '{SectionReviewStatus.NotRequired}' - UserName '{request.UserName}' - PageData = 'null'");
                     await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.WebsiteAddress, SectionReviewStatus.NotRequired, request.UserName, null);
                 }

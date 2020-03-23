@@ -210,6 +210,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<DateTime?>($"Gateway/SourcesCheckedOn/{applicationId}");
         }
 
+        public async Task<string> GetTradingName(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/TradingName");
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -221,7 +226,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
-        
+        private async Task<string> Get(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+
         private async Task Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =

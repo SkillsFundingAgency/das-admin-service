@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _orchestrator = orchestrator;
         }     
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/legal-name")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/LegalName")]
         public async Task<IActionResult> GetGatewayLegalNamePage(Guid applicationId, string pageId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -44,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/LegalName.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/legal-name")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/LegalName")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
      
@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/trading-name")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/TradingName")]
         public async Task<IActionResult> GetGatewayTradingNamePage(Guid applicationId, string pageId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/TradingName.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/trading-name")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/TradingName")]
         public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
         {
               var validationResponse = await _gatewayValidator.Validate(viewModel);

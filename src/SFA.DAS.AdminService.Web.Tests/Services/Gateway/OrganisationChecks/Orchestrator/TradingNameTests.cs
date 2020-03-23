@@ -78,9 +78,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
 
 
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
-            _qnaApiClient.Setup(x =>
-                    x.GetPageBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(applyPage);
+            _applyApiClient.Setup(x => x.GetTradingName(It.IsAny<Guid>())).ReturnsAsync(ApplyTradingName);
+            //_qnaApiClient.Setup(x =>
+            //        x.GetPageBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
+            //    .ReturnsAsync(applyPage);
         
 
             var request = new GetTradingNameRequest(applicationId, UserName);

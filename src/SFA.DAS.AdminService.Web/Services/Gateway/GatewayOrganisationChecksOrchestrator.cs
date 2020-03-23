@@ -96,9 +96,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
                 }
 
-            var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
-            model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
+            //var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
+            //model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
 
+            model.ApplyTradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
+       
             return model;
         }
 
