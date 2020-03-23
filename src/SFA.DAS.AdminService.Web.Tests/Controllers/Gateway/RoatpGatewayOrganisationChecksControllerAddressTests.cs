@@ -28,9 +28,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
         private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
-        private string username => "john smith";
-        private string givenName => "john";
-        private string surname => "smith";
+        private string username = "john smith";
+        private string givenName = "john";
+        private string surname = "smith";
+
         [SetUp]
         public void Setup()
         {

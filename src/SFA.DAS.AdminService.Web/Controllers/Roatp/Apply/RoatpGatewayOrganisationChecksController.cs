@@ -177,9 +177,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
-                
-                // MFCMFC Shutter page? throw again?
                 _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateAddressPage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
             }
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
