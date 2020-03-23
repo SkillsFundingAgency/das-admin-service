@@ -23,6 +23,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly ILogger<RoatpGatewayOrganisationChecksController> _logger;
         private readonly IGatewayOrganisationChecksOrchestrator _orchestrator;
 
+        private string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages/";
         public RoatpGatewayOrganisationChecksController(IRoatpApplicationApiClient applyApiClient, 
                                                         IHttpContextAccessor contextAccessor, 
                                                         IRoatpGatewayPageViewModelValidator gatewayValidator, 
