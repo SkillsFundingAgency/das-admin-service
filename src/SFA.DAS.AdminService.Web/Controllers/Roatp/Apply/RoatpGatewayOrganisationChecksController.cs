@@ -47,8 +47,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/legal-name")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
+     
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
@@ -58,6 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
@@ -66,8 +66,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
-                // MFCMFC Shutter page? throw again?
-                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                _logger.LogError(ex,"RoatpGatewayController-EvaluateLegalNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
             }
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
@@ -84,9 +84,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/trading-name")]
         public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
         {
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
+              var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
@@ -95,17 +93,55 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
 
             _logger.LogInformation($"RoatpGatewayController-EvaluateTradingNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
-            
             try
             {
                 await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
             }
             catch (Exception ex)
             {
-                // MFCMFC Shutter page? throw again?
                 _logger.LogError(ex, "RoatpGatewayController-EvaluateTradingNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
+            }
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        public async Task<IActionResult> GetOrganisationStatusPage(Guid applicationId, string pageId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetOrganisationStatusViewModel(new GetOrganisationStatusRequest(applicationId, username));
+            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
+        {
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatusPage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController-EvaluateTradingNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
             }
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });

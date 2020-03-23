@@ -35,7 +35,6 @@ using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web
@@ -205,7 +204,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-
+            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
@@ -214,8 +213,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
-
-            services.AddMediatR(typeof(GetApplicationOverviewHandler).GetTypeInfo().Assembly);
         }
 
         private void AddAuthentication(IServiceCollection services)

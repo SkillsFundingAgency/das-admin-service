@@ -1,35 +1,30 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Threading;
-using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.Domain;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.Apprenticeships.Api.Types;
 
-namespace SFA.DAS.AdminService.Web.Handlers.Gateway
+namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
-    public class GetApplicationOverviewHandler : IRequestHandler<GetApplicationOverviewRequest, RoatpGatewayApplicationViewModel>
+    public class GatewayOverviewOrchestrator: IGatewayOverviewOrchestrator
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
 
-        private readonly ILogger<GetApplicationOverviewHandler> _logger;
+        private readonly ILogger<GatewayOverviewOrchestrator> _logger;
 
-        public GetApplicationOverviewHandler(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, ILogger<GetApplicationOverviewHandler> logger)
+        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, ILogger<GatewayOverviewOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _qnaApiClient = qnaApiClient;
             _logger = logger;
         }
-        public async Task<RoatpGatewayApplicationViewModel> Handle(GetApplicationOverviewRequest request, CancellationToken cancellationToken)
+
+        public async Task<RoatpGatewayApplicationViewModel> GetOverviewViewModel(GetApplicationOverviewRequest request)
         {
             var application = await _applyApiClient.GetApplication(request.ApplicationId);
             if (application is null)
@@ -89,8 +84,8 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     SequenceTitle = "People in control checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "2-10", UrlTag="2-10", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "2-20", UrlTag="2-20",   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = "2-10",  UrlTag ="people-in-control", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "2-20",  UrlTag="people-in-control-risk",  LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -101,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     Sections = new List<GatewaySection>
                     {
                         new GatewaySection { SectionNumber = 1, PageId = "3-10", UrlTag= "roatp", LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "3-20", UrlTag = "RoEPAO", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 2, PageId = "3-20", UrlTag = "repao", LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -128,7 +123,7 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                         new GatewaySection { SectionNumber = 2, PageId = "5-20", UrlTag = "pay-back",  LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = "5-30", UrlTag = "contract-term", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 4, PageId = "5-40", UrlTag = "withdrawn", LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "5-50", UrlTag = "Roto", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = "5-50", UrlTag = "roto", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = "5-60", UrlTag  ="funding-removed", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = "5-70", UrlTag = "removed-professional-register", LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 8, PageId = "5-80", UrlTag="itt-accreditation", LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
@@ -199,11 +194,11 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                 {
                     var OfficeForStudentPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "235");
                     var OfficeForStudent = OfficeForStudentPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-235").FirstOrDefault()?.Value;
-                    if (OfficeForStudent!=null && OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
+                    if (OfficeForStudent != null && OfficeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) OfficeForStudentStatus = string.Empty;
 
                     var InitialTeacherTrainingPage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 1, 5, "240");
                     var InitialTeacherTraining = InitialTeacherTrainingPage.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == "YO-240").FirstOrDefault()?.Value;
-                    if (InitialTeacherTraining!=null && InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
+                    if (InitialTeacherTraining != null && InitialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) InitialTeacherTrainingStatus = string.Empty;
                 }
                 if (OfficeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
                 {
@@ -234,12 +229,12 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == GatewayPageIds.SubcontractorDeclaration).FirstOrDefault().Status = SectionReviewStatus.NotRequired;
                     _logger.LogInformation($"GetApplicationOverviewHandler-SubmitGatewayPageAnswer - ApplicationId '{request.ApplicationId}' - PageId '{GatewayPageIds.SubcontractorDeclaration}' - Status '{SectionReviewStatus.NotRequired}' - UserName '{request.UserName}' - PageData = 'null'");
                     await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, SectionReviewStatus.NotRequired, request.UserName, null);
-                }       
+                }
             }
             else
             {
                 var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
-                foreach(var currentStatus in savedStatuses)
+                foreach (var currentStatus in savedStatuses)
                 {
                     // Inject the statuses into viewmodel
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).Where(sec => sec.PageId == currentStatus.PageId).FirstOrDefault().Status = currentStatus.Status;
@@ -247,24 +242,24 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
             }
 
             // Check whether the Gateway Application is Ready to Confirm gateway outcome
-            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel); 
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
 
             return viewmodel;
         }
-    
+
         public bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
         {
             bool IsReadyToConfirm = true;
 
-            foreach(var sequence in viewmodel.Sequences)
+            foreach (var sequence in viewmodel.Sequences)
             {
-                foreach(var section in sequence.Sections)
+                foreach (var section in sequence.Sections)
                 {
-                    if(section.Status == null || (!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired)))
+                    if (section.Status == null || (!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired)))
                     {
                         IsReadyToConfirm = false;
                         break;
-                    } 
+                    }
                 }
             }
 
@@ -272,3 +267,4 @@ namespace SFA.DAS.AdminService.Web.Handlers.Gateway
         }
     }
 }
+

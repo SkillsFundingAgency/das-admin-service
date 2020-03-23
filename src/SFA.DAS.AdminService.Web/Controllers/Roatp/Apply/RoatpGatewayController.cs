@@ -8,12 +8,8 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Threading.Tasks;
-using MediatR;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
-using System.Linq;
-using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -22,16 +18,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
-        private readonly IMediator _mediator;
+        private readonly IGatewayOverviewOrchestrator _orchestrator;
         private readonly ILogger<RoatpGatewayController> _logger;
-
-        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IMediator mediator, ILogger<RoatpGatewayController> logger)
+        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor,  IGatewayOverviewOrchestrator orchestrator, ILogger<RoatpGatewayController> logger)
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
-            _gatewayValidator = gatewayValidator;
-            _mediator = mediator;
+            _orchestrator = orchestrator;
             _logger = logger;
         }
 
@@ -75,7 +68,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> ViewApplication(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var viewModel = await _mediator.Send(new GetApplicationOverviewRequest(applicationId, username));
+
+            var viewModel =
+                await _orchestrator.GetOverviewViewModel(new GetApplicationOverviewRequest(applicationId, username));
+
             if (viewModel is null)
             {
                 return RedirectToAction(nameof(NewApplications));
@@ -116,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var newViewModel = await _mediator.Send(new GetApplicationOverviewRequest(application.ApplicationId, username));
+                var newViewModel = await _orchestrator.GetOverviewViewModel(new GetApplicationOverviewRequest(application.ApplicationId, username));
                 return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", newViewModel);
             }
         }
@@ -144,62 +140,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
-        }
-
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-            if(validationResponse.Errors != null && validationResponse.Errors.Any())
-            {
-                viewModel.ErrorMessages = validationResponse.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
-            }
-
-            SetupGatewayPageOptionTexts(viewModel);
-
-            var pageData = JsonConvert.SerializeObject(viewModel);
-            _logger.LogInformation($"RoatpGatewayController-EvaluateOrganisationStatus-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - PageData '{pageData}'");
-            try
-            {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, pageData);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "RoatpGatewayController - EvaluateOrganisationStatus - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-            }
-
-            return RedirectToAction("ViewApplication", new { viewModel.ApplicationId });
-        }
-
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/1-30")]
-        public async Task<IActionResult> GetOrganisationStatus(Guid applicationId)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", await _mediator.Send(new GetOrganisationStatusRequest(applicationId, username)));
-        }
-
-
-        public  string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
-        {
-            if (viewModel?.Status == null) return string.Empty;
-            viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
-            viewModel.OptionPassText = viewModel.Status ==SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
-            viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
-
-            switch (viewModel.Status)
-            {
-                case SectionReviewStatus.Pass:
-                    return viewModel.OptionPassText;
-                case SectionReviewStatus.Fail:
-                    return viewModel.OptionFailText;
-                case SectionReviewStatus.InProgress:
-                    return viewModel.OptionInProgressText;
-                default:
-                    return string.Empty;
-            }
         }
     }
 }
