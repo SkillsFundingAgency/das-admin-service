@@ -12,15 +12,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     public class GatewayOrganisationChecksOrchestrator : IGatewayOrganisationChecksOrchestrator
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayOrganisationChecksOrchestrator> _logger;
 
-        public GatewayOrganisationChecksOrchestrator(IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient,
+        public GatewayOrganisationChecksOrchestrator(IRoatpApplicationApiClient applyApiClient, 
                                                      ILogger<GatewayOrganisationChecksOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
-            _qnaApiClient = qnaApiClient;
         }
 
         public async Task<LegalNamePageViewModel> GetLegalNameViewModel(GetLegalNameRequest request)
@@ -95,9 +93,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 {
                     model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
                 }
-
-            //var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(request.ApplicationId, 0, 1, RoatpQnaConstants.RoatpSections.Preamble.SectionId.ToString());
-            //model.ApplyTradingName = tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpQnaConstants.RoatpSections.Preamble.QuestionIds.TradingName)?.Value;
 
             model.ApplyTradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
        

@@ -112,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/OrganisationStatus")]
         public async Task<IActionResult> GetOrganisationStatusPage(Guid applicationId, string pageId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -120,7 +120,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationStatus.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/organisation-status")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/OrganisationStatus")]
         public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
         {
             var validationResponse = await _gatewayValidator.Validate(viewModel);

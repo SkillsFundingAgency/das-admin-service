@@ -19,7 +19,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
-        private Mock<IQnaApiClient> _qnaApiClient;
 
         private static string PageId => "1-20";
         private static string ukprn => "12344321";
@@ -34,9 +33,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         public void Setup()
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _qnaApiClient = new Mock<IQnaApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _qnaApiClient.Object, _logger.Object);
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
         [Test]
@@ -79,10 +77,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
 
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
             _applyApiClient.Setup(x => x.GetTradingName(It.IsAny<Guid>())).ReturnsAsync(ApplyTradingName);
-            //_qnaApiClient.Setup(x =>
-            //        x.GetPageBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-            //    .ReturnsAsync(applyPage);
-        
 
             var request = new GetTradingNameRequest(applicationId, UserName);
 
