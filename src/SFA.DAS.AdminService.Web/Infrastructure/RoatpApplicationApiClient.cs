@@ -215,6 +215,28 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get($"/Gateway/{applicationId}/TradingName");
         }
 
+
+        public async Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/WebsiteAddressFromUkrlp");
+        }
+
+
+        public async Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/WebsiteAddressManuallyEntered");
+        }
+
+        public async Task<string> GetOfficeForStudents(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/OfficeForStudent");
+        }
+
+        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/InitialTeacherTraining");
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
