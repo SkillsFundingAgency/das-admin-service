@@ -10,6 +10,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string TradingName = "1-20";
         public const string OrganisationStatus = "1-30";
         public const string AddressCheck = "Address";
+        public const string IcoNumber = "IcoNumber";
 
         public const string WebsiteAddress = "1-60";
 

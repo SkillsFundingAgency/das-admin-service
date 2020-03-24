@@ -193,5 +193,42 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<IcoNumberViewModel> GetIcoNumberViewModel(GetIcoNumberRequest request)
+        {
+            _logger.LogInformation($"Retrieving ICO Number check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.IcoNumber;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new IcoNumberViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.IcoNumber
+            };
+
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.OrganisationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
+
+            model.IcoNumber = await _applyApiClient.GetIcoNumber(request.ApplicationId);
+
+            return model;
+        }
     }
 }

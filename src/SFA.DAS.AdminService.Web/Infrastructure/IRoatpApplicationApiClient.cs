@@ -53,7 +53,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
          Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
-         Task TriggerGatewayDataGathering(Guid applicationId, string userName);
+        Task<string> GetIcoNumber(Guid applicationId);
+        Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);

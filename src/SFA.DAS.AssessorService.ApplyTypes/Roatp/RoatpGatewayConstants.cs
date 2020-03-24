@@ -15,6 +15,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         {
             public static string OrganisationStatusCheck = "Organisation status check";
             public static string AddressCheck = "Address check";
+            public static string IcoNumber = "Information Commissioner's Office (ICO) registration number check";
 
         }
     }

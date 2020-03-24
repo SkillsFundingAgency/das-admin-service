@@ -168,7 +168,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<ContactAddress> GetOrganisationAddress(Guid applicationId)
         {
-            return await Get<ContactAddress>($"Gateway/Page/OrganisationAddress/{applicationId}");
+            return await Get<ContactAddress>($"/Gateway/{applicationId}/OrganisationAddress");
+        }
+
+        public async Task<string> GetIcoNumber(Guid applicationId)
+        {
+            return await GetString($"/Gateway/{applicationId}/IcoNumber ");
         }
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
@@ -228,6 +233,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
+        private async Task<string> GetString(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
 
         private async Task Post<T>(string uri, T model)
         {

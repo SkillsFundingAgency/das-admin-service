@@ -10,5 +10,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         Task<TradingNamePageViewModel> GetTradingNameViewModel(GetTradingNameRequest getTradingNameRequest);
         Task<OrganisationStatusViewModel> GetOrganisationStatusViewModel(GetOrganisationStatusRequest getOrganisationStatusRequest);
         Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request);
+        Task<IcoNumberViewModel> GetIcoNumberViewModel(GetIcoNumberRequest request);
     }
 }
