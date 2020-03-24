@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/CompositionWithCreditors")]
         public async Task<IActionResult> GetOrganisationCompositionCreditorsPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -48,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/CompositionWithCreditors")]
         public async Task<IActionResult> EvaluateOrganisationCompositionCreditorsPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
