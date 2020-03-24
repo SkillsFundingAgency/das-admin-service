@@ -413,5 +413,95 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewModel.Should().NotBeNull();
             viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
         }
+
+        [Test]
+        public void Removed_from_Roto_check_returns_view()
+        {
+            var applicationId = Guid.NewGuid();
+
+            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()))
+                .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
+                .Verifiable("view model not returned");
+
+            var result = _controller.GetOrganisationRemovedRotoPage(applicationId).GetAwaiter().GetResult();
+            _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
+            viewModel.Should().NotBeNull();
+            viewModel.PageTitle.Should().Be(CriminalCompliancePageTitles.OrganisationRemovedFromRoTO);
+            viewModel.PostBackAction.Should().Be(CriminalCompliancePagePostActions.OrganisationRemovedFromRoTO);
+        }
+
+        [Test]
+        public void Removed_from_Roto_check_posted()
+        {
+            var model = new OrganisationCriminalCompliancePageViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplyLegalName = "legal name",
+                ComplianceCheckQuestionId = "CC-1",
+                ComplianceCheckAnswer = "No",
+                OptionPassText = null,
+                Status = "Pass",
+                PageId = GatewayPageIds.CCOrganisationRemovedRoTO,
+                QuestionText = "Question text",
+                Ukprn = "10001234"
+            };
+
+            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+
+            var validationResponse = new ValidationResponse
+            {
+                Errors = new List<ValidationErrorDetail>()
+            };
+            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
+
+            var result = _controller.EvaluateOrganisationRemovedRotoPage(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ViewApplication");
+        }
+
+        [Test]
+        public void Removed_from_Roto_check_has_validation_error()
+        {
+            var model = new OrganisationCriminalCompliancePageViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplyLegalName = "legal name",
+                ComplianceCheckQuestionId = "CC-1",
+                ComplianceCheckAnswer = "No",
+                OptionFailText = null,
+                Status = "Fail",
+                PageId = GatewayPageIds.CCOrganisationRemovedRoTO,
+                QuestionText = "Question text",
+                Ukprn = "10001234"
+            };
+
+            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+
+            var validationResponse = new ValidationResponse
+            {
+                Errors = new List<ValidationErrorDetail>()
+                {
+                    new ValidationErrorDetail
+                    {
+                        ErrorMessage = "Comments are mandatory",
+                        Field = "OptionFailText"
+                    }
+                }
+            };
+            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
+
+            var result = _controller.EvaluateOrganisationRemovedRotoPage(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
+            viewModel.Should().NotBeNull();
+            viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
+        }
     }
 }

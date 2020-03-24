@@ -17,5 +17,6 @@
         public const string CCOrganisationFailedToRepayFunds = "PayBack";
         public const string CCOrganisationContractTermination = "ContractTerm";
         public const string CCOrganisationContractWithdrawnEarly = "Withdrawn";
+        public const string CCOrganisationRemovedRoTO = "Roto";
     }
 }
