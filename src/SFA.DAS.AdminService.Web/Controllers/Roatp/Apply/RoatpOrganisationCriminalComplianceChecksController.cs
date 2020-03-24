@@ -130,5 +130,38 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/Withdrawn")]
+        public async Task<IActionResult> GetOrganisationContractWithdrawnPage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(applicationId, GatewayPageIds.CCOrganisationContractWithdrawnEarly, username));
+
+            viewModel.PageTitle = CriminalCompliancePageTitles.OrganisationContractWithdrawnEarly;
+            viewModel.PostBackAction = CriminalCompliancePagePostActions.OrganisationContractWithdrawnEarly;
+
+            return View(CriminalComplianceView, viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/Withdrawn")]
+        public async Task<IActionResult> EvaluateOrganisationContractWithdrawnPage(OrganisationCriminalCompliancePageViewModel viewModel)
+        {
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse?.Errors;
+                return View(CriminalComplianceView, viewModel);
+            }
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+
+            await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+        
     }
 }
