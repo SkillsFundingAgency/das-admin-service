@@ -8,7 +8,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
     public class OrganisationStatusViewModel : RoatpGatewayPageViewModel
     {
         public DateTime? ApplicationSubmittedOn { get; set; }
-        public DateTime SourcesCheckedOn { get; set; }
+        public DateTime? SourcesCheckedOn { get; set; }
 
         public string UkrlpStatus { get; set; }
         public string CompaniesHouseStatus { get; set; }

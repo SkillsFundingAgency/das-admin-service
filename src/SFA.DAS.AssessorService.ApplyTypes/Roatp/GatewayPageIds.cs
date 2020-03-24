@@ -8,7 +8,6 @@
 
         public const string WebsiteAddress = "WebsiteAddress";
 
-
         public const string OfficeForStudent = "OfficeForStudents";
         public const string InitialTeacherTraining = "InitialTeacherTraining";
         public const string Ofsted = "Ofsted";

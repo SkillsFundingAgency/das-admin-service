@@ -35,7 +35,6 @@ using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web
@@ -219,8 +218,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
-
-            services.AddMediatR(typeof(GetOrganisationStatusHandler).GetTypeInfo().Assembly);
         }
 
         private void AddAuthentication(IServiceCollection services)

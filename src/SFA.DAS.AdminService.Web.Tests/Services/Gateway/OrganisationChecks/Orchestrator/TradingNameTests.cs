@@ -7,23 +7,18 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using SFA.DAS.QnA.Api.Types.Page;
 using Answer = SFA.DAS.QnA.Api.Types.Page.Answer;
 using PageOfAnswers = SFA.DAS.QnA.Api.Types.Page.PageOfAnswers;
 
-namespace SFA.DAS.AdminService.Web.Tests.Services
+namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
     [TestFixture]
-    public class GatewayOrganisationChecksOrchestratorTradingNameTests
+    public class TradingNameTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
-        private Mock<IQnaApiClient> _qnaApiClient;
 
         private static string PageId => "1-20";
         private static string ukprn => "12344321";
@@ -38,13 +33,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         public void Setup()
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _qnaApiClient = new Mock<IQnaApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _qnaApiClient.Object, _logger.Object);
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
         [Test]
-        public void check_trading_name_handler_builds_with_expected_details()
+        public void check_trading_name_orchestrator_builds_with_expected_details()
         {
             var applicationId = Guid.NewGuid();
 
@@ -82,10 +76,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
 
             _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
-            _qnaApiClient.Setup(x =>
-                    x.GetPageBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
-                .ReturnsAsync(applyPage);
-        
+            _applyApiClient.Setup(x => x.GetTradingName(It.IsAny<Guid>())).ReturnsAsync(ApplyTradingName);
 
             var request = new GetTradingNameRequest(applicationId, UserName);
 
