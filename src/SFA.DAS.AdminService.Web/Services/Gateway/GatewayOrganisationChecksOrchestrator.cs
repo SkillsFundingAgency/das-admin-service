@@ -123,7 +123,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             };
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
-            model.UkrlpStatus = ukrlpDetails.ProviderStatus.CapitaliseFirstLetter();
+            model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();
 
             var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
             if (companiesHouseDetails != null)
