@@ -229,7 +229,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<string> GetOfficeForStudents(Guid applicationId)
         {
-            return await Get($"/Gateway/{applicationId}/OfficeForStudent");
+            return await Get($"/Gateway/{applicationId}/OfficeForStudents");
         }
 
         public async Task<string> GetInitialTeacherTraining(Guid applicationId)

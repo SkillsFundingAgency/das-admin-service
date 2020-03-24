@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -68,13 +69,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "LegalName",  LinkTitle = "Legal name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "TradingName", LinkTitle = "Trading name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "OrganisationStatus", LinkTitle = "Organisation status", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "Address", LinkTitle = "Address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "IcoNumber", LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "WebsiteAddress",  LinkTitle = "Website address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = "OrganisationRisk",  LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.LegalName,  LinkTitle = "Legal name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.TradingName, LinkTitle = "Trading name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.OrganisationStatus, LinkTitle = "Organisation status", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Address, LinkTitle = "Address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.IcoNumber, LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.WebsiteAddress,  LinkTitle = "Website address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.OrganisationRisk,  LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -84,8 +85,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "People in control checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "PeopleInControl", LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "PeopleInControlRisk",   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.PeopleInControl, LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PeopleInControlRisk,   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -95,8 +96,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Register checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "Roatp", LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "Repao",  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.Roatp, LinkTitle = "RoATP", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.Repao,  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -106,10 +107,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Experience and accreditation checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "OfficeForStudents",  LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "InitialTeacherTraining", LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "Ofsted",  LinkTitle = "Ofsted", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "SubcontractorDeclaration", LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.OfficeForStudents,  LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.InitialTeacherTraining, LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.Ofsted,  LinkTitle = "Ofsted", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.SubcontractorDeclaration, LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -119,18 +120,18 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "CompositionWithCreditors",  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "Payback", LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "ContractTerm",  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "Withdrawn",LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "Roto", LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "FundingRemoved", LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = "RemovedProfessionalRegister", LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = "IttAccredication",  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = "RemovedCharityRegister", LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 10, PageId = "Safeguarding",  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 11, PageId = "Whistleblowing",  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 12, PageId = "Insolvency", LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CompositionWithCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PayBack, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.ContractTerm,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Withdrawn,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
                     }
                 },
 
@@ -189,7 +190,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
                 var providerRoute = application.ApplyData.ApplyDetails.ProviderRoute;
 
-                // OfficeForStudent 
+                // OfficeForStudents 
                 var officeForStudentStatus = SectionReviewStatus.NotRequired;
 
                 if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
@@ -201,11 +202,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 {
 
                     var page = viewmodel?.Sequences?.SelectMany(seq => seq.Sections)
-                        .Where(sec => sec.PageId == GatewayPageIds.OfficeForStudent)?.FirstOrDefault();
+                        .Where(sec => sec.PageId == GatewayPageIds.OfficeForStudents)?.FirstOrDefault();
                     if (page != null)
                         page.Status = SectionReviewStatus.NotRequired;
-                    _logger.LogInformation($"GetApplicationOverviewHandler-SubmitGatewayPageAnswer - ApplicationId '{request.ApplicationId}' - PageId '{GatewayPageIds.OfficeForStudent}' - Status '{SectionReviewStatus.NotRequired}' - UserName '{request.UserName}' - PageData = 'null'");
-                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.OfficeForStudent, SectionReviewStatus.NotRequired, request.UserName, null);
+                    _logger.LogInformation($"GetApplicationOverviewHandler-SubmitGatewayPageAnswer - ApplicationId '{request.ApplicationId}' - PageId '{GatewayPageIds.OfficeForStudents}' - Status '{SectionReviewStatus.NotRequired}' - UserName '{request.UserName}' - PageData = 'null'");
+                    await _applyApiClient.SubmitGatewayPageAnswer(request.ApplicationId, GatewayPageIds.OfficeForStudents, SectionReviewStatus.NotRequired, request.UserName, null);
                 }
                 
 
