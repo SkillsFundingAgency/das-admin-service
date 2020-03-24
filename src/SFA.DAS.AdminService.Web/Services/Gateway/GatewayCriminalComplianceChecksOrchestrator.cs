@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway

@@ -10,15 +10,15 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
-namespace SFA.DAS.AdminService.Web.Tests.Services
+namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
     [TestFixture]
-    public class GatewayOrganisationChecksOrchestratorLegalNameTests
+    public class LegalNameTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
-        private Mock<IQnaApiClient> _qnaApiClient;
+
 
         private static string PageId => "1-10";
         private GatewayPageAnswer _gatewayPageAnswer;
@@ -40,12 +40,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _qnaApiClient = new Mock<IQnaApiClient>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _qnaApiClient.Object, _logger.Object);
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_company_and_charity_details()
+        public void check_legal_name_orchestrator_builds_with_company_and_charity_details()
         {
             var applicationId = Guid.NewGuid();
 
@@ -90,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_company_details_only()
+        public void check_legal_name_orchestrator_builds_with_company_details_only()
         {
             var applicationId = Guid.NewGuid();
 
@@ -132,7 +131,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         }
 
         [Test]
-        public void check_legal_name_handler_builds_with_charity_details_only()
+        public void check_legal_name_orchestrator_builds_with_charity_details_only()
         {
             var applicationId = Guid.NewGuid();
 

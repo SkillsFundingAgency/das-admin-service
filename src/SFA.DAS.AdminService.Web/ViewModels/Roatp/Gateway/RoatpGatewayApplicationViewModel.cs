@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public List<GatewaySequence> Sequences { get; set; }
         public bool ReadyToConfirm { get; set; }
 
-        public RoatpGatewayApplicationViewModel() { }
+
 
         public RoatpGatewayApplicationViewModel(AssessorService.ApplyTypes.Roatp.Apply application)
         {
@@ -60,7 +60,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
     {
         public int SectionNumber { get; set; }
         public string PageId { get; set; }
-        public string UrlTag { get; set; }
         public string HiddenText { get; set; }
         public string LinkTitle { get; set; }
         public string Status { get; set; }       

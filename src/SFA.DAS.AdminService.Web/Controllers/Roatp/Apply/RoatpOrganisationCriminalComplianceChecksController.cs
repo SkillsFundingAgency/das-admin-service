@@ -38,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/CompositionWithCreditors")]
         public async Task<IActionResult> GetOrganisationCompositionCreditorsPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View(CriminalComplianceView, viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/composition-with-creditors")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/CompositionWithCreditors")]
         public async Task<IActionResult> EvaluateOrganisationCompositionCreditorsPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/pay-back")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/Payback")]
         public async Task<IActionResult> GetOrganisationFailedToRepayFundsPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View(CriminalComplianceView, viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/pay-back")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/Payback")]
         public async Task<IActionResult> EvaluateOrganisationFailedToRepayFundsPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
@@ -100,7 +100,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
 
-        [HttpGet("/Roatp/Gateway/{applicationId}/Page/contract-term")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/ContractTerm")]
         public async Task<IActionResult> GetOrganisationContractTerminationPage(Guid applicationId)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -112,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View(CriminalComplianceView, viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/contract-term")]
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/ContractTerm")]
         public async Task<IActionResult> EvaluateOrganisationContractTerminationPage(OrganisationCriminalCompliancePageViewModel viewModel)
         {
             var comments = SetupGatewayPageOptionTexts(viewModel);
