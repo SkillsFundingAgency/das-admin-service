@@ -7,12 +7,12 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
     {
         public static Dictionary<string, string> Titles = new Dictionary<string, string>
         {
-            { GatewayPageIds.CCOrganisationCompositionCreditors, "Composition with creditors check" },
-            { GatewayPageIds.CCOrganisationFailedToRepayFunds, "Failed to pay back funds in the last 3 years check" },
-            { GatewayPageIds.CCOrganisationContractTermination, "Contract terminated early by a public body in the last 3 years check" },
-            { GatewayPageIds.CCOrganisationContractWithdrawnEarly, "Withdrawn from a contract with a public body in the last 3 years check" },
-            { GatewayPageIds.CCOrganisationRemovedRoTO, "Removed from Register of Training Organisations (RoTO) in the last 3 years check" },
-            { GatewayPageIds.CCOrganisationFundingRemoved, "Funding removed from any education bodies in the last 3 years check" }
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors, "Composition with creditors check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, "Failed to pay back funds in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination, "Contract terminated early by a public body in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly, "Withdrawn from a contract with a public body in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO, "Removed from Register of Training Organisations (RoTO) in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, "Funding removed from any education bodies in the last 3 years check" }
         };
     }
 }

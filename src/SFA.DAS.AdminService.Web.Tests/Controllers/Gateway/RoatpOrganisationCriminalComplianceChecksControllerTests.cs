@@ -54,12 +54,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             _controller = new RoatpOrganisationCriminalComplianceChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
         }
 
-        [TestCase(GatewayPageIds.CCOrganisationCompositionCreditors)]
-        [TestCase(GatewayPageIds.CCOrganisationFailedToRepayFunds)]
-        [TestCase(GatewayPageIds.CCOrganisationContractTermination)]
-        [TestCase(GatewayPageIds.CCOrganisationContractWithdrawnEarly)]
-        [TestCase(GatewayPageIds.CCOrganisationRemovedRoTO)]
-        [TestCase(GatewayPageIds.CCOrganisationFundingRemoved)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         public void Criminal_compliance_check_returns_view(string gatewayPageId)
         {
             var applicationId = Guid.NewGuid();
@@ -78,12 +78,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewModel.PageTitle.Should().Be(CriminalCompliancePageConfiguration.Titles[gatewayPageId]);
         }
 
-        [TestCase(GatewayPageIds.CCOrganisationCompositionCreditors)]
-        [TestCase(GatewayPageIds.CCOrganisationFailedToRepayFunds)]
-        [TestCase(GatewayPageIds.CCOrganisationContractTermination)]
-        [TestCase(GatewayPageIds.CCOrganisationContractWithdrawnEarly)]
-        [TestCase(GatewayPageIds.CCOrganisationRemovedRoTO)]
-        [TestCase(GatewayPageIds.CCOrganisationFundingRemoved)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         public void Criminal_compliance_check_posted(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
@@ -114,12 +114,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             redirectResult.ActionName.Should().Be("ViewApplication");
         }
 
-        [TestCase(GatewayPageIds.CCOrganisationCompositionCreditors)]
-        [TestCase(GatewayPageIds.CCOrganisationFailedToRepayFunds)]
-        [TestCase(GatewayPageIds.CCOrganisationContractTermination)]
-        [TestCase(GatewayPageIds.CCOrganisationContractWithdrawnEarly)]
-        [TestCase(GatewayPageIds.CCOrganisationRemovedRoTO)]
-        [TestCase(GatewayPageIds.CCOrganisationFundingRemoved)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         public void Criminal_compliance_check_has_validation_error(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel

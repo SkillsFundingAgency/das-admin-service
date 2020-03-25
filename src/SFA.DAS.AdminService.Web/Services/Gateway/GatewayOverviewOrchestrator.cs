@@ -120,18 +120,18 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CCOrganisationCompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CCOrganisationFailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CCOrganisationContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CCOrganisationContractWithdrawnEarly,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CCOrganisationRemovedRoTO, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CCOrganisationFundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
                     }
                 },
 
