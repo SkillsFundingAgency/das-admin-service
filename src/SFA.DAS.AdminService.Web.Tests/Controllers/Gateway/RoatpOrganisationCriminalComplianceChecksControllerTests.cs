@@ -54,8 +54,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             _controller = new RoatpOrganisationCriminalComplianceChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
         }
 
-        [Test]
-        public void Composition_with_creditors_check_returns_view()
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        public void Criminal_compliance_check_returns_view(string gatewayPageId)
         {
             var applicationId = Guid.NewGuid();
 
@@ -63,19 +66,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
                 .Verifiable("view model not returned");
 
-            var result = _controller.GetOrganisationCompositionCreditorsPage(applicationId).GetAwaiter().GetResult();
+            var result = _controller.GetCriminalCompliancePage(applicationId, gatewayPageId).GetAwaiter().GetResult();
             _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
             var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
             viewModel.Should().NotBeNull();
-            viewModel.PageTitle.Should().Be(CriminalCompliancePageTitles.OrganisationCompositionCreditors);
-            viewModel.PostBackAction.Should().Be(CriminalCompliancePagePostActions.OrganisationCompositionCreditors);
+            viewModel.PageTitle.Should().Be(CriminalCompliancePageConfiguration.Titles[gatewayPageId]);
         }
 
-        [Test]
-        public void Composition_with_creditors_check_posted()
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        public void Criminal_compliance_check_posted(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
             {
@@ -85,97 +90,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 ComplianceCheckAnswer = "No",
                 OptionPassText = null,
                 Status = "Pass",
-                PageId = GatewayPageIds.CCOrganisationCompositionCreditors,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-
-            var validationResponse = new ValidationResponse 
-            {
-                Errors = new List<ValidationErrorDetail>()
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationCompositionCreditorsPage(model).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ViewApplication");
-        }
-
-        [Test]
-        public void Composition_with_creditors_check_has_validation_error()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionFailText = null,
-                Status = "Fail",
-                PageId = GatewayPageIds.CCOrganisationCompositionCreditors,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-            
-            var validationResponse = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>()
-                {
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = "Comments are mandatory",
-                        Field = "OptionFailText"
-                    }
-                }
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationCompositionCreditorsPage(model).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
-        }
-
-        [Test]
-        public void Failed_to_repay_funds_check_returns_view()
-        {
-            var applicationId = Guid.NewGuid();
-
-            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()))
-                .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
-                .Verifiable("view model not returned");
-
-            var result = _controller.GetOrganisationFailedToRepayFundsPage(applicationId).GetAwaiter().GetResult();
-            _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.PageTitle.Should().Be(CriminalCompliancePageTitles.OrganisationFailedToRepayFunds);
-            viewModel.PostBackAction.Should().Be(CriminalCompliancePagePostActions.OrganisationFailedToRepayFunds);
-        }
-
-        [Test]
-        public void Failed_to_repay_funds_check_posted()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionPassText = null,
-                Status = "Pass",
-                PageId = GatewayPageIds.CCOrganisationFailedToRepayFunds,
+                PageId = gatewayPageId,
                 QuestionText = "Question text",
                 Ukprn = "10001234"
             };
@@ -188,15 +103,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             };
             _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
-            var result = _controller.EvaluateOrganisationFailedToRepayFundsPage(model).GetAwaiter().GetResult();
+            var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ViewApplication");
         }
 
-        [Test]
-        public void Failed_to_repay_funds_check_has_validation_error()
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly)]
+        public void Criminal_compliance_check_has_validation_error(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
             {
@@ -206,7 +124,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 ComplianceCheckAnswer = "No",
                 OptionFailText = null,
                 Status = "Fail",
-                PageId = GatewayPageIds.CCOrganisationFailedToRepayFunds,
+                PageId = gatewayPageId,
                 QuestionText = "Question text",
                 Ukprn = "10001234"
             };
@@ -226,187 +144,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             };
             _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
-            var result = _controller.EvaluateOrganisationFailedToRepayFundsPage(model).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
-        }
-
-        [Test]
-        public void Contract_terminated_check_returns_view()
-        {
-            var applicationId = Guid.NewGuid();
-
-            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()))
-                .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
-                .Verifiable("view model not returned");
-
-            var result = _controller.GetOrganisationContractTerminationPage(applicationId).GetAwaiter().GetResult();
-            _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.PageTitle.Should().Be(CriminalCompliancePageTitles.OrganisationContractTerminatedByPublicBody);
-            viewModel.PostBackAction.Should().Be(CriminalCompliancePagePostActions.OrganisationContractTerminatedByPublicBody);
-        }
-
-        [Test]
-        public void Contract_terminated_check_posted()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionPassText = null,
-                Status = "Pass",
-                PageId = GatewayPageIds.CCOrganisationContractTermination,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-
-            var validationResponse = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>()
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationContractTerminationPage(model).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ViewApplication");
-        }
-
-        [Test]
-        public void Contract_terminated_check_has_validation_error()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionFailText = null,
-                Status = "Fail",
-                PageId = GatewayPageIds.CCOrganisationContractTermination,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-
-            var validationResponse = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>()
-                {
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = "Comments are mandatory",
-                        Field = "OptionFailText"
-                    }
-                }
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationContractTerminationPage(model).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
-        }
-
-        [Test]
-        public void Contract_withdrawn_check_returns_view()
-        {
-            var applicationId = Guid.NewGuid();
-
-            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()))
-                .ReturnsAsync(new OrganisationCriminalCompliancePageViewModel())
-                .Verifiable("view model not returned");
-
-            var result = _controller.GetOrganisationContractWithdrawnPage(applicationId).GetAwaiter().GetResult();
-            _orchestrator.Verify(x => x.GetCriminalComplianceCheckViewModel(It.IsAny<GetCriminalComplianceCheckRequest>()), Times.Once());
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
-            viewModel.Should().NotBeNull();
-            viewModel.PageTitle.Should().Be(CriminalCompliancePageTitles.OrganisationContractWithdrawnEarly);
-            viewModel.PostBackAction.Should().Be(CriminalCompliancePagePostActions.OrganisationContractWithdrawnEarly);
-        }
-
-        [Test]
-        public void Contract_withdrawn_check_posted()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionPassText = null,
-                Status = "Pass",
-                PageId = GatewayPageIds.CCOrganisationContractWithdrawnEarly,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
-
-            var validationResponse = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>()
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationContractWithdrawnPage(model).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ViewApplication");
-        }
-
-        [Test]
-        public void Contract_withdrawn_check_has_validation_error()
-        {
-            var model = new OrganisationCriminalCompliancePageViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                ApplyLegalName = "legal name",
-                ComplianceCheckQuestionId = "CC-1",
-                ComplianceCheckAnswer = "No",
-                OptionFailText = null,
-                Status = "Fail",
-                PageId = GatewayPageIds.CCOrganisationContractWithdrawnEarly,
-                QuestionText = "Question text",
-                Ukprn = "10001234"
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
-
-            var validationResponse = new ValidationResponse
-            {
-                Errors = new List<ValidationErrorDetail>()
-                {
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = "Comments are mandatory",
-                        Field = "OptionFailText"
-                    }
-                }
-            };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
-
-            var result = _controller.EvaluateOrganisationContractWithdrawnPage(model).GetAwaiter().GetResult();
+            var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
