@@ -61,6 +61,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation)]
         public void Criminal_compliance_check_returns_view(string gatewayPageId)
         {
             var applicationId = Guid.NewGuid();
@@ -86,6 +87,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation)]
         public void Criminal_compliance_check_posted(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
@@ -123,6 +125,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister)]
+        [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation)]
         public void Criminal_compliance_check_has_validation_error(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
