@@ -9,6 +9,7 @@
         {
             public static int Preamble = 0;
             public static int YourOrganisation = 1;
+            public static int FinancialEvidence = 2;
         }
 
         public static class RoatpSections
@@ -32,9 +33,16 @@
 
             public static class YourOrganisation
             {
-                public static int OrganisationDetails = 4;
+                public static int OrganisationDetails = 2;
+                public static int DescribeYourOrganisation = 4;
+
                 public static class PageIds
                 {
+                    public static string ParentCompanyCheck = "20";
+                    public static string ParentCompanyDetails = "21";
+                    public static string TradingForMain = "50";
+                    public static string TradingForEmployer = "51";
+                    public static string TradingForSupporting = "60";
                     public static string OrganisationTypeMainSupporting = "140";
                     public static string OrganisationTypeEmployer = "150";
                     public static string PublicBodyTypeMainSupporting = "170";
@@ -53,6 +61,12 @@
                     public static string EducationalInstituteTypeEmployer = "YO-161";
                 }
             }
+
+            public static class FinancialEvidence
+            {
+                public static int YourOrganisationsFinancialEvidence = 2;
+                public static int YourUkUltimateParentCompanysFinancialEvidence = 3;
+            }
         }
 
         public static class QnaQuestionTags
@@ -61,6 +75,8 @@
             public const string UKRLPLegalName = "UKRLPLegalName";
             public const string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
             public const string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
+
+            public const string HasParentCompany = "HasParentCompany";
         }
     }
 }

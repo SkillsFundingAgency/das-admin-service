@@ -25,9 +25,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        private const int OrganisationDetailsSequenceNo = 1;
-        private const int FinancialHealthSequenceNo = 2;
-
         public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
             _apiClient = apiClient;
@@ -216,20 +213,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private async Task<Section> GetParentCompanySection(Guid applicationId)
         {
             const string ParentCompanySectionTitle = "UK ultimate parent company";
-            const string HasParentCompanyQuestionTag = "HasParentCompany";
-            const string HasParentCompanyPageId = "20";
-            const string ParentCompanyDetailsPageId = "21";
 
             Section parentCompanySection = null;
 
-            var hasParentCompanyTagValue = await _qnaApiClient.GetQuestionTag(applicationId, HasParentCompanyQuestionTag);
+            var hasParentCompanyTagValue = await _qnaApiClient.GetQuestionTag(applicationId, RoatpQnaConstants.QnaQuestionTags.HasParentCompany);
 
             if ("Yes".Equals(hasParentCompanyTagValue, StringComparison.OrdinalIgnoreCase))
             {                
-                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 2);
+                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
                 parentCompanySection.LinkTitle = ParentCompanySectionTitle;
                 parentCompanySection.Title = ParentCompanySectionTitle;
-                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == HasParentCompanyPageId || page.PageId == ParentCompanyDetailsPageId).ToList();
+                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyCheck 
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails).ToList();
             }
 
             return parentCompanySection;
@@ -238,14 +233,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private async Task<Section> GetActivelyTradingSection(Guid applicationId)
         {
             const string ActivelyTradingSectionTitle = "Actively trading";
-            const string TradingForMainPageId = "50";
-            const string TradingForEmployerPageId = "51";
-            const string TradingForSupportingPageId = "60";
 
-            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 2);
+            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
             activelyTradingSection.LinkTitle = ActivelyTradingSectionTitle;
             activelyTradingSection.Title = ActivelyTradingSectionTitle;
-            activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForMainPageId || page.PageId == TradingForEmployerPageId || page.PageId == TradingForSupportingPageId).ToList();
+            activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForMain
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForEmployer
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForSupporting).ToList();
 
             return activelyTradingSection;
         }
@@ -256,10 +250,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             const string OrganisationTypeMainSupportingPageId = "140";
             const string OrganisationTypeEmployerPageId = "150";
 
-            Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 4);
+            Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
-            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == OrganisationTypeMainSupportingPageId || page.PageId == OrganisationTypeEmployerPageId).ToList();
+            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeMainSupporting
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeEmployer).ToList();
 
             return organisationTypeSection;
         }
@@ -288,12 +283,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                         if (section.QnAData.Pages.Any(p => p.Active && p.Complete))
                         {
                             // APR-1477 - adjust title for Assessor
-                            if(section.SequenceNo == FinancialHealthSequenceNo && section.SectionNo == 2)
+                            if(section.SequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && section.SectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourOrganisationsFinancialEvidence)
                             {
                                 section.LinkTitle = CompanyFhaSectionTitle;
                                 section.Title = CompanyFhaSectionTitle;
                             }
-                            else if (section.SequenceNo == FinancialHealthSequenceNo && section.SectionNo == 3)
+                            else if (section.SequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && section.SectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourUkUltimateParentCompanysFinancialEvidence)
                             {
                                 section.LinkTitle = ParentCompanyFhaSectionTitle;
                                 section.Title = ParentCompanyFhaSectionTitle;
@@ -312,7 +307,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var listOfEvidence = new List<FinancialEvidence>();
 
-            var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, FinancialHealthSequenceNo);
+            var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, RoatpQnaConstants.RoatpSequences.FinancialEvidence);
             var financialSections = await _qnaApiClient.GetSections(applicationId, financialSequence.Id);
 
             foreach(var financialSection in financialSections)
