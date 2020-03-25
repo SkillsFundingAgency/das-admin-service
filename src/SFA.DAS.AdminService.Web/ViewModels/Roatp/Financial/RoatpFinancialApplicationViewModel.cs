@@ -126,11 +126,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         {
             string linkText;
 
-            if (sequenceNo == 2 && sectionNo == 2)
+            if (sequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && sectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourOrganisationsFinancialEvidence)
             {
                 linkText = "Download organisation's financial statements";
             }
-            else if (sequenceNo == 2 && sectionNo == 3)
+            else if (sequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && sectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourUkUltimateParentCompanysFinancialEvidence)
             {
                 linkText = "Download parent company's financial statements";
             }
