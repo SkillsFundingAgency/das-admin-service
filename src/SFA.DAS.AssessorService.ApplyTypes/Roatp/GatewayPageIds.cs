@@ -18,5 +18,6 @@
         public const string CCOrganisationContractTermination = "ContractTerm";
         public const string CCOrganisationContractWithdrawnEarly = "Withdrawn";
         public const string CCOrganisationRemovedRoTO = "Roto";
+        public const string CCOrganisationFundingRemoved = "FundingRemoved";
     }
 }
