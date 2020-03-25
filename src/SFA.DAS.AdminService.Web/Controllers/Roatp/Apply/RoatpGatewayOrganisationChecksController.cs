@@ -214,7 +214,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateIcoNumber - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateIcoNumber-SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
                 throw;
             }
 
