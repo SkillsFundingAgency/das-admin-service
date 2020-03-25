@@ -120,12 +120,12 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CompositionWithCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PayBack, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.ContractTerm,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Withdrawn,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CCOrganisationCompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CCOrganisationFailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CCOrganisationContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CCOrganisationContractWithdrawnEarly,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CCOrganisationRemovedRoTO, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CCOrganisationFundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
