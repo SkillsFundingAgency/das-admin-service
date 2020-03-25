@@ -24,6 +24,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+
+        private const int OrganisationDetailsSequenceNo = 1;
         private const int FinancialHealthSequenceNo = 2;
 
         public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
@@ -224,7 +226,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if ("Yes".Equals(hasParentCompanyTagValue, StringComparison.OrdinalIgnoreCase))
             {                
-                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
+                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 2);
                 parentCompanySection.LinkTitle = ParentCompanySectionTitle;
                 parentCompanySection.Title = ParentCompanySectionTitle;
                 parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == HasParentCompanyPageId || page.PageId == ParentCompanyDetailsPageId).ToList();
@@ -240,7 +242,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             const string TradingForEmployerPageId = "51";
             const string TradingForSupportingPageId = "60";
 
-            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 2);
+            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 2);
             activelyTradingSection.LinkTitle = ActivelyTradingSectionTitle;
             activelyTradingSection.Title = ActivelyTradingSectionTitle;
             activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == TradingForMainPageId || page.PageId == TradingForEmployerPageId || page.PageId == TradingForSupportingPageId).ToList();
@@ -254,7 +256,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             const string OrganisationTypeMainSupportingPageId = "140";
             const string OrganisationTypeEmployerPageId = "150";
 
-            Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, 1, 4);
+            Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, OrganisationDetailsSequenceNo, 4);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
             organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == OrganisationTypeMainSupportingPageId || page.PageId == OrganisationTypeEmployerPageId).ToList();
@@ -286,12 +288,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                         if (section.QnAData.Pages.Any(p => p.Active && p.Complete))
                         {
                             // APR-1477 - adjust title for Assessor
-                            if(section.SequenceNo == 2 && section.SectionNo == 2)
+                            if(section.SequenceNo == FinancialHealthSequenceNo && section.SectionNo == 2)
                             {
                                 section.LinkTitle = CompanyFhaSectionTitle;
                                 section.Title = CompanyFhaSectionTitle;
                             }
-                            else if (section.SequenceNo == 2 && section.SectionNo == 3)
+                            else if (section.SequenceNo == FinancialHealthSequenceNo && section.SectionNo == 3)
                             {
                                 section.LinkTitle = ParentCompanyFhaSectionTitle;
                                 section.Title = ParentCompanyFhaSectionTitle;
