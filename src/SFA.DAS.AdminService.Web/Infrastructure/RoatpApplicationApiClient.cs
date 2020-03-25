@@ -74,9 +74,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications");
         }
 
-        public async Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
         {
-            return await Get<RoaptFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
+            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
         }
 
         public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)

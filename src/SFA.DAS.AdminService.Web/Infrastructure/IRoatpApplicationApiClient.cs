@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
 
-        Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
 
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
         Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
