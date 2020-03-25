@@ -144,7 +144,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving address check details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.AddressCheck;
+            var pageId = GatewayPageIds.Address;
 
             var commonDetails =
                 await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
