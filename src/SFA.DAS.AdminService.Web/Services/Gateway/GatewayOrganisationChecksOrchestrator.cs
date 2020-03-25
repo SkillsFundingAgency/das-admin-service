@@ -227,5 +227,53 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<WebsiteViewModel> GetWebsiteViewModel(GetWebsiteRequest request)
+        {
+            _logger.LogInformation($"Retrieving Website check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.WebsiteAddress;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new WebsiteViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.Website
+            };
+
+            var ukrlpWebsite = await _applyApiClient.GetWebsiteAddressSourcedFromUkrlp(request.ApplicationId);
+            if (string.IsNullOrEmpty(ukrlpWebsite))
+            {
+                var applyWebsite = await _applyApiClient.GetWebsiteAddressManuallyEntered(request.ApplicationId);
+                if (!string.IsNullOrEmpty(applyWebsite))
+                {
+                    model.SubmittedWebsite = applyWebsite;
+                }
+            }
+            else
+            {
+                model.SubmittedWebsite = ukrlpWebsite;
+            }
+           
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
+            {
+                model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier).ContactWebsiteAddress;
+            }
+
+            return model;
+        }
     }
 }

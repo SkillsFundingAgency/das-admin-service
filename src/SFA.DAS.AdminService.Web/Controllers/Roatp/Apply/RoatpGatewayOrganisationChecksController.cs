@@ -220,5 +220,41 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
         }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
+        public async Task<IActionResult> GetWebsitePage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username));
+            return View("~/Views/Roatp/Apply/Gateway/pages/Website.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
+        public async Task<IActionResult> EvaluateWebsitePage(WebsiteViewModel viewModel)
+        {
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse?.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/Website.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateWebsitePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateWebsitePage-SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
+            }
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
     }
 }

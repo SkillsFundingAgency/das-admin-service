@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class IcoNumberTests
+    public class WebsiteAddressTests
     {
         private RoatpGatewayOrganisationChecksController _controller;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
@@ -61,25 +61,25 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         }
 
         [Test]
-        public void check_ico_number_request_is_sent()
+        public void check_website_request_is_sent()
         {
             var applicationId = Guid.NewGuid();
 
-            _orchestrator.Setup(x => x.GetIcoNumberViewModel(new GetIcoNumberRequest(applicationId, username)))
-                .ReturnsAsync(new IcoNumberViewModel())
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)))
+                .ReturnsAsync(new WebsiteViewModel())
                 .Verifiable("view model not returned");
 
-            var _result = _controller.GetIcoNumberPage(applicationId).Result;
-            _orchestrator.Verify(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()), Times.Once());
+            var _result = _controller.GetWebsitePage(applicationId).Result;
+            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Once());
         }
 
         [Test]
-        public void post_ico_number_happy_path()
+        public void post_website_address_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.IcoNumber;
+            var pageId = GatewayPageIds.WebsiteAddress;
 
-            var vm = new IcoNumberViewModel
+            var vm = new WebsiteViewModel
             {
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
@@ -88,19 +88,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateIcoNumberPage(vm).Result;
+            var result = _controller.EvaluateWebsitePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()), Times.Never());
+            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
 
         [Test]
-        public void post_ico_number_path_with_errors()
+        public void post_website_address_path_with_errors()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.IcoNumber;
+            var pageId = GatewayPageIds.WebsiteAddress;
 
-            var vm = new IcoNumberViewModel
+            var vm = new WebsiteViewModel
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
@@ -108,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<IcoNumberViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -122,17 +122,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             vm.PageId = vm.PageId;
             vm.SourcesCheckedOn = DateTime.Now;
 
-            _orchestrator.Setup(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()))
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
             _applyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateIcoNumberPage(vm).Result;
+            var result = _controller.EvaluateWebsitePage(vm).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()), Times.Never());
+            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
 
     }
