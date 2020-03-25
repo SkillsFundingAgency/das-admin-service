@@ -105,6 +105,9 @@
                     "ipSecurityRestrictions": {
                         "value": "[parameters('appServiceAllowedIPs')]"
                     },
+                    "appServiceSlotSettingAppSettings": {
+                        "value": ["WEBSITE_LOCAL_CACHE_OPTION", "WEBSITE_LOCAL_CACHE_SIZEINMB"]
+                    },
                     "appServiceAppSettings": {
                         "value": [
                             {
