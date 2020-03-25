@@ -7,7 +7,7 @@
     ViewBag.Title = "Financial health assessment overview";
     Layout = "_Layout";
 
-    var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "RejectedApplications" : "ClosedApplications";
+    var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
 }
 
 <div class="govuk-breadcrumbs">

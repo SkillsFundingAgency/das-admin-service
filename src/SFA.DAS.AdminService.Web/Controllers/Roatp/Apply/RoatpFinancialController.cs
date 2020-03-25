@@ -37,36 +37,41 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/Financial/Current")]
         public async Task<IActionResult> OpenApplications(int page = 1)
         {
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+
             var applications = await _applyApiClient.GetOpenFinancialApplications();
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
 
             return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Roatp/Financial/Clarification")]
-        public async Task<IActionResult> RejectedApplications(int page = 1)
+        public async Task<IActionResult> ClarificationApplications(int page = 1)
         {
-            // NOTE: Rejected actually means Feedback Added or it was graded as Inadequate
-            var applications = await _applyApiClient.GetFeedbackAddedFinancialApplications();
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+
+            var applications = await _applyApiClient.GetClarificationFinancialApplications();
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
 
-            return View("~/Views/Roatp/Apply/Financial/RejectedApplications.cshtml", viewmodel);
+            return View("~/Views/Roatp/Apply/Financial/ClarificationApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Roatp/Financial/Outcome")]
         public async Task<IActionResult> ClosedApplications(int page = 1)
         {
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+
             var applications = await _applyApiClient.GetClosedFinancialApplications();
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications };
+            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
 
             return View("~/Views/Roatp/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }

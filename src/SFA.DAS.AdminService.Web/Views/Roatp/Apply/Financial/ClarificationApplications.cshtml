@@ -20,13 +20,13 @@
     <nav class="app-navigation govuk-clearfix">
         <ul class="app-navigation__list">
             <li class="app-navigation">
-                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Current applications</a>
+                <a asp-action="OpenApplications" asp-controller="RoatpFinancial">Current applications (@Model.StatusCounts.ApplicationsOpen)</a>
             </li>
             <li class="app-navigation--current-page">
-                <a asp-action="RejectedApplications" asp-controller="RoatpFinancial">Clarifications</a>
+                <a asp-action="ClarificationApplications" asp-controller="RoatpFinancial">Clarifications (@Model.StatusCounts.ApplicationsWithClairification)</a>
             </li>
             <li class="app-navigation">
-                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome</a>
+                <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">Outcome (@Model.StatusCounts.ApplicationsClosed)</a>
             </li>
         </ul>
     </nav>
@@ -94,7 +94,7 @@
                 <div class="page-navigation">
                     @if (Model.Applications.HasPreviousPage)
                     {
-                        <a asp-action="RejectedApplications"
+                        <a asp-action="ClarificationApplications"
                         asp-controller="RoatpFinancial"
                         asp-route-page="@(Model.Applications.PageIndex - 1)"
                         class="govuk-link previous">
@@ -106,7 +106,7 @@
 
                     @if (Model.Applications.HasNextPage)
                     {
-                        <a asp-action="RejectedApplications"
+                        <a asp-action="ClarificationApplications"
                         asp-controller="RoatpFinancial"
                         asp-route-page="@(Model.Applications.PageIndex + 1)"
                         class="govuk-link next">

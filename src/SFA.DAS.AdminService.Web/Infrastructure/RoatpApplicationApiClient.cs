@@ -59,9 +59,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/FeedbackAdded");
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications()
         {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/FeedbackAddedApplications");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications");
         }
 
         public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
@@ -72,6 +72,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
         {
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications");
+        }
+
+        public async Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        {
+            return await Get<RoaptFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
         }
 
         public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
