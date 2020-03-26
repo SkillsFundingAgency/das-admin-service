@@ -6,7 +6,7 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-admi
 |               |               |
 | ------------- | ------------- |
 |![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png)|Admin Service Web|
-| Info | A service which allows EFSA staff members to assess an End Point Assessment Organisation (EPAO) or Approved Training Providers (ATP)  and add then to the register (RoEPAO & RoATP). |
+| Info | A service which allows EFSA staff members to assess an End Point Assessment Organisation (EPAO) or Approved Training Provider (ATP)  and add then to the register (RoEPAO & RoATP). |
 | Build | [![Build Status](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_apis/build/status/Endpoint%20Assessment%20Organisation/das-admin-service?branchName=master)](https://sfa-gov-uk.visualstudio.com/Digital%20Apprenticeship%20Service/_build/latest?definitionId=1644&branchName=master) |
 | Web  | https://localhost:44347/ |
 
@@ -31,7 +31,7 @@ See [Support Site](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pag
 - Open Visual Studio as an administrator
 
 ##### Publish Database
-The Admin service does not have a database it accesses both the EPAO and ATP databases via their internal APIs.
+The Admin service does not have a database it accesses both the RoEPAO and RoATP databases via their internal APIs.
 
 ##### Config
 
@@ -64,6 +64,6 @@ To access the assessment functionality for training providers, organisations or 
 
 #### Getting Started
 
-- Either follow the EPAO [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
-- Or follow the ATP Walkthough (coming soon)
+- Either follow the RoEPAO [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
+- Or follow the RoATP Walkthough (coming soon)
 
