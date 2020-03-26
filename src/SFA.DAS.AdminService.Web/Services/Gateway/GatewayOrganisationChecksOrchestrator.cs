@@ -270,7 +270,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
             {
-                model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier).ContactWebsiteAddress;
+                model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier)?.ContactWebsiteAddress;
             }
 
             return model;
