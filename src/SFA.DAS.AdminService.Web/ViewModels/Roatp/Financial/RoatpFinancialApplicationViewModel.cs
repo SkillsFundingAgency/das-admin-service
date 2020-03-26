@@ -113,8 +113,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         private void SetupDeclaredInApplication(RoatpApplyData applyData)
         {
-            const int fhaSequenceNo = 2;
-            var fhaSequence = applyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == fhaSequenceNo);
+            var fhaSequence = applyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence);
 
             if (fhaSequence != null)
             {
