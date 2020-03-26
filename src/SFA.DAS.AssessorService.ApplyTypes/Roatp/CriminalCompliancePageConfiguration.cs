@@ -16,7 +16,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             { GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister, "Removed from any professional or trade registers in the last 3 years check" },
             { GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation, "Involuntary withdrawal from Initial Teacher Training accreditation in the last 3 years check" },
             { GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, "Removed from any charity register check" },
-            { GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding, "Investigated due to safeguarding issues in the last 3 months check" }
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding, "Investigated due to safeguarding issues in the last 3 months check" },
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing, "Investigated due to whistleblowing issues in the last 3 months check" }
         };
     }
 }
