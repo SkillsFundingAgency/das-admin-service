@@ -146,10 +146,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Ukprn = "10001234"
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), 
-                                  It.IsAny<string>(), It.IsAny<string>()))
-                                  .Verifiable("Save answer was called");
-            
             var validationResponse = new ValidationResponse
             {
                 Errors = new List<ValidationErrorDetail>()
@@ -170,8 +166,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewModel.Should().NotBeNull();
             viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
-                                  It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
+                                 username, model.OptionPassText), Times.Never);
         }
     }
 }
