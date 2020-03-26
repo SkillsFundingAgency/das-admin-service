@@ -34,12 +34,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
-
-        [TestCase("www.ukrlpTest.co.uk", null, "www.ukrlpApiTest.co.uk")]
-        [TestCase(null, "www.applyTest.co.uk", "www.ukrlpApiTest.co.uk")]
-        [TestCase("www.ukrlpTest.co.uk", null, null)]
-        [TestCase(null, null, null)]
-        public void check_orchestrator_builds_with_website_address(string ukrlpWebsite, string applyWebsite, string ukrlpApiWebsite)
+        [TestCase("www.OrganisationWebSite.co.uk", "www.UkrlpApiWebsite.co.uk")]
+        [TestCase(null, "www.UkrlpApiWebsite.co.uk")]
+        [TestCase("www.OrganisationWebSite.co.uk", null)]
+        [TestCase(null, null)]
+        public void check_orchestrator_builds_with_website_address(string organisationWebsite, string ukrlpApiWebsite)
         {
             var applicationId = Guid.NewGuid();
 
@@ -52,9 +51,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             };
             _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
-            _applyApiClient.Setup(x => x.GetWebsiteAddressSourcedFromUkrlp(applicationId)).ReturnsAsync(ukrlpWebsite);
-            _applyApiClient.Setup(x => x.GetWebsiteAddressManuallyEntered(applicationId)).ReturnsAsync(applyWebsite);
-
+            _applyApiClient.Setup(x => x.GetOrganisationWebsiteAddress(applicationId)).ReturnsAsync(organisationWebsite);
+            
             var ukrlpDetails = new ProviderDetails
             {
                 ContactDetails = new List<ProviderContact>()
@@ -77,16 +75,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
 
             Assert.AreEqual(UKRLPLegalName, viewModel.UkrlpLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
-
-            if (string.IsNullOrEmpty(ukrlpWebsite))
-            {
-                Assert.AreEqual(applyWebsite, viewModel.SubmittedWebsite);
-            }
-            else
-            {
-                Assert.AreEqual(ukrlpWebsite, viewModel.SubmittedWebsite);
-            }
-           
+            Assert.AreEqual(organisationWebsite, viewModel.SubmittedWebsite);
             Assert.AreEqual(ukrlpApiWebsite, viewModel.UkrlpWebsite);
         }
     }

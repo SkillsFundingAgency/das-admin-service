@@ -253,20 +253,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 Heading = RoatpGatewayConstants.Headings.Website
             };
 
-            var ukrlpWebsite = await _applyApiClient.GetWebsiteAddressSourcedFromUkrlp(request.ApplicationId);
-            if (string.IsNullOrEmpty(ukrlpWebsite))
-            {
-                var applyWebsite = await _applyApiClient.GetWebsiteAddressManuallyEntered(request.ApplicationId);
-                if (!string.IsNullOrEmpty(applyWebsite))
-                {
-                    model.SubmittedWebsite = applyWebsite;
-                }
-            }
-            else
-            {
-                model.SubmittedWebsite = ukrlpWebsite;
-            }
-           
+            model.SubmittedWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
+
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
             {
