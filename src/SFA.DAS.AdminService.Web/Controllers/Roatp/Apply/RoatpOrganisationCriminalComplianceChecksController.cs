@@ -37,7 +37,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _logger = logger;
         }
 
-
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/{gatewayPageId}")]
         public async Task<IActionResult> GetCriminalCompliancePage(Guid applicationId, string gatewayPageId)
         {

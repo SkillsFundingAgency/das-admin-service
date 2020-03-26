@@ -163,6 +163,5 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewModel.Should().NotBeNull();
             viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
         }
-
     }
 }

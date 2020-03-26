@@ -28,7 +28,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 
         public static class CriminalComplianceOrganisationChecks
         {
-
             public const string CompositionCreditors = "CompositionWithCreditors";
             public const string FailedToRepayFunds = "PayBack";
             public const string ContractTermination = "ContractTerm";
