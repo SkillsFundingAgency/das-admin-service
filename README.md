@@ -21,7 +21,7 @@ See [Support Site](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pag
     - ASP.NET and web development
 - Install [SQL Server 2017 Developer Edition](https://go.microsoft.com/fwlink/?linkid=853016)
 - Install [SQL Management Studio](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
-- Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on atleast v5.3)
+- Install [Azure Storage Emulator](https://go.microsoft.com/fwlink/?linkid=717179&clcid=0x409) (Make sure you are on at least v5.3)
 - Install [Azure Storage Explorer](http://storageexplorer.com/) 
 - Administrator Access
 
@@ -62,7 +62,7 @@ To access the assessment functionality for training providers, organisations or 
 - run `dotnet run`
 - Open https://localhost:44347
 
-#### Getting Started
+### Getting Started
 
 - Either follow the RoEPAO [Walkthrough](https://skillsfundingagency.atlassian.net/wiki/spaces/NDL/pages/1533345867/EPAO+-+Walkthrough); which is a non-public Wiki.
 - Or follow the RoATP Walkthough (coming soon)
