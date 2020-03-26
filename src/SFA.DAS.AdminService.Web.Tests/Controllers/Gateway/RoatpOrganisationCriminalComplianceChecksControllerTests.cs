@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation)]
-        public void Criminal_compliance_check_returns_view(string gatewayPageId)
+        public void Criminal_compliance_check_is_displayed(string gatewayPageId)
         {
             var applicationId = Guid.NewGuid();
 
@@ -88,7 +88,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister)]
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation)]
-        public void Criminal_compliance_check_posted(string gatewayPageId)
+        public void Criminal_compliance_check_result_is_saved(string gatewayPageId)
         {
             var model = new OrganisationCriminalCompliancePageViewModel
             {
@@ -96,14 +96,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 ApplyLegalName = "legal name",
                 ComplianceCheckQuestionId = "CC-1",
                 ComplianceCheckAnswer = "No",
-                OptionPassText = null,
+                OptionPassText = "check passed",
                 Status = "Pass",
                 PageId = gatewayPageId,
                 QuestionText = "Question text",
-                Ukprn = "10001234"
+                Ukprn = "10001234",
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
+                                  username, model.OptionPassText)).Returns(Task.CompletedTask)
+                                  .Verifiable("Save answer not called");
 
             var validationResponse = new ValidationResponse 
             {
@@ -116,6 +118,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ViewApplication");
+
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
+                                  username, model.OptionPassText), Times.Once);
         }
 
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
@@ -141,7 +146,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Ukprn = "10001234"
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), 
+                                  It.IsAny<string>(), It.IsAny<string>()))
+                                  .Verifiable("Save answer was called");
             
             var validationResponse = new ValidationResponse
             {
@@ -162,6 +169,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
             viewModel.Should().NotBeNull();
             viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
+
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(),
+                                  It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
     }
 }
