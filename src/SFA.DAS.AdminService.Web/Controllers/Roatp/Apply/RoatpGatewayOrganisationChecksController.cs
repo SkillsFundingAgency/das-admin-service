@@ -226,7 +226,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username));
-            return View("~/Views/Roatp/Apply/Gateway/pages/Website.cshtml", viewModel);
+            return View($"{GatewayViewsLocation}/Website.cshtml", viewModel);
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
@@ -237,7 +237,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (validationResponse?.Errors != null && validationResponse.Errors.Any())
             {
                 viewModel.ErrorMessages = validationResponse.Errors;
-                return View("~/Views/Roatp/Apply/Gateway/pages/Website.cshtml", viewModel);
+                return View($"{GatewayViewsLocation}/Website.cshtml", viewModel);
             }
 
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
