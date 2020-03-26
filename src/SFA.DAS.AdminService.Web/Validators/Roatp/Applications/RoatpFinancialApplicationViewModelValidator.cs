@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
                 {
-                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less error message");
+                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
