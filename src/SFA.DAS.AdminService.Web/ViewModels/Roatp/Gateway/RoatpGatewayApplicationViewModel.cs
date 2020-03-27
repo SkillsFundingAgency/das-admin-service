@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public List<GatewaySequence> Sequences { get; set; }
         public bool ReadyToConfirm { get; set; }
 
-        public RoatpGatewayApplicationViewModel() { }
+
 
         public RoatpGatewayApplicationViewModel(AssessorService.ApplyTypes.Roatp.Apply application)
         {

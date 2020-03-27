@@ -1,10 +1,8 @@
 ﻿using System;
-using MediatR;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
-namespace SFA.DAS.AdminService.Web.Handlers.Gateway
+namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
-    public class GetLegalNameRequest: IRequest<LegalNamePageViewModel>
+    public class GetLegalNameRequest
     {
         public Guid ApplicationId { get; }
         public string UserName { get; }

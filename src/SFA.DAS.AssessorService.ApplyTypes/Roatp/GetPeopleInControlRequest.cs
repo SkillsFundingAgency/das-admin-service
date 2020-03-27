@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 
-namespace SFA.DAS.AdminService.Web.Handlers.Gateway
+namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
-    public class GetPeopleInControlRequest: IRequest<PeopleInControlPageViewModel>
+    public class GetPeopleInControlRequest
     {
         public Guid ApplicationId { get; }
         public string UserName { get; }

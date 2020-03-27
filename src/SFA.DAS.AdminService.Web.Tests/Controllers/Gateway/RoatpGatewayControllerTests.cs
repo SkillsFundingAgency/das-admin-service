@@ -1,49 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Mime;
-using System.Security.Claims;
-using System.Threading;
-using MediatR;
-using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Newtonsoft.Json;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Handlers.Gateway;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
     [TestFixture]
-    public class RoatpGatewayControllerTests
+    public class RoatpGatewayControllerBaseTests
     {
-
-        private RoatpGatewayController _controller;
-        private  Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private  Mock<IHttpContextAccessor> _contextAccessor;
-        private  Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
-        private  Mock<IMediator> _mediator;
-        private Mock<ILogger<RoatpGatewayController>> _logger;
-
+        private RoatpGatewayControllerBase _controller;
 
         [SetUp]
         public void Setup()
         {
-           _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-           _contextAccessor = new Mock<IHttpContextAccessor>();
-           _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-           _mediator = new Mock<IMediator>();
-           _logger = new Mock<ILogger<RoatpGatewayController>>();
-
-
-            _controller = new RoatpGatewayController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object,_mediator.Object, _logger.Object);
+            _controller = new RoatpGatewayControllerBase();
         }
 
 

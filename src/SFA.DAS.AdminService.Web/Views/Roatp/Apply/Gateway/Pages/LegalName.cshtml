@@ -43,7 +43,7 @@
             <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
         </li>
         
-        <li class="govuk-breadcrumbs__list-item" aria-current="page">@heading</li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">@caption</li>
     </ol>
 </div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -145,7 +145,7 @@
     {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateLegalNamePage" asp-controller="RoatpGateway">
+            <form class="js-disable-on-submit" asp-action="EvaluateLegalNamePage" asp-controller="RoatpGatewayOrganisationChecks">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="PageId" value="@Model.PageId" />
                 <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
