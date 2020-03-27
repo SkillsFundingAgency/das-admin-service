@@ -34,6 +34,7 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
@@ -180,6 +181,12 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<IRoatpOrganisationSummaryApiClient>(x => new RoatpOrganisationSummaryApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationSummaryApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IValidationService, ValidationService>();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -13,12 +14,14 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     public class GatewayPeopleInControlOrchestrator: IGatewayPeopleInControlOrchestrator
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
+        private readonly IRoatpOrganisationSummaryApiClient _organisationSummaryApiClient;
         private readonly ILogger<GatewayPeopleInControlOrchestrator> _logger;
 
-        public GatewayPeopleInControlOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayPeopleInControlOrchestrator> logger)
+        public GatewayPeopleInControlOrchestrator(IRoatpApplicationApiClient applyApiClient, IRoatpOrganisationSummaryApiClient organisationSummaryApiClient, ILogger<GatewayPeopleInControlOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
+            _organisationSummaryApiClient = organisationSummaryApiClient;
         }
 
         public async Task<PeopleInControlPageViewModel> GetPeopleInControlViewModel(GetPeopleInControlRequest request)
@@ -55,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             // "SoleTradeOrPartnership" can be ('Sole Trader' or 'Partnership') so put that in
             // 'Statutory Institute'
 
-            model.TypeOfOrganisation = "Company";
+            model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
             //  Company
             //  Company and charity
             //  Charity
