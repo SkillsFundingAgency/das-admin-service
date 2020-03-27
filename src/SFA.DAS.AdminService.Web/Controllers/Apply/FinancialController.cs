@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
@@ -27,13 +29,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ILogger<FinancialController> _logger;
 
-        public FinancialController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public FinancialController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, ILogger<FinancialController> logger)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _qnaApiClient = qnaApiClient;
+            _logger = logger;
         }
 
         [HttpGet("/Financial/Open")]
@@ -155,16 +159,29 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         [HttpPost("/Financial")]
         public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
         {
+            _logger.LogInformation($"FinancialController::Grade id => vm => {JsonConvert.SerializeObject(vm).ToString()}");
+
             var application = await _applyApiClient.GetApplication(vm.Id);
+
+            _logger.LogInformation($"FinancialController::Grade application => vm => {JsonConvert.SerializeObject(application).ToString()}");
+
             if (application is null)
             {
+                _logger.LogInformation($"FinancialController::Grade application is null");
                 return RedirectToAction(nameof(OpenApplications));
             }
 
             if (ModelState.IsValid)
             {
+                _logger.LogInformation($"FinancialController::Grade => model state is valid");
+
                 var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
+
+                _logger.LogInformation($"FinancialController::Grade financialSequence => {JsonConvert.SerializeObject(financialSequence).ToString()}");
+
                 var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+
+                _logger.LogInformation($"FinancialController::Grade financialSection => {JsonConvert.SerializeObject(financialSection).ToString()}");
 
                 var grade = new FinancialGrade
                 {
@@ -177,12 +194,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     InadequateMoreInformation = vm.Grade.InadequateMoreInformation
                 };
 
+                _logger.LogInformation($"FinancialController::Grade grade => {JsonConvert.SerializeObject(grade).ToString()}");
+
                 await _applyApiClient.ReturnFinancialReview(vm.Id, grade);
+
+                _logger.LogInformation($"FinancialController::Grade ReturnFinancialReview vm.Id => {vm.Id}, grade => {JsonConvert.SerializeObject(grade).ToString()}");
+
                 return RedirectToAction(nameof(Evaluated), new { vm.Id });
             }
             else
             {
                 var newvm = await CreateFinancialApplicationViewModel(application, vm.Grade);
+
+                _logger.LogInformation($"FinancialController::Grade ReturnFinancialReview newvm => {JsonConvert.SerializeObject(newvm).ToString()}");
+
                 return View("~/Views/Apply/Financial/Application.cshtml", newvm);
             }
         }
@@ -193,6 +218,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(Id);
             if (application?.financialGrade is null)
             {
+                _logger.LogInformation($"FinancialController::Evaluated redirecting to open application as no financial grade was saved");
+
                 return RedirectToAction(nameof(OpenApplications));
             }
 
