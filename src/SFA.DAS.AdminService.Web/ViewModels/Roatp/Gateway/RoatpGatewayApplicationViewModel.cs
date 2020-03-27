@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 
 
 
-        public RoatpGatewayApplicationViewModel(AssessorService.ApplyTypes.Roatp.Apply application)
+        public RoatpGatewayApplicationViewModel(AssessorService.ApplyTypes.Roatp.Apply.Apply application)
         {
             Id = application.Id;
             ApplicationId = application.ApplicationId;

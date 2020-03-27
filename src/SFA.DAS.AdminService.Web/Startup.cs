@@ -34,6 +34,7 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Web.Validators.Roatp
+﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+
+namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
     using System;
     using System.Collections.Generic;

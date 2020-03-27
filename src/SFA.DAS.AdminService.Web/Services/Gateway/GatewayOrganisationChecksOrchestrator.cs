@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway

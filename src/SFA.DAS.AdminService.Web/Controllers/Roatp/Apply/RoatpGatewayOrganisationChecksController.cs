@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
