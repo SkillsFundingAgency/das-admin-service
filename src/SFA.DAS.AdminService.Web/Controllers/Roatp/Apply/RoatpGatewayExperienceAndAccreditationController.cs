@@ -34,7 +34,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var userName = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetSubcontractorDeclarationViewModel(new GetSubcontractorDeclarationRequest(applicationId, userName));
-            return View(viewModel);
+            return View($"{GatewayViewsLocation}/SubcontractorDeclaration.cshtml", viewModel);
+        }
+
+        public async Task<FileStreamResult> SubcontractorDeclarationContractFile(Guid applicationId)
+        {
+            return await _orchestrator.GetSubcontractorDeclarationContractFile(new GetSubcontractorDeclarationContractFileRequest(applicationId));
         }
     }
 }

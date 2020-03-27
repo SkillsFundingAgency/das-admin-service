@@ -8,6 +8,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [Authorize]
     public class RoatpGatewayControllerBase : Controller
     {
+        protected const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
+
         public string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
         {
             if (viewModel?.Status == null) return string.Empty;

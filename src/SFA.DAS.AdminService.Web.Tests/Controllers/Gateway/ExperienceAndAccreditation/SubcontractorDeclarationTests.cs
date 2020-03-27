@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -68,6 +70,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 
             var result = _controller.SubcontractorDeclaration(applicationId).Result;
             Assert.AreSame(expectedViewModel, result.Model);
+        }
+
+        [Test]
+        public void subcontractor_contract_file_is_returned()
+        {
+            var applicationId = Guid.NewGuid();
+            var expectedContractFile = new FileStreamResult(new MemoryStream(), "application/pdf");
+
+            _orchestrator.Setup(x => x.GetSubcontractorDeclarationContractFile(It.Is<GetSubcontractorDeclarationContractFileRequest>(y => y.ApplicationId == applicationId))).ReturnsAsync(expectedContractFile);
+
+            var result = _controller.SubcontractorDeclarationContractFile(applicationId).Result;
+            Assert.AreSame(expectedContractFile, result);
         }
     }
 }

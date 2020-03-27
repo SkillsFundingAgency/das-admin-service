@@ -24,7 +24,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly ILogger<RoatpGatewayOrganisationChecksController> _logger;
         private readonly IGatewayOrganisationChecksOrchestrator _orchestrator;
 
-        private const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
         public RoatpGatewayOrganisationChecksController(IRoatpApplicationApiClient applyApiClient, 
                                                         IHttpContextAccessor contextAccessor, 
                                                         IRoatpGatewayPageViewModelValidator gatewayValidator, 
@@ -49,7 +48,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/LegalName")]
         public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
         {
-     
             var validationResponse = await _gatewayValidator.Validate(viewModel);
 
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
