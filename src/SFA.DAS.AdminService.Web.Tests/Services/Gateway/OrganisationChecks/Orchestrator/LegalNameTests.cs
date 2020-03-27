@@ -14,7 +14,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
     [TestFixture]
-    public class LegalNameTests
+    public class SubcontractorDeclarationTests
     {
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;

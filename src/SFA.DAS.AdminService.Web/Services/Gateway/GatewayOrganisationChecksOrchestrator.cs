@@ -28,23 +28,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var pageId = GatewayPageIds.LegalName;
 
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new LegalNamePageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                ApplyLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new LegalNamePageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
@@ -71,22 +56,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var pageId = GatewayPageIds.TradingName;
 
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new TradingNamePageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new TradingNamePageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
@@ -106,22 +77,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var pageId = GatewayPageIds.OrganisationStatus;
 
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new OrganisationStatusViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new OrganisationStatusViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();

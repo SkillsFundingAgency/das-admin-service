@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
     public class RoatpApplicationApiClient : RoatpApiClientBase<RoatpApplicationApiClient>, IRoatpApplicationApiClient
     {
-        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpTokenService tokenService) : base(baseUri, logger, tokenService)
+        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService) : base(baseUri, logger, tokenService)
         {
         }
 
