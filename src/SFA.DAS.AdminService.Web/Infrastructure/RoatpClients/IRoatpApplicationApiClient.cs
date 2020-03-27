@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -50,7 +51,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
-         Task TriggerGatewayDataGathering(Guid applicationId, string userName);
+         Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
+        Task<string> GetIcoNumber(Guid applicationId);
+        Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);
@@ -67,6 +70,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<string> GetTradingName(Guid applicationId);
         Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId);
         Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId);
+        Task<string> GetOrganisationWebsiteAddress(Guid applicationId);
         Task<string> GetOfficeForStudents(Guid applicationId);
         Task<string> GetInitialTeacherTraining(Guid applicationId);
     }

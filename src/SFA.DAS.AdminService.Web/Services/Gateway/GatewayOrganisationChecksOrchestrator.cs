@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-            model.UkrlpLegalName = ukrlpDetails.ProviderName;
+            model.UkrlpLegalName = ukrlpDetails?.ProviderName;
 
             var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
             if (companiesHouseDetails != null)
@@ -61,10 +61,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-                if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
-                {
-                    model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
-                }
+            if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
+            {
+                model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
+            }
 
             model.ApplyTradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
        
@@ -93,6 +93,130 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             if (charityCommissionDetails != null)
             {
                 model.CharityCommissionStatus = charityCommissionDetails?.Status.CapitaliseFirstLetter();
+            }
+
+            return model;
+        }
+
+        public async Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request)
+        {
+            _logger.LogInformation($"Retrieving address check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.Address;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new AddressCheckViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.AddressCheck
+                //GatewayReviewStatus = commonDetails.GatewayReviewStatus
+            };
+
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.SubmittedApplicationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
+
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            if (ukrlpDetails != null)
+            {
+                var ukrlpAddressLine1 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address1;
+                var ukrlpAddressLine2 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address2;
+                var ukrlpAddressLine3 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address3;
+                var ukrlpAddressLine4 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address4;
+                var ukrlpTown = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Town;
+                var ukrlpPostCode = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.PostCode;
+
+                var ukrlpAarray = new[] { ukrlpAddressLine1, ukrlpAddressLine2, ukrlpAddressLine3, ukrlpAddressLine4, ukrlpTown, ukrlpPostCode };
+                var ukrlpAddress = string.Join(", ", ukrlpAarray.Where(s => !string.IsNullOrEmpty(s)));
+                model.UkrlpAddress = ukrlpAddress;
+            }
+
+            return model;
+        }
+
+        public async Task<IcoNumberViewModel> GetIcoNumberViewModel(GetIcoNumberRequest request)
+        {
+            _logger.LogInformation($"Retrieving ICO Number check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.IcoNumber;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new IcoNumberViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.IcoNumber
+            };
+
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.OrganisationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
+
+            model.IcoNumber = await _applyApiClient.GetIcoNumber(request.ApplicationId);
+
+            return model;
+        }
+
+        public async Task<WebsiteViewModel> GetWebsiteViewModel(GetWebsiteRequest request)
+        {
+            _logger.LogInformation($"Retrieving Website check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.WebsiteAddress;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new WebsiteViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.Website
+            };
+
+            model.SubmittedWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
+
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
+            {
+                model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier)?.ContactWebsiteAddress;
             }
 
             return model;

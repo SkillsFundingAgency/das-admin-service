@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var comments = SetupGatewayPageOptionTexts(viewModel);
 
-            _logger.LogInformation($"RoatpGatewayController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateLegalNamePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
             try
             {
                 await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
@@ -142,6 +142,114 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             catch (Exception ex)
             {
                 _logger.LogError(ex, "RoatpGatewayController-EvaluateTradingNamePage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
+            }
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/Address")]
+        public async Task<IActionResult> GetGatewayAddressPage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetAddressViewModel(new GetAddressRequest(applicationId, username));
+            return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/Address")]
+        public async Task<IActionResult> EvaluateAddressPage(AddressCheckViewModel viewModel)
+        {
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse?.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/AddressCheck.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateAddressPage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateAddressPage - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
+            }
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/IcoNumber")]
+        public async Task<IActionResult> GetIcoNumberPage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetIcoNumberViewModel(new GetIcoNumberRequest(applicationId, username));
+            return View("~/Views/Roatp/Apply/Gateway/pages/IcoNumber.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/IcoNumber")]
+        public async Task<IActionResult> EvaluateIcoNumberPage(IcoNumberViewModel viewModel)
+        {
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse?.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Gateway/pages/IcoNumber.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateIcoNumber-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateIcoNumber-SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                throw;
+            }
+
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
+        public async Task<IActionResult> GetWebsitePage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username));
+            return View($"{GatewayViewsLocation}/Website.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
+        public async Task<IActionResult> EvaluateWebsitePage(WebsiteViewModel viewModel)
+        {
+            var validationResponse = await _gatewayValidator.Validate(viewModel);
+
+            if (validationResponse?.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModel.ErrorMessages = validationResponse.Errors;
+                return View($"{GatewayViewsLocation}/Website.cshtml", viewModel);
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(viewModel);
+
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateWebsitePage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+            try
+            {
+                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateWebsitePage-SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
                 throw;
             }
 

@@ -13,7 +13,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string Status { get; set; }
 
         public string Ukprn { get; set; }
+        public string UkrlpLegalName { get; set; }
 
+        // It will not be needed any more. It was for the breadcrumb, but the logic for it changed
         public string GatewayReviewStatus { get; set; }
 
         // these two will disappear once views use them locally - retained to keep Greg's UX stuff
@@ -30,5 +32,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string ApplyLegalName { get; set; }
         public DateTime? SourcesCheckedOn { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
+
+        public string Heading { get; set; }
+        public string Caption { get; set; }
     }
 }

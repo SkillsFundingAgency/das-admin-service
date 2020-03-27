@@ -9,6 +9,8 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using System.Net.Http.Formatting;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -154,6 +156,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
         }
 
+        public async Task<ContactAddress> GetOrganisationAddress(Guid applicationId)
+        {
+            return await Get<ContactAddress>($"/Gateway/{applicationId}/OrganisationAddress");
+        }
+
+        public async Task<string> GetIcoNumber(Guid applicationId)
+        {
+            return await GetString($"/Gateway/{applicationId}/IcoNumber ");
+        }
+
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
             await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
@@ -215,6 +227,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId)
         {
             return await Get($"/Gateway/{applicationId}/WebsiteAddressManuallyEntered");
+        }
+
+        public async Task<string> GetOrganisationWebsiteAddress(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/OrganisationWebsiteAddress");
         }
 
         public async Task<string> GetOfficeForStudents(Guid applicationId)
