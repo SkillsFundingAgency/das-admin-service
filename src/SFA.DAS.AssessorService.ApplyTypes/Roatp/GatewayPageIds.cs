@@ -42,5 +42,18 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public const string Insolvency = "Insolvency";
         }           
 
+        public static class CriminalComplianceWhosInControlChecks
+        {
+            public const string UnspentCriminalConviction = "UnspentCriminalConviction";
+            public const string FailedToRepayFunds = "FailedtoPayBack";
+            public const string FraudIrregularities = "FraudIrregularities";
+            public const string OngoingInvestigation = "OngoingInvestigation";
+            public const string ContractTerminated = "ContractTerminated";
+            public const string WithdrawnFromContract = "WithdrawnFromContract";
+            public const string BreachedPayments = "BreachedPayments";
+            public const string RegisterOfRemovedTrustees = "RegisterOfRemovedTrustees";
+            public const string Bankrupt = "Bankrupt";
+        }
+
     }
 }
