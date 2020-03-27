@@ -36,9 +36,9 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             return model;
         }
 
-        public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(GetSubcontractorDeclarationContractFileRequest subcontractorDeclarationRequest)
+        public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(GetSubcontractorDeclarationContractFileRequest request)
         {
-            throw new NotImplementedException();
+            return await _experienceAndAccreditationApiClient.GetSubcontractorDeclarationContractFile(request.ApplicationId);
         }
     }
 }

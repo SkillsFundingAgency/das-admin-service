@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -31,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
         }
 
         [Test]
-        public void check_legal_name_orchestrator_builds_with_company_and_charity_details()
+        public void check_subcontractor_declaration_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
 
@@ -70,5 +72,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
             Assert.AreEqual(subcontractorDeclaration.ContractFileName, viewModel.ContractFileName);
         }
 
+        [Test]
+        public void check_subcontractor_contract_file_is_returned()
+        {
+            var applicationId = Guid.NewGuid();
+            var fileStreamResult = new FileStreamResult(new MemoryStream(), "application/pdf");
+            _experienceAndAccreditationApiClient.Setup(x => x.GetSubcontractorDeclarationContractFile(applicationId)).ReturnsAsync(fileStreamResult);
+
+            var request = new GetSubcontractorDeclarationContractFileRequest(applicationId);
+            var response = _orchestrator.GetSubcontractorDeclarationContractFile(request);
+
+            var result = response.Result;
+
+            Assert.AreSame(fileStreamResult, result);
+        }
     }
 }
