@@ -21,25 +21,26 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string Roatp = "Roatp";
         public const string Repao = "Repao";
 
-
-
         public const string OfficeForStudents = "OfficeForStudents";
         public const string InitialTeacherTraining = "InitialTeacherTraining";
         public const string Ofsted = "Ofsted";
         public const string SubcontractorDeclaration = "SubcontractorDeclaration";
 
+        public static class CriminalComplianceOrganisationChecks
+        {
+            public const string CompositionCreditors = "CompositionWithCreditors";
+            public const string FailedToRepayFunds = "PayBack";
+            public const string ContractTermination = "ContractTerm";
+            public const string ContractWithdrawnEarly = "Withdrawn";
+            public const string Roto = "Roto";
+            public const string FundingRemoved = "FundingRemoved";
+            public const string RemovedProfessionalRegister = "RemovedProfessionalRegister";
+            public const string IttAccreditation = "IttAccreditation";
+            public const string RemovedCharityRegister = "RemovedCharityRegister";
+            public const string Safeguarding = "Safeguarding";
+            public const string Whistleblowing = "Whistleblowing";
+            public const string Insolvency = "Insolvency";
+        }
 
-        public const string CompositionWithCreditors = "CompositionWithCreditors";
-        public const string PayBack = "PayBack";
-        public const string ContractTerm = "ContractTerm";
-        public const string Withdrawn = "Withdrawn";
-        public const string Roto = "Roto";
-        public const string FundingRemoved = "FundingRemoved";
-        public const string RemovedProfessionalRegister = "RemovedProfessionalRegister";
-        public const string IttAccreditation = "IttAccreditation";
-        public const string RemovedCharityRegister = "RemovedCharityRegister";
-        public const string Safeguarding = "Safeguarding";
-        public const string Whistleblowing = "Whistleblowing";
-        public const string Insolvency = "Insolvency";
     }
 }
