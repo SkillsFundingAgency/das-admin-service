@@ -123,29 +123,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/OrganisationRisk")]
         public async Task<IActionResult> EvaluateOrganisationRiskPage(OrganisationRiskViewModel viewModel)
         {
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-
-            if (validationResponse?.Errors != null && validationResponse.Errors.Any())
-            {
-                viewModel.ErrorMessages = validationResponse.Errors;
-                return View($"{GatewayViewsLocation}/OrganisationRisk.cshtml", viewModel);
-            }
-
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var comments = SetupGatewayPageOptionTexts(viewModel);
-
-            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-EvaluateOrganisationRiskPage-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
-            try
-            {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "RoatpGatewayOrganisationChecksController-EvaluateOrganisationRiskPage-SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-                throw;
-            }
-
-            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OrganisationRisk.cshtml");
         }
     }
 }
