@@ -77,7 +77,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
 
             var viewModel = await _orchestrator.GetRoatpViewModel(request);
 
-            Assert.IsNotNull(viewModel.ApplyProviderRoute);
             Assert.IsFalse(viewModel.RoatpUkprnOnRegister);
             Assert.IsNull(viewModel.RoatpStatus);
             Assert.IsNull(viewModel.RoatpStatusDate);
@@ -100,11 +99,24 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
 
             var viewModel = await _orchestrator.GetRoatpViewModel(request);
 
-            Assert.IsNotNull(viewModel.ApplyProviderRoute);
             Assert.IsTrue(viewModel.RoatpUkprnOnRegister);
             Assert.IsNotNull(viewModel.RoatpStatus);
             Assert.IsNotNull(viewModel.RoatpStatusDate);
             Assert.IsNotNull(viewModel.RoatpProviderRoute);
+        }
+
+        [TestCase("Main")]
+        [TestCase("Supporting")]
+        [TestCase("Employer")]
+        public async Task check_orchestrator_builds_with_ProviderRoute_details(string providerRoute)
+        {
+            _applyApiClient.Setup(x => x.GetProviderRoute(_applicationId)).ReturnsAsync(providerRoute);
+
+            var request = new GetRoatpRequest(_applicationId, UserName);
+
+            var viewModel = await _orchestrator.GetRoatpViewModel(request);
+
+            Assert.AreEqual(providerRoute, viewModel.ApplyProviderRoute);
         }
     }
 }
