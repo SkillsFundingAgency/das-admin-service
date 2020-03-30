@@ -9,5 +9,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     {
         Task<SubcontractorDeclarationViewModel> GetSubcontractorDeclarationViewModel(GetSubcontractorDeclarationRequest subcontractorDeclarationRequest);
         Task<FileStreamResult> GetSubcontractorDeclarationContractFile(GetSubcontractorDeclarationContractFileRequest subcontractorDeclarationRequest);
+        Task<OfficeForStudentsViewModel> GetOfficeForStudentsViewModel(GetOfficeForStudentsRequest request);
     }
 }

@@ -40,5 +40,17 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             return await _experienceAndAccreditationApiClient.GetSubcontractorDeclarationContractFile(request.ApplicationId);
         }
+
+        public async Task<OfficeForStudentsViewModel> GetOfficeForStudentsViewModel(GetOfficeForStudentsRequest request)
+        {
+            _logger.LogInformation($"Retrieving office for students details for application {request.ApplicationId}");
+
+            var model = new OfficeForStudentsViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OfficeForStudents, request.UserName);
+
+            model.IsOrganisationFundedByOfficeForStudents = await _experienceAndAccreditationApiClient.GetOfficeForStudents(request.ApplicationId) == "Yes";
+
+            return model;
+        }
     }
 }
