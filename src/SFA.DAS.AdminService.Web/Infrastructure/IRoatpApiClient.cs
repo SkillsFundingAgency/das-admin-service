@@ -34,5 +34,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<bool> UpdateOrganisationCharityNumber(UpdateOrganisationCharityNumberRequest request);
         Task<bool> UpdateApplicationDeterminedDate(UpdateOrganisationApplicationDeterminedDateRequest request);        
         Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn);
+        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn);
     }
 }
