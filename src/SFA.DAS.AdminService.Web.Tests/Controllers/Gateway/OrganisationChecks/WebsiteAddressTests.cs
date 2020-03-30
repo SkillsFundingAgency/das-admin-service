@@ -1,64 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Moq;
-using Newtonsoft.Json;
+﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class WebsiteAddressTests
+    public class WebsiteAddressTests : RoatpGatewayControllerTestBase<RoatpGatewayOrganisationChecksController>
     {
         private RoatpGatewayOrganisationChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
-
-        private string username = "john smith";
-        private string givenName = "john";
-        private string surname = "smith";
 
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-             {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-             }));
-
-            var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
@@ -66,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         {
             var applicationId = Guid.NewGuid();
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)))
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)))
                 .ReturnsAsync(new WebsiteViewModel())
                 .Verifiable("view model not returned");
 
@@ -87,11 +51,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
+            ApplyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
             var result = _controller.EvaluateWebsitePage(vm).Result;
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
 
@@ -109,7 +73,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -127,12 +91,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
+            ApplyApiClient.Setup(x =>
+                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
             var result = _controller.EvaluateWebsitePage(vm).Result;
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
 

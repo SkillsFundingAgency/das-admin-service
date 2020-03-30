@@ -20,39 +20,18 @@ using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
     [TestFixture]
-    public class RoatpOrganisationCriminalComplianceChecksControllerTests
+    public class RoatpOrganisationCriminalComplianceChecksControllerTests : RoatpGatewayControllerTestBase<RoatpOrganisationCriminalComplianceChecksController>
     {
         private RoatpOrganisationCriminalComplianceChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayCriminalComplianceChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpOrganisationCriminalComplianceChecksController>> _logger;
 
-        private string username => "Gateway User";
-        private string givenName => "Gateway";
-        private string surname => "User";
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayCriminalComplianceChecksOrchestrator>();
-            _logger = new Mock<ILogger<RoatpOrganisationCriminalComplianceChecksController>>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-            }));
-
-            var context = new DefaultHttpContext { User = user };
-            
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpOrganisationCriminalComplianceChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpOrganisationCriminalComplianceChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
@@ -96,13 +75,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Ukprn = "10001234"
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+            ApplyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
 
             var validationResponse = new ValidationResponse
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
+            GatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
             var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
 
@@ -130,7 +109,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Ukprn = "10001234"
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
+            ApplyApiClient.Setup(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()));
 
             var validationResponse = new ValidationResponse
             {
@@ -143,7 +122,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                     }
                 }
             };
-            _gatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
+            GatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
             var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
 
