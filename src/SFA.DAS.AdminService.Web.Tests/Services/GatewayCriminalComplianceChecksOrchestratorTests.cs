@@ -6,6 +6,8 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {

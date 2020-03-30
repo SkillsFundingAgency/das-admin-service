@@ -3,6 +3,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {

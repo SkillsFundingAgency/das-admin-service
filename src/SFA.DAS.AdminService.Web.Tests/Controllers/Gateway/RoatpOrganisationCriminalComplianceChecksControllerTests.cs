@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
