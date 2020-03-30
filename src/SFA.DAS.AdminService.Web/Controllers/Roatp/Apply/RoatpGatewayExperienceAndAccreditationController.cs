@@ -42,5 +42,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/SubcontractorDeclaration.cshtml");
         }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/OfficeForStudents")]
+        public async Task<ViewResult> OfficeForStudents(Guid applicationId)
+        {
+            var userName = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetOfficeForStudentsViewModel(new GetOfficeForStudentsRequest(applicationId, userName));
+            return View($"{GatewayViewsLocation}/OfficeForStudents.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/OfficeForStudents")]
+        public async Task<IActionResult> EvaluateOfficeForStudentsPage(OfficeForStudentsViewModel viewModel)
+        {
+            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OfficeForStudents.cshtml");
+        }
     }
 }
