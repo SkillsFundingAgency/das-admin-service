@@ -237,6 +237,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
         }
 
+        public async Task<string> GetProviderRoute(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/ProviderRoute");
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

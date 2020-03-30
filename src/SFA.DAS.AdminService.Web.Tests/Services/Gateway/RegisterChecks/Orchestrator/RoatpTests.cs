@@ -47,6 +47,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
             };
             _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
+            _applyApiClient.Setup(x => x.GetProviderRoute(It.IsAny<Guid>())).ReturnsAsync($"{roatpProviderTypeId}");
+
             var providerType = new ProviderType
             {
                 Id = roatpProviderTypeId,
@@ -75,6 +77,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
 
             var viewModel = await _orchestrator.GetRoatpViewModel(request);
 
+            Assert.IsNotNull(viewModel.ApplyProviderRoute);
             Assert.IsFalse(viewModel.RoatpUkprnOnRegister);
             Assert.IsNull(viewModel.RoatpStatus);
             Assert.IsNull(viewModel.RoatpStatusDate);
@@ -97,6 +100,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
 
             var viewModel = await _orchestrator.GetRoatpViewModel(request);
 
+            Assert.IsNotNull(viewModel.ApplyProviderRoute);
             Assert.IsTrue(viewModel.RoatpUkprnOnRegister);
             Assert.IsNotNull(viewModel.RoatpStatus);
             Assert.IsNotNull(viewModel.RoatpStatusDate);

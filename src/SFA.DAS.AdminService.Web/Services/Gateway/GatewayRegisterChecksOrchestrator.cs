@@ -44,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
-            model.ApplyProviderRoute = "TEST - THIS AN END POINT"; // TODO: SORT OUT!!!
+            model.ApplyProviderRoute = await _applyApiClient.GetProviderRoute(request.ApplicationId);
 
             var roatpProviderDetails = await _roatpApiClient.GetOrganisationRegisterStatus(commonDetails.Ukprn);
 
