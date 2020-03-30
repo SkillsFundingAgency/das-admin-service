@@ -22,8 +22,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
 
-        private static string ukprn = "10026709";
-        private static string UKRLPLegalName = "EVA WOMENS AID LTD.";
+        private static string ukprn = "12345678";
+        private static string UKRLPLegalName = "John LTD.";
         private static string UserName = "GatewayUser";
 
         [SetUp]
@@ -34,8 +34,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
-        [TestCase("Company and charity", "Eva Training and Consultancy")]
-        [TestCase(null, "Eva Training and Consultancy")]
+        [TestCase("Company and charity", "John Training and Consultancy")]
+        [TestCase(null, "John Training and Consultancy")]
         [TestCase("Company and charity", null)]
         [TestCase(null, null)]
         public void Check_orchestrator_builds_with_organisation_risk(string organisationType, string tradingName)

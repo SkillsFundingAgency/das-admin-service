@@ -84,23 +84,26 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         }
 
         [Test]
-        public void post_organisation_risk_happy_path()
+        public async Task post_organisation_risk_happy_path()
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.OrganisationRisk;
 
             var vm = new OrganisationRiskViewModel
             {
+                ApplicationId = applicationId,
+                PageId = pageId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = "Some pass text"
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
+            _gatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            var result = _controller.EvaluateOrganisationRiskPage(vm).Result;
+            await _controller.EvaluateOrganisationRiskPage(vm);
 
-            _orchestrator.Verify(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)), Times.Never());
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText));
         }
 
         [Test]
@@ -111,6 +114,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             var vm = new OrganisationRiskViewModel
             {
+                ApplicationId = applicationId,
+                PageId = pageId,
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
@@ -127,9 +132,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            vm.ApplicationId = applicationId;
-            vm.PageId = vm.PageId;
-            vm.SourcesCheckedOn = DateTime.Now;
 
             _orchestrator.Setup(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)))
                 .ReturnsAsync(vm)
