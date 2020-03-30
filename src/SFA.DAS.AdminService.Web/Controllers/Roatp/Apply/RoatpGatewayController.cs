@@ -142,10 +142,5 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
         }
-
-        public async Task<IActionResult> SubmitGatewayPageAnswer(RoatpGatewayPageViewModel viewModel, string callingAction, string callingController)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
