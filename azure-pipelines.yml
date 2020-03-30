@@ -10,7 +10,9 @@ workspace:
     clean: all
 
 variables:
-  buildConfiguration: 'release'
+  - group: 'Prod Management Resources'
+  - name: buildConfiguration
+    value: 'release'
 
 pool:
   name: 'DAS - Continuous Integration'
