@@ -38,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         [TestCase(null, "John Training and Consultancy")]
         [TestCase("Company and charity", null)]
         [TestCase(null, null)]
-        public void Check_orchestrator_builds_with_organisation_risk(string organisationType, string tradingName)
+        public void Check_organisation_risk_details_are_returned(string organisationType, string tradingName)
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.OrganisationRisk;
@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             var commonDetails = new GatewayCommonDetails
             {
                 ApplicationSubmittedOn = DateTime.Now.AddDays(-3),
-                CheckedOn = DateTime.Now,
+                CheckedOn = DateTime.Now, 
                 LegalName = UKRLPLegalName,
                 Ukprn = ukprn
             };
