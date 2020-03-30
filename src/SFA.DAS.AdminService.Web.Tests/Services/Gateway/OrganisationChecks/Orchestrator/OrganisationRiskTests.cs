@@ -38,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         [TestCase(null, "Eva Training and Consultancy")]
         [TestCase("Company and charity", null)]
         [TestCase(null, null)]
-        public void Check_orchestrator_builds_with_organisation_risk(string organisatioType, string tradingName)
+        public void Check_orchestrator_builds_with_organisation_risk(string organisationType, string tradingName)
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.OrganisationRisk;
@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             };
             _applyApiClient.Setup(x => x.GetPageCommonDetails(applicationId, pageId, UserName)).ReturnsAsync(commonDetails);
 
-            _applyApiClient.Setup(x => x.GetTypeOfOrganisation(applicationId)).ReturnsAsync(organisatioType);
+            _applyApiClient.Setup(x => x.GetTypeOfOrganisation(applicationId)).ReturnsAsync(organisationType);
             _applyApiClient.Setup(x => x.GetTradingName(applicationId)).ReturnsAsync(tradingName);
             
             var request = new GetOrganisationRiskRequest(applicationId, UserName);
@@ -63,7 +63,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
 
             Assert.AreEqual(UKRLPLegalName, viewModel.UkrlpLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
-            Assert.AreEqual(organisatioType, viewModel.OrganisationType);
+            Assert.AreEqual(organisationType, viewModel.OrganisationType);
             Assert.AreEqual(tradingName, viewModel.TradingName);
         }
     }
