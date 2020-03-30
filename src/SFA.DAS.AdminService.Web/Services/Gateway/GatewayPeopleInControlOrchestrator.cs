@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.Validators;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
@@ -48,15 +49,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
-            //MFCMFC Stubbing while I work it out
-
-            // looks like need to get a combination of tags
-            // UKRLPPrimaryVerificationSource - 'Companies House', 'Charity Commission', 'DfE (Schools Unique Reference Number)', 
-            // UKRLPVerificationCompany "TRUE" if a company
-            // "UKRLPVerificationCharity": "TRUE" if a charity  
-            // if both true 'Company and charity'
-            // "SoleTradeOrPartnership" can be ('Sole Trader' or 'Partnership') so put that in
-            // 'Statutory Institute'
 
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
             //  Company
@@ -76,17 +68,29 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             // CompanyDirectors
             // Only show if company
+            // tag CompaniesHouseDirectors
 
             // PeopleWithSignificantControl
             // Only show if company and has PSC's
+            // tag CompaniesHousePSCs
 
             // Trustees
             // Only show if charity
-
+            // tag CharityTrustees
 
 
             // whosInControl
             //Only show is sole trader, partnership, statutory institute or any other manual entry
+            // partnership, tag is AddPartners
+            // sole trader  ?? nothing?? there is a tag for AddSoleTradeDOB  1,1980
+            // when sole trader (SoleTradeOrPartnership": "Sole trader") use UKRLPLegalName, AddsoleTradDob....
+            // when partnership ("SoleTradeOrPartnership": "Partnership") and individual ("PartnershipType": "Individual") use AddPartners
+            // when partnership and organisation - name of org
+ 
+            // gov statute tag was AddPeopleInControl
+            
+            // urn school was AddPeopleInControl
+
 
             var whosInControl = new TabularData
             {
@@ -98,6 +102,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
             };
 
+
+            // Note as per comment by Cherky on 15:55 26/03/20, make all names in tables uppercase
 
             model.WhosInControl = whosInControl;
 
