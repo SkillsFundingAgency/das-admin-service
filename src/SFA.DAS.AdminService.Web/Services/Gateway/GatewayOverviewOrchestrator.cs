@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
@@ -34,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
 
             // Setting Application Data => TODO: To be stored in session.
-            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply
+            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply.Apply
             {
                 ApplyData = new RoatpApplyData
                 {
@@ -120,18 +122,18 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "Organisation’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CompositionWithCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PayBack, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.ContractTerm,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Withdrawn,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly, LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
                     }
                 },
 

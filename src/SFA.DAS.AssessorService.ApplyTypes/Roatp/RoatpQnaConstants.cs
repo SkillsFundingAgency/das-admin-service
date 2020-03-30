@@ -9,6 +9,7 @@
         {
             public static int Preamble = 0;
             public static int YourOrganisation = 1;
+            public static int CriminalComplianceChecks = 3;
         }
 
         public static class RoatpSections
@@ -32,7 +33,7 @@
 
             public static class YourOrganisation
             {
-                public static int OrganisationDetails = 4;
+                public static int DescribeYourOrganisation = 4;
                 public static class PageIds
                 {
                     public static string OrganisationTypeMainSupporting = "140";

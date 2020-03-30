@@ -1,17 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {

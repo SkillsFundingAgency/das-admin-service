@@ -1,17 +1,16 @@
-﻿using SFA.DAS.AdminService.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
-
-
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
     public interface IRoatpApplicationApiClient
     {

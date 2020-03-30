@@ -29,6 +29,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string OptionInProgressText { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
+        public string ApplyLegalName { get; set; }
+        public DateTime? SourcesCheckedOn { get; set; }
+        public DateTime? ApplicationSubmittedOn { get; set; }
+
         public string Heading { get; set; }
         public string Caption { get; set; }
     }

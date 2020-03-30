@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
