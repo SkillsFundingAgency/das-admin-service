@@ -216,6 +216,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<StandardServiceClient>>()));
 
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
+            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }

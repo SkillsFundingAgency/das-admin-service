@@ -44,7 +44,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 
         public static class CriminalComplianceWhosInControlChecks
         {
-            public const string UnspentCriminalConviction = "UnspentCriminalConviction";
+            public const string UnspentCriminalConvictions = "UnspentCriminalConviction";
             public const string FailedToRepayFunds = "FailedtoPayBack";
             public const string FraudIrregularities = "FraudIrregularities";
             public const string OngoingInvestigation = "OngoingInvestigation";

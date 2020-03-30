@@ -18,7 +18,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             { GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, "Removed from any charity register check" },
             { GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding, "Investigated due to safeguarding issues in the last 3 months check" },
             { GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing, "Investigated due to whistleblowing issues in the last 3 months check" },
-            { GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, "Subject to insolvency or winding up proceedings in the last 3 years check" }
+            { GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, "Subject to insolvency or winding up proceedings in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceWhosInControlChecks.UnspentCriminalConvictions, "Unspent criminal convictions check" }
         };
     }
 }
