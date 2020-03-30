@@ -71,6 +71,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> GetOfficeForStudents(Guid applicationId);
         Task<string> GetInitialTeacherTraining(Guid applicationId);
 
-        Task<string> GetProviderRoute(Guid applicationId);
+        Task<string> GetProviderRouteName(Guid applicationId);
     }
 }

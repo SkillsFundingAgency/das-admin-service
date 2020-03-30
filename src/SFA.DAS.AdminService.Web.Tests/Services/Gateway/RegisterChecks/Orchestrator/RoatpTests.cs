@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
             };
             _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
-            _applyApiClient.Setup(x => x.GetProviderRoute(It.IsAny<Guid>())).ReturnsAsync($"{roatpProviderTypeId}");
+            _applyApiClient.Setup(x => x.GetProviderRouteName(It.IsAny<Guid>())).ReturnsAsync($"{roatpProviderTypeId}");
 
             var providerType = new ProviderType
             {
@@ -108,15 +108,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
         [TestCase("Main")]
         [TestCase("Supporting")]
         [TestCase("Employer")]
-        public async Task check_orchestrator_builds_with_ProviderRoute_details(string providerRoute)
+        public async Task check_orchestrator_builds_with_ProviderRouteName_details(string providerRouteName)
         {
-            _applyApiClient.Setup(x => x.GetProviderRoute(_applicationId)).ReturnsAsync(providerRoute);
+            _applyApiClient.Setup(x => x.GetProviderRouteName(_applicationId)).ReturnsAsync(providerRouteName);
 
             var request = new GetRoatpRequest(_applicationId, UserName);
 
             var viewModel = await _orchestrator.GetRoatpViewModel(request);
 
-            Assert.AreEqual(providerRoute, viewModel.ApplyProviderRoute);
+            Assert.AreEqual(providerRouteName, viewModel.ApplyProviderRoute);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
-            model.ApplyProviderRoute = await _applyApiClient.GetProviderRoute(request.ApplicationId);
+            model.ApplyProviderRoute = await _applyApiClient.GetProviderRouteName(request.ApplicationId);
 
             var roatpProviderDetails = await _roatpApiClient.GetOrganisationRegisterStatus(commonDetails.Ukprn);
 
