@@ -55,7 +55,7 @@
                             <th class="govuk-table__header" scope="col">Provider route</th>
                             <th class="govuk-table__header" scope="col">Declared in application</th>
                             <th class="govuk-table__header" scope="col">Submitted date</th>
-                            <th class="govuk-table__header" scope="col">Application status</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Application status</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -77,7 +77,7 @@
                             <td class="govuk-table__cell das-no-wrap" data-label="Submitted date">
                                 @item.SubmittedDate.ToSfaShortDateString()
                             </td>
-                            <td class="govuk-table__cell das-no-wrap" data-label="Application status">
+                            <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap" data-label="Application status">
                                 @{
                                     switch (item.FinancialReviewStatus)
                                     {
