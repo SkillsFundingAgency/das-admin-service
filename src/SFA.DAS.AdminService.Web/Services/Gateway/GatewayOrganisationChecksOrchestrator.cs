@@ -263,5 +263,36 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<OrganisationRiskViewModel> GetOrganisationRiskViewModel(GetOrganisationRiskRequest request)
+        {
+            _logger.LogInformation($"Retrieving Organisation high risk check details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.OrganisationRisk;
+
+            var commonDetails =
+                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new OrganisationRiskViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                UkrlpLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
+                Heading = RoatpGatewayConstants.Headings.OrganisationRisk
+            };
+            
+            model.OrganisationType = await _applyApiClient.GetTypeOfOrganisation(request.ApplicationId);
+            model.TradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
+
+            return model;
+        }
     }
 }

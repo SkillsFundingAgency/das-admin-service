@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class WebsiteAddressTests
+    public class OrganisationRiskTests
     {
         private RoatpGatewayOrganisationChecksController _controller;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
@@ -31,6 +32,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         private string username = "john smith";
         private string givenName = "john";
         private string surname = "smith";
+        private string comment = "test comment";
+        private string viewname = "~/Views/Roatp/Apply/Gateway/pages/OrganisationRisk.cshtml";
 
         [SetUp]
         public void Setup()
@@ -50,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
              }));
 
             var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationRiskViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>()
@@ -61,46 +64,52 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         }
 
         [Test]
-        public void check_website_request_is_sent()
+        public void check_organisation_risk_request_is_sent()
         {
             var applicationId = Guid.NewGuid();
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)))
-                .ReturnsAsync(new WebsiteViewModel())
-                .Verifiable("view model not returned");
-
-            var _result = _controller.GetWebsitePage(applicationId).Result;
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Once());
-        }
-
-        [Test]
-        public void post_website_address_happy_path()
-        {
-            var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.WebsiteAddress;
-
-            var vm = new WebsiteViewModel
+            var vm = new OrganisationRiskViewModel
             {
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
+            _orchestrator.Setup(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)))
+                .ReturnsAsync(vm);
 
-            var result = _controller.EvaluateWebsitePage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
+            var result = _controller.GetOrganisationRiskPage(applicationId).Result;
+            var viewResult = result as ViewResult;
+            Assert.AreEqual(viewname, viewResult.ViewName);
         }
 
         [Test]
-        public void post_website_address_path_with_errors()
+        public void post_organisation_risk_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.WebsiteAddress;
+            var pageId = GatewayPageIds.OrganisationRisk;
 
-            var vm = new WebsiteViewModel
+            var vm = new OrganisationRiskViewModel
+            {
+                Status = SectionReviewStatus.Pass,
+                SourcesCheckedOn = DateTime.Now,
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
+
+            var result = _controller.EvaluateOrganisationRiskPage(vm).Result;
+
+            _orchestrator.Verify(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)), Times.Never());
+        }
+
+        [Test]
+        public void post_organisation_risk_path_with_errors()
+        {
+            var applicationId = Guid.NewGuid();
+            var pageId = GatewayPageIds.OrganisationRisk;
+
+            var vm = new OrganisationRiskViewModel
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
@@ -108,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationRiskViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -122,18 +131,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             vm.PageId = vm.PageId;
             vm.SourcesCheckedOn = DateTime.Now;
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()))
+            _orchestrator.Setup(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
             _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
+                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
 
-            var result = _controller.EvaluateWebsitePage(vm).Result;
+            var result = _controller.EvaluateOrganisationRiskPage(vm).Result;
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
+            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment), Times.Never);
+            _orchestrator.Verify(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)), Times.Never());
         }
-
     }
 }

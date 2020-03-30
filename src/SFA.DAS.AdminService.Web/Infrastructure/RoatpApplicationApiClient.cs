@@ -173,7 +173,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<string> GetIcoNumber(Guid applicationId)
         {
-            return await GetString($"/Gateway/{applicationId}/IcoNumber ");
+            return await GetString($"/Gateway/{applicationId}/IcoNumber");
+        }
+
+        public async Task<string> GetTypeOfOrganisation(Guid applicationId)
+        {
+            return await GetString($"/organisation/TypeOfOrganisation/{applicationId}");
         }
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)

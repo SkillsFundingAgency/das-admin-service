@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public static string AddressCheck = "Address check";
             public static string IcoNumber = "Information Commissioner's Office (ICO) registration number check";
             public static string Website = "Website address check";
-
+            public static string OrganisationRisk = "Organisation high risk check";
         }
     }
 }
