@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task<SubcontractorDeclaration> GetSubcontractorDeclaration(Guid applicationId)
         {
-            return await Get<SubcontractorDeclaration>("/Accreditation/{applicationId}/SubcontractDeclaration");
+            return await Get<SubcontractorDeclaration>($"/Accreditation/{applicationId}/SubcontractDeclaration");
         }
 
         public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(Guid applicationId)

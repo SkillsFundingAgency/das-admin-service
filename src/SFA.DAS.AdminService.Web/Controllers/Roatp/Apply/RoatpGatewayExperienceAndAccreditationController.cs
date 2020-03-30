@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             _orchestrator = orchestrator;
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/SubcontractorDeclaration")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/SubcontractorDeclaration")]
         public async Task<ViewResult> SubcontractorDeclaration(Guid applicationId)
         {
             var userName = _contextAccessor.HttpContext.User.UserDisplayName();
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View($"{GatewayViewsLocation}/SubcontractorDeclaration.cshtml", viewModel);
         }
 
-        [HttpPost("/Roatp/Gateway/{applicationId}/Page/SubcontractorDeclarationFile")]
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/SubcontractorDeclarationFile")]
         public async Task<FileStreamResult> SubcontractorDeclarationContractFile(Guid applicationId)
         {
             return await _orchestrator.GetSubcontractorDeclarationContractFile(new GetSubcontractorDeclarationContractFileRequest(applicationId));

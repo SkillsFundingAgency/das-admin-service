@@ -183,6 +183,11 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
+            services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();

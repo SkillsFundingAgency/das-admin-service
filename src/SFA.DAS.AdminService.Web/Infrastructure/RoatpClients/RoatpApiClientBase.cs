@@ -47,10 +47,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-            {
-                return response;
-            }
+            var response = await _client.GetAsync(new Uri(uri, UriKind.Relative));
+            return response;
         }
         
         protected async Task Post<T>(string uri, T model)
