@@ -18,12 +18,14 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         //MFCMFC PARKING THIS TEST COVERAGE AS NEW STORY WILL BE CHANGING THE ORCHESTRATOR FLOW TO CHECK IF DETAILS ALREADY SET
         // WE WILL DO CHANGES AND COVERAGE WITHIN THAT STORY
         private readonly IRoatpApplicationApiClient _applyApiClient;
+        private readonly IRoatpExperienceAndAccreditationApiClient _accreditationClient;
 
         private readonly ILogger<GatewayOverviewOrchestrator> _logger;
 
-        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger)
+        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, IRoatpExperienceAndAccreditationApiClient accreditationClient, ILogger<GatewayOverviewOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
+            _accreditationClient = accreditationClient;
             _logger = logger;
         }
 
@@ -197,7 +199,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
                 if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
                 {
-                    var officeForStudent = await _applyApiClient.GetOfficeForStudents(request.ApplicationId);
+                    var officeForStudent = await _accreditationClient.GetOfficeForStudents(request.ApplicationId);
                     if (officeForStudent != null && officeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) officeForStudentStatus = string.Empty;
                 }
                 if (officeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
@@ -217,7 +219,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
                 if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
                 {
-                    var initialTeacherTraining = await _applyApiClient.GetInitialTeacherTraining(request.ApplicationId);
+                    var initialTeacherTraining = await _accreditationClient.GetInitialTeacherTraining(request.ApplicationId);
                     if (initialTeacherTraining != null && initialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) initialTeacherTrainingStatus = string.Empty;
                 }
 

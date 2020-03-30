@@ -9,5 +9,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
     {
         Task<SubcontractorDeclaration> GetSubcontractorDeclaration(Guid applicationId);
         Task<FileStreamResult> GetSubcontractorDeclarationContractFile(Guid applicationId);
+        Task<string> GetOfficeForStudents(Guid applicationId);
+        Task<string> GetInitialTeacherTraining(Guid applicationId);
     }
 }

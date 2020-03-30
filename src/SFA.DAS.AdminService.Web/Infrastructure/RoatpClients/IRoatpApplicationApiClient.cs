@@ -71,7 +71,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId);
         Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId);
         Task<string> GetOrganisationWebsiteAddress(Guid applicationId);
-        Task<string> GetOfficeForStudents(Guid applicationId);
-        Task<string> GetInitialTeacherTraining(Guid applicationId);
     }
 }

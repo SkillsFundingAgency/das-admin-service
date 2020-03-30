@@ -233,15 +233,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             return await Get($"/Gateway/{applicationId}/OrganisationWebsiteAddress");
         }
-
-        public async Task<string> GetOfficeForStudents(Guid applicationId)
-        {
-            return await Get($"/Accreditation/{applicationId}/OfficeForStudents");
-        }
-
-        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
-        {
-            return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
-        }
     }
 }
