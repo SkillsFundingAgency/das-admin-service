@@ -33,7 +33,7 @@
 
             public static class YourOrganisation
             {
-                public static int OrganisationDetails = 4;
+                public static int DescribeYourOrganisation = 4;
                 public static class PageIds
                 {
                     public static string OrganisationTypeMainSupporting = "140";
