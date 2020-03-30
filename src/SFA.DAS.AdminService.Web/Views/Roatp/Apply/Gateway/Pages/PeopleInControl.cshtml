@@ -4,7 +4,7 @@
 
 @{
     var heading = "People in control check ";  //MFCMFC
-    var caption = "People in control checks"; //MFCMFC
+    var caption = "People in control checks"; //MFCMFC 
 
     ViewBag.Title = $"Gateway - {heading}";
     Layout = "_Layout";
@@ -91,7 +91,7 @@
                 
 
                     <p class="govuk-body govuk-!-margin-bottom-0">
-                        Type Of organisation: @Model.TypeOfOrganisation
+                        Type of organisation: @Model.TypeOfOrganisation
                     </p>
                 
                 
@@ -117,40 +117,63 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <table class="govuk-table govuk-!-margin-bottom-9">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">Source</th>
-                        <th class="govuk-table__header" scope="col">Legal name</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
 
+        @foreach (var table in Model.Tables)
+        {
+            @if (table?.DataRows != null && table.DataRows.Any())
+            {
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <caption class="govuk-table__caption">@table.Caption</caption>
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            @foreach (var headings in table.HeadingTitles)
+                            {
+                                <th class="govuk-table__header" scope="col">@headings</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var dataRow in table.DataRows)
+                        {
+                            <tr class="govuk-table__row">
+
+                                @foreach (var column in dataRow.Columns)
+                                {
+                                    <td class="govuk-table__cell">@column</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @*@if (peopleInControl?.DataRows != null && peopleInControl.DataRows.Any())
+            {
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Submitted application data</td>
-                        <td class="govuk-table__cell">@Model.ApplyLegalName</td>
+                        <th class="govuk-table__header" scope="col">Who's in control</th>
+
                     </tr>
-                @*<tr class="govuk-table__row">
-                    <td class="govuk-table__cell">UKRLP data</td>
-                    <td class="govuk-table__cell">@Model.UkrlpLegalName</td>
-                </tr>
-                @if (!string.IsNullOrEmpty(Model.CompaniesHouseLegalName))
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Companies House data</td>
-                        <td class="govuk-table__cell">@Model.CompaniesHouseLegalName</td>
-                    </tr>
-                }
-                @if (!string.IsNullOrEmpty(Model.CharityCommissionLegalName))
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Charity Commission data</td>
-                        <td class="govuk-table__cell">@Model.CharityCommissionLegalName</td>
-                    </tr>
-                }*@
-                </tbody>
-            </table>
-                
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @foreach (var dataRow in peopleInControl.DataRows)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                @dataRow.Columns[0]?.ToUpper()
+
+                                @if (!string.IsNullOrEmpty(dataRow.Columns[1].ToString()))
+                                {
+                                    @Html.Raw("(" + @dataRow.Columns[1] + ")")
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }*@
+        }
         </div>
     </div>
 

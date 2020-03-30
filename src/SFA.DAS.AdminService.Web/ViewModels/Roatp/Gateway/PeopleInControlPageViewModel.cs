@@ -13,9 +13,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string ApplyLegalName { get; set; }
         public string TypeOfOrganisation { get; set; }
 
-        public TabularData CompanyDirectors { get; set; }
-        public TabularData PeopleWithSignificantControl { get; set; }
-        public TabularData Trustees { get; set; }
-        public TabularData WhosInControl { get; set; }
+        //public TabularData CompanyDirectors { get; set; }
+        //public TabularData PeopleWithSignificantControl { get; set; }
+        //public TabularData Trustees { get; set; }
+        //public TabularData WhosInControl { get; set; }
+
+        public List<TabularData> Tables { get; set; }
+
     }
 }
