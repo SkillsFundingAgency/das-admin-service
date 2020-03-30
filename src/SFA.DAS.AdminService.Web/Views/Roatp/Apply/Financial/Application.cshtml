@@ -60,8 +60,8 @@
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Application question</th>
-                                <th class="govuk-table__header" scope="col">Applicant's answer</th>
+                                <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Application question</th>
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">Applicant's answer</th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -71,7 +71,7 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
-                                        <td class="govuk-table__cell">
+                                        <td class="govuk-table__cell govuk-table__cell--numeric">
                                             @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
                                             {
                                                 <span>@Html.Raw(question.Input.InputPrefix)</span>
