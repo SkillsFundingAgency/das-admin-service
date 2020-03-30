@@ -51,5 +51,20 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<InitialTeacherTrainingViewModel> GetInitialTeacherTrainingViewModel(GetInitialTeacherTrainingRequest request)
+        {
+            _logger.LogInformation($"Retrieving initial teacher training details for application {request.ApplicationId}");
+
+            var model = new InitialTeacherTrainingViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName);
+
+            var initialTeacherTraining = await _experienceAndAccreditationApiClient.GetInitialTeacherTraining(request.ApplicationId);
+
+            model.DoesOrganisationOfferInitialTeacherTraining = initialTeacherTraining.DoesOrganisationOfferInitialTeacherTraining;
+            model.IsPostGradOnlyApprenticeship = initialTeacherTraining.IsPostGradOnlyApprenticeship;
+
+            return model;
+        }
     }
 }
