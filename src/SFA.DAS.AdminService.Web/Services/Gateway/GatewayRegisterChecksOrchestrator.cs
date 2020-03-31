@@ -60,6 +60,32 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             return model;
         }
 
+        public async Task<RoepaoPageViewModel> GetRoepaoViewModel(GetRoepaoRequest request)
+        {
+            _logger.LogInformation($"Retrieving RoEPAO details for application {request.ApplicationId}");
+
+            var pageId = GatewayPageIds.Roepao;
+
+            var commonDetails = await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+
+            var model = new RoepaoPageViewModel
+            {
+                ApplicationId = request.ApplicationId,
+                PageId = pageId,
+                ApplyLegalName = commonDetails.LegalName,
+                Ukprn = commonDetails.Ukprn,
+                Status = commonDetails.Status,
+                OptionPassText = commonDetails.OptionPassText,
+                OptionFailText = commonDetails.OptionFailText,
+                OptionInProgressText = commonDetails.OptionInProgressText,
+                SourcesCheckedOn = commonDetails.CheckedOn,
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
+                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+            };
+
+            return model;
+        }
+
         private async Task<string> GetProviderRoute(int? providerTypeId)
         {
             string route = null;
