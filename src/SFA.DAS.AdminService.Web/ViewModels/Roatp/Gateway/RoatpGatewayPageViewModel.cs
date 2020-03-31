@@ -35,5 +35,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 
         public string Heading { get; set; }
         public string Caption { get; set; }
+        public string NoSelectionErrorMessage { get; set; }
     }
 }

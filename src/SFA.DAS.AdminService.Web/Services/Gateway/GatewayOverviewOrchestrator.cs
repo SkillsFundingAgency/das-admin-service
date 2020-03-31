@@ -157,7 +157,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             };
             #endregion
 
-            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && savedStatuses.Count.Equals(0))
             { 
                 // TradingName
                 var tradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
@@ -260,7 +261,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
             else
             {
-                var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
                 foreach (var currentStatus in savedStatuses)
                 {
                     // Inject the statuses into viewmodel

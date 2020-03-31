@@ -121,7 +121,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
                 Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
                 Heading = RoatpGatewayConstants.Headings.AddressCheck
-                //GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
             var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
