@@ -35,17 +35,17 @@
                 <tbody class="govuk-table__body">
                     @if (!string.IsNullOrWhiteSpace(Model.UkrlpLegalName))
                     {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Legal name</td>
-                        <td class="govuk-table__cell">@Model.UkrlpLegalName</td>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Legal name</td>
+                            <td class="govuk-table__cell">@Model.UkrlpLegalName</td>
+                        </tr>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.TradingName))
                     {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Trading name</td>
-                        <td class="govuk-table__cell">@Model.TradingName</td>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Trading name</td>
+                            <td class="govuk-table__cell">@Model.TradingName</td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -53,21 +53,24 @@
     </div>
     @if (Model.ApplicationId != Guid.Empty)
     {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateOrganisationRiskPage" asp-controller="RoatpGatewayOrganisationChecks">
-                <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                <input type="hidden" name="PageId" value="@Model.PageId" />
-                <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
-                <input type="hidden" name="UkrlpLegalName" value="@Model.UkrlpLegalName" />
-                <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
-                <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                <input type="hidden" name="OrganisationType" value="@Model.OrganisationType" />
-                <input type="hidden" name="TradingName" value="@Model.TradingName" />
-                @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
-                <button class="govuk-button" type="submit">Save and continue</button>
-            </form>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateOrganisationRiskPage" asp-controller="RoatpGatewayOrganisationChecks">
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.Caption)
+                    @Html.HiddenFor(x => x.Heading)
+                    @Html.HiddenFor(x => x.NoSelectionErrorMessage)
+                    @Html.HiddenFor(x => x.Ukprn)
+                    @Html.HiddenFor(x => x.UkrlpLegalName)
+                    @Html.HiddenFor(x => x.ApplicationSubmittedOn)
+                    @Html.HiddenFor(x => x.SourcesCheckedOn)
+                    @Html.HiddenFor(x => x.OrganisationType)
+                    @Html.HiddenFor(x => x.TradingName)
+                    @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
         </div>
-    </div>
     }
 </main>

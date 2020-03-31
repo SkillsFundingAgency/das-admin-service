@@ -35,8 +35,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 Status = commonDetails.Status,
                 OptionPassText = commonDetails.OptionPassText,
                 OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+                OptionInProgressText = commonDetails.OptionInProgressText
             };
 
             _logger.LogInformation($"Retrieving criminal compliance details for application {request.ApplicationId} page {request.PageId}");

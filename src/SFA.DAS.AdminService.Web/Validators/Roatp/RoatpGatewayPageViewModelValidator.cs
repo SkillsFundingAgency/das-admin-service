@@ -11,9 +11,6 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
     public  class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
     {
-
-        //private  const string SelectAnOutcome = "Select the outcome of this check";
-
         private const string FailDetailsRequired = "Enter the reasons this check was failed";
         private const string TooManyWords = "Your comments must be 150 words or less";
 

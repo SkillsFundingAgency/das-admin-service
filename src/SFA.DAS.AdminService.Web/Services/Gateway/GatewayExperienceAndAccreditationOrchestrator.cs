@@ -27,6 +27,9 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             var model = new SubcontractorDeclarationViewModel();
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName);
+            model.Caption = RoatpGatewayConstants.Captions.ExperienceAndAccreditation;
+            model.Heading = RoatpGatewayConstants.Headings.SubcontractorDeclaration;
+            model.NoSelectionErrorMessage = NoSelectionErrorMessages.SubcontractorDeclaration;
 
             var subcontractorDeclaration = await _experienceAndAccreditationApiClient.GetSubcontractorDeclaration(request.ApplicationId);
 

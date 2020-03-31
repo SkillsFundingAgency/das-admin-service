@@ -21,7 +21,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             viewModel.OptionInProgressText = commonDetails.OptionInProgressText;
             viewModel.SourcesCheckedOn = commonDetails.CheckedOn;
             viewModel.ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn;
-            viewModel.GatewayReviewStatus = commonDetails.GatewayReviewStatus;
         }
     }
 }
