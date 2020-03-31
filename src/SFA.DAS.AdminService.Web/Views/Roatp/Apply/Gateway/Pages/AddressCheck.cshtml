@@ -6,12 +6,12 @@
     Layout = "_Layout";
 }
 
-@{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+@{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+            @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
             <span class="govuk-caption-xl">
                 @Model.Caption
             </span>
@@ -21,7 +21,7 @@
                     UKPRN: @Model.Ukprn
                 </p>
                 <p class="govuk-body govuk-!-margin-bottom-0">
-                    Legal name: @Model.UkrlpLegalName
+                    Legal name: @Model.ApplyLegalName
                 </p>
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
@@ -59,15 +59,18 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateAddressPage" asp-controller="RoatpGatewayOrganisationChecks">
-                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" name="PageId" value="@Model.PageId" />
-                    <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
-                    <input type="hidden" name="UkrlpLegalName" value="@Model.UkrlpLegalName" />
-                    <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
-                    <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                    <input type="hidden" name="SubmittedApplicationAddress" value="@Model.SubmittedApplicationAddress" />
-                    <input type="hidden" name="UkrlpAddress" value="@Model.UkrlpAddress" />
-                    @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.Caption)
+                    @Html.HiddenFor(x => x.Heading)
+                    @Html.HiddenFor(x => x.NoSelectionErrorMessage)
+                    @Html.HiddenFor(x => x.Ukprn)
+                    @Html.HiddenFor(x => x.ApplyLegalName)
+                    @Html.HiddenFor(x => x.ApplicationSubmittedOn)
+                    @Html.HiddenFor(x => x.SourcesCheckedOn)
+                    @Html.HiddenFor(x => x.SubmittedApplicationAddress)
+                    @Html.HiddenFor(x => x.UkrlpAddress)
+                    @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
                     <button class="govuk-button" type="submit">Save and continue</button>
                 </form>
             </div>

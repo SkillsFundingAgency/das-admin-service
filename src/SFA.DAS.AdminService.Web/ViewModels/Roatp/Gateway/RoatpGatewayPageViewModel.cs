@@ -13,7 +13,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string Status { get; set; }
 
         public string Ukprn { get; set; }
-        public string UkrlpLegalName { get; set; }
         public string ApplyLegalName { get; set; }
 
         public string OptionPassText { get; set; }

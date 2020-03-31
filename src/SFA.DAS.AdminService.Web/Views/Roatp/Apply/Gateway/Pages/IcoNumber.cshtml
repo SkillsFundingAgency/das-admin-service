@@ -21,7 +21,7 @@
                     UKPRN: @Model.Ukprn
                 </p>
                 <p class="govuk-body govuk-!-margin-bottom-0">
-                    Legal name: @Model.UkrlpLegalName
+                    Legal name: @Model.ApplyLegalName
                 </p>
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     Address: @Model.OrganisationAddress
@@ -60,7 +60,7 @@
                     @Html.HiddenFor(x => x.Heading)
                     @Html.HiddenFor(x => x.NoSelectionErrorMessage)
                     @Html.HiddenFor(x => x.Ukprn)
-                    @Html.HiddenFor(x => x.UkrlpLegalName)
+                    @Html.HiddenFor(x => x.ApplyLegalName)
                     @Html.HiddenFor(x => x.ApplicationSubmittedOn)
                     @Html.HiddenFor(x => x.SourcesCheckedOn)
                     @Html.HiddenFor(x => x.OrganisationAddress)

@@ -68,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
 
             var viewModel = response.Result;
 
-            Assert.AreEqual(UKRLPLegalName, viewModel.UkrlpLegalName);
+            Assert.AreEqual(UKRLPLegalName, viewModel.ApplyLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
             Assert.AreEqual(organisationWebsite, viewModel.SubmittedWebsite);
             Assert.AreEqual(ukrlpApiWebsite, viewModel.UkrlpWebsite);

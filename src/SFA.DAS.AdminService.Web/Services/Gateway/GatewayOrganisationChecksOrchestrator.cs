@@ -26,10 +26,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving legal name details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.LegalName;
-
             var model = new LegalNamePageViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.LegalName, request.UserName);
+            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+            model.Heading = RoatpGatewayConstants.Headings.LegalName;
+            model.NoSelectionErrorMessage = NoSelectionErrorMessages.LegalName;
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
@@ -54,13 +55,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving trading name details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.TradingName;
-
             var model = new TradingNamePageViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.TradingName, request.UserName);
+            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+            model.Heading = RoatpGatewayConstants.Headings.TradingName;
+            model.NoSelectionErrorMessage = NoSelectionErrorMessages.TradingName;
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
-
             if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
             {
                 model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
@@ -75,10 +76,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving organisation status details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.OrganisationStatus;
-
             var model = new OrganisationStatusViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OrganisationStatus, request.UserName);
+            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+            model.Heading = RoatpGatewayConstants.Headings.OrganisationStatusCheck;
+            model.NoSelectionErrorMessage = NoSelectionErrorMessages.OrganisationStatusCheck;
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();
@@ -102,26 +104,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving address check details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.Address;
-
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new AddressCheckViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                UkrlpLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                Caption = RoatpGatewayConstants.Captions.OrganisationChecks,
-                Heading = RoatpGatewayConstants.Headings.AddressCheck
-            };
+            var model = new AddressCheckViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Address, request.UserName);
+            model.Caption = RoatpGatewayConstants.Captions.OrganisationChecks;
+            model.Heading = RoatpGatewayConstants.Headings.AddressCheck;
+            model.NoSelectionErrorMessage = NoSelectionErrorMessages.AddressCheck;
 
             var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
             if (organisationAddress != null)
