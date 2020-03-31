@@ -20,7 +20,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             { GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing, "Investigated due to whistleblowing issues in the last 3 months check" },
             { GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, "Subject to insolvency or winding up proceedings in the last 3 years check" },
             { GatewayPageIds.CriminalComplianceWhosInControlChecks.UnspentCriminalConvictions, "Unspent criminal convictions check" },
-            { GatewayPageIds.CriminalComplianceWhosInControlChecks.FailedToRepayFunds, "Failed to pay back funds in the last 3 years check" }
+            { GatewayPageIds.CriminalComplianceWhosInControlChecks.FailedToRepayFunds, "Failed to pay back funds in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceWhosInControlChecks.FraudIrregularities, "Investigated for fraud or irregularities in the last 3 years check" }
         };
     }
 }
