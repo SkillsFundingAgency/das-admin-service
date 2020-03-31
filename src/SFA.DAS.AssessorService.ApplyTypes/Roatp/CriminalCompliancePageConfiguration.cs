@@ -25,7 +25,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             { GatewayPageIds.CriminalComplianceWhosInControlChecks.OngoingInvestigation, "Ongoing investigations for fraud or irregularities check" },
             { GatewayPageIds.CriminalComplianceWhosInControlChecks.ContractTerminated, "Contract terminated by a public body in the last 3 years check" },
             { GatewayPageIds.CriminalComplianceWhosInControlChecks.WithdrawnFromContract, "Withdrawn from a contract with a public body in the last 3 years check" },
-            { GatewayPageIds.CriminalComplianceWhosInControlChecks.BreachedPayments, "Breached tax payments or social security contributions in the last 3 years check" }
+            { GatewayPageIds.CriminalComplianceWhosInControlChecks.BreachedPayments, "Breached tax payments or social security contributions in the last 3 years check" },
+            { GatewayPageIds.CriminalComplianceWhosInControlChecks.RegisterOfRemovedTrustees, "Register of Removed Trustees check" }
         };
     }
 }
