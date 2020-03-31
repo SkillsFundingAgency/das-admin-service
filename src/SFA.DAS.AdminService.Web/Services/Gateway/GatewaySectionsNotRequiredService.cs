@@ -34,8 +34,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await SetupNotRequireLinkForOfsted(applicationId, userName, viewModel, providerRoute);
 
             await SetupNotRequiredLinkForSubcontractorDeclaration(applicationId, userName, viewModel, providerRoute);
-
-            await SetupNotRequiredLinksForPeopleInControlCriminalComplianceChecks(applicationId, userName, viewModel);
         } 
 
         private async Task SetupNotRequiredLinkForTradingName(Guid applicationId, string userName, RoatpGatewayApplicationViewModel viewModel)
@@ -140,27 +138,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 await _applyApiClient.SubmitGatewayPageAnswer(applicationId, GatewayPageIds.SubcontractorDeclaration, SectionReviewStatus.NotRequired, userName, null);
             }
         }
-
-        private async Task SetupNotRequiredLinksForPeopleInControlCriminalComplianceChecks(Guid applicationId, string userName, RoatpGatewayApplicationViewModel viewModel)
-        {
-            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(applicationId);
-
-            if (ukrlpDetails.VerificationDetails.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority) != null)
-            {
-                var criminalComplianceWhosInControlSection = viewModel.Sequences.FirstOrDefault(x => x.SequenceNumber
-                                                                                                == GatewaySequences.PeopleInControlCriminalComplianceChecks);
-                if (criminalComplianceWhosInControlSection != null)
-                {
-                    foreach (var page in criminalComplianceWhosInControlSection.Sections)
-                    {
-                        page.Status = SectionReviewStatus.NotRequired;
-                        _logger.LogInformation($"GetApplicationOverviewHandler-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{page.PageId}' - Status '{SectionReviewStatus.NotRequired}' - UserName '{userName}' - PageData = 'null'");
-                        await _applyApiClient.SubmitGatewayPageAnswer(applicationId, page.PageId, SectionReviewStatus.NotRequired, userName, null);
-                    }
-                }
-            }
-        }
-
 
         private GatewaySection GetSectionByPageId(RoatpGatewayApplicationViewModel viewModel, string gatewayPageId)
         {
