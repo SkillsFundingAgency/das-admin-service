@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 model.RoatpStatusDate = roatpProviderDetails.StatusDate;
                 model.RoatpProviderRoute = await GetProviderRoute(roatpProviderDetails.ProviderTypeId);
                 model.RoatpStatus = await GetProviderStatus(roatpProviderDetails.StatusId, roatpProviderDetails.ProviderTypeId);
-                model.RoatpRemoveReason = await GetRemovedReason(roatpProviderDetails.RemovedReasonId);
+                model.RoatpRemovedReason = await GetRemovedReason(roatpProviderDetails.RemovedReasonId);
             }
 
             return model;
@@ -80,9 +80,9 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             if(providerStatusId.HasValue)
             {
-                var roatpStatues = await _roatpApiClient.GetOrganisationStatuses(providerTypeId);
+                var roatpStatuses = await _roatpApiClient.GetOrganisationStatuses(providerTypeId);
 
-                status = roatpStatues?.FirstOrDefault(s => s.Id == providerStatusId.Value)?.Status;
+                status = roatpStatuses?.FirstOrDefault(s => s.Id == providerStatusId.Value)?.Status;
             }
 
             return status;

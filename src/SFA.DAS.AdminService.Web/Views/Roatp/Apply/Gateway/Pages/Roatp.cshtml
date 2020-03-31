@@ -129,7 +129,7 @@
                             <td class="govuk-table__cell">Not applicable</td>
                         </tr>
                     }
-                    else if (!string.IsNullOrEmpty(Model.RoatpRemoveReason))
+                    else if (!string.IsNullOrEmpty(Model.RoatpRemovedReason))
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">RoATP data</td>
@@ -137,7 +137,7 @@
                                 @Model.RoatpStatus<br />
                                 @Model.RoatpProviderRoute<br />
                                 @Model.RoatpStatusDate.ToSfaShortDateString()<br />
-                                @Model.RoatpRemoveReason
+                                @Model.RoatpRemovedReason
                             </td>
                         </tr>
                     }
