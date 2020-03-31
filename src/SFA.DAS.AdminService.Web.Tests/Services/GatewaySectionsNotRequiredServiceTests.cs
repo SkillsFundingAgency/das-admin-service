@@ -347,29 +347,5 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             peopleInControlCriminalComplianceSequence.Sections.Any(x => x.Status == SectionReviewStatus.NotRequired).Should().BeFalse();
         }
 
-        [Test]
-        public void Not_required_set_for_people_in_control_criminal_compliance_if_sole_trader_or_partnership()
-        {
-            var providerDetails = new ProviderDetails
-            {
-                VerificationDetails = new List<VerificationDetails>
-                {
-                    new VerificationDetails
-                    {
-                        VerificationAuthority = VerificationAuthorities.SoleTraderPartnershipAuthority
-                    }
-                }
-            };
-            _apiClient.Setup(x => x.GetUkrlpDetails(_applicationId)).ReturnsAsync(providerDetails);
-
-            _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, ProviderTypes.Main).GetAwaiter().GetResult();
-
-            var peopleInControlCriminalComplianceSequence = _viewModel.Sequences.FirstOrDefault(x => x.SequenceNumber 
-                                                                                                == GatewaySequences.PeopleInControlCriminalComplianceChecks);
-
-            peopleInControlCriminalComplianceSequence.Should().NotBeNull();
-            var notRequiredCount = peopleInControlCriminalComplianceSequence.Sections.Count(x => x.Status == SectionReviewStatus.NotRequired);
-            peopleInControlCriminalComplianceSequence.Sections.Count().Should().Be(notRequiredCount);
-        }
     }
 }
