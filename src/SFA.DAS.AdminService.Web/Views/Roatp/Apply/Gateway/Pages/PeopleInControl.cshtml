@@ -110,70 +110,68 @@
                 </p>
                     }
             </div>
-
-
         </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
-        @foreach (var table in Model.Tables)
-        {
-            @if (table?.DataRows != null && table.DataRows.Any())
+            @if (Model?.CompanyDirectorsData?.FromExternalSource != null || Model?.CompanyDirectorsData?.FromSubmittedApplication != null)
             {
+                var companiesHouseData = Model?.CompanyDirectorsData?.FromExternalSource?.OrderBy(x=>x.Name)?.ToArray();
+                var submittedData = Model?.CompanyDirectorsData?.FromSubmittedApplication?.OrderBy(x => x.Name)?.ToArray();
+                var upperCount = companiesHouseData.Length;
+                if (submittedData.Length > upperCount)
+                {
+                    upperCount = submittedData.Length;
+                }
+
+
                 <table class="govuk-table govuk-!-margin-bottom-9">
-                    <caption class="govuk-table__caption">@table.Caption</caption>
+                    <caption class="govuk-table__caption">@Model.CompanyDirectorsData.Caption</caption>
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            @foreach (var headings in table.HeadingTitles)
-                            {
-                                <th class="govuk-table__header" scope="col">@headings</th>
-                            }
+                            <th class="govuk-table__header" scope="col">@Model.CompanyDirectorsData.SubmittedApplicationHeading</th>
+                            <th class="govuk-table__header" scope="col">@Model.CompanyDirectorsData.ExternalSourceHeading</th>
                         </tr>
-                    </thead>
+                        </thead>
                     <tbody class="govuk-table__body">
-                        @foreach (var dataRow in table.DataRows)
-                        {
-                            <tr class="govuk-table__row">
-
-                                @foreach (var column in dataRow.Columns)
-                                {
-                                    <td class="govuk-table__cell">@column</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-
-            @*@if (peopleInControl?.DataRows != null && peopleInControl.DataRows.Any())
-            {
-                <table class="govuk-table govuk-!-margin-bottom-9">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">Who's in control</th>
-
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    @foreach (var dataRow in peopleInControl.DataRows)
+                    @for(var i =0; i < upperCount; i++)
                     {
+
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
-                                @dataRow.Columns[0]?.ToUpper()
+                            @if (submittedData.Length > i)
+                            {
+                                @submittedData[i].Name?.ToUpper()
 
-                                @if (!string.IsNullOrEmpty(dataRow.Columns[1].ToString()))
+                                if (!string.IsNullOrEmpty(submittedData[i].DateOfBirth))
                                 {
-                                    @Html.Raw("(" + @dataRow.Columns[1] + ")")
+                                    @Html.Raw( $@" ({submittedData[i].DateOfBirth})")
                                 }
+                            }
+                            </td>
+                            <td class="govuk-table__cell">
+                            @if (companiesHouseData.Length > i)
+                            {
+                                @companiesHouseData[i].Name
+                                if (!string.IsNullOrEmpty(companiesHouseData[i].DateOfBirth))
+                                {
+                                    @Html.Raw( $@" ({companiesHouseData[i].DateOfBirth})")
+                                }
+                            }
                             </td>
                         </tr>
                     }
                     </tbody>
                 </table>
-            }*@
-        }
+            }
+
+            @{
+                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_TabularData.cshtml", Model.CompanyDirectors);
+                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_TabularData.cshtml", Model.PeopleWithSignificantControl);
+                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_TabularData.cshtml", Model.Trustees);
+                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_TabularData.cshtml", Model.WhosInControl);
+            }
         </div>
     </div>
 

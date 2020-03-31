@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -26,11 +27,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
             return await GetString($"organisation/TypeOfOrganisation/{applicationId}");
         }
 
-        public async Task<TabularData> GetDirectors(Guid applicationId)
+        public async Task<List<PersonInControl>> GetDirectors(Guid applicationId)
         {
-            var directors = await Get<TabularData>($"organisation/DirectorData/{applicationId}");
+            var directors = await Get<List<PersonInControl>>($"organisation/DirectorData/{applicationId}");
             return directors;
         }
+
+        public async Task<List<PersonInControl>> GetDirectorsFromApplyData(Guid applicationId)
+        {
+            var directors = await Get<List<PersonInControl>>($"organisation/Apply/DirectorData/{applicationId}");
+            return directors;
+        }
+
 
         public async Task<TabularData> GetPersonsWithSignificantControl(Guid applicationId)
         {
@@ -46,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
 
         public async Task<TabularData> GetPeopleInControl(Guid applicationId)
         {
-            var peopleInControl = await Get<TabularData>($"organisation/PeopleInControlData/{applicationId}");
+            var peopleInControl = await Get<TabularData>($"organisation/CompanyDirectorsData/{applicationId}");
             return peopleInControl;
         }
 

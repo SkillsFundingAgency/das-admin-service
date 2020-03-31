@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation.Validators;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
@@ -61,44 +60,64 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             // Stubbing while I work it out
 
 
-            //model.CompanyDirectors = new TabularData();
-            //model.PeopleWithSignificantControl = new TabularData();
-            //model.Trustees = new TabularData();
-            //model.WhosInControl = new TabularData();
+            model.CompanyDirectors = new TabularData();
+            model.PeopleWithSignificantControl = new TabularData();
+            model.Trustees = new TabularData();
+            model.WhosInControl = new TabularData();
 
-            model.Tables = new List<TabularData>();
-            var companyData = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+            //var companyData = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
 
+            //var directorsFromApplyStorage = new List<string>();
+
+            //if (companyData?.Directors != null && companyData.Directors.Any())
+            //{
+            //    foreach (var director in companyData.Directors.OrderBy(x => x.Name))
+            //    {
+            //        var directorRecord = director?.Name.ToUpper();
+            //        if (!string.IsNullOrEmpty(director.DateOfBirth) &&
+            //            DateTime.TryParse(director.DateOfBirth, out var dateOfBirth))
+            //        {
+            //            directorRecord = $"{directorRecord} ({dateOfBirth:MMM yyyy})";
+            //        }
+            //        if (!string.IsNullOrEmpty(directorRecord))
+            //            directorsFromApplyStorage.Add(directorRecord);
+            //    }
+            //}
+
+            var directorsDataFromApply = await _organisationSummaryApiClient.GetDirectorsFromApplyData(request.ApplicationId);
             var directorsFromApplyStorage = new List<string>();
 
-            if (companyData?.Directors != null && companyData.Directors.Any())
+            if (directorsDataFromApply != null && directorsDataFromApply.Any())
             {
-                foreach (var director in companyData.Directors.OrderBy(x => x.Name))
+                foreach (var director in directorsDataFromApply.OrderBy(x => x.Name))
                 {
-                    var directorRecord = director?.Name.ToUpper();
-                    if (!string.IsNullOrEmpty(director.DateOfBirth) &&
-                        DateTime.TryParse(director.DateOfBirth, out var dateOfBirth))
+                    var directorRecord = director.Name.ToUpper();
+
+                    if (!string.IsNullOrEmpty(director.DateOfBirth))
                     {
-                        directorRecord = $"{directorRecord} ({dateOfBirth:MMM yyyy})";
+                        directorRecord = $"{directorRecord} ({director.DateOfBirth})";
                     }
-                    directorsFromApplyStorage.Add(directorRecord);
+                    if (!string.IsNullOrEmpty(directorRecord))
+                        directorsFromApplyStorage.Add(directorRecord);
                 }
             }
-            
+
+
             var directorsData = await _organisationSummaryApiClient.GetDirectors(request.ApplicationId);
             var directorsFromQnaStorage = new List<string>();
 
-            if (directorsData?.DataRows != null && directorsData.DataRows.Any())
+            if (directorsData != null && directorsData.Any())
             {
-                foreach (var director in directorsData.DataRows.Where(x=>x.Columns.Any()).OrderBy(x => x.Columns[0]))
+                foreach (var director in directorsData.OrderBy(x => x.Name))
                 {
-                    var directorRecord = director.Columns[0].ToUpper();
+                    var directorRecord = director.Name.ToUpper();
 
-                    if (director.Columns.Any() && director.Columns.Count>=2)
+                    if (!string.IsNullOrEmpty(director.DateOfBirth))
                     {
-                        directorRecord = $"{directorRecord} ({director.Columns[1]})";
+                        directorRecord = $"{directorRecord} ({director.DateOfBirth})";
                     }
-                    directorsFromQnaStorage.Add(directorRecord);
+                    if (!string.IsNullOrEmpty(directorRecord))
+                        directorsFromQnaStorage.Add(directorRecord);
                 }
             }
 
@@ -128,13 +147,31 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 {
                     Columns = new List<string> {directorFromQnaStorage, directorFromApplyStorage}
                 };
-
-                directorData.DataRows.Add(row);
+                if (directorFromQnaStorage!=string.Empty || directorFromApplyStorage != string.Empty)
+                    directorData.DataRows.Add(row);
             }
 
-            model.Tables.Add(directorData);
+            model.CompanyDirectors=  directorData;
 
 
+            model.CompanyDirectorsData = new PeopleInControlData
+            {
+                Caption = "Company directors",
+                SubmittedApplicationHeading = "Submitted application data",
+                ExternalSourceHeading = "Companies House data",
+                FromExternalSource = directorsDataFromApply,
+                FromSubmittedApplication = directorsData
+            };
+
+            // PeopleWithSignificantControl
+            // Only show if company and has PSC's
+            // tag CompaniesHousePSCs
+            //var pscsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
+            //if (pscsData != null && pscsData.DataRows != null && pscsData.DataRows.Count > 0)
+            //{
+            //    // transform this
+            //    model.PeopleWithSignificantControl = pscsData;
+            //}
             var pscData = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
 
             var pscDataFromApplyStorage = new List<string>();
@@ -149,7 +186,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     {
                         pscRecord = $"{pscRecord} ({dateOfBirth:MMM yyyy})";
                     }
-                    pscDataFromApplyStorage.Add(pscRecord);
+                    if(!string.IsNullOrEmpty(pscRecord))
+                        pscDataFromApplyStorage.Add(pscRecord);
                 }
             }
 
@@ -186,37 +224,29 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             for (var i = 0; i < upperPscCount; i++)
             {
                 var fromQnaStorage = string.Empty;
-                if (pscsFromQnaStorage.Count >= i)
+                if (pscsFromQnaStorage.Count > i)
                     fromQnaStorage = pscsFromQnaStorage[i];
                 var pcsFromApplyStorage = string.Empty;
-                if (pscDataFromApplyStorage.Count >= i)
+                if (pscDataFromApplyStorage.Count > i)
                     pcsFromApplyStorage = pscDataFromApplyStorage[i];
 
-                var row = new TabularDataRow
+                if (fromQnaStorage != string.Empty || pcsFromApplyStorage != string.Empty)
                 {
-                    Columns = new List<string> { fromQnaStorage, pcsFromApplyStorage }
-                };
-
-                pscTableData.DataRows.Add(row);
+                    pscTableData.DataRows.Add(new TabularDataRow
+                        {
+                            Columns = new List<string> { fromQnaStorage, pcsFromApplyStorage }
+                        });
+                }
             }
 
 
-            model.Tables.Add(pscTableData); //pscs
-            model.Tables.Add(new TabularData()); //trustees
+            model.PeopleWithSignificantControl =   pscTableData; 
+            model.Trustees = new TabularData(); //trustees
 
 
-            // PeopleWithSignificantControl
-            // Only show if company and has PSC's
-            // tag CompaniesHousePSCs
-            //var pscsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
-            //if (pscsData != null && pscsData.DataRows != null && pscsData.DataRows.Count > 0)
-            //{
-            //    // transform this
-            //    model.PeopleWithSignificantControl = pscsData;
-            //}
+          
 
-            var pscs = await _organisationSummaryApiClient.GetPersonsWithSignificantControl(request.ApplicationId);
-
+     
             // Trustees
             // Only show if charity
             // tag CharityTrustees
@@ -226,7 +256,75 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             //    model.Trustees = trusteesData;
             //}
 
-            var trustees = await _organisationSummaryApiClient.GetTrustees(request.ApplicationId);
+            var trusteesFromQna = await _organisationSummaryApiClient.GetTrustees(request.ApplicationId);
+            var charityData = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+
+
+
+
+            var charityDataFromApplyStorage = new List<string>();
+
+            if (charityData?.Trustees != null && charityData.Trustees.Any())
+            {
+                foreach (var trustee in charityData.Trustees.OrderBy(x => x.Name))
+                {
+                    var trusteeName = trustee?.Name.ToUpper();
+                   if (!string.IsNullOrEmpty(trusteeName))
+
+                       charityDataFromApplyStorage.Add(trusteeName);
+                }
+            }
+
+
+            var trusteesFromQnaStorage = new List<string>();
+
+            if (trusteesFromQna?.DataRows != null && trusteesFromQna.DataRows.Any())
+            {
+                foreach (var trustee in trusteesFromQna.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+                {
+                    var trusteeRecord = trustee.Columns[0].ToUpper();
+
+                    if (trustee.Columns.Any() && trustee.Columns.Count >= 2)
+                    {
+                        trusteeRecord = $"{trusteeRecord} ({trustee.Columns[1]})";
+                    }
+                    trusteesFromQnaStorage.Add(trusteeRecord);
+                }
+            }
+
+            var upperTrusteeCount = charityDataFromApplyStorage.Count;
+
+            if (trusteesFromQnaStorage.Count > charityDataFromApplyStorage.Count)
+                upperTrusteeCount = pscsFromQnaStorage.Count;
+
+
+            var trusteeTableData = new TabularData
+            {
+                Caption = "Trustees",
+                HeadingTitles = new List<string> { "Submitted application data", "Charity commission data" },
+                DataRows = new List<TabularDataRow>()
+            };
+
+            for (var i = 0; i < upperTrusteeCount; i++)
+            {
+                var fromQnaStorage = string.Empty;
+                if (trusteesFromQnaStorage.Count > i)
+                    fromQnaStorage = trusteesFromQnaStorage[i];
+                var fromApplyStorage = string.Empty;
+                if (charityDataFromApplyStorage.Count > i)
+                    fromApplyStorage = charityDataFromApplyStorage[i];
+
+                if (fromQnaStorage != string.Empty || fromApplyStorage != string.Empty)
+                {
+                    trusteeTableData.DataRows.Add(new TabularDataRow
+                    {
+                        Columns = new List<string> { fromQnaStorage, fromApplyStorage }
+                    });
+                }
+            }
+
+
+            model.Trustees = trusteeTableData;
             // whosInControl
             //Only show is sole trader, partnership, statutory institute or any other manual entry
             // partnership, tag is AddPartners
@@ -241,30 +339,59 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
 
             //var whosInControl = new TabularData
-            //{
-            //    Caption = "Company directors",   // this could be anything....
-            //    HeadingTitles = new List<string> {"Name", "Date of birth"},
-            //    DataRows = new List<TabularDataRow>
-            //    {
-            //        new TabularDataRow {Columns = new List<string> {"BARTON, Catherine-Jane", "Jan 1969"}}
-            //    }
-            //};
+            // this might use GetPeopleInControl, or alternatives for sole trader....
 
-            var peopleInControl = await _organisationSummaryApiClient.GetPeopleInControl(request.ApplicationId);
-            model.Tables.Add(peopleInControl);
+             var whosInControl = new TabularData
+            {
+                Caption = "Who's in control",
+                HeadingTitles = new List<string> {"Submitted application data"},
+                DataRows = new List<TabularDataRow>()
+            };
 
+             var peopleInControl = await _organisationSummaryApiClient.GetPeopleInControl(request.ApplicationId);
+             if (peopleInControl == null)
+             {
+                 //MFCMFC need to debug/check this
+                 peopleInControl = await _organisationSummaryApiClient.GetPartners(request.ApplicationId);
+             }
 
-            //// Note as per comment by Cherky on 15:55 26/03/20, make all names in tables uppercase
+             if (peopleInControl != null)
+             {
+                 if (peopleInControl?.DataRows != null && peopleInControl.DataRows.Any())
+                 {
+                     foreach (var row in peopleInControl.DataRows)
+                     {
+                         var person = string.Empty;
+                         if (row.Columns.Count == 1)
+                             person = row.Columns[0];
 
-            //model.WhosInControl = whosInControl;
+                         if (row.Columns.Count > 1)
+                             person = $"{row.Columns[0]} ({row.Columns[1]})";
 
+                         if (person != string.Empty)
+                         {
+                             whosInControl.DataRows.Add(new TabularDataRow
+                                 {Columns = new List<string> {person.ToUpper()}});
+                         }
+                     }
+                 }
+            }
+             else
+             {
+                 var soleTraderDob= await _organisationSummaryApiClient.GetSoleTraderDob(request.ApplicationId);
 
-            //var personData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
-            //if (personData != null && personData.DataRows != null && personData.DataRows.Count > 0)
-            //{
-            //    result.Add(personData);
-            //}
+                  if (!string.IsNullOrEmpty(soleTraderDob))
+                 {
+                     var person = commonDetails.LegalName.ToUpper();
 
+                    person = $"{person} ({soleTraderDob})";
+                     whosInControl.DataRows.Add(new TabularDataRow
+                         { Columns = new List<string> { person } });
+
+                }
+             }
+
+            model.WhosInControl = whosInControl;
 
 
             return model;
