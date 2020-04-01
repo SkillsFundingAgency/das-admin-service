@@ -57,18 +57,18 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateCriminalCompliancePage" asp-controller="RoatpOrganisationCriminalComplianceChecks">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.PageId)
-                    @Html.HiddenFor(x => x.Caption)
-                    @Html.HiddenFor(x => x.Heading)
-                    @Html.HiddenFor(x => x.NoSelectionErrorMessage)
-                    @Html.HiddenFor(x => x.Ukprn)
-                    @Html.HiddenFor(x => x.ApplyLegalName)
-                    @Html.HiddenFor(x => x.QuestionText)
-                    @Html.HiddenFor(x => x.ComplianceCheckAnswer)
-                    @Html.HiddenFor(x => x.ComplianceCheckQuestionId)
-                    @Html.HiddenFor(x => x.FurtherInformationAnswer)
-                    @Html.HiddenFor(x => x.FurtherInformationQuestionId)
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="PageId" />
+                    <input type="hidden" asp-for="Caption" />
+                    <input type="hidden" asp-for="Heading" />
+                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
+                    <input type="hidden" asp-for="Ukprn" />
+                    <input type="hidden" asp-for="ApplyLegalName" />
+                    <input type="hidden" asp-for="QuestionText" />
+                    <input type="hidden" asp-for="ComplianceCheckAnswer" />
+                    <input type="hidden" asp-for="ComplianceCheckQuestionId" />
+                    <input type="hidden" asp-for="FurtherInformationAnswer" />
+                    <input type="hidden" asp-for="FurtherInformationQuestionId" />
                     @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
                     <button class="govuk-button" type="submit">Save and continue</button>
                 </form>
