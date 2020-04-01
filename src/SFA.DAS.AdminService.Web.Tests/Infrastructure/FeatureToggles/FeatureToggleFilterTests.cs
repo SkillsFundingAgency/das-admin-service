@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.FeatureToggles
         private IWebConfiguration _WebConfiguration;
         private FeatureToggleFilter _FeatureToggleFilter;
         private ActionExecutingContext _ActionExecutingContext;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -37,26 +37,30 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.FeatureToggles
             _ActionExecutingContext = new ActionExecutingContext(actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), Mock.Of<RoatpGatewayControllerBase>());
         }
 
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        public void FeatureToggleFilter_Filters_Correctly(bool featureEnabled, bool shouldRedirect)
+        [Test]
+        public void FeatureToggleFilter_Redirects_When_FeatureToggles_Not_Enabled()
         {
-            _WebConfiguration.FeatureToggles.EnableRoatpGatewayReview = featureEnabled;
+            _WebConfiguration.FeatureToggles.EnableRoatpGatewayReview = false;
 
             _FeatureToggleFilter.OnActionExecuting(_ActionExecutingContext);
 
             var actualResult = _ActionExecutingContext.Result;
 
-            if(shouldRedirect)
-            {
-                Assert.IsNotNull(actualResult);
-                Assert.IsInstanceOf<RedirectToActionResult>(actualResult);
-            }
-            else
-            {
-                Assert.Null(actualResult);
-                Assert.IsNotInstanceOf<RedirectToActionResult>(actualResult);
-            }
+            Assert.IsNotNull(actualResult);
+            Assert.IsInstanceOf<RedirectToActionResult>(actualResult);
+        }
+
+        [Test]
+        public void FeatureToggleFilter_Does_Not_Redirect_When_FeatureToggles_Is_Enabled()
+        {
+            _WebConfiguration.FeatureToggles.EnableRoatpGatewayReview = true;
+
+            _FeatureToggleFilter.OnActionExecuting(_ActionExecutingContext);
+
+            var actualResult = _ActionExecutingContext.Result;
+
+            Assert.Null(actualResult);
+            Assert.IsNotInstanceOf<RedirectToActionResult>(actualResult);
         }
     }
 }
