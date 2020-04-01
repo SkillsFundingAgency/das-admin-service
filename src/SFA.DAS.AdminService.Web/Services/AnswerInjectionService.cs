@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Services
             var ukprn = GetUkprnFromRequestDetails(command.OrganisationUkprn, command.CompanyUkprn);
             var organisationTypeId = await GetOrganisationTypeIdFromDescriptor(command.OrganisationType);
 
-            // Organisation checks ////////////////////////////////
+            // Organisation checks
             RaiseWarningIfNoEpaoId(command.EndPointAssessorOrganisationId, warningMessages);
             RaiseWarningIfEpaoIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
             RaiseWarningIfNoOrganisationName(organisationName, warningMessages);
@@ -66,11 +66,11 @@ namespace SFA.DAS.AdminService.Web.Services
             RaiseWarningIfCompanyNumberIsInvalid(command.CompanyNumber, warningMessages);
             RaiseWarningIfCharityNumberIsInvalid(command.CharityNumber, warningMessages);
 
-            // Contact checks //////////////////////////////// 
+            // Contact checks
             RaiseWarningIfEmailIsMissingOrInvalid(command.ContactEmail, warningMessages);
-            RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
-            RaiseWarningIfContactNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
-
+            RaiseWarningIfContactGivenNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
+            RaiseWarningIfContactFamilyNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
+            
             var request = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId);
 
             // If we passed basic pre-checks; then validate fully
@@ -366,13 +366,22 @@ namespace SFA.DAS.AdminService.Web.Services
                 warningMessagesContact.Add($"{OrganisationAndContactMessages.EmailIsInvalid} : '{email}'");
         }
 
-        private void RaiseWarningIfContactNameIsMissingOrTooShort(string contactName, List<string> warningMessagesContact)
+        private void RaiseWarningIfContactGivenNameIsMissingOrTooShort(string contactGivenNames, List<string> warningMessagesContact)
         {
-            if (!_validationService.IsNotEmpty(contactName))
-                warningMessagesContact.Add(OrganisationAndContactMessages.ContactNameIsMissing);
+            if (!_validationService.IsNotEmpty(contactGivenNames))
+                warningMessagesContact.Add(OrganisationAndContactMessages.ContactGivenNamesIsMissing);
 
-            if (!_validationService.IsMinimumLengthOrMore(contactName, 2))
-                warningMessagesContact.Add($"{OrganisationAndContactMessages.ContactNameIsTooShort} : '{contactName}'");
+            if (!_validationService.IsMinimumLengthOrMore(contactGivenNames, 2))
+                warningMessagesContact.Add($"{OrganisationAndContactMessages.ContactGivenNameIsTooShort} : '{contactGivenNames}'");
+        }
+
+        private void RaiseWarningIfContactFamilyNameIsMissingOrTooShort(string contactFamilyName, List<string> warningMessagesContact)
+        {
+            if (!_validationService.IsNotEmpty(contactFamilyName))
+                warningMessagesContact.Add(OrganisationAndContactMessages.ContactFamilyNameIsMissing);
+
+            if (!_validationService.IsMinimumLengthOrMore(contactFamilyName, 2))
+                warningMessagesContact.Add($"{OrganisationAndContactMessages.ContactFamilyNameIsTooShort} : '{contactFamilyName}'");
         }
 
         private void RaiseWarningIfNoEpaoId(string endPointAssessorOrganisationId, List<string> warningMessages)
