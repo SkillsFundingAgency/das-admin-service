@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<PeopleInControlPageViewModel> GetPeopleInControlViewModel(GetPeopleInControlRequest request)
         {
-             _logger.LogInformation($"Retrieving legal name details for application {request.ApplicationId}");
+             _logger.LogInformation($"Retrieving people in control details for application {request.ApplicationId}");
 
             var pageId = GatewayPageIds.PeopleInControl;
 
@@ -48,9 +48,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 GatewayReviewStatus = commonDetails.GatewayReviewStatus
             };
 
-
+            _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
 
+
+            _logger.LogInformation($"Retrieving people in control - company directors for application {request.ApplicationId}");
             model.CompanyDirectorsData = new PeopleInControlData
             {
                 Caption = "Company directors",
@@ -59,6 +61,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
             };
 
+            _logger.LogInformation($"Retrieving people in control - persons of significant control for application {request.ApplicationId}");
             model.PscData = new PeopleInControlData
             {
                 Caption = "People with significant control (PSC’s)",
@@ -67,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetPscsFromSubmitted(request.ApplicationId)
             };
 
-
+            _logger.LogInformation($"Retrieving people in control - trustees for application {request.ApplicationId}");
             model.TrusteeData = new PeopleInControlData
             {
                 Caption = "Trustees",
@@ -76,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetTrusteesFromSubmitted(request.ApplicationId)
             };
 
-
+            _logger.LogInformation($"Retrieving people in control - who's in control for application {request.ApplicationId}");
             model.WhosInControlData = new PeopleInControlData
             {
                 Caption = "Who's in control",

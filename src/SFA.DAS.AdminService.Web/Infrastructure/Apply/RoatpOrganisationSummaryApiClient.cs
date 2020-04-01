@@ -24,49 +24,50 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
         }
         public async Task<string> GetTypeOfOrganisation(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving type of organisation from applicationId [{applicationId}]");
             return await GetString($"{RoutePath}/TypeOfOrganisation/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId)
         {
-            var directors = await Get<List<PersonInControl>>($"{RoutePath}/DirectorData/Submitted/{applicationId}");
-            return directors;
+            _logger.LogInformation($"Retrieving list of directors submitted in Qna QuestionTags from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/DirectorData/Submitted/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetDirectorsFromCompaniesHouse(Guid applicationId)
         {
-            var directors = await Get<List<PersonInControl>>($"{RoutePath}/DirectorData/CompaniesHouse/{applicationId}");
-            return directors;
+            _logger.LogInformation($"Retrieving list of directors from companies house in ApplyData from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/DirectorData/CompaniesHouse/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetPscsFromSubmitted(Guid applicationId)
         {
-            var pscs = await Get<List<PersonInControl>>($"{RoutePath}/PscData/Submitted/{applicationId}");
-            return pscs;
+            _logger.LogInformation($"Retrieving list of pscs in Qna QuestionTags from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/PscData/Submitted/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetPscsFromCompaniesHouse(Guid applicationId)
         {
-            var pscs = await Get<List<PersonInControl>>($"{RoutePath}/PscData/CompaniesHouse/{applicationId}");
-            return pscs;
+            _logger.LogInformation($"Retrieving list of pscs from companies house in ApplyData from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/PscData/CompaniesHouse/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetTrusteesFromSubmitted(Guid applicationId)
         {
-            var pscs = await Get<List<PersonInControl>>($"{RoutePath}/TrusteeData/Submitted/{applicationId}");
-            return pscs;
+            _logger.LogInformation($"Retrieving list of trustees in Qna QuestionTags from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/TrusteeData/Submitted/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetTrusteesFromCharityCommission(Guid applicationId)
         {
-            var pscs = await Get<List<PersonInControl>>($"{RoutePath}/TrusteeData/CharityCommission/{applicationId}");
-            return pscs;
+            _logger.LogInformation($"Retrieving list of trustees from charity commission in ApplyData from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/TrusteeData/CharityCommission/{applicationId}");
         }
 
         public async Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId)
         {
-            var whosInControl = await Get<List<PersonInControl>>($"{RoutePath}/WhosInControlData/Submitted/{applicationId}");
-            return whosInControl;
+            _logger.LogInformation($"Retrieving list of Whos in control in Qna QuestionTags from applicationId [{applicationId}]");
+            return await Get<List<PersonInControl>>($"{RoutePath}/WhosInControlData/Submitted/{applicationId}");
         }
 
         private async Task<T> Get<T>(string uri)

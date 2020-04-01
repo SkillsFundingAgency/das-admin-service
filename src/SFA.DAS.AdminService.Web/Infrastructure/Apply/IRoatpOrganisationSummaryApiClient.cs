@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Models;
 
-
 namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
 {
     public interface IRoatpOrganisationSummaryApiClient
     {
         Task<string> GetTypeOfOrganisation(Guid applicationId);
+
         Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId);
         Task<List<PersonInControl>> GetDirectorsFromCompaniesHouse(Guid applicationId);
 
@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
 
         Task<List<PersonInControl>> GetTrusteesFromSubmitted(Guid applicationId);
         Task<List<PersonInControl>> GetTrusteesFromCharityCommission(Guid applicationId);
-        Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId);
 
+        Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId);
     }
 }

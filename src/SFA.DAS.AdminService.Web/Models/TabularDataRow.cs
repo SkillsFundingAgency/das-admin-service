@@ -6,6 +6,8 @@ namespace SFA.DAS.AdminService.Web.Models
     {
         public string Id { get; set; }
         public List<string> Columns { get; set; }
-       
+        public string DetailsLabel { get; set; }
+        public string DetailsValue { get; set; }
+
     }
 }

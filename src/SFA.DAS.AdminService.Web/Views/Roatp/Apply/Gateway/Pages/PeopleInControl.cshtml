@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
-@using SFA.DAS.AssessorService.Domain.Extensions
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.PeopleInControlPageViewModel
 
 @{
@@ -89,21 +88,16 @@
                         Legal Name: @Model.ApplyLegalName
                     </p>
                 }
-                
-                
-
-                    <p class="govuk-body govuk-!-margin-bottom-0">
+                <p class="govuk-body govuk-!-margin-bottom-0">
                         Type of organisation: @Model.TypeOfOrganisation
                     </p>
-                
-                
+
                 @if (Model.ApplicationSubmittedOn!=null)
                     {
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
                 </p>
                     }
-
 
                 @if (Model.SourcesCheckedOn!=null)
                     {
@@ -114,11 +108,8 @@
             </div>
         </div>
     </div>
-
-    <div class="govuk-grid-row">
+<div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-          
-
             @{
                 await Html.RenderPartialAsync(peopleInControlPartialViewName, Model.CompanyDirectorsData);
                 await Html.RenderPartialAsync(peopleInControlPartialViewName, Model.PscData);
@@ -127,8 +118,7 @@
             }
         </div>
     </div>
-
-    @if (Model.ApplicationId != Guid.Empty)
+@if (Model.ApplicationId != Guid.Empty)
                 {
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

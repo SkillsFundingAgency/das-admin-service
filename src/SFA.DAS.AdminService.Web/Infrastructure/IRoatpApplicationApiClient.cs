@@ -46,10 +46,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
        
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
-
-         ////MFCMFC THIS NEEDS TO GO ONCE ALL TIDY UP IS DONE
-         //Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
-
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
          Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 

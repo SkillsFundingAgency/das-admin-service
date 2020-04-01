@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +21,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
             private readonly ILogger<RoatpGatewayPeopleInControlController> _logger;
             private readonly IGatewayPeopleInControlOrchestrator _orchestrator;
+
         public RoatpGatewayPeopleInControlController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator gatewayValidator, IGatewayPeopleInControlOrchestrator orchestrator,ILogger<RoatpGatewayPeopleInControlController> logger )
             {
                 _applyApiClient = applyApiClient;
@@ -32,8 +32,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
             private const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
-
-
 
             [HttpGet("/Roatp/Gateway/{applicationId}/Page/PeopleInControl")]
             public async Task<IActionResult> GetGatewayPeopleInControlPage(Guid applicationId, string pageId)
@@ -46,7 +44,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControl")]
             public async Task<IActionResult> EvaluatePeopleInControlPage(PeopleInControlPageViewModel viewModel)
             {
-
                 var validationResponse = await _gatewayValidator.Validate(viewModel);
 
                 if (validationResponse.Errors != null && validationResponse.Errors.Any())
