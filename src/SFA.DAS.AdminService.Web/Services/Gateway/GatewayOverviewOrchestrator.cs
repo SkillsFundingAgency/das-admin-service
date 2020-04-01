@@ -220,7 +220,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
                 {
                     var initialTeacherTraining = await _accreditationClient.GetInitialTeacherTraining(request.ApplicationId);
-                    if (initialTeacherTraining != null && initialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) initialTeacherTrainingStatus = string.Empty;
+                    if (initialTeacherTraining != null && initialTeacherTraining.DoesOrganisationOfferInitialTeacherTraining) initialTeacherTrainingStatus = string.Empty;
                 }
 
                 if (initialTeacherTrainingStatus.Equals(SectionReviewStatus.NotRequired))

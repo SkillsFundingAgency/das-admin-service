@@ -1,0 +1,109 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.InitialTeacherTrainingViewModel
+
+@{
+    var heading = "Initial teacher training (ITT) check";
+    var caption = "Experience and accreditation checks";
+
+    ViewBag.Title = $"Gateway - {heading}";
+    Layout = "_Layout";
+
+    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
+    var isErrorFailText = "";
+    var noSelectionMessage = "";
+    var failTextMessage = "";
+    if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
+    {
+        foreach (var error in Model.ErrorMessages)
+        {
+            if (error.Field == "OptionPass")
+            {
+                noSelectionMessage = error.ErrorMessage;
+            }
+
+            if (error.Field == "OptionFailText")
+            {
+                isErrorFailText = "govuk-textarea--error-override";
+                failTextMessage = error.ErrorMessage;
+            }
+        }
+    }
+}
+
+@{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+
+            <span class="govuk-caption-xl">
+                @caption
+            </span>
+
+            <h1 class="govuk-heading-xl">@heading</h1>
+
+
+            <div class="govuk-!-margin-bottom-4">
+                @if (Model.Ukprn != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        UKPRN: @Model.Ukprn
+                    </p>
+                }
+
+                @if (Model.ApplyLegalName != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Legal name: @Model.ApplyLegalName
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Application question</th>
+                        <th class="govuk-table__header" scope="col">Applicant's answer</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Does your organisation offer initial teacher training?</td>
+                        <td class="govuk-table__cell">@(Model.DoesOrganisationOfferInitialTeacherTraining ? "Yes" : "No")</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?</td>
+                        <td class="govuk-table__cell">@(Model.IsPostGradOnlyApprenticeship ? "Yes" : "No")</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateInitialTeacherTrainingPage" asp-controller="RoatpGatewayExperienceAndAccreditation">
+                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                    <input type="hidden" name="PageId" value="@Model.PageId" />
+                    <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
+                    <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
+                    <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
+                    <input type="hidden" name="DoesOrganisationOfferInitialTeacherTraining" value="@Model.DoesOrganisationOfferInitialTeacherTraining" />
+                    <input type="hidden" name="IsPostGradOnlyApprenticeship" value="@Model.IsPostGradOnlyApprenticeship" />
+
+                    @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>
