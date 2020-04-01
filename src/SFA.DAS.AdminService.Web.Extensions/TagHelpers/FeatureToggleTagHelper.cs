@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
         {
             var toggleEnabled = false;
 
-            if (_featureToggles != null && string.IsNullOrWhiteSpace(featureToggle))
+            if (_featureToggles != null && !string.IsNullOrWhiteSpace(featureToggle))
             {
                 try
                 {

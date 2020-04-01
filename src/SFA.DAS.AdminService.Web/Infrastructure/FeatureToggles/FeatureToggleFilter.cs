@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles
         {
             var toggleEnabled = false;
 
-            if (_featureToggles != null && string.IsNullOrWhiteSpace(featureToggle))
+            if (_featureToggles != null && !string.IsNullOrWhiteSpace(featureToggle))
             {
                 try
                 {
