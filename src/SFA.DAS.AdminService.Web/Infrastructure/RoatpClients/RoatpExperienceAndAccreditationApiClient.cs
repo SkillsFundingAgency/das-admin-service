@@ -36,5 +36,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
         }
+
+        public async Task<OfstedDetails> GetOfstedDetails(Guid applicationId)
+        {
+            return await Get<OfstedDetails>($"/Accreditation/{applicationId}/OfstedDetails");
+        }
     }
 }
