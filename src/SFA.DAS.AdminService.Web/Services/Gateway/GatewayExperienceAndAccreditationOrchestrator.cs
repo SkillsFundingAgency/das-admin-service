@@ -66,5 +66,27 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<OfstedDetailsViewModel> GetOfstedDetailsViewModel(GetOfstedDetailsRequest request)
+        {
+            _logger.LogInformation($"Retrieving ofsted details for application {request.ApplicationId}");
+
+            var model = new OfstedDetailsViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Ofsted, request.UserName);
+
+            var ofstedDetails = await _experienceAndAccreditationApiClient.GetOfstedDetails(request.ApplicationId);
+
+            model.FullInspectionApprenticeshipGrade = ofstedDetails.FullInspectionApprenticeshipGrade;
+            model.FullInspectionOverallEffectivenessGrade = ofstedDetails.FullInspectionOverallEffectivenessGrade;
+            model.GradeWithinTheLast3Years = ofstedDetails.GradeWithinTheLast3Years;
+            model.HasHadFullInspection = ofstedDetails.HasHadFullInspection;
+            model.HasHadMonitoringVisit = ofstedDetails.HasHadMonitoringVisit;
+            model.HasHadShortInspectionWithinLast3Years = ofstedDetails.HasHadShortInspectionWithinLast3Years;
+            model.HasMaintainedFullGradeInShortInspection = ofstedDetails.HasMaintainedFullGradeInShortInspection;
+            model.HasMaintainedFundingSinceInspection = ofstedDetails.HasMaintainedFundingSinceInspection;
+            model.ReceivedFullInspectionGradeForApprenticeships = ofstedDetails.ReceivedFullInspectionGradeForApprenticeships;
+
+            return model;
+        }
     }
 }
