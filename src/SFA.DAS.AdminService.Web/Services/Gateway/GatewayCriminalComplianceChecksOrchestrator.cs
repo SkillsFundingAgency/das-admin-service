@@ -24,19 +24,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<OrganisationCriminalCompliancePageViewModel> GetCriminalComplianceCheckViewModel(GetCriminalComplianceCheckRequest request)
         {
-            //var commonDetails = await _applyApiClient.GetPageCommonDetails(request.ApplicationId, request.PageId, request.UserName);
-
-            //var model = new OrganisationCriminalCompliancePageViewModel 
-            //{ 
-            //    ApplicationId = request.ApplicationId, 
-            //    PageId = request.PageId,
-            //    ApplyLegalName = commonDetails.LegalName,
-            //    Ukprn = commonDetails.Ukprn,
-            //    Status = commonDetails.Status,
-            //    OptionPassText = commonDetails.OptionPassText,
-            //    OptionFailText = commonDetails.OptionFailText,
-            //    OptionInProgressText = commonDetails.OptionInProgressText
-            //};
             _logger.LogInformation($"Retrieving criminal compliance details for application {request.ApplicationId} page {request.PageId}");
 
             var model = new OrganisationCriminalCompliancePageViewModel();
