@@ -30,7 +30,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
     {
         public string Caption { get; set; }
         public string ExternalSourceHeading { get; set; }
-        public string SubmittedApplicationHeading { get; set; }
         public List<PersonInControl> FromExternalSource { get; set; }
         public List<PersonInControl> FromSubmittedApplication { get; set; }
     }

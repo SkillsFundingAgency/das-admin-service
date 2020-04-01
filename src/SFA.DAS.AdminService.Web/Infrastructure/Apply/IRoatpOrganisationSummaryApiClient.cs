@@ -19,12 +19,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
         Task<List<PersonInControl>> GetTrusteesFromCharityCommission(Guid applicationId);
         Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId);
 
-        Task<TabularData> GetPersonsWithSignificantControl(Guid applicationId);
-        Task<TabularData> GetTrustees(Guid applicationId);
-        Task<TabularData> GetPeopleInControl(Guid applicationId);
-        Task<TabularData> GetPartners(Guid applicationId);
-
-        Task<string> GetSoleTraderDob(Guid applicationId);
-
     }
 }

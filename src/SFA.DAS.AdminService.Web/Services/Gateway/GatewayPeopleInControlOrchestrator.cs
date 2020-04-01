@@ -54,7 +54,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.CompanyDirectorsData = new PeopleInControlData
             {
                 Caption = "Company directors",
-                SubmittedApplicationHeading = "Submitted application data",
                 ExternalSourceHeading = "Companies House data",
                 FromExternalSource = await _organisationSummaryApiClient.GetDirectorsFromCompaniesHouse(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
@@ -63,7 +62,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.PscData = new PeopleInControlData
             {
                 Caption = "People with significant control (PSC’s)",
-                SubmittedApplicationHeading = "Submitted application data",
                 ExternalSourceHeading = "Companies House data",
                 FromExternalSource = await _organisationSummaryApiClient.GetPscsFromCompaniesHouse(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetPscsFromSubmitted(request.ApplicationId)
@@ -73,8 +71,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.TrusteeData = new PeopleInControlData
             {
                 Caption = "Trustees",
-                SubmittedApplicationHeading = "Submitted application data",
-                ExternalSourceHeading = "Charity commission data",
+                ExternalSourceHeading = "Charity Commission data",
                 FromExternalSource = await _organisationSummaryApiClient.GetTrusteesFromCharityCommission(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetTrusteesFromSubmitted(request.ApplicationId)
             };
@@ -83,83 +80,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.WhosInControlData = new PeopleInControlData
             {
                 Caption = "Who's in control",
-                SubmittedApplicationHeading = "Submitted application data",
                 ExternalSourceHeading = null,
                 FromExternalSource = null,
                 FromSubmittedApplication =
                     await _organisationSummaryApiClient.GetWhosInControlFromSubmitted(request.ApplicationId)
             };
-            // whosInControl
-            //Only show is sole trader, partnership, statutory institute or any other manual entry
-            // partnership, tag is AddPartners
-            // sole trader  ?? nothing?? there is a tag for AddSoleTradeDOB  1,1980
-            // when sole trader (SoleTradeOrPartnership": "Sole trader") use UKRLPLegalName, AddsoleTradDob....
-            // when partnership ("SoleTradeOrPartnership": "Partnership") and individual ("PartnershipType": "Individual") use AddPartners
-            // when partnership and organisation - name of org
-
-            // gov statute tag was AddPeopleInControl
-
-            // urn school was AddPeopleInControl
-
-
-            //var whosInControl = new TabularData
-            // this might use GetPeopleInControl, or alternatives for sole trader....
-
-            //model.WhosInControl = new TabularData();
-
-
-            //var whosInControl = new TabularData
-            //{
-            //    Caption = "Who's in control",
-            //    HeadingTitles = new List<string> {"Submitted application data"},
-            //    DataRows = new List<TabularDataRow>()
-            //};
-
-            // var peopleInControl = await _organisationSummaryApiClient.GetPeopleInControl(request.ApplicationId);
-            // if (peopleInControl == null)
-            // {
-            //     //MFCMFC need to debug/check this
-            //     peopleInControl = await _organisationSummaryApiClient.GetPartners(request.ApplicationId);
-            // }
-
-            // if (peopleInControl != null)
-            // {
-            //     if (peopleInControl?.DataRows != null && peopleInControl.DataRows.Any())
-            //     {
-            //         foreach (var row in peopleInControl.DataRows)
-            //         {
-            //             var person = string.Empty;
-            //             if (row.Columns.Count == 1)
-            //                 person = row.Columns[0];
-
-            //             if (row.Columns.Count > 1)
-            //                 person = $"{row.Columns[0]} ({row.Columns[1]})";
-
-            //             if (person != string.Empty)
-            //             {
-            //                 whosInControl.DataRows.Add(new TabularDataRow
-            //                     {Columns = new List<string> {person.ToUpper()}});
-            //             }
-            //         }
-            //     }
-            //}
-            // else
-            // {
-            //     var soleTraderDob= await _organisationSummaryApiClient.GetSoleTraderDob(request.ApplicationId);
-
-            //      if (!string.IsNullOrEmpty(soleTraderDob))
-            //     {
-            //         var person = commonDetails.LegalName.ToUpper();
-
-            //        person = $"{person} ({soleTraderDob})";
-            //         whosInControl.DataRows.Add(new TabularDataRow
-            //             { Columns = new List<string> { person } });
-
-            //    }
-            // }
-
-            //model.WhosInControl = whosInControl;
-
 
             return model;
         }
