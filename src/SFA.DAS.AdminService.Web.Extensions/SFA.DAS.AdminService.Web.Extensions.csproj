@@ -13,5 +13,9 @@
       <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
+    </ItemGroup>
+
    
 </Project>
