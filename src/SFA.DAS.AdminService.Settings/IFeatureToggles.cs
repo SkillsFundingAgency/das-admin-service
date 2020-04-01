@@ -2,6 +2,9 @@
 {
     public interface IFeatureToggles
     {
-        bool EnableRoatpApply { get; set; }
+        bool EnableRoatpAssessorReview { get; set; }
+        bool EnableRoatpFinancialReview { get; set; }
+        bool EnableRoatpGatewayReview { get; set; }
+        bool EnableRoatpSnapshot { get; set; }
     }
 }

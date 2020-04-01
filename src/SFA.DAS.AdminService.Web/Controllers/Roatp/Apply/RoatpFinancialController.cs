@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
-    [FeatureToggle(FeatureToggles.EnableRoatpApply, "Dashboard", "Index")]
+    [FeatureToggle(FeatureToggles.EnableRoatpFinancialReview, "Dashboard", "Index")]
     public class RoatpFinancialController : Controller
     {
         private readonly IRoatpOrganisationApiClient _apiClient;

@@ -7,8 +7,8 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize]
-    [FeatureToggle(FeatureToggles.EnableRoatpApply, "Dashboard", "Index")]
+    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
     public class RoatpGatewayControllerBase : Controller
     {
         public string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)

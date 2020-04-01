@@ -39,9 +39,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.FeatureToggles
 
         [TestCase(true, false)]
         [TestCase(false, true)]
-        public void FeatureToggleFilter_Filters_Correctly(bool enableRoatpApply, bool shouldRedirect)
+        public void FeatureToggleFilter_Filters_Correctly(bool featureEnabled, bool shouldRedirect)
         {
-            _WebConfiguration.FeatureToggles.EnableRoatpApply = enableRoatpApply;
+            _WebConfiguration.FeatureToggles.EnableRoatpGatewayReview = featureEnabled;
 
             _FeatureToggleFilter.OnActionExecuting(_ActionExecutingContext);
 

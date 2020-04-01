@@ -13,7 +13,7 @@ using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
-    [FeatureToggle(FeatureToggles.EnableRoatpApply, "Dashboard", "Index")]
+    [FeatureToggle(FeatureToggles.EnableRoatpSnapshot, "Dashboard", "Index")]
     public class RoatpSnapshotController : Controller
     {
         private readonly IConfiguration _configuration;
