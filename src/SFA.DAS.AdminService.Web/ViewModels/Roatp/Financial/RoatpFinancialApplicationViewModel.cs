@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial

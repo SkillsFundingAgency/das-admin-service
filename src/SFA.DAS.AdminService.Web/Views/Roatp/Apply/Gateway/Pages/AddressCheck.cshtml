@@ -1,0 +1,79 @@
+﻿@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.AddressCheckViewModel
+
+@{
+    ViewBag.Title = $"Gateway - {Model.Heading}";
+    Layout = "_Layout";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+            <span class="govuk-caption-xl">
+                @Model.Caption
+            </span>
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+            <div class="govuk-!-margin-bottom-4">
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    UKPRN: @Model.Ukprn
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Legal name: @Model.ApplyLegalName
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Source</th>
+                        <th class="govuk-table__header" scope="col">Address</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Submitted application data</td>
+                        <td class="govuk-table__cell">@Model.SubmittedApplicationAddress</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">UKRLP data</td>
+                        <td class="govuk-table__cell">@Model.UkrlpAddress</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateAddressPage" asp-controller="RoatpGatewayOrganisationChecks">
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.Caption)
+                    @Html.HiddenFor(x => x.Heading)
+                    @Html.HiddenFor(x => x.NoSelectionErrorMessage)
+                    @Html.HiddenFor(x => x.Ukprn)
+                    @Html.HiddenFor(x => x.ApplyLegalName)
+                    @Html.HiddenFor(x => x.ApplicationSubmittedOn)
+                    @Html.HiddenFor(x => x.SourcesCheckedOn)
+                    @Html.HiddenFor(x => x.SubmittedApplicationAddress)
+                    @Html.HiddenFor(x => x.UkrlpAddress)
+                    @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>

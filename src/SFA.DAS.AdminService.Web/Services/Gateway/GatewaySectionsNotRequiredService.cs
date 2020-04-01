@@ -54,13 +54,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         private async Task SetupNotRequiredLinkForWebsiteAddress(Guid applicationId, string userName, RoatpGatewayApplicationViewModel viewModel)
         {
-            var websiteAddressUkrlp = await _applyApiClient.GetWebsiteAddressSourcedFromUkrlp(applicationId);
-            var websiteAddressApply =
-                await _applyApiClient.GetWebsiteAddressManuallyEntered(applicationId);
-            var websiteAddressStatus = string.IsNullOrWhiteSpace(websiteAddressUkrlp) && string.IsNullOrWhiteSpace(websiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
-            if (websiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
+            var applyWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(applicationId);
+            if (string.IsNullOrEmpty(applyWebsite))
             {
-                var page = GetSectionByPageId(viewModel, GatewayPageIds.WebsiteAddress);
+                var page = viewModel?.Sequences?.SelectMany(seq => seq.Sections)
+                    .Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress)?.FirstOrDefault();
 
                 if (page != null)
                     page.Status = SectionReviewStatus.NotRequired;

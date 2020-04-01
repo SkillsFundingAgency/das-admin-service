@@ -34,6 +34,7 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 
@@ -182,6 +183,11 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
+            services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
+				x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IRoatpGatewayCriminalComplianceChecksApiClient>(x => new RoatpGatewayCriminalComplianceChecksApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpGatewayCriminalComplianceChecksApiClient>>(),
@@ -217,6 +223,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
             services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
+            services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }
