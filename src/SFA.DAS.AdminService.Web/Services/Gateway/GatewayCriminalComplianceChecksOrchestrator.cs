@@ -27,10 +27,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving criminal compliance details for application {request.ApplicationId} page {request.PageId}");
 
             var model = new OrganisationCriminalCompliancePageViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, request.PageId, request.UserName);
-            model.Caption = RoatpGatewayConstants.Captions.OrganisationsCriminalAndComplianceChecks;
-            model.Heading = CriminalCompliancePageConfiguration.Headings[request.PageId];
-            model.NoSelectionErrorMessage = CriminalCompliancePageConfiguration.NoSelectionErrorMessages[request.PageId];
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, request.PageId, request.UserName,
+                                                    RoatpGatewayConstants.Captions.OrganisationsCriminalAndComplianceChecks,
+                                                    CriminalCompliancePageConfiguration.Headings[request.PageId],
+                                                    CriminalCompliancePageConfiguration.NoSelectionErrorMessages[request.PageId]);
 
             var criminalComplianceCheckDetails = await _criminalChecksApiClient.GetCriminalComplianceQuestionDetails(request.ApplicationId, request.PageId);
             model.QuestionText = criminalComplianceCheckDetails.QuestionText;
