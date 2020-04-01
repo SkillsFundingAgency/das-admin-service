@@ -9,8 +9,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
     public interface IRoatpOrganisationSummaryApiClient
     {
         Task<string> GetTypeOfOrganisation(Guid applicationId);
-        Task<List<PersonInControl>> GetDirectors(Guid applicationId);
-        Task<List<PersonInControl>> GetDirectorsFromApplyData(Guid applicationId);
+        Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId);
+        Task<List<PersonInControl>> GetDirectorsFromCompaniesHouse(Guid applicationId);
+
+        Task<List<PersonInControl>> GetPscsFromSubmitted(Guid applicationId);
+        Task<List<PersonInControl>> GetPscsFromCompaniesHouse(Guid applicationId);
+
+        Task<List<PersonInControl>> GetTrusteesFromSubmitted(Guid applicationId);
+        Task<List<PersonInControl>> GetTrusteesFromCharityCommission(Guid applicationId);
+        Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId);
 
         Task<TabularData> GetPersonsWithSignificantControl(Guid applicationId);
         Task<TabularData> GetTrustees(Guid applicationId);

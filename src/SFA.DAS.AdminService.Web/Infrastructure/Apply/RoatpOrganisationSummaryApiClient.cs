@@ -27,18 +27,47 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
             return await GetString($"organisation/TypeOfOrganisation/{applicationId}");
         }
 
-        public async Task<List<PersonInControl>> GetDirectors(Guid applicationId)
+        public async Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId)
         {
-            var directors = await Get<List<PersonInControl>>($"organisation/DirectorData/{applicationId}");
+            var directors = await Get<List<PersonInControl>>($"organisation/DirectorData/Submitted/{applicationId}");
             return directors;
         }
 
-        public async Task<List<PersonInControl>> GetDirectorsFromApplyData(Guid applicationId)
+        public async Task<List<PersonInControl>> GetDirectorsFromCompaniesHouse(Guid applicationId)
         {
-            var directors = await Get<List<PersonInControl>>($"organisation/Apply/DirectorData/{applicationId}");
+            var directors = await Get<List<PersonInControl>>($"organisation/DirectorData/CompaniesHouse/{applicationId}");
             return directors;
         }
 
+        public async Task<List<PersonInControl>> GetPscsFromSubmitted(Guid applicationId)
+        {
+            var pscs = await Get<List<PersonInControl>>($"organisation/PscData/Submitted/{applicationId}");
+            return pscs;
+        }
+
+        public async Task<List<PersonInControl>> GetPscsFromCompaniesHouse(Guid applicationId)
+        {
+            var pscs = await Get<List<PersonInControl>>($"organisation/PscData/CompaniesHouse/{applicationId}");
+            return pscs;
+        }
+
+        public async Task<List<PersonInControl>> GetTrusteesFromSubmitted(Guid applicationId)
+        {
+            var pscs = await Get<List<PersonInControl>>($"organisation/TrusteeData/Submitted/{applicationId}");
+            return pscs;
+        }
+
+        public async Task<List<PersonInControl>> GetTrusteesFromCharityCommission(Guid applicationId)
+        {
+            var pscs = await Get<List<PersonInControl>>($"organisation/TrusteeData/CharityCommission/{applicationId}");
+            return pscs;
+        }
+
+        public async Task<List<PersonInControl>> GetWhosInControlFromSubmitted(Guid applicationId)
+        {
+            var whosInControl = await Get<List<PersonInControl>>($"organisation/WhosInControlData/Submitted/{applicationId}");
+            return whosInControl;
+        }
 
         public async Task<TabularData> GetPersonsWithSignificantControl(Guid applicationId)
         {
