@@ -91,7 +91,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
-                    //options.Filters.Add<FeatureToggleFilter>();
+                    options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
