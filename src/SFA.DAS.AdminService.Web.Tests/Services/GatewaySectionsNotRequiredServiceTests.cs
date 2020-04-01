@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
@@ -33,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             _logger = new Mock<ILogger<GatewaySectionsNotRequiredService>>();
             _service = new GatewaySectionsNotRequiredService(_apiClient.Object, _logger.Object);
 
-            var application = new AssessorService.ApplyTypes.Roatp.Apply();
+            var application = new AssessorService.ApplyTypes.Roatp.Apply.Apply();
             _viewModel = new RoatpGatewayApplicationViewModel(application)
             {
                 Sequences = new List<GatewaySequence>
@@ -145,8 +146,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(null)]
         public void Not_required_set_for_website_when_not_found_on_ukrlp_or_manually_entered(string websiteAddress)
         {
-            _apiClient.Setup(x => x.GetWebsiteAddressManuallyEntered(_applicationId)).ReturnsAsync(websiteAddress);
-            _apiClient.Setup(x => x.GetWebsiteAddressSourcedFromUkrlp(_applicationId)).ReturnsAsync(websiteAddress);
+            _apiClient.Setup(x => x.GetOrganisationWebsiteAddress(_applicationId)).ReturnsAsync(websiteAddress);
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, ProviderTypes.Main).GetAwaiter().GetResult();
 
@@ -158,25 +158,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         }
 
         [Test]
-        public void Not_required_not_set_for_website_when_found_on_ukrlp()
+        public void Not_required_not_set_for_website_when_found_on_ukrlp_or_manually_entered()
         {
-            _apiClient.Setup(x => x.GetWebsiteAddressManuallyEntered(_applicationId)).ReturnsAsync(string.Empty);
-            _apiClient.Setup(x => x.GetWebsiteAddressSourcedFromUkrlp(_applicationId)).ReturnsAsync("www.site.com");
-
-            _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, ProviderTypes.Main).GetAwaiter().GetResult();
-
-            var websiteSection = _viewModel.Sequences.SelectMany(seq => seq.Sections)
-                    .Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress).FirstOrDefault();
-
-            websiteSection.Should().NotBeNull();
-            websiteSection.Status.Should().Be(SectionReviewStatus.New);
-        }
-
-        [Test]
-        public void Not_required_not_set_for_website_when_manually_entered()
-        {
-            _apiClient.Setup(x => x.GetWebsiteAddressManuallyEntered(_applicationId)).ReturnsAsync("www.site.com");
-            _apiClient.Setup(x => x.GetWebsiteAddressSourcedFromUkrlp(_applicationId)).ReturnsAsync(string.Empty);
+            _apiClient.Setup(x => x.GetOrganisationWebsiteAddress(_applicationId)).ReturnsAsync("www.site.com");
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, ProviderTypes.Main).GetAwaiter().GetResult();
 
