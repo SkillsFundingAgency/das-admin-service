@@ -4,9 +4,9 @@ namespace SFA.DAS.AdminService.Settings
 {
     public class FeatureToggles : IFeatureToggles
     {
-        public bool EnableRoatpAssessorReview { get; set; }
-        public bool EnableRoatpFinancialReview { get; set; }
-        public bool EnableRoatpGatewayReview { get; set; }
-        public bool EnableRoatpSnapshot { get; set; }
+        [JsonRequired] public bool EnableRoatpAssessorReview { get; set; }
+        [JsonRequired] public bool EnableRoatpFinancialReview { get; set; }
+        [JsonRequired] public bool EnableRoatpGatewayReview { get; set; }
+        [JsonRequired] public bool EnableRoatpSnapshot { get; set; }
     }
 }

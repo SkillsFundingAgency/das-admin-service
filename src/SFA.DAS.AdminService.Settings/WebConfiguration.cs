@@ -25,6 +25,6 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
 
-        public FeatureToggles FeatureToggles { get; set; }
+        [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
     }
 }
