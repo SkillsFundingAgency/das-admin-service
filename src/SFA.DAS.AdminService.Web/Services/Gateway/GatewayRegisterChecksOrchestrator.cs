@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -24,31 +23,20 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<RoatpPageViewModel> GetRoatpViewModel(GetRoatpRequest request)
         {
+            var pageId = GatewayPageIds.Roatp;
             _logger.LogInformation($"Retrieving RoATP details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.Roatp;
+            var model = new RoatpPageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName,
+                                                    RoatpGatewayConstants.Captions.RegisterChecks,
+                                                    RoatpGatewayConstants.Headings.Roatp,
+                                                    NoSelectionErrorMessages.Roatp);
 
-            var commonDetails = await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
+            model.ApplyProviderRoute = await _applyApiClient.GetProviderRouteName(model.ApplicationId);
 
-            var model = new RoatpPageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                ApplyLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn
-            };
+            var roatpProviderDetails = await _roatpApiClient.GetOrganisationRegisterStatus(model.Ukprn);
 
-            model.ApplyProviderRoute = await _applyApiClient.GetProviderRouteName(request.ApplicationId);
-
-            var roatpProviderDetails = await _roatpApiClient.GetOrganisationRegisterStatus(commonDetails.Ukprn);
-
-            if(roatpProviderDetails != null)
+            if (roatpProviderDetails != null)
             {
                 model.RoatpUkprnOnRegister = roatpProviderDetails.UkprnOnRegister;
                 model.RoatpStatusDate = roatpProviderDetails.StatusDate;
@@ -62,25 +50,14 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
         public async Task<RoepaoPageViewModel> GetRoepaoViewModel(GetRoepaoRequest request)
         {
+            var pageId = GatewayPageIds.Roepao;
             _logger.LogInformation($"Retrieving RoEPAO details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.Roepao;
-
-            var commonDetails = await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new RoepaoPageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                ApplyLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn
-            };
+            var model = new RoepaoPageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName,
+                                                    RoatpGatewayConstants.Captions.RegisterChecks,
+                                                    RoatpGatewayConstants.Headings.Roepao,
+                                                    NoSelectionErrorMessages.Roepao);
 
             return model;
         }

@@ -73,20 +73,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
         }
 
         [Test]
-        public async Task roepao_viewmodel_is_returned()
-        {
-            var applicationId = Guid.NewGuid();
-            var expectedViewModel = new RoepaoPageViewModel();
-
-            _orchestrator.Setup(x => x.GetRoepaoViewModel(It.Is<GetRoepaoRequest>(y => y.ApplicationId == applicationId && y.UserName == username))).ReturnsAsync(expectedViewModel);
-
-            var _result = await _controller.GetGatewayRoepaoPage(applicationId, GatewayPageIds.Roepao);
-            var viewModel = (_result as ViewResult)?.ViewData.Model as RoepaoPageViewModel;
-
-            Assert.AreSame(expectedViewModel, viewModel);
-        }
-
-        [Test]
         public async Task saving_roepao_happy_path_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();

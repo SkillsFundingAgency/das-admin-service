@@ -73,20 +73,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
         }
 
         [Test]
-        public async Task roatp_viewmodel_is_returned()
-        {
-            var applicationId = Guid.NewGuid();
-            var expectedViewModel = new RoatpPageViewModel();
-
-            _orchestrator.Setup(x => x.GetRoatpViewModel(It.Is<GetRoatpRequest>(y => y.ApplicationId == applicationId && y.UserName == username))).ReturnsAsync(expectedViewModel);
-
-            var _result = await _controller.GetGatewayRoatpPage(applicationId, GatewayPageIds.Roatp);
-            var viewModel = (_result as ViewResult)?.ViewData.Model as RoatpPageViewModel;
-
-            Assert.AreSame(expectedViewModel, viewModel);
-        }
-
-        [Test]
         public async Task saving_roatp_happy_path_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
