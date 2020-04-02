@@ -128,10 +128,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 Ukprn = "10001234",
             };
 
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
-                                  username, model.OptionPassText)).Returns(Task.CompletedTask)
-                                  .Verifiable("Save answer not called");
-
             var validationResponse = new ValidationResponse 
             {
                 Errors = new List<ValidationErrorDetail>()
