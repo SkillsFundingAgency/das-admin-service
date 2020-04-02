@@ -45,9 +45,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.RegisterChecks.Orchest
                 LegalName = UKRLPLegalName,
                 Ukprn = ukprn
             };
-            _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
+            _applyApiClient.Setup(x => x.GetPageCommonDetails(_applicationId, It.IsAny<string>(), UserName)).ReturnsAsync(commonDetails);
 
-            _applyApiClient.Setup(x => x.GetProviderRouteName(It.IsAny<Guid>())).ReturnsAsync($"{roatpProviderTypeId}");
+            _applyApiClient.Setup(x => x.GetProviderRouteName(_applicationId)).ReturnsAsync($"{roatpProviderTypeId}");
 
             var providerType = new ProviderType
             {
