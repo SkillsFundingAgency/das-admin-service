@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
@@ -161,7 +160,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
-            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+            try
+            {
+                return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving Gateway common details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Gateway common details", ex);
+            }
         }
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
@@ -187,22 +194,54 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task<ProviderDetails> GetUkrlpDetails(Guid applicationId)
         {
-            return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
+            try
+            {
+                return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving UKRLP details", ex);
+                throw new ExternalApiException("An error occurred when retrieving UKRLP details", ex);
+            }
         }
 
         public async Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId)
         {
-            return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+            try 
+            { 
+                return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving Companies House details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Companies House details", ex);
+            }
         }
 
         public async Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId)
         {
-            return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+            try 
+            { 
+                return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving Charity Commission details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Charity Commission details", ex);
+            }
         }
 
         public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId)
         {
-            return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+            try
+            {
+                return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving RoATP details", ex);
+                throw new ExternalApiException("An error occurred when retrieving RoATP details", ex);
+            }
         }
 
         public async Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId)

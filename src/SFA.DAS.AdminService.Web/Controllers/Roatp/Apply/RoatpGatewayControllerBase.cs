@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize]
+    [ExternalApiExceptionFilter]
     public class RoatpGatewayControllerBase : Controller
     {
         public string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
