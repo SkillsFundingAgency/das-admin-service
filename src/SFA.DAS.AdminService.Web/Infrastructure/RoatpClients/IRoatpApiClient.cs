@@ -1,14 +1,12 @@
 ﻿
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
-    using System;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-
     public interface IRoatpApiClient
     {
         Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister();

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System.Linq;
@@ -40,8 +41,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 OptionFailText = commonDetails.OptionFailText,
                 OptionInProgressText = commonDetails.OptionInProgressText,
                 SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn
             };
 
             model.ApplyProviderRoute = await _applyApiClient.GetProviderRouteName(request.ApplicationId);
@@ -79,8 +79,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 OptionFailText = commonDetails.OptionFailText,
                 OptionInProgressText = commonDetails.OptionInProgressText,
                 SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
+                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn
             };
 
             return model;

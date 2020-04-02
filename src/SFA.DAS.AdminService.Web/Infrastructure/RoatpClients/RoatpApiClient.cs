@@ -1,33 +1,27 @@
 ﻿
-namespace SFA.DAS.AdminService.Web.Infrastructure
-{
-    using System;
-    using System.Collections.Generic;
-    using SFA.DAS.AdminService.Settings;
-    using Microsoft.Extensions.Logging;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using System.Net;
-    using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
-    public class RoatpApiClient : IRoatpApiClient
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
+{
+    public class RoatpApiClient : RoatpApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<RoatpApiClient> _logger;
-        private readonly IRoatpTokenService _tokenService;
         private IWebConfiguration _configuration;
         private string _baseUrl;
 
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService, IWebConfiguration configuration)
+        public RoatpApiClient(ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService, IWebConfiguration configuration) : base(configuration.RoatpApiClientBaseUrl, logger, tokenService)
         {
-            _logger = logger;
-            _tokenService = tokenService;
             _configuration = configuration;
             _baseUrl = _configuration.RoatpApiClientBaseUrl;
-            _client = new HttpClient { BaseAddress = new Uri($"{_baseUrl}") };
         }
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory()
