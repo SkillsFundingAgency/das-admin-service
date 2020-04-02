@@ -10,6 +10,4 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public PeopleInControlData TrusteeData { get; set; }
         public PeopleInControlData WhosInControlData { get; set; }
     }
-
-    
 }

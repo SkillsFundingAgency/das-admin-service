@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AdminService.Web.Services.Gateway;
+using SFA.DAS.AdminService.Web.Services.Gateway;IRo
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orchestrator
