@@ -17,9 +17,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public class RoatpGatewayPeopleInControlController : RoatpGatewayControllerBase<RoatpGatewayPeopleInControlController>
         {
 
-            private readonly IGatewayPeopleInControlOrchestrator _orchestrator;
+            private readonly IPeopleInControlOrchestrator _orchestrator;
 
-        public RoatpGatewayPeopleInControlController(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, ILogger<RoatpGatewayPeopleInControlController> logger, IRoatpGatewayPageViewModelValidator validator, IGatewayPeopleInControlOrchestrator orchestrator ) : base(contextAccessor, roatpApiClient, logger, validator)
+        public RoatpGatewayPeopleInControlController(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, ILogger<RoatpGatewayPeopleInControlController> logger, IRoatpGatewayPageViewModelValidator validator, IPeopleInControlOrchestrator orchestrator ) : base(contextAccessor, roatpApiClient, logger, validator)
         {
             {
                 _orchestrator = orchestrator;
@@ -37,17 +37,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControl")]
-        public async Task<IActionResult> EvaluatePeopleInControlPage(PeopleInControlPageViewModel viewModel)
-        {
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var vmRebuild = await _orchestrator.GetPeopleInControlViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
-            viewModel.CompanyDirectorsData = vmRebuild.CompanyDirectorsData;
-            viewModel.PscData = vmRebuild.PscData;
-            viewModel.TrusteeData = vmRebuild.TrusteeData;
-            viewModel.WhosInControlData = vmRebuild.WhosInControlData;
+            public async Task<IActionResult> EvaluatePeopleInControlPage(PeopleInControlPageViewModel viewModel)
+            {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var vmRebuild = await _orchestrator.GetPeopleInControlViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
+                viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
+                viewModel.PscData = vmRebuild?.PscData;
+                viewModel.TrusteeData = vmRebuild?.TrusteeData;
+                viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
 
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml");
-        }
+                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml");
+            }
     }
     
 }

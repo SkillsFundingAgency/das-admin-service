@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway

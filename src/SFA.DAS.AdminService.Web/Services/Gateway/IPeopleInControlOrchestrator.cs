@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
-    public interface IGatewayPeopleInControlOrchestrator
+    public interface IPeopleInControlOrchestrator
     {
         Task<PeopleInControlPageViewModel> GetPeopleInControlViewModel(GetPeopleInControlRequest getLegalNameRequest);
     }

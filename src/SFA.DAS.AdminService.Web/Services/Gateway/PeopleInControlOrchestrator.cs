@@ -8,13 +8,13 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
-    public class GatewayPeopleInControlOrchestrator: IGatewayPeopleInControlOrchestrator
+    public class PeopleInControlOrchestrator: IPeopleInControlOrchestrator
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IRoatpOrganisationSummaryApiClient _organisationSummaryApiClient;
-        private readonly ILogger<GatewayPeopleInControlOrchestrator> _logger;
+        private readonly ILogger<PeopleInControlOrchestrator> _logger;
 
-        public GatewayPeopleInControlOrchestrator(IRoatpApplicationApiClient applyApiClient, IRoatpOrganisationSummaryApiClient organisationSummaryApiClient, ILogger<GatewayPeopleInControlOrchestrator> logger)
+        public PeopleInControlOrchestrator(IRoatpApplicationApiClient applyApiClient, IRoatpOrganisationSummaryApiClient organisationSummaryApiClient, ILogger<PeopleInControlOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControl, request.UserName,
                 RoatpGatewayConstants.Captions.PeopleInControlChecks,
                 RoatpGatewayConstants.Headings.PeopleInControl,
-                NoSelectionErrorMessages.AddressCheck);
+                NoSelectionErrorMessages.PeopleInControlCheck);
 
             _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);

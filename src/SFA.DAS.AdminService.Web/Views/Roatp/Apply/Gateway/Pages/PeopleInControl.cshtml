@@ -72,6 +72,8 @@
             <form class="js-disable-on-submit" asp-action="EvaluatePeopleInControlPage" asp-controller="RoatpGatewayPeopleInControl">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="PageId" value="@Model.PageId" />
+                <input type="hidden" asp-for="Caption" />
+                <input type="hidden" asp-for="Heading" />
                 <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
                 <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
                 <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
