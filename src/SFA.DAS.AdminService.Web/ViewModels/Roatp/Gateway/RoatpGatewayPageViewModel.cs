@@ -13,13 +13,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string Status { get; set; }
 
         public string Ukprn { get; set; }
-
-        public string GatewayReviewStatus { get; set; }
-
+        public string ApplyLegalName { get; set; }
         public string OptionPassText { get; set; }
         public string OptionFailText { get; set; }
-
         public string OptionInProgressText { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+   
+        public DateTime? SourcesCheckedOn { get; set; }
+        public DateTime? ApplicationSubmittedOn { get; set; }
+
+        public string Heading { get; set; }
+        public string Caption { get; set; }
+        public string NoSelectionErrorMessage { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {

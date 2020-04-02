@@ -6,6 +6,8 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -30,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [Test]
         public void Orchestrator_builds_view_model_from_api()
         {
-            var pageId = "1234";
+            var pageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors;
             var questionId = "CC-11";
             var furtherQuestionId = "CC-11.1";
 
@@ -60,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _criminalChecksApiClient.Setup(x => x.GetCriminalComplianceQuestionDetails(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(criminalComplianceDetails);
             
-            var viewModel = _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(Guid.NewGuid(), "1234", "user")).GetAwaiter().GetResult();
+            var viewModel = _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(Guid.NewGuid(), pageId, "user")).GetAwaiter().GetResult();
             
             viewModel.PageId.Should().Be(pageId);
             viewModel.QuestionText.Should().Be(criminalComplianceDetails.QuestionText);

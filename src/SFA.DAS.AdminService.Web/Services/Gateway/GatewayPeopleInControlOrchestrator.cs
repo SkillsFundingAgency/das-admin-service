@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -28,25 +25,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
              _logger.LogInformation($"Retrieving people in control details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.PeopleInControl;
-
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new PeopleInControlPageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                ApplyLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+             var model = new PeopleInControlPageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControl, request.UserName,
+                RoatpGatewayConstants.Captions.PeopleInControlChecks,
+                RoatpGatewayConstants.Headings.PeopleInControl,
+                NoSelectionErrorMessages.AddressCheck);
 
             _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);

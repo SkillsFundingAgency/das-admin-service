@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
@@ -25,29 +26,15 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving legal name details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.LegalName;
-
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new LegalNamePageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                ApplyLegalName = commonDetails.LegalName,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new LegalNamePageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.LegalName, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.LegalName,
+                                                                                            NoSelectionErrorMessages.LegalName);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
-            model.UkrlpLegalName = ukrlpDetails.ProviderName;
+            model.UkrlpLegalName = ukrlpDetails?.ProviderName;
 
             var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
             if (companiesHouseDetails != null)
@@ -68,31 +55,17 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving trading name details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.TradingName;
-
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new TradingNamePageViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new TradingNamePageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.TradingName, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.TradingName,
+                                                                                            NoSelectionErrorMessages.TradingName);
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
-
-                if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
-                {
-                    model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
-                }
+            if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
+            {
+                model.UkrlpTradingName = ukrlpDetail.ProviderAliases.First().Alias;
+            }
 
             model.ApplyTradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
        
@@ -103,24 +76,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         {
             _logger.LogInformation($"Retrieving organisation status details for application {request.ApplicationId}");
 
-            var pageId = GatewayPageIds.OrganisationStatus;
-
-            var commonDetails =
-                await _applyApiClient.GetPageCommonDetails(request.ApplicationId, pageId, request.UserName);
-
-            var model = new OrganisationStatusViewModel
-            {
-                ApplicationId = request.ApplicationId,
-                PageId = pageId,
-                Ukprn = commonDetails.Ukprn,
-                Status = commonDetails.Status,
-                OptionPassText = commonDetails.OptionPassText,
-                OptionFailText = commonDetails.OptionFailText,
-                OptionInProgressText = commonDetails.OptionInProgressText,
-                SourcesCheckedOn = commonDetails.CheckedOn,
-                ApplicationSubmittedOn = commonDetails.ApplicationSubmittedOn,
-                GatewayReviewStatus = commonDetails.GatewayReviewStatus
-            };
+            var model = new OrganisationStatusViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OrganisationStatus, request.UserName,
+                                                                                                RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                                RoatpGatewayConstants.Headings.OrganisationStatusCheck,
+                                                                                                NoSelectionErrorMessages.OrganisationStatusCheck);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();
@@ -136,6 +96,101 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             {
                 model.CharityCommissionStatus = charityCommissionDetails?.Status.CapitaliseFirstLetter();
             }
+
+            return model;
+        }
+
+        public async Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request)
+        {
+            _logger.LogInformation($"Retrieving address check details for application {request.ApplicationId}");
+
+            var model = new AddressCheckViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Address, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.AddressCheck,
+                                                                                            NoSelectionErrorMessages.AddressCheck);
+
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.SubmittedApplicationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
+
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            if (ukrlpDetails != null)
+            {
+                var ukrlpAddressLine1 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address1;
+                var ukrlpAddressLine2 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address2;
+                var ukrlpAddressLine3 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address3;
+                var ukrlpAddressLine4 = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Address4;
+                var ukrlpTown = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.Town;
+                var ukrlpPostCode = ukrlpDetails.ContactDetails.FirstOrDefault().ContactAddress.PostCode;
+
+                var ukrlpAarray = new[] { ukrlpAddressLine1, ukrlpAddressLine2, ukrlpAddressLine3, ukrlpAddressLine4, ukrlpTown, ukrlpPostCode };
+                var ukrlpAddress = string.Join(", ", ukrlpAarray.Where(s => !string.IsNullOrEmpty(s)));
+                model.UkrlpAddress = ukrlpAddress;
+            }
+
+            return model;
+        }
+
+        public async Task<IcoNumberViewModel> GetIcoNumberViewModel(GetIcoNumberRequest request)
+        {
+            _logger.LogInformation($"Retrieving ICO Number check details for application {request.ApplicationId}");
+
+            var model = new IcoNumberViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.IcoNumber, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.IcoNumber,
+                                                                                            NoSelectionErrorMessages.IcoNumber);
+            
+
+            var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
+            if (organisationAddress != null)
+            {
+                var AddressArray = new[] { organisationAddress.Address1, organisationAddress.Address2, organisationAddress.Address3, organisationAddress.Address4, organisationAddress.Town, organisationAddress.PostCode };
+                model.OrganisationAddress = string.Join(", ", AddressArray.Where(s => !string.IsNullOrEmpty(s))); ;
+            }
+
+            model.IcoNumber = await _applyApiClient.GetIcoNumber(request.ApplicationId);
+
+            return model;
+        }
+
+        public async Task<WebsiteViewModel> GetWebsiteViewModel(GetWebsiteRequest request)
+        {
+            _logger.LogInformation($"Retrieving Website check details for application {request.ApplicationId}");
+
+            var model = new WebsiteViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.WebsiteAddress, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.Website,
+                                                                                            NoSelectionErrorMessages.Website);
+
+            model.SubmittedWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
+
+            var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
+            if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
+            {
+                model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier)?.ContactWebsiteAddress;
+            }
+
+            return model;
+        }
+
+        public async Task<OrganisationRiskViewModel> GetOrganisationRiskViewModel(GetOrganisationRiskRequest request)
+        {
+            _logger.LogInformation($"Retrieving Organisation high risk check details for application {request.ApplicationId}");
+
+            var model = new OrganisationRiskViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OrganisationRisk, request.UserName,
+                                                                                            RoatpGatewayConstants.Captions.OrganisationChecks,
+                                                                                            RoatpGatewayConstants.Headings.OrganisationRisk,
+                                                                                            NoSelectionErrorMessages.OrganisationRisk);
+
+            model.OrganisationType = await _applyApiClient.GetTypeOfOrganisation(request.ApplicationId);
+            model.TradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
 
             return model;
         }
