@@ -34,38 +34,37 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
 
-
-            _logger.LogInformation($"Retrieving people in control - company directors for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving people in control - [{RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors}] for application {request.ApplicationId}");
             model.CompanyDirectorsData = new PeopleInControlData
             {
-                Caption = "Company directors",
-                ExternalSourceHeading = "Companies House data",
+                Caption = RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors,
+                ExternalSourceHeading = RoatpGatewayConstants.PeopleInControl.Caption.CompaniesHouse,
                 FromExternalSource = await _organisationSummaryApiClient.GetDirectorsFromCompaniesHouse(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
             };
 
-            _logger.LogInformation($"Retrieving people in control - persons of significant control for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving people in control - [{RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl}] for application {request.ApplicationId}");
             model.PscData = new PeopleInControlData
             {
-                Caption = "People with significant control (PSC’s)",
-                ExternalSourceHeading = "Companies House data",
+                Caption = RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl,
+                ExternalSourceHeading = RoatpGatewayConstants.PeopleInControl.Caption.CompaniesHouse,
                 FromExternalSource = await _organisationSummaryApiClient.GetPscsFromCompaniesHouse(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetPscsFromSubmitted(request.ApplicationId)
             };
 
-            _logger.LogInformation($"Retrieving people in control - trustees for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving people in control - [{RoatpGatewayConstants.PeopleInControl.Heading.Trustees}] for application {request.ApplicationId}");
             model.TrusteeData = new PeopleInControlData
             {
-                Caption = "Trustees",
-                ExternalSourceHeading = "Charity Commission data",
+                Caption = RoatpGatewayConstants.PeopleInControl.Heading.Trustees,
+                ExternalSourceHeading = RoatpGatewayConstants.PeopleInControl.Caption.CharityCommission,
                 FromExternalSource = await _organisationSummaryApiClient.GetTrusteesFromCharityCommission(request.ApplicationId),
                 FromSubmittedApplication = await _organisationSummaryApiClient.GetTrusteesFromSubmitted(request.ApplicationId)
             };
 
-            _logger.LogInformation($"Retrieving people in control - who's in control for application {request.ApplicationId}");
+            _logger.LogInformation($"Retrieving people in control - [{RoatpGatewayConstants.PeopleInControl.Heading.WhosInControl}] for application {request.ApplicationId}");
             model.WhosInControlData = new PeopleInControlData
             {
-                Caption = "Who's in control",
+                Caption = RoatpGatewayConstants.PeopleInControl.Heading.WhosInControl,
                 ExternalSourceHeading = null,
                 FromExternalSource = null,
                 FromSubmittedApplication =

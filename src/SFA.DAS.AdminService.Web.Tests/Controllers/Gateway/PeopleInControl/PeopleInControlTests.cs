@@ -71,8 +71,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
             [Test]
             public void check_people_in_control_request_is_sent()
             {
-                var pageId = "PeopleInControl";
-                var _result = _controller.GetGatewayPeopleInControlPage(applicationId, pageId).Result;
+                var _result = _controller.GetGatewayPeopleInControlPage(applicationId, GatewayPageIds.PeopleInControl).Result;
                 _orchestrator.Verify(x => x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()), Times.Once());
             }
 
@@ -80,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         public void post_people_in_control_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "PeopleInControl";
+            var pageId = GatewayPageIds.PeopleInControl;
 
             var vm = new PeopleInControlPageViewModel
             {
@@ -104,7 +103,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         public void post_people_in_control_path_with_errors()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "PeopleInControl2";
+            var pageId = GatewayPageIds.PeopleInControl;
 
             var viewModel = new PeopleInControlPageViewModel
             {

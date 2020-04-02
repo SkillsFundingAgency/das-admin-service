@@ -34,6 +34,23 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public static string Ofsted = "";
             public static string SubcontractorDeclaration = "Subcontractor declaration check";
         }
+
+        public static class PeopleInControl
+        {
+            public static class Heading
+            {
+                public static string CompanyDirectors = "Company directors";
+                public static string PeopleWithSignificantControl = "People with significant control(PSC''s)";
+                public static string Trustees = "Trustees";
+                public static string WhosInControl = "Who's in control";
+            }
+
+            public static class Caption
+            {
+                public static string CompaniesHouse = "Companies House data";
+                public static string CharityCommission = "Charity Commission data";
+            }
+        }
     }
 
     public static class NoSelectionErrorMessages
