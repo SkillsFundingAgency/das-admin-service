@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Snapshot;
 using System.Linq;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 

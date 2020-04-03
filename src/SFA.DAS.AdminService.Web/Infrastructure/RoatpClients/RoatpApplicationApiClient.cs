@@ -1,31 +1,23 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using System.Net.Http.Formatting;
+using SFA.DAS.AdminService.Web.Models;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
-    public class RoatpApplicationApiClient : IRoatpApplicationApiClient
+    public class RoatpApplicationApiClient : RoatpApiClientBase<RoatpApplicationApiClient>, IRoatpApplicationApiClient
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<RoatpApplicationApiClient> _logger;
-        private readonly IRoatpApplyTokenService _tokenService;
-
-        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService)
+        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService) : base(baseUri, logger, tokenService)
         {
-            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _logger = logger;
-            _tokenService = tokenService;
         }
 
         public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
@@ -164,6 +156,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
         }
 
+        public async Task<ContactAddress> GetOrganisationAddress(Guid applicationId)
+        {
+            return await Get<ContactAddress>($"/Gateway/{applicationId}/OrganisationAddress");
+        }
+
+        public async Task<string> GetIcoNumber(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/IcoNumber");
+        }
+
+        public async Task<string> GetTypeOfOrganisation(Guid applicationId)
+        {
+            return await Get($"/organisation/TypeOfOrganisation/{applicationId}");
+        }
+
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
             await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
@@ -227,6 +234,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get($"/Gateway/{applicationId}/WebsiteAddressManuallyEntered");
         }
 
+        public async Task<string> GetOrganisationWebsiteAddress(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/OrganisationWebsiteAddress");
+        }
+
         public async Task<string> GetOfficeForStudents(Guid applicationId)
         {
             return await Get($"/Accreditation/{applicationId}/OfficeForStudents");
@@ -236,65 +248,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
         }
-
-        private async Task<T> Get<T>(string uri)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-            {
-                return await response.Content.ReadAsAsync<T>();
-            }
-        }
-
-        private async Task<string> Get(string uri)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-        }
-
-
-        private async Task Post<T>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
-        }
-
-        private async Task<U> Post<T, U>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
-            {
-                return await response.Content.ReadAsAsync<U>();
-            }
-        }
-
-        private async Task<U> Put<T, U>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
-            {
-                return await response.Content.ReadAsAsync<U>();
-            }
-        }
-
     }
 }

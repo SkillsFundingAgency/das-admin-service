@@ -15,6 +15,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Web.Tests.Validators
+﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+
+namespace SFA.DAS.AdminService.Web.Tests.Validators
 {
     using System;
     using System.Linq;

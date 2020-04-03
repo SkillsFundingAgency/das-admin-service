@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
