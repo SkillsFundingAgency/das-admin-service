@@ -6,6 +6,7 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {

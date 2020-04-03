@@ -1,16 +1,16 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
-
-
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
     public interface IRoatpApplicationApiClient
     {
@@ -51,7 +51,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
          Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
-         Task TriggerGatewayDataGathering(Guid applicationId, string userName);
+         Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
+        Task<string> GetIcoNumber(Guid applicationId);
+        Task<string> GetTypeOfOrganisation(Guid applicationId);
+        Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);
@@ -68,6 +71,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> GetTradingName(Guid applicationId);
         Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId);
         Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId);
+        Task<string> GetOrganisationWebsiteAddress(Guid applicationId);
         Task<string> GetOfficeForStudents(Guid applicationId);
         Task<string> GetInitialTeacherTraining(Guid applicationId);
     }

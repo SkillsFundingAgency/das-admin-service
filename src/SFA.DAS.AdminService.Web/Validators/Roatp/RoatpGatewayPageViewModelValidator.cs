@@ -11,10 +11,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
     public  class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
     {
-
-        private  const string SelectAnOutcome = "Select the outcome of this check";
-
-        private const string FailDetailsRequired = "Enter the reasons this check was failed";
+        private const string FailDetailsRequired = "Enter comments";
         private const string TooManyWords = "Your comments must be 150 words or less";
 
         public async Task<ValidationResponse> Validate(RoatpGatewayPageViewModel vm)
@@ -26,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             if (string.IsNullOrWhiteSpace(vm.Status))
             {
-                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", SelectAnOutcome));
+                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", vm.NoSelectionErrorMessage));
             }
             else
             {

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
@@ -34,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
 
             // Setting Application Data => TODO: To be stored in session.
-            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply
+            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply.Apply
             {
                 ApplyData = new RoatpApplyData
                 {
@@ -155,7 +157,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             };
             #endregion
 
-            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && savedStatuses.Count.Equals(0))
             { 
                 // TradingName
                 var tradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
@@ -173,11 +176,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
 
                 // WebsiteAddress
-                var websiteAddressUkrlp = await _applyApiClient.GetWebsiteAddressSourcedFromUkrlp(request.ApplicationId);
-                var websiteAddressApply =
-                    await _applyApiClient.GetWebsiteAddressManuallyEntered(request.ApplicationId);
-                var websiteAddressStatus = string.IsNullOrWhiteSpace(websiteAddressUkrlp) && string.IsNullOrWhiteSpace(websiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
-                if (websiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
+                var applyWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
+                if (string.IsNullOrEmpty(applyWebsite))
                 {
                     var page = viewmodel?.Sequences?.SelectMany(seq => seq.Sections)
                         .Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress)?.FirstOrDefault();
@@ -258,7 +258,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
             else
             {
-                var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
                 foreach (var currentStatus in savedStatuses)
                 {
                     // Inject the statuses into viewmodel
