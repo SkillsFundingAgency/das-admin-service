@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
@@ -170,10 +171,24 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             model.SubmittedWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
 
+            Uri submittedWebsiteProperUri;
+            var isSubmittedWebsiteProperUri = StringExtensions.ValidateHttpURL(model.SubmittedWebsite, out submittedWebsiteProperUri);
+            if (isSubmittedWebsiteProperUri)
+            {
+                model.SubmittedWebsiteUrl = submittedWebsiteProperUri?.AbsoluteUri;
+            }
+            
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetails != null && ukrlpDetails.ContactDetails != null)
             {
                 model.UkrlpWebsite = ukrlpDetails.ContactDetails.FirstOrDefault(x => x.ContactType == RoatpGatewayConstants.ProviderContactDetailsTypeLegalIdentifier)?.ContactWebsiteAddress;
+
+                Uri ukrlpWebsiteProperUri;
+                var isUkrlpWebsiteProperUri = StringExtensions.ValidateHttpURL(model.UkrlpWebsite, out ukrlpWebsiteProperUri);
+                if (isUkrlpWebsiteProperUri)
+                {
+                    model.UkrlpWebsiteUrl = ukrlpWebsiteProperUri?.AbsoluteUri;
+                }
             }
 
             return model;
