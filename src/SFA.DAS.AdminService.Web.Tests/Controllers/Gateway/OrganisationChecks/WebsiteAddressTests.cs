@@ -20,6 +20,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         private RoatpGatewayOrganisationChecksController _controller;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
 
+        private string comment = "test comment";
+        private string viewname = "~/Views/Roatp/Apply/Gateway/pages/Website.cshtml";
+
         [SetUp]
         public void Setup()
         {
@@ -41,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username))).ReturnsAsync(vm);
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username))).ReturnsAsync(vm);
 
             var result = _controller.GetWebsitePage(applicationId).Result;
             var viewResult = result as ViewResult;
@@ -56,15 +59,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             var vm = new WebsiteViewModel
             {
+                ApplicationId = applicationId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = comment,
+                PageId = pageId
             };
 
             var result = _controller.EvaluateWebsitePage(vm).Result;
 
-			ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)), Times.Never());
+			ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, comment));
+            _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)), Times.Never());
         }
 
         [Test]
@@ -92,7 +98,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)))
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 

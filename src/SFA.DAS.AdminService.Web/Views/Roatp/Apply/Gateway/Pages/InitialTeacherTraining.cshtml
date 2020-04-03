@@ -1,32 +1,8 @@
 ﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.InitialTeacherTrainingViewModel
 
 @{
-    var heading = "Initial teacher training (ITT) check";
-    var caption = "Experience and accreditation checks";
-
-    ViewBag.Title = $"Gateway - {heading}";
+    ViewBag.Title = $"Gateway - {@Model.Heading}";
     Layout = "_Layout";
-
-    var formGroupError = Model.ErrorMessages != null && Model.ErrorMessages.Any() ? "govuk-form-group--error" : "";
-    var isErrorFailText = "";
-    var noSelectionMessage = "";
-    var failTextMessage = "";
-    if (Model.ErrorMessages != null && Model.ErrorMessages.Any())
-    {
-        foreach (var error in Model.ErrorMessages)
-        {
-            if (error.Field == "OptionPass")
-            {
-                noSelectionMessage = error.ErrorMessage;
-            }
-
-            if (error.Field == "OptionFailText")
-            {
-                isErrorFailText = "govuk-textarea--error-override";
-                failTextMessage = error.ErrorMessage;
-            }
-        }
-    }
 }
 
 @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
@@ -38,10 +14,10 @@
             @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
 
             <span class="govuk-caption-xl">
-                @caption
+                @Model.Caption
             </span>
 
-            <h1 class="govuk-heading-xl">@heading</h1>
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
 
 
             <div class="govuk-!-margin-bottom-4">

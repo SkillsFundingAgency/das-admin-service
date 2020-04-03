@@ -22,7 +22,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
 
             Assert.AreEqual(GatewayPageIds.OfficeForStudents, viewModel.PageId);
             Assert.AreEqual(ApplicationId, viewModel.ApplicationId);
-            Assert.AreEqual(CommonDetails.GatewayReviewStatus, viewModel.GatewayReviewStatus);
             Assert.AreEqual(CommonDetails.OptionFailText, viewModel.OptionFailText);
             Assert.AreEqual(CommonDetails.OptionInProgressText, viewModel.OptionInProgressText);
             Assert.AreEqual(CommonDetails.OptionPassText, viewModel.OptionPassText);
