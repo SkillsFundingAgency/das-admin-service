@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving ofsted details for application {request.ApplicationId}");
 
             var model = new OfstedDetailsViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Ofsted, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Ofsted, request.UserName, RoatpGatewayConstants.Captions.ExperienceAndAccreditation, RoatpGatewayConstants.Headings.Ofsted, NoSelectionErrorMessages.Ofsted);
 
             var ofstedDetails = await _experienceAndAccreditationApiClient.GetOfstedDetails(request.ApplicationId);
 
