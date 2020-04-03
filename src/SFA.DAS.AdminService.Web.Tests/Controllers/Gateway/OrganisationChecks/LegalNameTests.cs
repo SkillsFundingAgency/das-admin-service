@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
@@ -18,101 +20,73 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class LegalNameTests
+    public class LegalNameTests : RoatpGatewayControllerTestBase<RoatpGatewayOrganisationChecksController>
     {
         private RoatpGatewayOrganisationChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
-        private string username => "mark cain";
-        private string givenName => "mark";
-        private string surname => "cain";
         [SetUp]
         public void Setup()
         {
-           _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-           _contextAccessor = new Mock<IHttpContextAccessor>();
-           _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-           _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
-           _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
+            CoreSetup();
 
-           var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-            }));
-
-            var context = new DefaultHttpContext{ User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                    {
-                        Errors = new List<ValidationErrorDetail>()
-                    }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object,_contextAccessor.Object,_gatewayValidator.Object, _orchestrator.Object,_logger.Object);
+            _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
-        public  void check_legal_name_request_is_sent()
+        public async Task LegalName_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-10";
+            var pageId = GatewayPageIds.LegalName;
+            var expectedViewModel = new LegalNamePageViewModel();
 
-            _orchestrator.Setup(x => x.GetLegalNameViewModel(new GetLegalNameRequest(applicationId, username)))
-                .ReturnsAsync(new LegalNamePageViewModel())
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetLegalNameViewModel(It.Is<GetLegalNameRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
 
-            var _result =  _controller.GetGatewayLegalNamePage(applicationId, pageId).Result;
-            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Once());
+            var result = await _controller.GetGatewayLegalNamePage(applicationId, pageId);
+            var viewResult = result as ViewResult;
+            Assert.AreSame(expectedViewModel, viewResult.Model);
         }
 
         [Test]
-        public void post_legal_name_happy_path()
+        public async Task LegalName_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-10";
+            var pageId = GatewayPageIds.LegalName;
 
             var vm = new LegalNamePageViewModel
             {
+                ApplicationId = applicationId,
+                PageId = pageId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = "Some pass text"
             };
 
-            vm.SourcesCheckedOn = DateTime.Now;
+            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            var pageData = JsonConvert.SerializeObject(vm);
+            await _controller.EvaluateLegalNamePage(vm);
 
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
-
-            var result = _controller.EvaluateLegalNamePage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
 
         [Test]
-        public void post_legal_name_path_with_errors()
+        public async Task LegalName_without_required_fields_does_not_save()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-20";
+            var pageId = GatewayPageIds.LegalName;
 
-            var vm = new LegalNamePageViewModel
+            var vm = new LegalNamePageViewModel()
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                ApplicationId = applicationId,
+                PageId = pageId
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(vm))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -122,23 +96,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            vm.ApplicationId = applicationId;
-            vm.PageId = vm.PageId;
-            vm.SourcesCheckedOn = DateTime.Now;
+            await _controller.EvaluateLegalNamePage(vm);
 
-            _orchestrator.Setup(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
-
-            var pageData = JsonConvert.SerializeObject(vm);
-
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
-
-            var result = _controller.EvaluateLegalNamePage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
         }
+
+
+
     }
 }

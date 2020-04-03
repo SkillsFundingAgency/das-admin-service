@@ -9,5 +9,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     public interface IGatewayOverviewOrchestrator
     {
         Task<RoatpGatewayApplicationViewModel> GetOverviewViewModel(GetApplicationOverviewRequest getTradingNameRequest);
+        Task<RoatpGatewayApplicationViewModel> GetConfirmOverviewViewModel(GetApplicationOverviewRequest request);
     }
 }

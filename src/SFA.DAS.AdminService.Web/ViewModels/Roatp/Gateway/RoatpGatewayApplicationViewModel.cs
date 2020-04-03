@@ -62,6 +62,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
         public string PageId { get; set; }
         public string HiddenText { get; set; }
         public string LinkTitle { get; set; }
-        public string Status { get; set; }       
+        public string Status { get; set; }          
+        public string Comment { get; set; }
     }
 }

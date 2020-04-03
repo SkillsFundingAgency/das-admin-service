@@ -35,127 +35,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 return null;
             }
 
-            // Setting Application Data => TODO: To be stored in session.
-            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply.Apply
-            {
-                ApplyData = new RoatpApplyData
-                {
-                    ApplyDetails = new RoatpApplyDetails
-                    {
-                        ReferenceNumber = application.ApplyData.ApplyDetails.ReferenceNumber,
-                        ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute,
-                        ProviderRouteName = application.ApplyData.ApplyDetails.ProviderRouteName,
-                        UKPRN = application.ApplyData.ApplyDetails.UKPRN,
-                        OrganisationName = application.ApplyData.ApplyDetails.OrganisationName,
-                        ApplicationSubmittedOn = application.ApplyData.ApplyDetails.ApplicationSubmittedOn
-                    }
-                },
-                Id = application.Id,
-                ApplicationId = application.ApplicationId,
-                OrganisationId = application.OrganisationId,
-                ApplicationStatus = application.ApplicationStatus,
-                GatewayReviewStatus = application.GatewayReviewStatus,
-                AssessorReviewStatus = application.AssessorReviewStatus,
-                FinancialReviewStatus = application.FinancialReviewStatus
-            };
+            var applicationData = GetApplicationData(application);
 
             var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
-
-            // APR-1467 Code Stubbing Data - TODO: Store it somewhere 
-            #region Sequences Stubbed Data
-            viewmodel.Sequences = new List<GatewaySequence>
-            {
-                new GatewaySequence
-                {
-                    SequenceNumber = 1,
-                    SequenceTitle = "Organisation checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.LegalName,  LinkTitle = "Legal name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.TradingName, LinkTitle = "Trading name", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.OrganisationStatus, LinkTitle = "Organisation status", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Address, LinkTitle = "Address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.IcoNumber, LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.WebsiteAddress,  LinkTitle = "Website address", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.OrganisationRisk,  LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 2,
-                    SequenceTitle = "People in control checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.PeopleInControl, LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PeopleInControlRisk,   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 3,
-                    SequenceTitle = "Register checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.Roatp, LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.Repao,  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 4,
-                    SequenceTitle = "Experience and accreditation checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.OfficeForStudents,  LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.InitialTeacherTraining, LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.Ofsted,  LinkTitle = "Ofsted", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.SubcontractorDeclaration, LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 5,
-                    SequenceTitle = "Organisation’s criminal and compliance checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly, LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
-                    }
-                },
-
-                new GatewaySequence
-                {
-                    SequenceNumber = 6,
-                    SequenceTitle = "People in control’s criminal and compliance checks",
-                    Sections = new List<GatewaySection>
-                    {
-                        new GatewaySection { SectionNumber = 1, PageId = "UnspentCriminalConviction",  LinkTitle = "Unspent criminal convictions", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "FailedtoPayBack", LinkTitle = "Failed to pay back funds", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "FraudIrregularities", LinkTitle = "Investigated for fraud or irregularities", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "OngoingInvestigation",  LinkTitle = "Ongoing investigations for fraud or irregularities", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "ContractTerminated", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "WithdrawnFromContract",  LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = "BreachedPayments",  LinkTitle = "Breached tax payments or social security contributions", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = "RegisterOfRemovedTrustees", LinkTitle = "Register of Removed Trustees", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = "Bankrupt",  LinkTitle = "Been made bankrupt", HiddenText = "", Status = "" }
-                    }
-                }
-            };
-            #endregion
+            viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
 
             var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
             if (savedStatuses != null && savedStatuses.Count.Equals(0))
@@ -265,12 +148,46 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
             }
 
-            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
+            viewmodel.ReadyToConfirm = true; // CheckIsItReadyToConfirm(viewmodel);
 
             return viewmodel;
         }
 
-        public bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
+        public async Task<RoatpGatewayApplicationViewModel> GetConfirmOverviewViewModel(GetApplicationOverviewRequest request)
+        {
+            var application = await _applyApiClient.GetApplication(request.ApplicationId);
+            if (application is null)
+            {
+                return null;
+            }
+
+            var applicationData = GetApplicationData(application);
+
+            var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
+            viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
+
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && savedStatuses.Count.Equals(0))
+            {
+                viewmodel.ReadyToConfirm = false;
+                return viewmodel;
+            }
+            else
+            {
+                foreach (var currentStatus in savedStatuses)
+                {
+                    // Inject the statuses and comments into viewmodel
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus.Status;
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Comment = currentStatus.Comments;
+                }
+            }
+
+            viewmodel.ReadyToConfirm = true; // CheckIsItReadyToConfirm(viewmodel);
+
+            return viewmodel;
+        }
+
+        private bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
         {
             var isReadyToConfirm = true;
 
@@ -287,6 +204,129 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
 
             return isReadyToConfirm;
+        }
+
+        private AssessorService.ApplyTypes.Roatp.Apply.Apply GetApplicationData(RoatpApplicationResponse application)
+        {
+            return new AssessorService.ApplyTypes.Roatp.Apply.Apply
+            {
+                ApplyData = new RoatpApplyData
+                {
+                    ApplyDetails = new RoatpApplyDetails
+                    {
+                        ReferenceNumber = application.ApplyData.ApplyDetails.ReferenceNumber,
+                        ProviderRoute = application.ApplyData.ApplyDetails.ProviderRoute,
+                        ProviderRouteName = application.ApplyData.ApplyDetails.ProviderRouteName,
+                        UKPRN = application.ApplyData.ApplyDetails.UKPRN,
+                        OrganisationName = application.ApplyData.ApplyDetails.OrganisationName,
+                        ApplicationSubmittedOn = application.ApplyData.ApplyDetails.ApplicationSubmittedOn
+                    }
+                },
+                Id = application.Id,
+                ApplicationId = application.ApplicationId,
+                OrganisationId = application.OrganisationId,
+                ApplicationStatus = application.ApplicationStatus,
+                GatewayReviewStatus = application.GatewayReviewStatus,
+                AssessorReviewStatus = application.AssessorReviewStatus,
+                FinancialReviewStatus = application.FinancialReviewStatus
+            };
+        }
+
+        // APR-1467 Code Stubbed Data - TODO: Store it somewhere 
+        private List<GatewaySequence> GetCoreGatewayApplicationViewModel()
+        {
+            return new List<GatewaySequence>
+            {
+                new GatewaySequence
+                {
+                    SequenceNumber = 1,
+                    SequenceTitle = "Organisation checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.LegalName,  LinkTitle = "Legal name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.TradingName, LinkTitle = "Trading name", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.OrganisationStatus, LinkTitle = "Organisation status", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.Address, LinkTitle = "Address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.IcoNumber, LinkTitle = "ICO registration number", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.WebsiteAddress,  LinkTitle = "Website address", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.OrganisationRisk,  LinkTitle = "Organisation high risk", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 2,
+                    SequenceTitle = "People in control checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.PeopleInControl, LinkTitle = "People in control", HiddenText = "for people in control checks", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.PeopleInControlRisk,   LinkTitle = "People in control high risk", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 3,
+                    SequenceTitle = "Register checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.Roatp, LinkTitle = "RoATP", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.Repao,  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 4,
+                    SequenceTitle = "Experience and accreditation checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.OfficeForStudents,  LinkTitle = "Office for Student (OfS)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.InitialTeacherTraining, LinkTitle = "Initial teacher training (ITT)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.Ofsted,  LinkTitle = "Ofsted", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.SubcontractorDeclaration, LinkTitle = "Subcontractor declaration", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 5,
+                    SequenceTitle = "Organisation’s criminal and compliance checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly, LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Roto, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedProfessionalRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.IttAccreditation,  LinkTitle = "Initial Teacher Training accreditation", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedCharityRegister, LinkTitle = "Removed from any charity register", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 10, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Safeguarding,  LinkTitle = "Investigated due to safeguarding issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 11, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Whistleblowing,  LinkTitle = "Investigated due to whistleblowing issues", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 12, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.Insolvency, LinkTitle = "Insolvency or winding up proceedings", HiddenText = "", Status = "" }
+                    }
+                },
+
+                new GatewaySequence
+                {
+                    SequenceNumber = 6,
+                    SequenceTitle = "People in control’s criminal and compliance checks",
+                    Sections = new List<GatewaySection>
+                    {
+                        new GatewaySection { SectionNumber = 1, PageId = "UnspentCriminalConviction",  LinkTitle = "Unspent criminal convictions", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = "FailedtoPayBack", LinkTitle = "Failed to pay back funds", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = "FraudIrregularities", LinkTitle = "Investigated for fraud or irregularities", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = "OngoingInvestigation",  LinkTitle = "Ongoing investigations for fraud or irregularities", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = "ContractTerminated", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = "WithdrawnFromContract",  LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = "BreachedPayments",  LinkTitle = "Breached tax payments or social security contributions", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = "RegisterOfRemovedTrustees", LinkTitle = "Register of Removed Trustees", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = "Bankrupt",  LinkTitle = "Been made bankrupt", HiddenText = "", Status = "" }
+                    }
+                }
+            };
         }
     }
 }

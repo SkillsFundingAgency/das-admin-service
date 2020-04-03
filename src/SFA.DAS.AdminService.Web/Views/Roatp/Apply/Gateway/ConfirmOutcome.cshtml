@@ -1,0 +1,143 @@
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayApplicationViewModel
+
+@{
+    ViewBag.Title = "Gateway - Overall gateway outcome";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Overall gateway outcome </li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Overall gateway outcome </span>
+            <h1 class="govuk-heading-xl">Confirm gateway outcome</h1>
+            <p class="govuk-body">
+                UKPRN:  @Model.Ukprn<br>
+                Legal name:  @Model.OrganisationName<br>
+                Provider route: @Model.ApplicationRoute
+            </p>
+        </div>
+    </div>
+    @if (Model.Sequences.Any())
+    {
+        <div class="govuk-grid-column-full">
+            @foreach (var sequence in Model.Sequences)
+            {
+                <h2 class="govuk-heading-l govuk-!-margin-top-5">@sequence.SequenceTitle</h2>
+                <table class="govuk-table govuk-!-margin-bottom-9">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" width="40%">Check</th>
+                            <th scope="col" class="govuk-table__header" width="10%">Outome</th>
+                            <th scope="col" class="govuk-table__header" width="50%">Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var currentSection in sequence.Sections)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__header">
+                                    @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))
+                                </td>
+                                <td class="govuk-table__cell">
+                                    @if (!string.IsNullOrWhiteSpace(currentSection.Status))
+                                    {
+                                        var cssModifierClassName = currentSection.Status.ToLower().Replace(" ", "");
+                                        <strong class="govuk-tag app-task-list__task-@cssModifierClassName">@currentSection.Status</strong>
+                                    }
+                                </td>
+                                <td class="govuk-table__cell">
+                                    @currentSection.Comment
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+    <div class="govuk-grid-column-two-thirds">
+        <form action="" method="post" class="form">
+            <h3 class="govuk-heading-m govuk-!-margin-top-5">What do you want to do?</h3>
+            <div class="govuk-form-group">
+                <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="gw-abctraining-outcome-conditional-1" name="gw-abctraining-outcome" type="radio" value="Ask for clarification" aria-controls="conditional-gw-abctraining-outcome-conditional-1" aria-expanded="false">
+                        <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-conditional-1">
+                            Ask for clarification
+                        </label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-gw-abctraining-outcome-conditional-1">
+                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="gw-abctraining-outcome-clarify">
+                                    Enter your clarification comments
+                                </label>
+                                <span id="gw-abctraining-outcome-clarify-hint" class="govuk-hint">
+                                    The applicant can use this information to change and resubmit their application.
+                                </span>
+                                <textarea class="govuk-textarea js-character-count" id="gw-abctraining-outcome-clarify" name="gw-abctraining-outcome-clarify" rows="5" aria-describedby="gw-abctraining-outcome-clarify-info gw-abctraining-outcome-clarify-hint"></textarea><span id="gw-abctraining-outcome-clarify-info" class="govuk-hint govuk-character-count__message" aria-live="polite">You have 499 words remaining</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="gw-abctraining-outcome-conditional-2" name="gw-abctraining-outcome" type="radio" value="Decline this application" aria-controls="conditional-gw-abctraining-outcome-conditional-2" aria-expanded="false">
+                        <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-conditional-2">
+                            Decline this application
+                        </label>
+                    </div>
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-gw-abctraining-outcome-conditional-2">
+                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="gw-abctraining-outcome-decline">
+                                    Enter your declined comments
+                                </label>
+                                <span id="gw-abctraining-outcome-decline-hint" class="govuk-hint">
+                                    The applicant will be able to see this information.
+                                </span>
+                                <textarea class="govuk-textarea js-character-count" id="gw-abctraining-outcome-decline" name="gw-abctraining-outcome-decline" rows="5" aria-describedby="gw-abctraining-outcome-decline-info gw-abctraining-outcome-decline-hint"></textarea><span id="gw-abctraining-outcome-decline-info" class="govuk-hint govuk-character-count__message" aria-live="polite">You have 500 words remaining</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="gw-abctraining-outcome-conditional-3" name="gw-abctraining-outcome" type="radio" value="Pass this application" aria-controls="conditional-gw-abctraining-outcome-conditional-3" aria-expanded="true">
+                        <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-conditional-3">
+                            Pass this application
+                        </label>
+                    </div>
+                    <div class="govuk-radios__conditional" id="conditional-gw-abctraining-outcome-conditional-3">
+                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="gw-abctraining-outcome-pass">
+                                    Add comments (optional)
+                                </label>
+                                <textarea class="govuk-textarea js-character-count" id="gw-abctraining-outcome-pass" name="gw-abctraining-outcome-pass" rows="5" aria-describedby="gw-abctraining-outcome-pass-info"></textarea><span id="gw-abctraining-outcome-pass-info" class="govuk-hint govuk-character-count__message" aria-live="polite">You have 500 words remaining</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="govuk-button">
+                Save and continue
+            </button>
+        </form>
+        <p><a href="/Roatp/Gateway/@Model.ApplicationId">Back to application assessment overview</a></p>
+    </div>
+</main>

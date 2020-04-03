@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -17,99 +19,73 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class OrganisationStatusTests
+    public class OrganisationStatusTests : RoatpGatewayControllerTestBase<RoatpGatewayOrganisationChecksController>
     {
         private RoatpGatewayOrganisationChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
-        private string username => "mark cain";
-        private string givenName => "mark";
-        private string surname => "cain";
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-             {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-             }));
-
-            var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationStatusViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
-        public void check_organisation_status_request_is_called()
+        public async Task OrganisationStatus_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-10";
+            var pageId = GatewayPageIds.OrganisationStatus;
+            var expectedViewModel = new OrganisationStatusViewModel();
 
-            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(new GetOrganisationStatusRequest(applicationId, username)))
-                .ReturnsAsync(new OrganisationStatusViewModel())
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(It.Is<GetOrganisationStatusRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
 
-            var _result = _controller.GetOrganisationStatusPage(applicationId, pageId).Result;
-            _orchestrator.Verify(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()), Times.Once());
+            var result = await _controller.GetOrganisationStatusPage(applicationId, pageId);
+            var viewResult = result as ViewResult;
+            Assert.AreSame(expectedViewModel, viewResult.Model);
         }
 
         [Test]
-        public void post_organisation_status_happy_path()
+        public async Task OrganisationStatus_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-30";
+            var pageId = GatewayPageIds.OrganisationStatus;
 
-            var viewModel = new OrganisationStatusViewModel()
+            var vm = new OrganisationStatusViewModel
             {
+                ApplicationId = applicationId,
+                PageId = pageId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = "Some pass text"
             };
 
-            viewModel.SourcesCheckedOn = DateTime.Now;
+            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, username, It.IsAny<string>()));
+            await _controller.EvaluateOrganisationStatus(vm);
 
-            var result = _controller.EvaluateOrganisationStatus(viewModel).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
 
         [Test]
-        public void post_organisation_status_path_with_errors()
+        public async Task OrganisationStatus_without_required_fields_does_not_save()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = "1-20";
+            var pageId = GatewayPageIds.OrganisationStatus;
 
-            var viewModel = new OrganisationStatusViewModel()
+            var vm = new OrganisationStatusViewModel()
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                ApplicationId = applicationId,
+                PageId = pageId
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationStatusViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(vm))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -119,21 +95,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            viewModel.ApplicationId = applicationId;
-            viewModel.PageId = viewModel.PageId;
-            viewModel.SourcesCheckedOn = DateTime.Now;
+            await _controller.EvaluateOrganisationStatus(vm);
 
-            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()))
-                .ReturnsAsync(viewModel)
-                .Verifiable("view model not returned");
-
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, username, It.IsAny<string>()));
-
-            var result = _controller.EvaluateOrganisationStatus(viewModel).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetTradingNameViewModel(It.IsAny<GetTradingNameRequest>()), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
         }
     }
 }

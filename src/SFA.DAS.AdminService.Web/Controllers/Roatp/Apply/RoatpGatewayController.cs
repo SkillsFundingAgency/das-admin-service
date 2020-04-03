@@ -91,6 +91,29 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
         }
 
+        [HttpGet("/Roatp/Gateway/{applicationId}/ConfirmOutcome")]
+        public async Task<IActionResult> ConfirmOutcome(Guid applicationId)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(applicationId, username));
+
+            if (viewModel.ReadyToConfirm)
+            {
+                return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModel);
+            }
+            else
+            {
+                return Redirect($"/Roatp/Gateway/{applicationId}");
+            }
+            
+        }
+
         [HttpPost("/Roatp/Gateway")]
         public async Task<IActionResult> EvaluateGateway(RoatpGatewayApplicationViewModel viewModel, bool? isGatewayApproved)
         {

@@ -21,90 +21,35 @@ using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class WebsiteAddressTests
+    public class WebsiteAddressTests : RoatpGatewayControllerTestBase<RoatpGatewayOrganisationChecksController>
     {
         private RoatpGatewayOrganisationChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
-
-        private string username = "john smith";
-        private string givenName = "john";
-        private string surname = "smith";
-        private string comment = "test comment";
-        private string viewname = "~/Views/Roatp/Apply/Gateway/pages/Website.cshtml";
 
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-             {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-             }));
-
-            var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
-        public void check_website_request_is_sent()
+        public async Task WebsiteAddress_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
+            var expectedViewModel = new WebsiteViewModel();
 
-            var vm = new WebsiteViewModel
-            {
-                Status = SectionReviewStatus.Pass,
-                SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-            };
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(It.Is<GetWebsiteRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username))).ReturnsAsync(vm);
-
-            var result = _controller.GetWebsitePage(applicationId).Result;
+            var result = await _controller.GetWebsitePage(applicationId);
             var viewResult = result as ViewResult;
-            Assert.AreEqual(viewname, viewResult.ViewName);
+            Assert.AreSame(expectedViewModel, viewResult.Model);
         }
 
         [Test]
-        public void post_website_address_happy_path()
-        {
-            var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.WebsiteAddress;
-
-            var vm = new WebsiteViewModel
-            {
-                Status = SectionReviewStatus.Pass,
-                SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-            };
-
-            _applyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
-
-            var result = _controller.EvaluateWebsitePage(vm).Result;
-
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)), Times.Never());
-        }
-
-        [Test]
-        public void post_website_address_path_with_errors()
+        public async Task WebsiteAddress_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.WebsiteAddress;
@@ -112,13 +57,36 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             var vm = new WebsiteViewModel
             {
                 ApplicationId = applicationId,
-                Status = SectionReviewStatus.Fail,
+                PageId = pageId,
+                Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = "Some pass text"
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+
+            await _controller.EvaluateWebsitePage(vm);
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
+        }
+
+        [Test]
+        public async Task WebsiteAddress_without_required_fields_does_not_save()
+        {
+            var applicationId = Guid.NewGuid();
+            var pageId = GatewayPageIds.WebsiteAddress;
+
+            var vm = new WebsiteViewModel()
+            {
+                Status = SectionReviewStatus.Fail,
+                SourcesCheckedOn = DateTime.Now,
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                ApplicationId = applicationId,
+                PageId = pageId
+            };
+
+            GatewayValidator.Setup(v => v.Validate(vm))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -128,17 +96,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
+            await _controller.EvaluateWebsitePage(vm);
 
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
-
-            var result = _controller.EvaluateWebsitePage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment), Times.Never);
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, username)), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
         }
     }
 }
