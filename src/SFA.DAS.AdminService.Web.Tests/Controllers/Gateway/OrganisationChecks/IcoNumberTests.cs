@@ -16,66 +16,41 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
     [TestFixture]
-    public class IcoNumberTests
+    public class IcoNumberTests : RoatpGatewayControllerTestBase<RoatpGatewayOrganisationChecksController>
     {
         private RoatpGatewayOrganisationChecksController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
-
-        private string username = "john smith";
-        private string givenName = "john";
-        private string surname = "smith";
 
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-             {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-             }));
-
-            var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-            _controller = new RoatpGatewayOrganisationChecksController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
-        public void check_ico_number_request_is_sent()
+        public async Task IcoNumber_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
+            var expectedViewModel = new IcoNumberViewModel();
 
-            _orchestrator.Setup(x => x.GetIcoNumberViewModel(new GetIcoNumberRequest(applicationId, username)))
-                .ReturnsAsync(new IcoNumberViewModel())
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetIcoNumberViewModel(It.Is<GetIcoNumberRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
 
-            var _result = _controller.GetIcoNumberPage(applicationId).Result;
-            _orchestrator.Verify(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()), Times.Once());
+            var result = await _controller.GetIcoNumberPage(applicationId);
+            var viewResult = result as ViewResult;
+            Assert.AreSame(expectedViewModel, viewResult.Model);
         }
 
         [Test]
-        public async Task post_ico_number_happy_path()
+        public async Task IcoNumber_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.IcoNumber;
@@ -90,28 +65,29 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 OptionPassText = "Some pass text"
             };
 
-            _gatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
             await _controller.EvaluateIcoNumberPage(vm);
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText));
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
 
         [Test]
-        public void post_ico_number_path_with_errors()
+        public async Task IcoNumber_without_required_fields_does_not_save()
         {
             var applicationId = Guid.NewGuid();
             var pageId = GatewayPageIds.IcoNumber;
 
-            var vm = new IcoNumberViewModel
+            var vm = new IcoNumberViewModel()
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                ApplicationId = applicationId,
+                PageId = pageId
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<IcoNumberViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(vm))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -121,22 +97,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            vm.ApplicationId = applicationId;
-            vm.PageId = vm.PageId;
-            vm.SourcesCheckedOn = DateTime.Now;
+            await _controller.EvaluateIcoNumberPage(vm);
 
-            _orchestrator.Setup(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
-
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
-
-            var result = _controller.EvaluateIcoNumberPage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetIcoNumberViewModel(It.IsAny<GetIcoNumberRequest>()), Times.Never());
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
         }
-
     }
 }
