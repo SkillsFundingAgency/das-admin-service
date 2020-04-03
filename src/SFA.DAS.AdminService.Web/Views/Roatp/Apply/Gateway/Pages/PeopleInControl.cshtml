@@ -76,7 +76,7 @@
                 <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
                 <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
                 <input type="hidden" name="ApplyLegalName" value="@Model.ApplyLegalName" />
-                <input type="hidden" name="TypeOfOrganisation" value="@Model.ApplyLegalName" />
+                <input type="hidden" name="TypeOfOrganisation" value="@Model.TypeOfOrganisation" />
                 <input type="hidden" asp-for="NoSelectionErrorMessage" />
                 @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
                 <button class="govuk-button" type="submit">Save and continue</button>
