@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.FeatureToggles
 
             var actionContext = new ActionContext(Mock.Of<HttpContext>(), Mock.Of<RouteData>(), Mock.Of<ActionDescriptor>());
 
-            _ActionExecutingContext = new ActionExecutingContext(actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), Mock.Of<RoatpGatewayControllerBase>());
+            _ActionExecutingContext = new ActionExecutingContext(actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), Mock.Of<RoatpGatewayControllerBase<RoatpGatewayController>>());
         }
 
         [Test]

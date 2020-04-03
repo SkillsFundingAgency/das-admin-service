@@ -7,7 +7,6 @@ using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -24,6 +23,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         protected readonly ILogger<T> _logger;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
         protected const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
+
+        public RoatpGatewayControllerBase()
+        {
+
+        }
 
         public RoatpGatewayControllerBase(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient applyApiClient, ILogger<T> logger, IRoatpGatewayPageViewModelValidator gatewayValidator)
         {
