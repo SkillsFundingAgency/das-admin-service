@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             public async Task<IActionResult> GetGatewayPeopleInControlRiskPage(Guid applicationId, string pageId)
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var viewModel = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlRequest(applicationId, username));
+                var viewModel = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlHighRiskRequest(applicationId, username));
                 return View($"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", viewModel);
             }
 
@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> EvaluatePeopleInControlHighRiskPage(PeopleInControlHighRiskPageViewModel viewModel)
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var vmRebuild = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
+            var vmRebuild = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlHighRiskRequest(viewModel.ApplicationId, username));
             viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
             viewModel.PscData = vmRebuild?.PscData;
             viewModel.TrusteeData = vmRebuild?.TrusteeData;

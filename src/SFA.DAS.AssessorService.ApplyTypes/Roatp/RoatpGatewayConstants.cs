@@ -42,7 +42,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public static class Heading
             {
                 public static string CompanyDirectors = "Company directors";
-                public static string PeopleWithSignificantControl = "People with significant control(PSC's)";
+                public static string PeopleWithSignificantControl = "People with significant control (PSC's)";
                 public static string Trustees = "Trustees";
                 public static string WhosInControl = "Who's in control";
             }

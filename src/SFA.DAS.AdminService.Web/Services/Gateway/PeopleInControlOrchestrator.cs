@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             return model;
         }
 
-        public async Task<PeopleInControlHighRiskPageViewModel> GetPeopleInControlHighRiskViewModel(GetPeopleInControlRequest request)
+        public async Task<PeopleInControlHighRiskPageViewModel> GetPeopleInControlHighRiskViewModel(GetPeopleInControlHighRiskRequest request)
         {
             var model = new PeopleInControlHighRiskPageViewModel();
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControlRisk, request.UserName,
