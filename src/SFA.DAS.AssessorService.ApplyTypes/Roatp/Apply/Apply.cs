@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
+namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
     public class Apply
     {

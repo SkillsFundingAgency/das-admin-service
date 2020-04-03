@@ -1,5 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
@@ -8,12 +13,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
     [TestFixture]
     public class RoatpGatewayControllerBaseTests
     {
-        private RoatpGatewayControllerBase _controller;
+        private RoatpGatewayControllerBase<RoatpGatewayControllerBaseTests> _controller;
 
         [SetUp]
         public void Setup()
         {
-            _controller = new RoatpGatewayControllerBase();
+            _controller = new RoatpGatewayControllerBase<RoatpGatewayControllerBaseTests>(Mock.Of<IHttpContextAccessor>(), Mock.Of<IRoatpApplicationApiClient>(), Mock.Of<ILogger<RoatpGatewayControllerBaseTests>>(), Mock.Of<IRoatpGatewayPageViewModelValidator>());
         }
 
 
