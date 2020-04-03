@@ -10,7 +10,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
-    public abstract class RoatpGatewayControllerTestBase <T>
+    public abstract class RoatpGatewayControllerTestBase<T>
     {
         protected Mock<IRoatpApplicationApiClient> ApplyApiClient;
         protected Mock<IHttpContextAccessor> ContextAccessor;

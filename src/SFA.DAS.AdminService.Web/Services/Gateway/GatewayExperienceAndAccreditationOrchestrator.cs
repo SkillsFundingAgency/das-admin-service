@@ -25,7 +25,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving subcontractor declaration details for application {request.ApplicationId}");
 
             var model = new SubcontractorDeclarationViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName,
+                                                                                                RoatpGatewayConstants.Captions.ExperienceAndAccreditation,
+                                                                                                RoatpGatewayConstants.Headings.SubcontractorDeclaration,
+                                                                                                NoSelectionErrorMessages.SubcontractorDeclaration);
 
             var subcontractorDeclaration = await _experienceAndAccreditationApiClient.GetSubcontractorDeclaration(request.ApplicationId);
 
@@ -45,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving office for students details for application {request.ApplicationId}");
 
             var model = new OfficeForStudentsViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OfficeForStudents, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OfficeForStudents, request.UserName, RoatpGatewayConstants.Captions.ExperienceAndAccreditation, RoatpGatewayConstants.Headings.OfficeForStudents, NoSelectionErrorMessages.OfficeForStudents);
 
             model.IsOrganisationFundedByOfficeForStudents = await _experienceAndAccreditationApiClient.GetOfficeForStudents(request.ApplicationId) == "Yes";
 
@@ -57,7 +60,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving initial teacher training details for application {request.ApplicationId}");
 
             var model = new InitialTeacherTrainingViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.InitialTeacherTraining, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.InitialTeacherTraining, request.UserName, RoatpGatewayConstants.Captions.ExperienceAndAccreditation, RoatpGatewayConstants.Headings.InitialTeacherTraining, NoSelectionErrorMessages.InitialTeacherTraining);
 
             var initialTeacherTraining = await _experienceAndAccreditationApiClient.GetInitialTeacherTraining(request.ApplicationId);
 

@@ -53,7 +53,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewResult.Should().NotBeNull();
             var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;
             viewModel.Should().NotBeNull();
-            viewModel.PageTitle.Should().Be(CriminalCompliancePageConfiguration.Titles[gatewayPageId]);
         }
 
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]

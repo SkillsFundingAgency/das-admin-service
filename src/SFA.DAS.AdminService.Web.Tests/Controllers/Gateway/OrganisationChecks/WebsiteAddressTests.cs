@@ -1,4 +1,8 @@
-﻿using Moq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Services.Gateway;
@@ -16,6 +20,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         private RoatpGatewayOrganisationChecksController _controller;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
 
+        private string comment = "test comment";
+        private string viewname = "~/Views/Roatp/Apply/Gateway/pages/Website.cshtml";
+
         [SetUp]
         public void Setup()
         {
@@ -30,12 +37,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         {
             var applicationId = Guid.NewGuid();
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)))
-                .ReturnsAsync(new WebsiteViewModel())
-                .Verifiable("view model not returned");
+            var vm = new WebsiteViewModel
+            {
+                Status = SectionReviewStatus.Pass,
+                SourcesCheckedOn = DateTime.Now,
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
 
-            var _result = _controller.GetWebsitePage(applicationId).Result;
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Once());
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username))).ReturnsAsync(vm);
+
+            var result = _controller.GetWebsitePage(applicationId).Result;
+            var viewResult = result as ViewResult;
+            Assert.AreEqual(viewname, viewResult.ViewName);
         }
 
         [Test]
@@ -46,17 +59,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             var vm = new WebsiteViewModel
             {
+                ApplicationId = applicationId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                OptionPassText = comment,
+                PageId = pageId
             };
-
-            ApplyApiClient.Setup(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
             var result = _controller.EvaluateWebsitePage(vm).Result;
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
+			ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, comment));
+            _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)), Times.Never());
         }
 
         [Test]
@@ -67,6 +81,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             var vm = new WebsiteViewModel
             {
+                ApplicationId = applicationId,
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
@@ -83,22 +98,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            vm.ApplicationId = applicationId;
-            vm.PageId = vm.PageId;
-            vm.SourcesCheckedOn = DateTime.Now;
-
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()))
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
-
-            ApplyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
             var result = _controller.EvaluateWebsitePage(vm).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
-
     }
 }

@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
-    public class IcoNumberViewModel : RoatpGatewayPageViewModel
+    public class OrganisationRiskViewModel :  RoatpGatewayPageViewModel
     {
-        public string OrganisationAddress { get; set; }
-        public string IcoNumber { get; set; }
+        public string OrganisationType { get; set; }
+        public string TradingName { get; set; }
     }
 }
