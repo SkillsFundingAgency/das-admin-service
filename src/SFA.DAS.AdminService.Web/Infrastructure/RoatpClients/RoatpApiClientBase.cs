@@ -151,14 +151,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             if (response?.RequestMessage != null && !response.IsSuccessStatusCode)
             {
-                var httpMethod = response.RequestMessage.Method;
+                var httpMethod = response.RequestMessage.Method.ToString();
                 var statusCode = (int)response.StatusCode;
                 var requestUri = response.RequestMessage.RequestUri;
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                var errorMessage = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
+                var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
 
-                _logger.LogError($"{httpMethod} || StatusCode: {statusCode} || RequestUri: {requestUri} || ErrorMessage: {errorMessage}");
+                _logger.LogError($"HTTP {statusCode} || {httpMethod}: {requestUri} || Message: {message}");
             }
         }
 
