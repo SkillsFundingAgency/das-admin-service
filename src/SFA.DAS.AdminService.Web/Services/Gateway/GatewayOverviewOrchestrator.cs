@@ -159,7 +159,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             };
             #endregion
 
-            if (application.GatewayReviewStatus.Equals(GatewayReviewStatus.New))
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && savedStatuses.Count.Equals(0))
             { 
                 // TradingName
                 var tradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
@@ -177,11 +178,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
 
                 // WebsiteAddress
-                var websiteAddressUkrlp = await _applyApiClient.GetWebsiteAddressSourcedFromUkrlp(request.ApplicationId);
-                var websiteAddressApply =
-                    await _applyApiClient.GetWebsiteAddressManuallyEntered(request.ApplicationId);
-                var websiteAddressStatus = string.IsNullOrWhiteSpace(websiteAddressUkrlp) && string.IsNullOrWhiteSpace(websiteAddressApply) ? SectionReviewStatus.NotRequired : string.Empty; ;
-                if (websiteAddressStatus.Equals(SectionReviewStatus.NotRequired))
+                var applyWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
+                if (string.IsNullOrEmpty(applyWebsite))
                 {
                     var page = viewmodel?.Sequences?.SelectMany(seq => seq.Sections)
                         .Where(sec => sec.PageId == GatewayPageIds.WebsiteAddress)?.FirstOrDefault();
@@ -262,7 +260,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
             else
             {
-                var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
                 foreach (var currentStatus in savedStatuses)
                 {
                     // Inject the statuses into viewmodel

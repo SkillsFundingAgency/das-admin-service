@@ -163,7 +163,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task<string> GetIcoNumber(Guid applicationId)
         {
-            return await Get($"/Gateway/{applicationId}/IcoNumber ");
+            return await Get($"/Gateway/{applicationId}/IcoNumber");
+        }
+
+        public async Task<string> GetTypeOfOrganisation(Guid applicationId)
+        {
+            return await Get($"/organisation/TypeOfOrganisation/{applicationId}");
         }
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)

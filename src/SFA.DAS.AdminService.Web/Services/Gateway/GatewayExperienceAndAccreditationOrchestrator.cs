@@ -25,7 +25,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving subcontractor declaration details for application {request.ApplicationId}");
 
             var model = new SubcontractorDeclarationViewModel();
-            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName);
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.SubcontractorDeclaration, request.UserName,
+                                                                                                RoatpGatewayConstants.Captions.ExperienceAndAccreditation,
+                                                                                                RoatpGatewayConstants.Headings.SubcontractorDeclaration,
+                                                                                                NoSelectionErrorMessages.SubcontractorDeclaration);
 
             var subcontractorDeclaration = await _experienceAndAccreditationApiClient.GetSubcontractorDeclaration(request.ApplicationId);
 

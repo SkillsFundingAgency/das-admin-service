@@ -7,10 +7,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
     public class WebsiteViewModel : RoatpGatewayPageViewModel
     {
-        public DateTime? ApplicationSubmittedOn { get; set; }
-        public DateTime? SourcesCheckedOn { get; set; }
-
         public string SubmittedWebsite { get; set; }
+        public string SubmittedWebsiteUrl { get; set; }
         public string UkrlpWebsite { get; set; }
+        public string UkrlpWebsiteUrl { get; set; }
     }
 }

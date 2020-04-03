@@ -33,9 +33,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var viewModel = await _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(applicationId, gatewayPageId, username));
-
-            viewModel.PageTitle = CriminalCompliancePageConfiguration.Titles[gatewayPageId];
-
+           
             return View(CriminalComplianceView, viewModel);
         }
 

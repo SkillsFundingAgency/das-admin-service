@@ -12,5 +12,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         Task<AddressCheckViewModel> GetAddressViewModel(GetAddressRequest request);
         Task<IcoNumberViewModel> GetIcoNumberViewModel(GetIcoNumberRequest request);
         Task<WebsiteViewModel> GetWebsiteViewModel(GetWebsiteRequest request);
+        Task<OrganisationRiskViewModel> GetOrganisationRiskViewModel(GetOrganisationRiskRequest request);
     }
 }
