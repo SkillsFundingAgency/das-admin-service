@@ -48,6 +48,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml");
             }
+
+
+            [HttpGet("/Roatp/Gateway/{applicationId}/Page/PeopleInControlRisk")]
+            public async Task<IActionResult> GetGatewayPeopleInControlRiskPage(Guid applicationId, string pageId)
+            {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var viewModel = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlRequest(applicationId, username));
+                return View($"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", viewModel);
+            }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControlRisk")]
+        public async Task<IActionResult> EvaluatePeopleInControlHighRiskPage(PeopleInControlHighRiskPageViewModel viewModel)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var vmRebuild = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
+            viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
+            viewModel.PscData = vmRebuild?.PscData;
+            viewModel.TrusteeData = vmRebuild?.TrusteeData;
+            viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
+
+            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml");
+        }
     }
     
 }

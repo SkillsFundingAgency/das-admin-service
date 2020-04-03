@@ -73,5 +73,47 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             return model;
         }
+
+        public async Task<PeopleInControlHighRiskPageViewModel> GetPeopleInControlHighRiskViewModel(GetPeopleInControlRequest request)
+        {
+            var model = new PeopleInControlHighRiskPageViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControlRisk, request.UserName,
+                RoatpGatewayConstants.Captions.PeopleInControlChecks,
+                RoatpGatewayConstants.Headings.PeopleInControlHighRisk,
+                NoSelectionErrorMessages.PeopleInControlHighRiskCheck);
+
+            _logger.LogInformation($"Retrieving people in control high risk - type of organisation for application {request.ApplicationId}");
+            model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
+
+            _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors}] for application {request.ApplicationId}");
+            model.CompanyDirectorsData = new PeopleInControlHighRiskData
+            {
+                Heading = RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors,
+                PeopleInControl = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
+            };
+
+            _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl}] for application {request.ApplicationId}");
+            model.PscData = new PeopleInControlHighRiskData
+            {
+                Heading = RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl,
+                PeopleInControl = await _organisationSummaryApiClient.GetPscsFromSubmitted(request.ApplicationId)
+            };
+
+            _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.Trustees}] for application {request.ApplicationId}");
+            model.TrusteeData = new PeopleInControlHighRiskData
+            {
+                Heading = RoatpGatewayConstants.PeopleInControl.Heading.Trustees,
+                PeopleInControl = await _organisationSummaryApiClient.GetTrusteesFromSubmitted(request.ApplicationId)
+            };
+
+            _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.WhosInControl}] for application {request.ApplicationId}");
+            model.WhosInControlData = new PeopleInControlHighRiskData
+            {
+                Heading = RoatpGatewayConstants.PeopleInControl.Heading.WhosInControl,
+                PeopleInControl = await _organisationSummaryApiClient.GetWhosInControlFromSubmitted(request.ApplicationId)
+            };
+
+            return model;
+        }
     }
 }
