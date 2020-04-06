@@ -1,0 +1,71 @@
+@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AdminService.Web.Helpers;
+@using SFA.DAS.AssessorService.Domain.Extensions
+
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpSequenceViewModel
+
+@{
+    ViewBag.Title = "Application overview";
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
+}
+
+<a class="govuk-back-link" asp-action="Application" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (Model.Sections == null)
+            {
+                <h1 class="govuk-heading-xl">Sequence not active</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Application overview</h1>
+
+                <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
+
+                <ul class="govuk-list">
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
+                    {
+                        <li>
+                            @if (applicationSection.QnAData.Pages.Count > 0)
+                            {
+                                <h2 class="govuk-heading-m">
+                                    <a class="govuk-link" href="@Url.Action("Section", "RoatpApplication", new { Model.ApplicationId, applicationSection.SequenceNo, applicationSection.SectionNo })">
+                                        @applicationSection.LinkTitle
+                                    </a>
+                                </h2>
+                                <span class="govuk-hint">
+                                    @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
+                                </span>
+
+
+                                @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
+                                {
+                                    <div class="govuk-tag">
+                                        Feedback added
+                                    </div>
+                                }
+
+                                @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
+                                @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
+                                {
+                                    <div class="govuk-tag">
+                                        Evaluated
+                                    </div>
+                                }
+
+                                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="Application" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Return to application overview</a>
+            </p>
+        </div>
+    </div>
+</main>

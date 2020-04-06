@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp
+﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+
+namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
     using System.Threading.Tasks;
     using Infrastructure;

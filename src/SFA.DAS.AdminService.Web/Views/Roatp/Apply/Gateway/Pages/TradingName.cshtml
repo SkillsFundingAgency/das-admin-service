@@ -1,0 +1,76 @@
+﻿@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+@using SFA.DAS.AssessorService.Domain.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.TradingNamePageViewModel
+
+@{
+    ViewBag.Title = $"Gateway - {Model.Heading}";
+    Layout = "_Layout";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+            <span class="govuk-caption-xl">@Model.Caption</span>
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+            <div class="govuk-!-margin-bottom-4">
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    UKPRN: @Model.Ukprn
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Application submitted on: @Model.ApplicationSubmittedOn.ToSfaShortDateString()
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Source</th>
+                        <th class="govuk-table__header" scope="col">Legal name</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Submitted application data</td>
+                        <td class="govuk-table__cell">@Model.ApplyTradingName</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">UKRLP data</td>
+                        <td class="govuk-table__cell">@Model.UkrlpTradingName</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateTradingNamePage" asp-controller="RoatpGatewayOrganisationChecks">
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="PageId" />
+                    <input type="hidden" asp-for="Caption" />
+                    <input type="hidden" asp-for="Heading" />
+                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
+                    <input type="hidden" asp-for="Ukprn" />
+                    <input type="hidden" asp-for="ApplicationSubmittedOn" />
+                    <input type="hidden" asp-for="SourcesCheckedOn" />
+                    <input type="hidden" asp-for="UkrlpTradingName" />
+                    <input type="hidden" asp-for="ApplyTradingName" />
+                    @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>

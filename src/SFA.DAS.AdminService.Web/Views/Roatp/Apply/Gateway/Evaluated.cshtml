@@ -1,0 +1,37 @@
+@{
+    ViewBag.Title = "Evaluation submitted";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Evaluation submitted
+                </h1>
+                <div class="govuk-panel__body">
+                    <div>
+                        <span class="govuk-!-font-size-24">
+                            The evaluation has been saved
+                        </span>
+                        @*<br>
+                        <strong></strong>*@
+                    </div>
+                </div>
+            </div>
+            
+            <p class="govuk-body">You can view previous evaluations, including this one in the <a asp-action="ClosedApplications" asp-controller="RoatpGateway">closed assessments</a> area.</p>
+
+            <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="NewApplications" asp-controller="RoatpGateway">Return to account home</a>
+            </p>
+            @*<p class="govuk-body">
+                <a class="govuk-link" href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
+            </p>*@
+
+        </div>
+    </div>
+</main>
