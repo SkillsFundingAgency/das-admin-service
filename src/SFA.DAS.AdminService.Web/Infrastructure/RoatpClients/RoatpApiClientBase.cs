@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -79,7 +80,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
-        protected async Task Post<T>(string uri, T model)
+        protected async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
@@ -92,6 +93,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                     new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) 
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    return response.StatusCode;
                 }
             }
             catch (HttpRequestException ex)
@@ -120,6 +122,29 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, $"{HttpMethod.Post}: Error when processing request to: {uri}");
+                throw;
+            }
+        }
+
+        protected async Task<HttpStatusCode> Put<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            try
+            {
+                using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
+                    new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                {
+                    await LogErrorIfUnsuccessfulResponse(response);
+                    return response.StatusCode;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"{HttpMethod.Put}: Error when processing request to: {uri}");
                 throw;
             }
         }
