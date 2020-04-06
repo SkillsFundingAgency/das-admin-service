@@ -129,11 +129,17 @@
   <data name="CompanyNumberNotValid" xml:space="preserve">
     <value>Company number is an invalid format</value>
   </data>
-  <data name="ContactNameIsMissing" xml:space="preserve">
-    <value>The contact name is missing</value>
+  <data name="ContactFamilyNameIsMissing" xml:space="preserve">
+    <value>The contact family name is missing</value>
   </data>
-  <data name="ContactNameIsTooShort" xml:space="preserve">
-    <value>The contact name is too short</value>
+  <data name="ContactFamilyNameIsTooShort" xml:space="preserve">
+    <value>The contact family name is too short</value>
+  </data>
+  <data name="ContactGivenNameIsTooShort" xml:space="preserve">
+    <value>The contact given name is too short</value>
+  </data>
+  <data name="ContactGivenNamesIsMissing" xml:space="preserve">
+    <value>The contact given name is missing</value>
   </data>
   <data name="EmailAlreadyUsed" xml:space="preserve">
     <value>The email is already used by another organisation</value>
