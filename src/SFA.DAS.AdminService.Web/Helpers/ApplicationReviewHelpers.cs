@@ -1,5 +1,4 @@
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {
@@ -20,11 +19,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
             }
 
             return string.Empty;
-        }
-
-        public static string ApplicationBacklinkAction()
-        {
-            return nameof(RoatpApplicationController.OpenApplications);
         }
     }
 }
