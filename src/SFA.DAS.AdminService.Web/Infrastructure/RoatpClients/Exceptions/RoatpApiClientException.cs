@@ -8,7 +8,7 @@ using System.Text;
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions
 {
     [Serializable]
-    public class RoatpApiClientException : SystemException
+    public class RoatpApiClientException : ApplicationException
     {
         public string HttpMethod { get; }
         public HttpStatusCode StatusCode { get; }
