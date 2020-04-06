@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles
         public FeatureToggleFilter(ILogger<FeatureToggleFilter> logger, IWebConfiguration configuration)
         {
             _logger = logger;
-            _featureToggles = configuration?.FeatureToggles;
+            _featureToggles = configuration.FeatureToggles;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
