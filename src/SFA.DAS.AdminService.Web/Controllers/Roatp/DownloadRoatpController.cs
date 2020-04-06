@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AdminService.Web.Helpers;
     using SFA.DAS.AdminService.Web.Infrastructure;
 
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class DownloadRoatpController : Controller
     {
         private IRoatpApiClient _apiClient;

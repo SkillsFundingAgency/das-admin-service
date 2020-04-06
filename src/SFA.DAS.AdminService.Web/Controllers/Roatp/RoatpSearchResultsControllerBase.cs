@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.AdminService.Web.Domain;
 
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class RoatpSearchResultsControllerBase : Controller
     {
         protected IRoatpSessionService _sessionService;

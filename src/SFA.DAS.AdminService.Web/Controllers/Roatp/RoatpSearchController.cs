@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AdminService.Web.Domain;
     using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class RoatpSearchController : RoatpSearchResultsControllerBase
     {
         private ILogger<RoatpSearchController> _logger;

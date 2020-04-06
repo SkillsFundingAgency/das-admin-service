@@ -21,7 +21,7 @@ using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpAssessorTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpAssessorTeam)]
     [FeatureToggle(FeatureToggles.EnableRoatpAssessorReview, "Dashboard", "Index")]
     public class RoatpApplicationController : Controller
     {

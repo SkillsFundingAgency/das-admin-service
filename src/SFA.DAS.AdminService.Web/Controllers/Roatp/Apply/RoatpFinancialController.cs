@@ -20,7 +20,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpFinancialAssessorTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpFinancialAssessorTeam)]
     [FeatureToggle(FeatureToggles.EnableRoatpFinancialReview, "Dashboard", "Index")]
     public class RoatpFinancialController : Controller
     {

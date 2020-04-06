@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using System.Collections.Generic;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.RoatpApplicationOversightTeam)]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
