@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using System;
 using System.Collections.Generic;
 
@@ -12,13 +13,21 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 
         public string ApplicationStatus { get; }
         public string GatewayReviewStatus { get; set; }
+        public string OptionAskClarificationText { get; set; }
+        public string OptionDeclinedText { get; set; }
+        public string OptionApprovedText { get; set; }
+        public string GatewayReviewComment { get; set; }
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         public bool IsGatewayApproved { get; set; }
 
         public List<GatewaySequence> Sequences { get; set; }
         public bool ReadyToConfirm { get; set; }
 
+        public RoatpGatewayApplicationViewModel()
+        {
 
+        }
 
         public RoatpGatewayApplicationViewModel(AssessorService.ApplyTypes.Roatp.Apply.Apply application)
         {

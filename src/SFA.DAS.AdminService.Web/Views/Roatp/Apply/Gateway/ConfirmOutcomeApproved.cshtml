@@ -1,0 +1,71 @@
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayConfirmOutcomeViewModel
+
+@{
+    ViewBag.Title = "Gateway - Overall gateway outcome";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Overall gateway outcome </li>
+    </ol>
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Overall gateway outcome</span>
+            <h1 class="govuk-heading-xl">Are you sure you want to pass this application?</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l govuk-!-margin-top-5">Comments</h2>
+            <p class="govuk-body">@Model.GatewayReviewComment</p>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    This application will pass and go to governance.
+                </strong>
+            </div>
+            <form action="" method="post" class="form">
+                <div class="govuk-form-group">
+                    <div class="govuk-radios govuk-radios--inline">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="gw-abctraining-outcome-confirm-1" name="gw-abctraining-outcome-confirm" type="radio" value="Yes">
+                            <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-confirm-1">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="gw-abctraining-outcome-confirm-2" name="gw-abctraining-outcome-confirm" type="radio" value="No">
+                            <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-confirm-2">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="govuk-button">
+                    Save and continue
+                </button>
+            </form>
+            <p><a href="/mvp-gateway/v5/applications/gateway/tasklist-abctraining">Back to application assessment overview</a></p>
+        </div>
+    </div>
+</main>
