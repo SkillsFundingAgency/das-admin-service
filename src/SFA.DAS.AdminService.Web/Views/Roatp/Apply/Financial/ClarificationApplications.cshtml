@@ -27,70 +27,65 @@
         </div>
     </div>
 
-    <div class="govuk-tabs">
-        <h2 class="govuk-tabs__title">
-            RoATP financial applications
-        </h2>
-        <ul class="govuk-tabs__list">
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" asp-action="OpenApplications" asp-controller="RoatpFinancial">
-                    Current applications (@Model.StatusCounts.ApplicationsOpen)
-                </a>
-            </li>
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab govuk-tabs__tab--selected" asp-action="ClarificationApplications" asp-controller="RoatpFinancial">
-                    Clarifications (@Model.StatusCounts.ApplicationsWithClarification)
-                </a>
-            </li>
-            <li class="govuk-tabs__list-item">
-                <a class="govuk-tabs__tab" asp-action="ClosedApplications" asp-controller="RoatpFinancial">
-                    Outcome (@Model.StatusCounts.ApplicationsClosed)
-                </a>
-            </li>
-        </ul>
-        <div class="govuk-tabs__panel" id="clarifications">
-            <h2 class="govuk-heading-l">Clarifications</h2>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <div class="govuk-tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" asp-action="OpenApplications" asp-controller="RoatpFinancial">
+                            Current applications (@Model.StatusCounts.ApplicationsOpen)
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab govuk-tabs__tab--selected" asp-action="ClarificationApplications" asp-controller="RoatpFinancial">
+                            Clarifications (@Model.StatusCounts.ApplicationsWithClarification)
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" asp-action="ClosedApplications" asp-controller="RoatpFinancial">
+                            Outcome (@Model.StatusCounts.ApplicationsClosed)
+                        </a>
+                    </li>
+                </ul>
+                <div class="govuk-tabs__panel" id="clarifications">
+                    @if (@Model.Applications.Items.Any())
+                    {
+                        <table class="govuk-table govuk-table--s das-table--responsive">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">Organisation name</th>
+                                    <th class="govuk-table__header" scope="col">UKPRN</th>
+                                    <th class="govuk-table__header" scope="col">Provider route</th>
+                                    <th class="govuk-table__header" scope="col">Submitted date</th>
+                                    <th class="govuk-table__header" scope="col">Clarification date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                @foreach (var item in Model.Applications.Items)
+                                {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Organisation name">
+                                        <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="UKPRN">
+                                        @item.Ukprn
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Provider route">
+                                        @item.ApplicationRouteShortText
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Submitted date">
+                                        @item.SubmittedDate.ToSfaShortDateString()
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Clarification date">
+                                        @item.FeedbackAddedDate.ToSfaShortDateString()
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
 
-            @if (@Model.Applications.Items.Any())
-            {
-                <table class="govuk-table govuk-table--s das-table--responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">UKPRN</th>
-                            <th class="govuk-table__header" scope="col">Provider route</th>
-                            <th class="govuk-table__header" scope="col">Submitted date</th>
-                            <th class="govuk-table__header" scope="col">Clarification date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var item in Model.Applications.Items)
+                        @if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
                         {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" data-label="Organisation name">
-                                <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                            </td>
-                            <td class="govuk-table__cell" data-label="UKPRN">
-                                @item.Ukprn
-                            </td>
-                            <td class="govuk-table__cell" data-label="Provider route">
-                                @item.ApplicationRouteShortText
-                            </td>
-                            <td class="govuk-table__cell" data-label="Submitted date">
-                                @item.SubmittedDate.ToSfaShortDateString()
-                            </td>
-                            <td class="govuk-table__cell" data-label="Clarification date">
-                                @item.FeedbackAddedDate.ToSfaShortDateString()
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-
-                @if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
-                {
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-full">
                             <div class="page-navigation">
                                 @if (Model.Applications.HasPreviousPage)
                                 {
@@ -116,14 +111,14 @@
                                     </a>
                                 }
                             </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <p class="govuk-body-l">There are no clarifications at this time.</p>
-            }
+                        }
+                    }
+                    else
+                    {
+                        <p class="govuk-body-l">There are no clarifications at this time.</p>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </main>
