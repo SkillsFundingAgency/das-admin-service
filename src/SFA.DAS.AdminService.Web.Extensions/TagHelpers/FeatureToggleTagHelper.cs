@@ -25,43 +25,33 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (!IsFeatureToggleEnabled(_logger, _featureToggles, FeatureToggle))
+            if (!IsFeatureToggleEnabled())
             {
                 output.SuppressOutput();
             }
         }
 
-        private static bool IsFeatureToggleEnabled(ILogger<FeatureToggleTagHelper> _logger, IFeatureToggles _featureToggles, string featureToggle)
+        private bool IsFeatureToggleEnabled()
         {
             var toggleEnabled = false;
 
-            if (_featureToggles != null && !string.IsNullOrWhiteSpace(featureToggle))
+            if (!string.IsNullOrWhiteSpace(FeatureToggle))
             {
                 try
                 {
-                    var property = _featureToggles.GetType().GetProperty(featureToggle);
+                    var property = _featureToggles.GetType().GetProperty(FeatureToggle);
                     var propertyValue = property.GetValue(_featureToggles, null);
-
-                    if (propertyValue != null)
-                    {
-                        toggleEnabled = Convert.ToBoolean(propertyValue);
-                    }
+                    toggleEnabled = Convert.ToBoolean(propertyValue);
                 }
                 catch (SystemException ex) when (ex is InvalidCastException || ex is FormatException)
                 {
                     toggleEnabled = false;
-                    if (_logger != null)
-                    {
-                        _logger.LogError(ex, $"FeatureToogle '{featureToggle}' is not in the expected format");
-                    }
+                    _logger.LogError(ex, $"FeatureToogle '{FeatureToggle}' is not in the expected format");
                 }
                 catch (SystemException ex) when (ex is NullReferenceException)
                 {
                     toggleEnabled = false;
-                    if (_logger != null)
-                    {
-                        _logger.LogError(ex, $"FeatureToogle '{featureToggle}' is not defined in the configuration");
-                    }
+                    _logger.LogError(ex, $"FeatureToogle '{FeatureToggle}' is not defined in the configuration");
                 }
             }
 
