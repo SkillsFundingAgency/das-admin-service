@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using System.Linq;
 
-    [Authorize]
+    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.RoatpApplicationOversightTeam)]
     public class AddRoatpOrganisationController : Controller
     {
         private readonly IRoatpApiClient _apiClient;
