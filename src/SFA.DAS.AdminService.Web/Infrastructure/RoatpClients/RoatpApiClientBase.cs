@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -21,6 +22,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _tokenService = tokenService;
         }
 
+        /// <summary>
+        /// HTTP GET to the specified URI
+        /// </summary>
+        /// <typeparam name="T">The type of the object to read.</typeparam>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>A Task yielding the result (of type T).</returns>
+        /// <exception cref="RoatpApiClientException">Thrown if there was an unsuccessful response.</exception>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<T> Get<T>(string uri) where T : new()
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -31,6 +40,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                 using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<T>();
                 }
             }
@@ -41,6 +51,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP GET to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>A Task yielding the result (as a string).</returns>
+        /// <exception cref="RoatpApiClientException">Thrown if there was an unsuccessful response.</exception>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<string> Get(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -51,6 +68,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                 using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsStringAsync();
                 }
             }
@@ -61,6 +79,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP GET to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpResponseMessage> GetResponse(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -80,6 +105,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP POST to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -103,6 +135,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP POST to the specified URI
+        /// </summary>
+        /// <typeparam name="T">The type of the object to POST.</typeparam>
+        /// <typeparam name="U">The type of the object to read.</typeparam>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>A Task yielding the result (of type U).</returns>
+        /// <exception cref="RoatpApiClientException">Thrown if there was an unsuccessful response.</exception>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Post<T, U>(string uri, T model) where U : new()
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -116,6 +157,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                     new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();
                 }
             }
@@ -126,6 +168,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP PUT to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpStatusCode> Put<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -149,6 +198,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP PUT to the specified URI
+        /// </summary>
+        /// <typeparam name="T">The type of the object to PUT.</typeparam>
+        /// <typeparam name="U">The type of the object to read.</typeparam>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>A Task yielding the result (of type U).</returns>
+        /// <exception cref="RoatpApiClientException">Thrown if there was an unsuccessful response.</exception>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Put<T, U>(string uri, T model) where U : new()
         {
             _client.DefaultRequestHeaders.Authorization =
@@ -162,6 +220,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                     new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
+                    ThrowExceptionIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();
                 }
             }
@@ -184,6 +243,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                 var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
 
                 _logger.LogError($"HTTP {statusCode} || {httpMethod}: {requestUri} || Message: {message}");
+            }
+        }
+
+        private void ThrowExceptionIfUnsuccessfulResponse(HttpResponseMessage response)
+        {
+            if (response?.RequestMessage != null && !response.IsSuccessStatusCode)
+            {
+                var httpMethod = response.RequestMessage.Method.ToString();
+                var requestUri = response.RequestMessage.RequestUri;
+                throw new RoatpApiClientException(response, $"{httpMethod}: Error getting response from: {requestUri} ");
             }
         }
 
