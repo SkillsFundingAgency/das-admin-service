@@ -29,9 +29,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
         }
 
-        [TestCase("www.OrganisationWebSite.co.uk", "www.UkrlpApiWebsite.co.uk")]
-        [TestCase(null, "www.UkrlpApiWebsite.co.uk")]
-        [TestCase("www.OrganisationWebSite.co.uk", null)]
+        [TestCase("http://www.OrganisationWebSite.co.uk", "http://www.UkrlpApiWebsite.co.uk")]
+        [TestCase(null, "http://www.UkrlpApiWebsite.co.uk")]
+        [TestCase("http://www.OrganisationWebSite.co.uk", null)]
         [TestCase(null, null)]
         public void check_orchestrator_builds_with_website_address(string organisationWebsite, string ukrlpApiWebsite)
         {
