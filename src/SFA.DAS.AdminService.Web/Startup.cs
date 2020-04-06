@@ -27,6 +27,7 @@ using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
+using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
@@ -92,6 +93,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
+                    options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
@@ -229,6 +231,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<StandardServiceClient>>()));
 
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
+            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
             services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();

@@ -12,6 +12,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
     using SFA.DAS.AdminService.Web.Resources;
     using SFA.DAS.AdminService.Web.Validators.Roatp;
     using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+    using SFA.DAS.AdminService.Web.Infrastructure;
 
     [TestFixture]
     public class AddOrganisationValidatorTests
