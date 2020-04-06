@@ -172,7 +172,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
         {
-            return await Get<OrganisationRegisterStatus>($"{_baseUrl}/api/v1/ukprn-on-register?ukprn={ukprn}");
+            return await Get<OrganisationRegisterStatus>($"{_baseUrl}/api/v1/Organisation/register-status?ukprn={ukprn}");
         }
 
         private async Task<T> Get<T>(string uri)
