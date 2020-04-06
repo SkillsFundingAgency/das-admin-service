@@ -19,14 +19,12 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         //MFCMFC PARKING THIS TEST COVERAGE AS NEW STORY WILL BE CHANGING THE ORCHESTRATOR FLOW TO CHECK IF DETAILS ALREADY SET
         // WE WILL DO CHANGES AND COVERAGE WITHIN THAT STORY
         private readonly IRoatpApplicationApiClient _applyApiClient;
-        private readonly IRoatpExperienceAndAccreditationApiClient _accreditationClient;
 		private readonly IGatewaySectionsNotRequiredService _sectionsNotRequiredService;
         private readonly ILogger<GatewayOverviewOrchestrator> _logger;
 
-        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, IRoatpExperienceAndAccreditationApiClient accreditationClient, ILogger<GatewayOverviewOrchestrator> logger, IGatewaySectionsNotRequiredService sectionsNotRequiredService)
+        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger, IGatewaySectionsNotRequiredService sectionsNotRequiredService)
         {
             _applyApiClient = applyApiClient;
-            _accreditationClient = accreditationClient;
             _logger = logger;
             _sectionsNotRequiredService = sectionsNotRequiredService;
         }
