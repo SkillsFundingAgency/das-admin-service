@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -20,6 +21,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpFinancialReview, "Dashboard", "Index")]
     public class RoatpFinancialController : Controller
     {
         private readonly IRoatpOrganisationApiClient _apiClient;

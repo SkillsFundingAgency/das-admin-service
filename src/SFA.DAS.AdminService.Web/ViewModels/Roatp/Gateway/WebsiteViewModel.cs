@@ -8,6 +8,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
     public class WebsiteViewModel : RoatpGatewayPageViewModel
     {
         public string SubmittedWebsite { get; set; }
+        public string SubmittedWebsiteUrl { get; set; }
         public string UkrlpWebsite { get; set; }
+        public string UkrlpWebsiteUrl { get; set; }
     }
 }
