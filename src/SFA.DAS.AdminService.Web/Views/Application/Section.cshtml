@@ -178,16 +178,16 @@
                                         </div>
                                     }
                                 </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @foreach (var answerPage in pg.PageOfAnswers)
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var answerPage in pg.PageOfAnswers)
+                                {
+                                    foreach (var answer in answerPage.Answers)
                                     {
-                                        foreach (var answer in answerPage.Answers)
+                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                        if (question != null)
                                         {
-                                            var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-                                            if (question != null)
-                                            {
-                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@question.Label</h3>
-                                            }
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(question.Label)</h3>
+                                        }
 
                                         if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
                                         {

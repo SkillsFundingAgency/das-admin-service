@@ -19,5 +19,8 @@
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
         ClientApiAuthentication QnaApiAuthentication { get; set; }
+
+        FeatureToggles FeatureToggles { get; set; }
+
     }
 }

@@ -26,7 +26,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
 
-        public PageViewModel(Guid applicationId, int sequenceNo, int sectionNo, string pageId,Section section, Page page, string backAction, string backController, string backOrganisationId)
+        public PageViewModel(Guid applicationId, int sequenceNo, int sectionNo, string pageId, Section section, Page page)
+            : this(applicationId, sequenceNo, sectionNo, pageId, section, page, string.Empty, string.Empty, string.Empty)
+        {
+        }
+
+        public PageViewModel(Guid applicationId, int sequenceNo, int sectionNo, string pageId, Section section, Page page, string backAction, string backController, string backOrganisationId)
             : base(backAction, backController, backOrganisationId)
         {
             if (page != null)

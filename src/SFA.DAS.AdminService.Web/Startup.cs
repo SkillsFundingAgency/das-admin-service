@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -26,12 +27,17 @@ using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
+using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
+using MediatR;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
+using SFA.DAS.AdminService.Web.Services.Gateway;
 using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SFA.DAS.AdminService.Web
@@ -88,11 +94,12 @@ namespace SFA.DAS.AdminService.Web
             });
 
             services.AddMvc(options =>
-            {
-                options.Filters.Add<CheckSessionFilter>();
-                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-            })
-                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
+                {
+                    options.Filters.Add<CheckSessionFilter>();
+                    options.Filters.Add<FeatureToggleFilter>();
+                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                })
+                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
@@ -121,7 +128,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-            
+   
             ConfigureDependencyInjection(services);           
         }
 
@@ -159,6 +166,17 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
+            services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CompaniesHouseApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<ICharityCommissionApiClient>(x => new CharityCommissionApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CharityCommissionApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
@@ -169,10 +187,32 @@ namespace SFA.DAS.AdminService.Web
               x.GetService<IQnaTokenService>(),
               x.GetService<ILogger<QnaApiClient>>()));
 
+            services.AddTransient<IRoatpApplyTokenService, RoatpApplyTokenService>();
+
+            services.AddTransient<IRoatpApplicationApiClient>(x => new RoatpApplicationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpApplicationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
+				x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpGatewayCriminalComplianceChecksApiClient>(x => new RoatpGatewayCriminalComplianceChecksApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpGatewayCriminalComplianceChecksApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            
+            services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
@@ -191,11 +231,15 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-
+            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
+
+            services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
+            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
+            services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
         }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
