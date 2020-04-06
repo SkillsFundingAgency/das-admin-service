@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Services
@@ -39,8 +40,34 @@ namespace SFA.DAS.AdminService.Web.Services
             var useTradingNameString = GetAnswer(applicationData, "use_trading_name");
             var useTradingName = "yes".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "true".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase) || "1".Equals(useTradingNameString, StringComparison.InvariantCultureIgnoreCase);
 
+            // get a contact by their contact name parts (application started May 2019 to date)
             var contactGivenNames = GetAnswer(applicationData, "contact_given_name");
             var contactFamilyName = GetAnswer(applicationData, "contact_family_name");
+
+            if (string.IsNullOrEmpty(contactGivenNames) && string.IsNullOrEmpty(contactFamilyName))
+            {
+                // get a contact by their contact name (application started before May 2019)
+                var contactName = GetAnswer(applicationData, "contact_name");
+                if (!string.IsNullOrEmpty(contactName))
+                {
+                    var matches = Regex.Matches(contactName, "^*([,'.-a-zA-z]{1,})");
+                    if (matches.Count() > 0)
+                    {
+                        var contactNameParts = matches.Cast<Group>()
+                            .Where(o => o.Value != string.Empty)
+                            .Select(o => o.Value);
+
+                        contactGivenNames = contactNameParts.Count() == 1
+                            ? contactNameParts.First()
+                            : string.Join(" ", contactNameParts.Take(contactNameParts.Count() - 1));
+
+                        // using the (Unknown) placeholder for the family name in cases where only a single word was entered
+                        contactFamilyName = contactNameParts.Count() == 1
+                            ? "(Unknown)"
+                            : contactNameParts.Last();
+                    }
+                }
+            }
 
             // get a contact address which is a single question with multiple answers
             var contactAddress = GetJsonAnswer(applicationData, "contact_address");
@@ -99,7 +126,6 @@ namespace SFA.DAS.AdminService.Web.Services
                 organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
                 organisation.OrganisationData?.FHADetails?.FinancialDueDate,
                 organisation.OrganisationData?.FHADetails?.FinancialExempt);
-
 
             return command;
         }

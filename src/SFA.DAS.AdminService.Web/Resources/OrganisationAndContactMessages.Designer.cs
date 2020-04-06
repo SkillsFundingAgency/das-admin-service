@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class OrganisationAndContactMessages {
@@ -97,20 +97,38 @@ namespace SFA.DAS.AdminService.Web.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The contact name is missing.
+        ///   Looks up a localized string similar to The contact family name is missing.
         /// </summary>
-        internal static string ContactNameIsMissing {
+        internal static string ContactFamilyNameIsMissing {
             get {
-                return ResourceManager.GetString("ContactNameIsMissing", resourceCulture);
+                return ResourceManager.GetString("ContactFamilyNameIsMissing", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The contact name is too short.
+        ///   Looks up a localized string similar to The contact family name is too short.
         /// </summary>
-        internal static string ContactNameIsTooShort {
+        internal static string ContactFamilyNameIsTooShort {
             get {
-                return ResourceManager.GetString("ContactNameIsTooShort", resourceCulture);
+                return ResourceManager.GetString("ContactFamilyNameIsTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The contact given name is too short.
+        /// </summary>
+        internal static string ContactGivenNameIsTooShort {
+            get {
+                return ResourceManager.GetString("ContactGivenNameIsTooShort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The contact given name is missing.
+        /// </summary>
+        internal static string ContactGivenNamesIsMissing {
+            get {
+                return ResourceManager.GetString("ContactGivenNamesIsMissing", resourceCulture);
             }
         }
         
