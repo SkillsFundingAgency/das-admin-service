@@ -11,12 +11,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
     public class RoatpGatewayController : Controller
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
