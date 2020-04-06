@@ -20,5 +20,7 @@
 
         ClientApiAuthentication QnaApiAuthentication { get; set; }
 
+        FeatureToggles FeatureToggles { get; set; }
+
     }
 }
