@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using System.Globalization;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
