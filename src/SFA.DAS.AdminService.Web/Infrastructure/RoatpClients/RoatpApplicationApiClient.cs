@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Formatting;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -157,7 +158,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             {
                 return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
             }
-            catch (Exception ex)
+            catch (RoatpApiClientException ex)
             {
                 _logger.LogError("An error occurred when retrieving Gateway common details", ex);
                 throw new ExternalApiException("An error occurred when retrieving Gateway common details", ex);
@@ -206,7 +207,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             {
                 return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
             }
-            catch (Exception ex)
+            catch (RoatpApiClientException ex)
             {
                 _logger.LogError("An error occurred when retrieving UKRLP details", ex);
                 throw new ExternalApiException("An error occurred when retrieving UKRLP details", ex);
@@ -219,7 +220,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             { 
                 return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
             }
-            catch (Exception ex)
+            catch (RoatpApiClientException ex)
             {
                 _logger.LogError("An error occurred when retrieving Companies House details", ex);
                 throw new ExternalApiException("An error occurred when retrieving Companies House details", ex);
@@ -232,7 +233,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             { 
                 return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
             }
-            catch (Exception ex)
+            catch (RoatpApiClientException ex)
             {
                 _logger.LogError("An error occurred when retrieving Charity Commission details", ex);
                 throw new ExternalApiException("An error occurred when retrieving Charity Commission details", ex);
