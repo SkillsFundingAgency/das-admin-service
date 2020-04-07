@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
             var month = dueDate.Month;
             var year = dueDate.Year;
 
-            var isValidDate = DateTime.TryParse($"{day}/{month}/{year}", out var parsedDate);
+            var isValidDate = DateTime.TryParseExact($"{day}/{month}/{year}", "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
 
             if (!isValidDate)
             {
