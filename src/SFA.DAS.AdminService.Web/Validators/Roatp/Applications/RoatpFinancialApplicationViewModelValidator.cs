@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using NUnit.Framework;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
@@ -78,6 +79,9 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 context.AddFailure(propertyName, "Enter a correct financial due date");
                 return;
             }
+
+            TestContext.Out.WriteLine($"parsedDate: {parsedDate}");
+            TestContext.Out.WriteLine($"DateTime.Today: {DateTime.Today}");
 
             if (parsedDate < DateTime.Today)
             {
