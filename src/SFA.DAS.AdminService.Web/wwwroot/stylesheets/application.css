@@ -249,7 +249,7 @@
 
 .app-task-list__section {
   display: table;
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -291,7 +291,7 @@
 }
 
 .app-task-list__items {
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -333,10 +333,6 @@
 @media (min-width: 40.0625em) {
   .app-task-list__items {
     padding-left: 30px;
-  }
-
-  .app-task-list__items--no-number {
-    padding-left: 0;
   }
 }
 
@@ -1369,10 +1365,6 @@ TODO: change to 'das-page-navigation' and BEM
   padding: 10px 10px 8px;
   box-sizing: border-box;
   border-bottom: 1px dotted #bfc1c3;
-}
-
-.das-table--responsive tr td .govuk-tag {
-  margin-right: 8px;
 }
 
 .das-table--responsive tr td:before {
