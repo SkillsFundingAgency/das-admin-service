@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Get}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
                 throw;
             }
         }
@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Get}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
                 throw;
             }
         }
@@ -100,7 +100,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Get}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
                 throw;
             }
         }
@@ -130,7 +130,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Post}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Post} - {uri}");
                 throw;
             }
         }
@@ -163,7 +163,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Post}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Post} - {uri}");
                 throw;
             }
         }
@@ -193,7 +193,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Put}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Put} - {uri}");
                 throw;
             }
         }
@@ -226,7 +226,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, $"{HttpMethod.Put}: Error when processing request to: {uri}");
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Put} - {uri}");
                 throw;
             }
         }
@@ -252,7 +252,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             {
                 var httpMethod = response.RequestMessage.Method.ToString();
                 var requestUri = response.RequestMessage.RequestUri;
-                throw new RoatpApiClientException(response, $"{httpMethod}: Error getting response from: {requestUri} ");
+                throw new RoatpApiClientException(response, $"Error when processing response: {httpMethod} - {requestUri}");
             }
         }
 
