@@ -129,12 +129,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
                 var errorViewModel = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(viewModel.ApplicationId, username));
-                errorViewModel.ErrorMessages = validationResponse.Errors;
-                errorViewModel.GatewayReviewStatus = viewModel.GatewayReviewStatus;
-                errorViewModel.OptionAskClarificationText = viewModel.OptionAskClarificationText;
-                errorViewModel.OptionDeclinedText = viewModel.OptionDeclinedText;
-                errorViewModel.OptionApprovedText = viewModel.OptionApprovedText;
-                return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", errorViewModel);
+                if(errorViewModel != null)
+                {
+                    errorViewModel.ErrorMessages = validationResponse.Errors;
+                    errorViewModel.GatewayReviewStatus = viewModel.GatewayReviewStatus;
+                    errorViewModel.OptionAskClarificationText = viewModel.OptionAskClarificationText;
+                    errorViewModel.OptionDeclinedText = viewModel.OptionDeclinedText;
+                    errorViewModel.OptionApprovedText = viewModel.OptionApprovedText;
+                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", errorViewModel);
+                }
+                else
+                {
+                    return Redirect($"/Roatp/Gateway/{viewModel.ApplicationId}");
+                }
             }
 
             var viewName = "~/Views/Roatp/Apply/Gateway/ConfirmOutcomeAskClarification.cshtml";
