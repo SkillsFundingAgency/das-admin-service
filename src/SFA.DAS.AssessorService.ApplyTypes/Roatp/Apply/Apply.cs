@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
+namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
     public class Apply
     {
@@ -114,5 +114,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public bool Sequential { get; set; }
         public List<string> ExcludeSections { get; set; }
         public List<string> Roles { get; set; }
+    }
+
+    public class OrganisationRegisterStatus
+    {
+        public bool UkprnOnRegister { get; set; }
+        public Guid? OrganisationId { get; set; }
+        public int? ProviderTypeId { get; set; }
+        public int? StatusId { get; set; }
+        public int? RemovedReasonId { get; set; }
+        public DateTime? StatusDate { get; set; }
     }
 }

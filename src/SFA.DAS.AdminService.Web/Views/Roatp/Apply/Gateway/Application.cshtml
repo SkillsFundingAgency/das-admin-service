@@ -8,7 +8,18 @@
     Layout = "_Layout";
 }
 
-<a asp-action="InProgressApplications" asp-controller="RoatpGateway" class="govuk-back-link">Back</a>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Application assessment overview</li>
+    </ol>
+</div>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -28,7 +39,6 @@
             }
 
             <h1 class="govuk-heading-xl">Application assessment overview</h1>
-            <h2 class="govuk-heading-m">Organisation details</h2>
 
             <dl class="govuk-summary-list">
                 @if (!string.IsNullOrWhiteSpace(Model.Ukprn))
@@ -46,7 +56,7 @@
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Organisation name
+                            Legal name
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.OrganisationName
@@ -90,141 +100,67 @@
         </div>
     </div>
 
-
-    <div class="govuk-grid-column-two-thirds">
-
-        <ol class="app-task-list">
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">1. </span> Legal checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/initial/legalname">Legal checks</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/highrisk/organisation">Organisation high risk</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/highrisk/people">People in control high risk</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">2. </span> Register checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/register/roatp">RoATP</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/register/epao">Register of end-point assessment organisations</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">3. </span> Organisation checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <!--a href="company/organisation/info/parent-name">Organisation information</a-->
-                            <a href="company/organisation/info/ico">Organisation information</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/organisation/type/type">Organisation type</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/organisation/experience/ofs">Experience and accreditation</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="app-task-list__section">
-                    <span class="app-task-list__section-number">4. </span> Criminal and compliance checks
-                </h2>
-                <ul class="app-task-list__items">
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/criminal/organisation">The organisation</a>
-                        </span>
-
-                    </li>
-                    <li class="app-task-list__item">
-                        <span class="app-task-list__task-name">
-                            <a href="company/criminal/peopleincontrol">People in control</a>
-                        </span>
-
-                    </li>
-                </ul>
-            </li>
-
-
-        </ol>
-
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <form class="js-disable-on-submit" asp-action="EvaluateGateway" asp-controller="RoatpGateway">
-                <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <input type="hidden" name="OrgId" value="@Model.OrgId" />
-
-                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <fieldset class="govuk-fieldset">
-                        <legend id="IsGatewayApproved">
-                            <h2 class="govuk-heading-l">
-                                What is the grade for this Gateway?
+    @if (Model.Sequences.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <ol class="app-task-list">
+                    @foreach (var sequence in Model.Sequences)
+                    {
+                        <li>
+                            <h2 class="app-task-list__section">
+                                <span class="app-task-list__section-number">@sequence.SequenceNumber. </span>@sequence.SequenceTitle
                             </h2>
-                        </legend>
+                            <ul class="app-task-list__items">
+                                @foreach (var currentSection in sequence.Sections)
+                                {
+                                    <li class="app-task-list__item">
+                                        <span class="app-task-list__task-name app-task-list__task-name--inactive">
+                                            @if (currentSection.Status != null && currentSection.Status.Equals(SectionReviewStatus.NotRequired))
+                                            {
+                                                @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))
+                                            }
+                                            else
+                                            {
+                                                <a class="govuk-link" href="/Roatp/GatewayCheckStatus/@Model.ApplicationId/Page/@currentSection.PageId/Status/@Model.GatewayReviewStatus">@currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))</a>
+                                            }
+                                        </span>
+                                        @if(!string.IsNullOrWhiteSpace(currentSection.Status))
+                                        {
+                                            @if (!currentSection.Status.Equals(SectionReviewStatus.New))
+                                            {
+                                                var cssModifierClassName = currentSection.Status.ToLower().Replace(" ", "");
+                                                <strong class="govuk-tag app-task-list__task-@cssModifierClassName">@currentSection.Status</strong>
+                                            }
+                                        }
 
-                        <span class="govuk-error-message" asp-validation-for="IsGatewayApproved"></span>
 
-                        <div class="govuk-radios govuk-radios--inline">
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" asp-for="IsGatewayApproved" id="options_yes" type="radio" value="True" sfa-validation-for="IsGatewayApproved" />
-                                <label class="govuk-label govuk-radios__label" for="options_yes">
-                                    Approve
-                                </label>
-                            </div>
-                            @*<div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="GatewayReviewStatus" id="options_no" type="radio" value="False" sfa-validation-for="IsGatewayApproved" />
-                                    <label class="govuk-label govuk-radios__label" for="options_no">
-                                        Decline
-                                    </label>
-                                </div>*@
-                        </div>
-                    </fieldset>
-                </div>
-
-                <button class="govuk-button" type="submit">Confirm and submit</button>
-            </form>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                    <li>
+                        <h2 class="app-task-list__section">
+                            <span class="app-task-list__section-number">7. </span>Overall gateway outcome
+                        </h2>
+                        <ul class="app-task-list__items">
+                            <li class="app-task-list__item">
+                                <span class="app-task-list__task-name app-task-list__task-name--inactive">
+                                    @if (Model.ReadyToConfirm)
+                                    {
+                                        <a href="/Roatp/Gateway/GoAndConfirm/@Model.ApplicationId">Confirm gateway outcome</a>
+                                    }
+                                    else
+                                    {
+                                        <text>Confirm gateway outcome</text>
+                                    }
+                                </span>
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
         </div>
-    </div>
+    }
 </main>

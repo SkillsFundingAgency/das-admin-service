@@ -1,27 +1,23 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using System.Net.Http.Formatting;
+using SFA.DAS.AdminService.Web.Models;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
-    public class RoatpApplicationApiClient : IRoatpApplicationApiClient
+    public class RoatpApplicationApiClient : RoatpApiClientBase<RoatpApplicationApiClient>, IRoatpApplicationApiClient
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<RoatpApplicationApiClient> _logger;
-        private readonly IRoatpApplyTokenService _tokenService;
-
-        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService)
+        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService) : base(baseUri, logger, tokenService)
         {
-            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _logger = logger;
-            _tokenService = tokenService;
         }
 
         public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
@@ -147,53 +143,115 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
+  
 
-        private async Task<T> Get<T>(string uri)
+        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
+        }
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
+        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
+        }
+
+        public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
+        {
+            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+        }
+
+        public async Task<ContactAddress> GetOrganisationAddress(Guid applicationId)
+        {
+            return await Get<ContactAddress>($"/Gateway/{applicationId}/OrganisationAddress");
+        }
+
+        public async Task<string> GetIcoNumber(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/IcoNumber");
+        }
+
+        public async Task<string> GetTypeOfOrganisation(Guid applicationId)
+        {
+            return await Get($"/organisation/TypeOfOrganisation/{applicationId}");
+        }
+
+        public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
+        {
+            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+        }
+
+        public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
+            string comments)
+        {
+            _logger.LogInformation($"RoatpApplicationApiClient-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{status}' - UserName '{username}' - Comments '{comments}'");
+
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                await Post($"/Gateway/Page/Submit", new { applicationId, pageId, status, comments, username });
             }
-        }
-
-        private async Task Post<T>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
-        }
-
-        private async Task<U> Post<T, U>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            catch(Exception ex)
             {
-                return await response.Content.ReadAsAsync<U>();
+                _logger.LogError(ex, "RoatpApplicationApiClient - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
             }
+            
         }
 
-        private async Task<U> Put<T, U>(string uri, T model)
+        public async Task<ProviderDetails> GetUkrlpDetails(Guid applicationId)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
-            {
-                return await response.Content.ReadAsAsync<U>();
-            }
+            return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
         }
 
+        public async Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId)
+        {
+            return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+        }
+
+        public async Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId)
+        {
+            return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+        }
+
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId)
+        {
+            return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+        }
+
+        public async Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId)
+        {
+            return await Get<DateTime?>($"Gateway/SourcesCheckedOn/{applicationId}");
+        }
+
+        public async Task<string> GetTradingName(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/TradingName");
+        }
+
+
+        public async Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/WebsiteAddressFromUkrlp");
+        }
+
+
+        public async Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/WebsiteAddressManuallyEntered");
+        }
+
+        public async Task<string> GetOrganisationWebsiteAddress(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/OrganisationWebsiteAddress");
+        }
+
+        public async Task<string> GetOfficeForStudents(Guid applicationId)
+        {
+            return await Get($"/Accreditation/{applicationId}/OfficeForStudents");
+        }
+
+        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
+        {
+            return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
+        }
     }
 }

@@ -7,11 +7,14 @@ using System;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Snapshot;
 using System.Linq;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpSnapshot, "Dashboard", "Index")]
     public class RoatpSnapshotController : Controller
     {
         private readonly IConfiguration _configuration;

@@ -17,8 +17,8 @@
     using SFA.DAS.AdminService.Web.Resources;
     using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
-    //MFCMFC
-
+    //This controller has been changed and someone needs to update this test
+    //TESTREDO
     //[TestFixture]
     //public class AddRoatpOrganisationControllerTests
     //{

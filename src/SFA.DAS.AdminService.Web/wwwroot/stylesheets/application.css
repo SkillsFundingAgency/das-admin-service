@@ -249,7 +249,7 @@
 
 .app-task-list__section {
   display: table;
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -291,7 +291,7 @@
 }
 
 .app-task-list__items {
-  font-family: "nta", Arial, sans-serif;
+  font-family: "GDS Transport", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -341,7 +341,7 @@
 }
 
 .app-task-list__item {
-  border-bottom: 1px solid #bfc1c3;
+  border-bottom: 1px solid #b1b4b6;
   margin-bottom: 0 !important;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -351,6 +351,10 @@
   content: "";
   display: block;
   clear: both;
+}
+
+.app-task-list__item:first-child {
+  border-top: 1px solid #b1b4b6;
 }
 
 .app-task-list__task-name {
@@ -364,17 +368,56 @@
   }
 }
 
+.app-task-list__task-pass,
+.app-task-list__task-fail,
+.app-task-list__task-inprogress,
+.app-task-list__task-notrequired,
+.app-task-list__task-next,
 .app-task-list__task-completed {
   margin-top: 10px;
   margin-bottom: 5px;
 }
 
 @media (min-width: 28.125em) {
+  .app-task-list__task-pass,
+  .app-task-list__task-fail,
+  .app-task-list__task-inprogress,
+  .app-task-list__task-notrequired,
+  .app-task-list__task-next,
   .app-task-list__task-completed {
     float: right;
     margin-top: 0;
     margin-bottom: 0;
   }
+}
+
+.app-task-list__task-pass {
+  background-color: #00703c;
+}
+
+.app-task-list__task-fail {
+  background-color: #d4351c;
+}
+
+.app-task-list__task-inprogress {
+  background-color: #005ea5;
+}
+
+.app-task-list__task-notrequired {
+  background-color: #6f777b;
+}
+
+.app-task-list__task-next {
+  background-color: #ffbf47;
+  color: #0b0c0c;
+}
+
+.app-task-list__task-name--inactive {
+  color: #6f777b;
+}
+
+.app-task-list__task-hidden {
+  display: none;
 }
 
 .das-user-panel {
@@ -1328,6 +1371,10 @@ TODO: change to 'das-page-navigation' and BEM
   border-bottom: 1px dotted #bfc1c3;
 }
 
+.das-table--responsive tr td .govuk-tag {
+  margin-right: 8px;
+}
+
 .das-table--responsive tr td:before {
   content: attr(data-label);
   float: left;
@@ -1523,4 +1570,17 @@ TODO: change to 'das-page-navigation' and BEM
 
 .roatp-search-panel {
   background-color: #f8f8f8;
+}
+
+.govuk-table__row--no-border > td {
+  border-bottom: 0 none;
+  padding-bottom: 0;
+}
+
+/* 
+  Required as word/char count wiptes out 'govuk-textarea--error' 
+  on page load if inside limits 
+*/
+.govuk-textarea--error-override {
+  border: 4px solid #b10e1e;
 }

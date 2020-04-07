@@ -55,7 +55,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData/{questionTag}"))
             {
                 return await RequestAndDeserialiseAsync<string>(request,
-                    $"Could not find the application");
+                    $"Could not find the question tag");
             }
         }
 

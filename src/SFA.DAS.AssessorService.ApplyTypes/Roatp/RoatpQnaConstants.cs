@@ -10,6 +10,7 @@
             public static int Preamble = 0;
             public static int YourOrganisation = 1;
             public static int FinancialEvidence = 2;
+            public static int CriminalComplianceChecks = 3;
         }
 
         public static class RoatpSections
