@@ -1,10 +1,8 @@
-﻿using FizzWare.NBuilder;
-using FluentAssertions;
-using FluentValidation.Results;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System;
 using System.Linq;
 

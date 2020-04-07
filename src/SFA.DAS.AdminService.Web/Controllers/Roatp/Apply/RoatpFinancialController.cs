@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -248,8 +251,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private async Task<Section> GetOrganisationTypeSection(Guid applicationId)
         {
             const string OrganisationTypeSectionTitle = "Organisation type";
-            const string OrganisationTypeMainSupportingPageId = "140";
-            const string OrganisationTypeEmployerPageId = "150";
 
             Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
