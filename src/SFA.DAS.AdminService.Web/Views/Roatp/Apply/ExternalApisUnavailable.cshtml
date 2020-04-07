@@ -9,23 +9,21 @@
 
             <h1 class="govuk-heading-xl">We were unable to get information</h1>
 
-            <div class="govuk-form-group">
-                <p class="govuk-body">
-                    We were unable to get information from either:
-                </p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>UKRLP</li>
-                    <li>Companies House</li>
-                    <li>Charity Commission</li>
-                    <li>the RoATP</li>
-                </ul>
-                <p class="govuk-body">
-                    You'll need to come back later to assess this application.
-                </p>
-                <p class="govuk-body">
-                    While you wait, you can assess another application using <a asp-controller="RoatpGateway" asp-action="NewApplications">RoATP applications</a>
-                </p>
-            </div>
+            <p class="govuk-body">
+                We were unable to get information from either:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>UKRLP</li>
+                <li>Companies House</li>
+                <li>Charity Commission</li>
+                <li>the RoATP</li>
+            </ul>
+            <p class="govuk-body">
+                You'll need to come back later to assess this application.
+            </p>
+            <p class="govuk-body">
+                While you wait, you can assess another application using <a class="govuk-link" asp-controller="RoatpGateway" asp-action="NewApplications">RoATP applications</a>
+            </p>
 
         </div>
     </div>
