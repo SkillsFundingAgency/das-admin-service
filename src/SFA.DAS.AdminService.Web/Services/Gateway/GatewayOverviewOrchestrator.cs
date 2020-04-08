@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 foreach (var currentStatus in savedStatuses)
                 {
                     // Inject the statuses into viewmodel
-                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus.Status;
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus?.Status;
                 }
             }
 
