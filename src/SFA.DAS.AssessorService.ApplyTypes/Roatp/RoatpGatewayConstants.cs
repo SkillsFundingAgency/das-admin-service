@@ -43,8 +43,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public static string Website = "Select the outcome for website address check";
         public static string OrganisationRisk = "Select the outcome for organisation high risk check";
 
-        public static string OfficeForStudents = "Select the outcome for Office for Students(OfS) check";
-        public static string InitialTeacherTraining = "Select the outcome for initial teacher training(ITT) check";
+        public static string OfficeForStudents = "Select the outcome for Office for Students (OfS) check";
+        public static string InitialTeacherTraining = "Select the outcome for initial teacher training (ITT) check";
         public static string Ofsted = "Select the outcome for Ofsted check";
         public static string SubcontractorDeclaration = "Select the outcome for subcontractor declaration check";
     }
