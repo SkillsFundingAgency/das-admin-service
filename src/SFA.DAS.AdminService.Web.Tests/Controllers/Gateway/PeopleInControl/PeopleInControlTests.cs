@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -17,127 +14,83 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
 {
 
         [TestFixture]
-        public class PeopleInControlTests
-        {
+        public class PeopleInControlTests : RoatpGatewayControllerTestBase<RoatpGatewayPeopleInControlController>
+    {
             private RoatpGatewayPeopleInControlController _controller;
-            private Mock<IRoatpApplicationApiClient> _applyApiClient;
-            private Mock<IHttpContextAccessor> _contextAccessor;
-            private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
             private Mock<IPeopleInControlOrchestrator> _orchestrator;
             private Mock<ILogger<RoatpGatewayPeopleInControlController>> _logger;
+            private readonly Guid _applicationId = Guid.NewGuid();
 
-            private string username => "mark cain";
-            private string givenName => "mark";
-            private string surname => "cain";
-            private Guid applicationId = Guid.NewGuid();
-        [SetUp]
+            public GetPeopleInControlRequest Request;
+            public PeopleInControlPageViewModel ViewModel;
+
+            [SetUp]
             public void Setup()
             {
-                _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-                _contextAccessor = new Mock<IHttpContextAccessor>();
-                _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
+                CoreSetup();
                 _logger = new Mock<ILogger<RoatpGatewayPeopleInControlController>>();
                 _orchestrator = new Mock<IPeopleInControlOrchestrator>();
+                ViewModel = new PeopleInControlPageViewModel { ApplicationId = _applicationId };
 
-                var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-                 {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-                 }));
-
-                var context = new DefaultHttpContext { User = user };
-                _gatewayValidator.Setup(v => v.Validate(It.IsAny<PeopleInControlPageViewModel>()))
-                    .ReturnsAsync(new ValidationResponse
-                    {
-                        Errors = new List<ValidationErrorDetail>()
-                    }
-                    );
-                _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-
+                Request = new GetPeopleInControlRequest(_applicationId, Username);
                 _orchestrator.Setup(x =>
-                        x.GetPeopleInControlViewModel(new GetPeopleInControlRequest(applicationId, username)))
-                    .ReturnsAsync(new PeopleInControlPageViewModel())
+                        x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()))
+                    .ReturnsAsync(ViewModel)
                     .Verifiable("view model not returned");
 
-
-            _controller = new RoatpGatewayPeopleInControlController(_contextAccessor.Object, _applyApiClient.Object, _logger.Object, _gatewayValidator.Object,  _orchestrator.Object);
+            _controller = new RoatpGatewayPeopleInControlController(ContextAccessor.Object, ApplyApiClient.Object, _logger.Object, GatewayValidator.Object,  _orchestrator.Object);
             }
 
             [Test]
-            public void check_people_in_control_request_is_sent()
+            public void check_people_in_control_request_is_sent_and_viewmodel_returned()
             {
-                var _result = _controller.GetGatewayPeopleInControlPage(applicationId, GatewayPageIds.PeopleInControl).Result;
-                _orchestrator.Verify(x => x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()), Times.Once());
+            var result = (ViewResult)_controller.GetGatewayPeopleInControlPage(_applicationId, GatewayPageIds.PeopleInControl).Result;
+            var resultModel = (PeopleInControlPageViewModel)result.Model;
+            Assert.AreEqual(_applicationId, resultModel.ApplicationId);
+        }
+
+            [Test]
+            public void post_people_in_control_happy_path()
+            {
+                var vm = ViewModel;
+                vm.Status = SectionReviewStatus.Pass;
+                vm.SourcesCheckedOn = DateTime.Now;
+                vm.ErrorMessages = new List<ValidationErrorDetail>();
+
+                var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlPage(ViewModel).Result;
+
+                GatewayValidator.Verify(x=>x.Validate(ViewModel),Times.Once);
+                Assert.AreEqual("ViewApplication", result.ActionName);
+                Assert.AreEqual("RoatpGateway", result.ControllerName);
             }
 
-        [Test]
-        public void post_people_in_control_happy_path()
-        {
-            var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.PeopleInControl;
-
-            var vm = new PeopleInControlPageViewModel
+            [Test]
+            public void post_people_in_control_path_with_errors()
             {
-                Status = SectionReviewStatus.Pass,
-                SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-            };
-
-            vm.SourcesCheckedOn = DateTime.Now;
-
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, It.IsAny<string>()));
-
-            var result = _controller.EvaluatePeopleInControlPage(vm).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-            _orchestrator.Verify(x => x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()), Times.Once());
-        }
-
-        [Test]
-        public void post_people_in_control_path_with_errors()
-        {
-            var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.PeopleInControl;
-
-            var viewModel = new PeopleInControlPageViewModel
-            {
-                Status = SectionReviewStatus.Fail,
-                SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>()
-
-            };
-
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<PeopleInControlPageViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>
+                var vm = ViewModel;
+                GatewayValidator.Setup(v => v.Validate(It.IsAny<PeopleInControlPageViewModel>()))
+                    .ReturnsAsync(new ValidationResponse
                         {
-                        new ValidationErrorDetail {Field = "OptionFail", ErrorMessage = "needs text"}
+                            Errors = new List<ValidationErrorDetail>
+                            {
+                                new ValidationErrorDetail {Field = "OptionFail", ErrorMessage = "needs text"}
+                            }
                         }
-                }
-                );
+                    );
 
-            viewModel.ApplicationId = applicationId;
-            viewModel.PageId = viewModel.PageId;
-            viewModel.SourcesCheckedOn = DateTime.Now;
+                vm.PageId = GatewayPageIds.PeopleInControlRisk;
+                vm.SourcesCheckedOn = DateTime.Now;
 
-            _orchestrator.Setup(x => x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()))
-                .ReturnsAsync(viewModel)
-                .Verifiable("view model not returned");
+                _orchestrator.Setup(x => x.GetPeopleInControlViewModel(Request))
+                    .ReturnsAsync(vm)
+                    .Verifiable("view model not returned");
 
-          
-            _applyApiClient.Setup(x =>
-                x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, username, It.IsAny<string>()));
+                var result = (ViewResult)_controller.EvaluatePeopleInControlPage(ViewModel).Result;
+                var resultModel = (PeopleInControlPageViewModel)result.Model;
 
-            var result = _controller.EvaluatePeopleInControlPage(viewModel).Result;
-
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetPeopleInControlViewModel(It.IsAny<GetPeopleInControlRequest>()), Times.Once());
-
-        }
+                GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
+                Assert.AreEqual(1, resultModel.ErrorMessages.Count);
+            }
     }
     
 }

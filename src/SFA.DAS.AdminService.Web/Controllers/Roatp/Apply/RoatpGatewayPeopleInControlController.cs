@@ -39,14 +39,22 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControl")]
             public async Task<IActionResult> EvaluatePeopleInControlPage(PeopleInControlPageViewModel viewModel)
             {
+                var validationCheck = await GatewayValidator.Validate(viewModel);
+
+                if (validationCheck.Errors == null || !validationCheck.Errors.Any())
+                    return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml",
+                        validationCheck.Errors);
+
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var vmRebuild = await _orchestrator.GetPeopleInControlViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
+                var vmRebuild =
+                    await _orchestrator.GetPeopleInControlViewModel(
+                        new GetPeopleInControlRequest(viewModel.ApplicationId, username));
                 viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
                 viewModel.PscData = vmRebuild?.PscData;
                 viewModel.TrusteeData = vmRebuild?.TrusteeData;
                 viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
 
-                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml");
+                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml",validationCheck.Errors);
             }
 
 
@@ -61,6 +69,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControlRisk")]
         public async Task<IActionResult> EvaluatePeopleInControlHighRiskPage(PeopleInControlHighRiskPageViewModel viewModel)
         {
+            var validationCheck = await GatewayValidator.Validate(viewModel);
+
+            if (validationCheck.Errors == null || !validationCheck.Errors.Any())
+                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml",validationCheck.Errors);
+            
             var username = _contextAccessor.HttpContext.User.UserDisplayName();
             var vmRebuild = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlHighRiskRequest(viewModel.ApplicationId, username));
             viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
@@ -68,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             viewModel.TrusteeData = vmRebuild?.TrusteeData;
             viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
 
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml");
+            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", validationCheck.Errors);
         }
     }
     

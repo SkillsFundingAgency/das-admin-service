@@ -61,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
 
             var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
             Assert.AreEqual("ViewApplication",result.ActionName);
             Assert.AreEqual("RoatpGateway", result.ControllerName);
         }
@@ -90,6 +90,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
             var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
 
             var resultModel = (PeopleInControlHighRiskPageViewModel)result.Model;
+
+            GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
             Assert.AreEqual(1, resultModel.ErrorMessages.Count);
         }
     }
