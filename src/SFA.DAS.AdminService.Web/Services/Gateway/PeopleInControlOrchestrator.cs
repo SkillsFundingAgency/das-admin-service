@@ -34,6 +34,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
 
+            _logger.LogInformation($"Retrieving company number in control for application {request.ApplicationId}");
+            model.CompanyNumber = await _organisationSummaryApiClient.GetCompanyNumber(request.ApplicationId);
+
+            _logger.LogInformation($"Retrieving company number in control for application {request.ApplicationId}");
+            model.CharityNumber = await _organisationSummaryApiClient.GetCharityNumber(request.ApplicationId);
+
+
             _logger.LogInformation($"Retrieving people in control - [{RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors}] for application {request.ApplicationId}");
             model.CompanyDirectorsData = new PeopleInControlData
             {

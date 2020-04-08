@@ -28,6 +28,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
             return await GetString($"{RoutePath}/TypeOfOrganisation/{applicationId}");
         }
 
+        public async Task<string> GetCompanyNumber(Guid applicationId)
+        {
+            _logger.LogInformation($"Retrieving company number from applicationId [{applicationId}]");
+            return await GetString($"{RoutePath}/CompanyNumber/{applicationId}");
+        }
+
+        public async Task<string> GetCharityNumber(Guid applicationId)
+        {
+            _logger.LogInformation($"Retrieving charity number from applicationId [{applicationId}]");
+            return await GetString($"{RoutePath}/CharityNumber/{applicationId}");
+        }
+
         public async Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId)
         {
             _logger.LogInformation($"Retrieving list of directors submitted in Qna QuestionTags from applicationId [{applicationId}]");

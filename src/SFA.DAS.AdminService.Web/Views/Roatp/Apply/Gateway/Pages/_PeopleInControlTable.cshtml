@@ -1,6 +1,6 @@
 ﻿@model SFA.DAS.AdminService.Web.Models.PeopleInControlData
 
-@if (Model?.FromExternalSource != null || Model?.FromSubmittedApplication != null)
+@if ((Model?.FromExternalSource != null && Model.FromExternalSource.Count > 0) || (Model?.FromSubmittedApplication != null && Model.FromSubmittedApplication.Count > 0))
 {
     var externalData = Model?.FromExternalSource?.OrderBy(x => x.Name)?.ToArray();
     var submittedData = Model?.FromSubmittedApplication?.OrderBy(x => x.Name)?.ToArray();
@@ -13,45 +13,45 @@
         }
 
 
-<table class="govuk-table govuk-!-margin-bottom-9">
-    <caption class="govuk-table__caption">@Model.Caption</caption>
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="col">Submitted application data</th>
-            <th class="govuk-table__header" scope="col">@Model.ExternalSourceHeading</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        @for (var i = 0; i < upperCount; i++)
-            {
+        <table class="govuk-table govuk-!-margin-bottom-9">
+            <caption class="govuk-table__caption">@Model.Caption</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">Submitted application data</th>
+                    <th class="govuk-table__header" scope="col">@Model.ExternalSourceHeading</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @for (var i = 0; i < upperCount; i++)
+                {
 
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell">
-                @if (submittedData.Length > i)
-                        {
-                @submittedData[i]?.Name?.ToUpper()
-
-                            if (!string.IsNullOrEmpty(submittedData[i].DateOfBirth))
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">
+                            @if (submittedData.Length > i)
                             {
-                @Html.Raw($@" ({submittedData[i].DateOfBirth})")
-                            }
-                        }
-            </td>
+                                @submittedData[i]?.Name?.ToUpper()
 
-            <td class="govuk-table__cell">
-                @if (externalData != null && externalData.Length > i)
-                        {
-                @externalData[i]?.Name?.ToUpper()
-                @if (!string.IsNullOrEmpty(externalData[i].DateOfBirth))
+                                if (!string.IsNullOrEmpty(submittedData[i].MonthYearOfBirth))
+                                {
+                                    @Html.Raw($@" ({submittedData[i].MonthYearOfBirth})")
+                                }
+                            }
+                        </td>
+
+                        <td class="govuk-table__cell">
+                            @if (externalData != null && externalData.Length > i)
                             {
-                @Html.Raw($@" ({externalData[i].DateOfBirth})")
+                                @externalData[i]?.Name?.ToUpper()
+                                @if (!string.IsNullOrEmpty(externalData[i].MonthYearOfBirth))
+                                {
+                                    @Html.Raw($@" ({externalData[i].MonthYearOfBirth})")
+                                }
                             }
-                        }
-            </td>
+                        </td>
 
-        </tr>
-            }
-    </tbody>
-</table>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
 }
