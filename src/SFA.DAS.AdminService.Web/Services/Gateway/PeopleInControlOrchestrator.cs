@@ -92,6 +92,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 PeopleInControl = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
             };
 
+
+            _logger.LogInformation($"Retrieving company number in control high risk for application {request.ApplicationId}");
+            model.CompanyNumber = await _organisationSummaryApiClient.GetCompanyNumber(request.ApplicationId);
+
+            _logger.LogInformation($"Retrieving company number in control high risk for application {request.ApplicationId}");
+            model.CharityNumber = await _organisationSummaryApiClient.GetCharityNumber(request.ApplicationId);
+
             _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl}] for application {request.ApplicationId}");
             model.PscData = new PeopleInControlHighRiskData
             {

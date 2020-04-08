@@ -1,6 +1,6 @@
 ﻿@model SFA.DAS.AdminService.Web.Models.PeopleInControlHighRiskData
 
-@if (Model?.PeopleInControl != null)
+@if (Model?.PeopleInControl != null && Model.PeopleInControl.Count>0)
 {
     var submittedData = Model?.PeopleInControl?.OrderBy(x => x.Name)?.ToArray();
 

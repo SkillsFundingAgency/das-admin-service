@@ -34,8 +34,21 @@
                     </p>
                 }
                 <p class="govuk-body govuk-!-margin-bottom-0">
-                        Type of organisation: @Model.TypeOfOrganisation
+                    Type of organisation: @Model.TypeOfOrganisation
+                </p>
+                @if (!string.IsNullOrEmpty(Model.CompanyNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Company number: @Model.CompanyNumber
                     </p>
+                }
+                
+                @if (!string.IsNullOrEmpty(Model.CharityNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Charity number: @Model.CharityNumber
+                    </p>
+                }
 
                 @if (Model.ApplicationSubmittedOn!=null)
                     {

@@ -9,6 +9,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
     {
         Task<string> GetTypeOfOrganisation(Guid applicationId);
 
+        Task<string> GetCompanyNumber(Guid applicationId);
+        Task<string> GetCharityNumber(Guid applicationId);
+
         Task<List<PersonInControl>> GetDirectorsFromSubmitted(Guid applicationId);
         Task<List<PersonInControl>> GetDirectorsFromCompaniesHouse(Guid applicationId);
 
