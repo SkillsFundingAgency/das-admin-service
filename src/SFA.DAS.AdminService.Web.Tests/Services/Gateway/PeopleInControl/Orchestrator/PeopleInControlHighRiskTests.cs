@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
             var directorsFromSubmitted = new List<PersonInControl>{
                 new PersonInControl{
                     Name =PersonInControlName + DirectorsPostfix,
-                    DateOfBirth = PersonInControlDob + DirectorsPostfix ,
+                    MonthYearOfBirth = PersonInControlDob + DirectorsPostfix ,
                 } };
             _organisationSummaryApiClient.Setup(x => x.GetDirectorsFromSubmitted(_applicationId)).ReturnsAsync(directorsFromSubmitted);
 
@@ -96,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
 
             Assert.AreEqual(1, viewModel.CompanyDirectorsData.PeopleInControl.Count);
             Assert.AreEqual(viewModel.CompanyDirectorsData.PeopleInControl.First().Name, directorsFromSubmitted.First().Name);
-            Assert.AreEqual(viewModel.CompanyDirectorsData.PeopleInControl.First().DateOfBirth, directorsFromSubmitted.First().DateOfBirth);
+            Assert.AreEqual(viewModel.CompanyDirectorsData.PeopleInControl.First().MonthYearOfBirth, directorsFromSubmitted.First().MonthYearOfBirth);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                 new PersonInControl
                 {
                     Name = PersonInControlName+PscPostfix,
-                    DateOfBirth = PersonInControlDob + PscPostfix
+                    MonthYearOfBirth = PersonInControlDob + PscPostfix
                 }
             };
             _organisationSummaryApiClient.Setup(x => x.GetPscsFromSubmitted(_applicationId)).ReturnsAsync(pcsFromSubmitted);
@@ -120,7 +120,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
 
             Assert.AreEqual(1, viewModel.PscData.PeopleInControl.Count);
             Assert.AreEqual(viewModel.PscData.PeopleInControl.First().Name, pcsFromSubmitted.First().Name);
-            Assert.AreEqual(viewModel.PscData.PeopleInControl.First().DateOfBirth, pcsFromSubmitted.First().DateOfBirth);
+            Assert.AreEqual(viewModel.PscData.PeopleInControl.First().MonthYearOfBirth, pcsFromSubmitted.First().MonthYearOfBirth);
         }
 
         [Test]
@@ -131,7 +131,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                 new PersonInControl
                 {
                     Name = PersonInControlName+ TrusteesPostfix,
-                    DateOfBirth = PersonInControlDob + TrusteesPostfix
+                    MonthYearOfBirth = PersonInControlDob + TrusteesPostfix
                 }
             };
             _organisationSummaryApiClient.Setup(x => x.GetTrusteesFromSubmitted(_applicationId)).ReturnsAsync(trusteesFromSubmitted);
@@ -143,7 +143,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
             Assert.AreEqual(1, viewModel.TrusteeData.PeopleInControl.Count);
 
             Assert.AreEqual(viewModel.TrusteeData.PeopleInControl.First().Name, trusteesFromSubmitted.First().Name);
-            Assert.AreEqual(viewModel.TrusteeData.PeopleInControl.First().DateOfBirth, trusteesFromSubmitted.First().DateOfBirth);
+            Assert.AreEqual(viewModel.TrusteeData.PeopleInControl.First().MonthYearOfBirth, trusteesFromSubmitted.First().MonthYearOfBirth);
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                 new PersonInControl
                 {
                     Name = PersonInControlName+ WhosInControlPostfix,
-                    DateOfBirth = PersonInControlDob + WhosInControlPostfix
+                    MonthYearOfBirth = PersonInControlDob + WhosInControlPostfix
                 }
             };
             _organisationSummaryApiClient.Setup(x => x.GetWhosInControlFromSubmitted(_applicationId)).ReturnsAsync(whosInControlFromSubmitted);
@@ -166,7 +166,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
 
             Assert.AreEqual(1, viewModel.WhosInControlData.PeopleInControl.Count);
             Assert.AreEqual(viewModel.WhosInControlData.PeopleInControl.First().Name, whosInControlFromSubmitted.First().Name);
-            Assert.AreEqual(viewModel.WhosInControlData.PeopleInControl.First().DateOfBirth, whosInControlFromSubmitted.First().DateOfBirth);
+            Assert.AreEqual(viewModel.WhosInControlData.PeopleInControl.First().MonthYearOfBirth, whosInControlFromSubmitted.First().MonthYearOfBirth);
         }
     }
 }

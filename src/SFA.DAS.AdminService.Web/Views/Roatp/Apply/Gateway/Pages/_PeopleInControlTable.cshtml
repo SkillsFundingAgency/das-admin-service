@@ -1,6 +1,6 @@
 ﻿@model SFA.DAS.AdminService.Web.Models.PeopleInControlData
 
-@if (Model?.FromExternalSource != null || Model?.FromSubmittedApplication != null)
+@if ((Model?.FromExternalSource != null && Model.FromExternalSource.Count>0 ) || (Model?.FromSubmittedApplication != null && Model.FromSubmittedApplication.Count>0))
 {
     var externalData = Model?.FromExternalSource?.OrderBy(x => x.Name)?.ToArray();
     var submittedData = Model?.FromSubmittedApplication?.OrderBy(x => x.Name)?.ToArray();
@@ -31,9 +31,9 @@
                         {
                 @submittedData[i]?.Name?.ToUpper()
 
-                            if (!string.IsNullOrEmpty(submittedData[i].DateOfBirth))
+                            if (!string.IsNullOrEmpty(submittedData[i].MonthYearOfBirth))
                             {
-                @Html.Raw($@" ({submittedData[i].DateOfBirth})")
+                @Html.Raw($@" ({submittedData[i].MonthYearOfBirth})")
                             }
                         }
             </td>
@@ -42,9 +42,9 @@
                 @if (externalData != null && externalData.Length > i)
                         {
                 @externalData[i]?.Name?.ToUpper()
-                @if (!string.IsNullOrEmpty(externalData[i].DateOfBirth))
+                @if (!string.IsNullOrEmpty(externalData[i].MonthYearOfBirth))
                             {
-                @Html.Raw($@" ({externalData[i].DateOfBirth})")
+                @Html.Raw($@" ({externalData[i].MonthYearOfBirth})")
                             }
                         }
             </td>
