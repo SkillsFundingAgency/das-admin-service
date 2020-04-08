@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         private readonly Guid _applicationId = Guid.NewGuid();
 
         public GetPeopleInControlHighRiskRequest Request;
-        public PeopleInControlHighRiskPageViewModel viewModel;
+        public PeopleInControlHighRiskPageViewModel ViewModel;
 
         [SetUp]
         public void Setup()
@@ -32,12 +32,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
             CoreSetup();
             _logger = new Mock<ILogger<RoatpGatewayPeopleInControlController>>();
             _orchestrator = new Mock<IPeopleInControlOrchestrator>();
-            viewModel = new PeopleInControlHighRiskPageViewModel{ApplicationId = _applicationId};
+            ViewModel = new PeopleInControlHighRiskPageViewModel{ApplicationId = _applicationId};
 
         Request = new GetPeopleInControlHighRiskRequest(_applicationId, Username);
             _orchestrator.Setup(x =>
                     x.GetPeopleInControlHighRiskViewModel(It.IsAny<GetPeopleInControlHighRiskRequest>()))
-                .ReturnsAsync(viewModel)
+                .ReturnsAsync(ViewModel)
                 .Verifiable("view model not returned");
 
             _controller = new RoatpGatewayPeopleInControlController(ContextAccessor.Object, ApplyApiClient.Object, _logger.Object, GatewayValidator.Object, _orchestrator.Object);
@@ -54,12 +54,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         [Test]
         public void post_people_in_control_high_risk_happy_path()
         {
-            var vm = viewModel;
+            var vm = ViewModel;
             vm.Status = SectionReviewStatus.Pass;
             vm.SourcesCheckedOn = DateTime.Now;
             vm.ErrorMessages = new List<ValidationErrorDetail>();
 
-            var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(viewModel).Result;
+            var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             Assert.AreEqual("ViewApplication",result.ActionName);
@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         [Test]
         public void post_people_in_control_high_risk_path_with_errors()
         {
-            var vm = viewModel;
+            var vm = ViewModel;
             GatewayValidator.Setup(v => v.Validate(It.IsAny<PeopleInControlHighRiskPageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
                 {
@@ -83,12 +83,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
             vm.PageId = GatewayPageIds.PeopleInControlRisk;
             vm.SourcesCheckedOn = DateTime.Now;
 
-            _orchestrator.Setup(x => x.GetPeopleInControlHighRiskViewModel(It.IsAny<GetPeopleInControlHighRiskRequest>()))
+            _orchestrator.Setup(x => x.GetPeopleInControlHighRiskViewModel(Request))
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
-            var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(viewModel).Result;
-
+            var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
 
             var resultModel = (PeopleInControlHighRiskPageViewModel)result.Model;
             Assert.AreEqual(1, resultModel.ErrorMessages.Count);
