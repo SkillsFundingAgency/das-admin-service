@@ -119,8 +119,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ViewApplication");
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
-                                  username, model.OptionPassText), Times.Once);
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status, Username, model.OptionPassText), Times.Once);
         }
 
         [TestCase(GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors)]
@@ -179,8 +178,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             viewModel.Should().NotBeNull();
             viewModel.ErrorMessages.Count.Should().BeGreaterThan(0);
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status,
-                                 username, model.OptionPassText), Times.Never);
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(model.ApplicationId, gatewayPageId, model.Status, Username, model.OptionPassText), Times.Never);
         }
     }
 }

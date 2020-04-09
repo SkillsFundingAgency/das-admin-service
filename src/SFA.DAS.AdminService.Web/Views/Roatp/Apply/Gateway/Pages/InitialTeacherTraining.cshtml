@@ -67,13 +67,18 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateInitialTeacherTrainingPage" asp-controller="RoatpGatewayExperienceAndAccreditation">
-                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" name="PageId" value="@Model.PageId" />
-                    <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
-                    <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
-                    <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                    <input type="hidden" name="DoesOrganisationOfferInitialTeacherTraining" value="@Model.DoesOrganisationOfferInitialTeacherTraining" />
-                    <input type="hidden" name="IsPostGradOnlyApprenticeship" value="@Model.IsPostGradOnlyApprenticeship" />
+                    
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="PageId" />
+                    <input type="hidden" asp-for="Caption" />
+                    <input type="hidden" asp-for="Heading" />
+                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
+                    <input type="hidden" asp-for="Ukprn" />
+                    <input type="hidden" asp-for="ApplicationSubmittedOn" />
+                    <input type="hidden" asp-for="SourcesCheckedOn" />
+                    <input type="hidden" asp-for="ApplyLegalName" />
+                    <input type="hidden" asp-for="DoesOrganisationOfferInitialTeacherTraining" />
+                    <input type="hidden" asp-for="IsPostGradOnlyApprenticeship" />
 
                     @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
 

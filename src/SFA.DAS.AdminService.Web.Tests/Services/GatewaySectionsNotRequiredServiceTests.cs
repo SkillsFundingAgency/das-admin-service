@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -23,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private GatewaySectionsNotRequiredService _service;
         private RoatpGatewayApplicationViewModel _viewModel;
         private Guid _applicationId;
+        private Mock<IRoatpExperienceAndAccreditationApiClient> _accreditationClient;
         private const string UserName = "GatewayUser";
 
         [SetUp]
@@ -31,8 +33,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             _applicationId = Guid.NewGuid();
 
             _apiClient = new Mock<IRoatpApplicationApiClient>();
+            _accreditationClient = new Mock<IRoatpExperienceAndAccreditationApiClient>();
             _logger = new Mock<ILogger<GatewaySectionsNotRequiredService>>();
-            _service = new GatewaySectionsNotRequiredService(_apiClient.Object, _logger.Object);
+            _service = new GatewaySectionsNotRequiredService(_apiClient.Object, _accreditationClient.Object, _logger.Object);
 
             var application = new AssessorService.ApplyTypes.Roatp.Apply.Apply();
             _viewModel = new RoatpGatewayApplicationViewModel(application)
@@ -187,7 +190,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(ProviderTypes.Employer)]
         public void Not_required_set_for_office_for_students_if_main_or_employer_and_answered_no(int providerTypeId)
         {
-            _apiClient.Setup(x => x.GetOfficeForStudents(_applicationId)).ReturnsAsync("No");
+            _accreditationClient.Setup(x => x.GetOfficeForStudents(_applicationId)).ReturnsAsync("No");
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, providerTypeId).GetAwaiter().GetResult();
 
@@ -202,7 +205,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(ProviderTypes.Employer)]
         public void Not_required_not_set_for_office_for_students_if_main_or_employer_and_answered_yes(int providerTypeId)
         {
-            _apiClient.Setup(x => x.GetOfficeForStudents(_applicationId)).ReturnsAsync("Yes");
+            _accreditationClient.Setup(x => x.GetOfficeForStudents(_applicationId)).ReturnsAsync("Yes");
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, providerTypeId).GetAwaiter().GetResult();
 
@@ -229,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(ProviderTypes.Employer)]
         public void Not_required_set_for_initial_teacher_training_if_main_or_employer_and_answered_no(int providerTypeId)
         {
-            _apiClient.Setup(x => x.GetInitialTeacherTraining(_applicationId)).ReturnsAsync("No");
+            _accreditationClient.Setup(x => x.GetInitialTeacherTraining(_applicationId)).ReturnsAsync(new InitialTeacherTraining { DoesOrganisationOfferInitialTeacherTraining = false });
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, providerTypeId).GetAwaiter().GetResult();
 
@@ -244,7 +247,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [TestCase(ProviderTypes.Employer)]
         public void Not_required_not_set_for_initial_teacher_training_if_main_or_employer_and_answered_yes(int providerTypeId)
         {
-            _apiClient.Setup(x => x.GetInitialTeacherTraining(_applicationId)).ReturnsAsync("Yes");
+            _accreditationClient.Setup(x => x.GetInitialTeacherTraining(_applicationId)).ReturnsAsync(new InitialTeacherTraining { DoesOrganisationOfferInitialTeacherTraining = true });
 
             _service.SetupNotRequiredLinks(_applicationId, UserName, _viewModel, providerTypeId).GetAwaiter().GetResult();
 
