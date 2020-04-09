@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -13,7 +14,8 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize]
+    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
     public class RoatpGatewayControllerBase<T> : Controller
     {
         protected readonly IHttpContextAccessor _contextAccessor;
@@ -21,6 +23,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         protected readonly ILogger<T> _logger;
         private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
         protected const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
+
+        public RoatpGatewayControllerBase()
+        {
+
+        }
 
         public RoatpGatewayControllerBase(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient applyApiClient, ILogger<T> logger, IRoatpGatewayPageViewModelValidator gatewayValidator)
         {
