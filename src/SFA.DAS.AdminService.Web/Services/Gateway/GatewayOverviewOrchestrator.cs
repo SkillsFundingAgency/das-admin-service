@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
             }
 
-            viewmodel.ReadyToConfirm = true; // CheckIsItReadyToConfirm(viewmodel);
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
 
             return viewmodel;
         }
@@ -92,7 +92,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 }
             }
 
-            viewmodel.ReadyToConfirm = true; // CheckIsItReadyToConfirm(viewmodel);
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
 
             return viewmodel;
         }
