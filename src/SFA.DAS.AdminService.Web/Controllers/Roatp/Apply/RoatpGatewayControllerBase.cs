@@ -68,12 +68,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         protected async Task<IActionResult> SubmitGatewayPageAnswer(RoatpGatewayPageViewModel viewModel, string errorViewName,  List<ValidationErrorDetail> validationErrors)
         {
-            if (validationErrors == null)
-            {    
-                var validationResponse = await GatewayValidator.Validate(viewModel);
-                validationErrors = validationResponse.Errors;
-            }
-
             if (validationErrors != null && validationErrors.Any())
             {
                 viewModel.ErrorMessages = validationErrors;

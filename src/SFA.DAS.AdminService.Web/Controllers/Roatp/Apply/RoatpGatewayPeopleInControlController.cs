@@ -53,8 +53,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 viewModel.PscData = vmRebuild?.PscData;
                 viewModel.TrusteeData = vmRebuild?.TrusteeData;
                 viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
+                viewModel.ErrorMessages = validationCheck.Errors;
 
-                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml",validationCheck.Errors);
+                return View($"{GatewayViewsLocation}/PeopleInControl.cshtml", viewModel);
             }
 
 
@@ -80,8 +81,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             viewModel.PscData = vmRebuild?.PscData;
             viewModel.TrusteeData = vmRebuild?.TrusteeData;
             viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
+            viewModel.ErrorMessages = validationCheck.Errors;
 
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", validationCheck.Errors);
+            return View($"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", viewModel);
         }
     }
     
