@@ -9,6 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
 {
@@ -34,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
         [TestCase("12345678", "John Ltd.", SectionReviewStatus.Pass, "Very good.")]
         [TestCase("87654321", "Simon Ltd.", SectionReviewStatus.Fail, "Not so good.")]
         [TestCase("12344321", "Frank Ltd.", SectionReviewStatus.NotRequired, null)]
-        public void Check_GetConfirmOverviewViewModel_returns_model(string ukprn, string organisationName, string sectionReviewStatus, string comment)
+        public void GetConfirmOverviewViewModel_returns_model(string ukprn, string organisationName, string sectionReviewStatus, string comment)
         {
             var applicationId = Guid.NewGuid();
             var gatewayReviewStatus = GatewayReviewStatus.InProgress;
@@ -82,6 +85,108 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
             Assert.AreEqual(gatewayReviewStatus, viewModel.GatewayReviewStatus);
             Assert.AreEqual(sectionReviewStatus, viewModel.Sequences.FirstOrDefault(seq => seq.SequenceNumber == 1).Sections.FirstOrDefault(sec => sec.PageId == GatewayPageIds.OrganisationRisk).Status);
             Assert.AreEqual(comment, viewModel.Sequences.FirstOrDefault(seq => seq.SequenceNumber == 1).Sections.FirstOrDefault(sec => sec.PageId == GatewayPageIds.OrganisationRisk).Comment);
+        }
+
+        [TestCase("12345678", "John Ltd.")]
+        [TestCase("87654321", "Simon Ltd.")]
+        [TestCase("12344321", "Frank Ltd.")]
+        public void GetConfirmOverviewViewModel_returns_model_no_saved_statuses(string ukprn, string organisationName)
+        {
+            var applicationId = Guid.NewGuid();
+            var gatewayReviewStatus = GatewayReviewStatus.InProgress;
+
+            var applyData = new RoatpApplyData
+            {
+                ApplyDetails = new RoatpApplyDetails
+                {
+                    UKPRN = ukprn,
+                    OrganisationName = organisationName
+                }
+            };
+
+            var returnedRoatpApplicationResponse = new RoatpApplicationResponse
+            {
+                ApplicationId = applicationId,
+                ApplyData = applyData,
+                GatewayReviewStatus = GatewayReviewStatus.InProgress
+            };
+
+            _applyApiClient.Setup(x => x.GetApplication(applicationId)).ReturnsAsync(returnedRoatpApplicationResponse);
+
+            // No Saved Statusses
+            var returnedGatewayPageAnswers = new List<GatewayPageAnswerSummary>();
+
+            _applyApiClient.Setup(x => x.GetGatewayPageAnswers(applicationId)).ReturnsAsync(returnedGatewayPageAnswers);
+
+            var request = new GetApplicationOverviewRequest(applicationId, UserName);
+
+            var response = _orchestrator.GetConfirmOverviewViewModel(request);
+
+            var viewModel = response.Result;
+
+            viewModel.ApplicationId.Should().Be(applicationId);
+            viewModel.Ukprn.Should().Be(ukprn);
+            viewModel.OrganisationName.Should().Be(organisationName);
+            viewModel.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
+            viewModel.ReadyToConfirm.Should().Be(false);
+        }
+
+        [TestCase(GatewayReviewStatus.InProgress, "GatewayReviewStatus", "Error - GatewayReviewStatus")]
+        [TestCase(GatewayReviewStatus.Clarification, "OptionAskClarificationText", "Error - Clarification")]
+        [TestCase(GatewayReviewStatus.Declined, "OptionDeclinedText", "Error - Declined")]
+        [TestCase(GatewayReviewStatus.Approved, "OptionApprovedText", "Error - Approved")]
+        public void ProcessViewModelOnError_process_view_model_correctly(string gatewayReviewStatus, string field, string errorMessage)
+        {
+            var applicationId = Guid.NewGuid();
+
+            var viewModelOnError = new RoatpGatewayApplicationViewModel 
+            {
+                ApplicationId = applicationId,
+                GatewayReviewStatus = gatewayReviewStatus
+            };
+
+            var viewModel = new RoatpGatewayApplicationViewModel
+            {
+                ApplicationId = applicationId,
+                GatewayReviewStatus = gatewayReviewStatus
+            };
+
+            var validationResponse = new ValidationResponse 
+            { 
+                Errors = new List<ValidationErrorDetail> 
+                { 
+                    new ValidationErrorDetail 
+                    { 
+                        Field = field, 
+                        ErrorMessage = errorMessage
+                    } 
+                } 
+            };
+                        
+            _orchestrator.ProcessViewModelOnError(viewModelOnError, viewModel, validationResponse);
+
+            viewModelOnError.ApplicationId.Should().Be(applicationId);
+            viewModelOnError.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
+           
+            if (field.Equals(nameof(viewModelOnError.GatewayReviewStatus)))
+            {
+                viewModelOnError.ErrorTextGatewayReviewStatus.Should().Be(errorMessage);
+            }
+
+            if (field.Equals(nameof(viewModelOnError.OptionAskClarificationText)))
+            {
+                viewModelOnError.ErrorTextAskClarification.Should().Be(errorMessage);
+            }
+
+            if (field.Equals(nameof(viewModelOnError.OptionDeclinedText)))
+            {
+                viewModelOnError.ErrorTextDeclined.Should().Be(errorMessage);
+            }
+
+            if (field.Equals(nameof(viewModelOnError.OptionApprovedText)))
+            {
+                viewModelOnError.ErrorTextApproved.Should().Be(errorMessage);
+            }
         }
     }
 }

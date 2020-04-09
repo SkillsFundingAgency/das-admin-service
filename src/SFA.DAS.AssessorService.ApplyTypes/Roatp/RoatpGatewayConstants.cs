@@ -48,4 +48,12 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public static string Ofsted = "Select the outcome for Ofsted check";
         public static string SubcontractorDeclaration = "Select the outcome for subcontractor declaration check";
     }
+
+    public static class HtmlAndCssElements
+    {
+        public static string CheckBoxChecked = "checked";
+        public static string CssFormGroupErrorClass = "govuk-form-group--error";
+        public static string CssTextareaErrorOverrideClass = "govuk-textarea--error-override";
+       
+    }
 }

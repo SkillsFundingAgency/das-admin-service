@@ -7,6 +7,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
@@ -44,7 +45,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
 
             var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
-            if (savedStatuses != null && savedStatuses.Count.Equals(0))
+            if (savedStatuses != null && !savedStatuses.Any())
             {
                 var providerRoute = application.ApplyData.ApplyDetails.ProviderRoute;
                 await _sectionsNotRequiredService.SetupNotRequiredLinks(request.ApplicationId, request.UserName, viewmodel, providerRoute);
@@ -77,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
 
             var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
-            if (savedStatuses != null && savedStatuses.Count.Equals(0))
+            if (savedStatuses != null && !savedStatuses.Any())
             {
                 viewmodel.ReadyToConfirm = false;
                 return viewmodel;
@@ -95,6 +96,50 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
 
             return viewmodel;
+        }
+
+        public void ProcessViewModelOnError(RoatpGatewayApplicationViewModel viewModelOnError, RoatpGatewayApplicationViewModel viewModel, ValidationResponse validationResponse)
+        {
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModelOnError.IsInvalid = true;
+                viewModelOnError.ErrorMessages = validationResponse.Errors;
+                viewModelOnError.GatewayReviewStatus = viewModel.GatewayReviewStatus;
+                viewModelOnError.OptionAskClarificationText = viewModel.OptionAskClarificationText;
+                viewModelOnError.OptionDeclinedText = viewModel.OptionDeclinedText;
+                viewModelOnError.OptionApprovedText = viewModel.OptionApprovedText;
+
+                viewModelOnError.CssFormGroupError = HtmlAndCssElements.CssFormGroupErrorClass;
+                viewModelOnError.RadioCheckedAskClarification = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Clarification ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedDeclined = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Declined ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedApproved = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Approved ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+
+                foreach(var error in viewModelOnError.ErrorMessages)
+                {
+                    if (error.Field.Equals(nameof(viewModelOnError.GatewayReviewStatus)))
+                    {
+                        viewModelOnError.ErrorTextGatewayReviewStatus = error.ErrorMessage;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionAskClarificationText)))
+                    {
+                        viewModelOnError.ErrorTextAskClarification = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorAskClarification = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionDeclinedText)))
+                    {
+                        viewModelOnError.ErrorTextDeclined = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorDeclined = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionApprovedText)))
+                    {
+                        viewModelOnError.ErrorTextApproved = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorApproved = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+                }
+            }
         }
 
         private bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
@@ -225,15 +270,15 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     SequenceTitle = "People in control’s criminal and compliance checks",
                     Sections = new List<GatewaySection>
                     {
-                        new GatewaySection { SectionNumber = 1, PageId = "UnspentCriminalConviction",  LinkTitle = "Unspent criminal convictions", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = "FailedtoPayBack", LinkTitle = "Failed to pay back funds", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 3, PageId = "FraudIrregularities", LinkTitle = "Investigated for fraud or irregularities", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = "OngoingInvestigation",  LinkTitle = "Ongoing investigations for fraud or irregularities", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 5, PageId = "ContractTerminated", LinkTitle = "Contract terminated early by a public body", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 6, PageId = "WithdrawnFromContract",  LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the people in control", Status = "" },
-                        new GatewaySection { SectionNumber = 7, PageId = "BreachedPayments",  LinkTitle = "Breached tax payments or social security contributions", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 8, PageId = "RegisterOfRemovedTrustees", LinkTitle = "Register of Removed Trustees", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 9, PageId = "Bankrupt",  LinkTitle = "Been made bankrupt", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.UnspentCriminalConvictions,  LinkTitle = "Unspent criminal convictions", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.FraudIrregularities, LinkTitle = "Investigated for fraud or irregularities", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.OngoingInvestigation,  LinkTitle = "Ongoing investigations for fraud or irregularities", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.ContractTerminated, LinkTitle = "Contract terminated early by a public body", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.WithdrawnFromContract,  LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the people in control", Status = "" },
+                        new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.BreachedPayments,  LinkTitle = "Breached tax payments or social security contributions", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 8, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.RegisterOfRemovedTrustees, LinkTitle = "Register of Removed Trustees", HiddenText = "", Status = "" },
+                        new GatewaySection { SectionNumber = 9, PageId = GatewayPageIds.CriminalComplianceWhosInControlChecks.Bankrupt,  LinkTitle = "Been made bankrupt", HiddenText = "", Status = "" }
                     }
                 }
             };

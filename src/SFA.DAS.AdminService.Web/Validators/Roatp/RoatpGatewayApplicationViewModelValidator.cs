@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             if (string.IsNullOrEmpty(viewModel.GatewayReviewStatus) ||
                 (!string.IsNullOrEmpty(viewModel.GatewayReviewStatus) &&
-                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.AskForClarification) &&
+                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Clarification) &&
                 !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Declined) &&
                 !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Approved)))
             {
@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             switch (viewModel.GatewayReviewStatus)
             {
-                case GatewayReviewStatus.AskForClarification:
+                case GatewayReviewStatus.Clarification:
                     {
                         if (string.IsNullOrEmpty(viewModel.OptionAskClarificationText))
                         {

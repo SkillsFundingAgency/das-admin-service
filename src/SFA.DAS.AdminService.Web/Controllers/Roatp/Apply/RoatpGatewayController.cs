@@ -115,7 +115,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                return Redirect($"/Roatp/Gateway/{applicationId}");
+                return RedirectToAction(nameof(ViewApplication), new { applicationId = applicationId } );
             }
 
         }
@@ -128,19 +128,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var errorViewModel = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(viewModel.ApplicationId, username));
-                if(errorViewModel != null)
+                var viewModelOnError = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(viewModel.ApplicationId, username));
+                if(viewModelOnError != null)
                 {
-                    errorViewModel.ErrorMessages = validationResponse.Errors;
-                    errorViewModel.GatewayReviewStatus = viewModel.GatewayReviewStatus;
-                    errorViewModel.OptionAskClarificationText = viewModel.OptionAskClarificationText;
-                    errorViewModel.OptionDeclinedText = viewModel.OptionDeclinedText;
-                    errorViewModel.OptionApprovedText = viewModel.OptionApprovedText;
-                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", errorViewModel);
+                    _orchestrator.ProcessViewModelOnError(viewModelOnError, viewModel, validationResponse);
+                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModelOnError);
                 }
                 else
                 {
-                    return Redirect($"/Roatp/Gateway/{viewModel.ApplicationId}");
+                    return RedirectToAction(nameof(ViewApplication), new { applicationId = viewModel.ApplicationId });
                 }
             }
 
@@ -149,7 +145,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             switch (viewModel.GatewayReviewStatus)
             {
-                case GatewayReviewStatus.AskForClarification:
+                case GatewayReviewStatus.Clarification:
                     {
                         confirmViewModel.GatewayReviewComment = viewModel.OptionAskClarificationText;
                         break;
