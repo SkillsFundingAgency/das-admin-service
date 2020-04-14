@@ -1,10 +1,10 @@
-@using SFA.DAS.AdminService.Web.Helpers;
+@using SFA.DAS.AdminService.Web.Helpers.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpApplicationReturnedViewModel
 
 @{
     ViewBag.Title = Model.WarningMessages.Any() ? "Issue during approval" : "Feedback sent";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(null, Model?.SequenceNo);
+    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction();
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">

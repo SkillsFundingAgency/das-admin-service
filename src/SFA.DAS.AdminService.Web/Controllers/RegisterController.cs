@@ -1,40 +1,60 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Domain.Apply;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
+using SFA.DAS.AdminService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AssessorService.Domain.Paging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AdminService.Web.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
     [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam + "," + Roles.RegisterViewOnlyTeam)]
+    [CheckSession(nameof(RegisterController), nameof(Index), nameof(IControllerSession.Register_SessionValid))]
     public class RegisterController: Controller
     {
+        private readonly IControllerSession _controllerSession;
         private readonly IApiClient _apiClient;
+        private readonly IApplicationApiClient _applyApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
 
-        public RegisterController(IApiClient apiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        private const int DefaultPageIndex = 1;
+        private const int DefaultStandardsPerPage = 10;
+        private const int DefaultPageSetSize = 6;
+
+        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
         {
+            _controllerSession = controllerSession;
             _apiClient = apiClient;
+            _applyApiClient = applyApiClient;
             _contactsApiClient = contactsApiClient;
             _standardServiceClient = standardServiceClient;
             _env = env;
         }
 
+        [CheckSession(nameof(IControllerSession.Register_SessionValid), CheckSession.Ignore)]
         public IActionResult Index()
         {
+            // reset all the session paging settings when searching for a new organisation on the register
+            SetDefaultSession();
+
             return View(); 
         }
 
@@ -68,7 +88,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewModel = await MapOrganisationModel(organisation);
+            var viewModel = await MapOrganisationModel(organisation, false);
             return View(viewModel);
         }
 
@@ -80,7 +100,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
                 await GatherOrganisationContacts(viewModel);
-                await GatherOrganisationStandards(viewModel);
+                await GatherOrganisationStandards(viewModel, false);
                 return View(viewModel);
             }
 
@@ -163,7 +183,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
-        [HttpGet("register/view-standard/{organisationStandardId}")]
+        [HttpGet("register/view-standard/{organisationStandardId}", Name="Register_ViewStandard")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
         {
             var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
@@ -365,10 +385,71 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> ViewOrganisation(string organisationId)
         {
             var organisation = await _apiClient.GetEpaOrganisation(organisationId);
-            var viewModel = await MapOrganisationModel(organisation);     
+            var viewModel = await MapOrganisationModel(organisation, true);     
             return View(viewModel);
         }
 
+        [HttpGet("register/view-organisation-approved-standards/{organisationId}/page-index/{pageIndex}", Name = "Register_ChangePageViewOrganisationApprovedStandards")]
+        public IActionResult ChangePageViewOrganisationApprovedStandards(string organisationId, int pageIndex = DefaultPageIndex)
+        {
+            _controllerSession.Register_ApprovedStandards.PageIndex = pageIndex;
+            return RedirectToAction(nameof(ViewOrganisation), new { organisationId });
+        }
+
+        [HttpGet]
+        [CheckSession(nameof(IControllerSession.Register_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangePageViewOrganisationApprovedStandardsPartial(string organisationId, int pageIndex)
+        {
+            _controllerSession.Register_ApprovedStandards.PageIndex = pageIndex;
+            var viewModel = new OrganisationApprovedStandardsViewModel
+            {
+                OrganisationId = organisationId,
+                PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
+            };
+            return PartialView("_OrganisationStandardsPartial", viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult ChangeStandardsPerPageViewOrganisationApprovedStandards(string organisationId, int itemsPerPage = DefaultStandardsPerPage)
+        {
+            _controllerSession.Register_ApprovedStandards.ItemsPerPage = itemsPerPage;
+            return RedirectToAction(nameof(ChangePageViewOrganisationApprovedStandards), new { organisationId, pageIndex = 1 });
+        }
+
+        [HttpGet]
+        [CheckSession(nameof(IControllerSession.Register_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> ChangeStandardsPerPageViewOrganisationApprovedStandardsPartial(string organisationId, int itemsPerPage)
+        {
+            _controllerSession.Register_ApprovedStandards.ItemsPerPage = itemsPerPage;
+            _controllerSession.Register_ApprovedStandards.PageIndex = 1;
+            var viewModel = new OrganisationApprovedStandardsViewModel
+            {
+                OrganisationId = organisationId,
+                PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
+            };
+            return PartialView("_OrganisationStandardsPartial", viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult SortViewOrganisationApprovedStandards(string organisationId, string sortColumn, string sortDirection)
+        {
+            UpdateSortDirection(sortColumn, sortDirection, _controllerSession.Register_ApprovedStandards);
+            return RedirectToAction(nameof(ChangePageViewOrganisationApprovedStandards), new { organisationId, pageIndex = 1 });
+        }
+
+        [HttpGet]
+        [CheckSession(nameof(IControllerSession.Register_SessionValid), CheckSession.Error)]
+        public async Task<IActionResult> SortViewOrganisationApprovedStandardsPartial(string organisationId, string sortColumn, string sortDirection)
+        {
+            UpdateSortDirection(sortColumn, sortDirection, _controllerSession.Register_ApprovedStandards);
+            _controllerSession.Register_ApprovedStandards.PageIndex = 1;
+            var viewModel = new OrganisationApprovedStandardsViewModel
+            {
+                OrganisationId = organisationId,
+                PaginationViewModel = await GatherOrganisationStandards(organisationId, true)
+            };
+            return PartialView("_OrganisationStandardsPartial", viewModel);
+        }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/search-standards/{organisationId}")]
@@ -455,11 +536,129 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             return vm;
         }
-        private async Task GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel)
+
+        private async Task GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel, bool paged = true)
         {
             var organisationStandards = await _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId);
+            if (organisationStandards != null)
+            {
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel = new RegisterViewOrganisationStandardsViewModel(nameof(RegisterController).RemoveController());
+                
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.OrganisationId = viewAndEditModel.OrganisationId;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel = await GatherOrganisationStandards(viewAndEditModel.OrganisationId, paged);
+                
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.OrganisationId = viewAndEditModel.OrganisationId;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.InProgress);
 
-            viewAndEditModel.OrganisationStandards = organisationStandards;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.OrganisationId = viewAndEditModel.OrganisationId;
+                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.HasFeedback);
+            }
+        }
+
+        private async Task<PaginationViewModel<OrganisationStandardSummary>> GatherOrganisationStandards(string organisationId, bool paged)
+        {
+            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(organisationId);
+            if (organisationStandards != null)
+            {
+                var pageOfOrganisationStandards = paged
+                    ? SortOrganisationStandardSummary(organisationStandards)
+                    .Skip((_controllerSession.Register_ApprovedStandards.PageIndex - 1) * _controllerSession.Register_ApprovedStandards.ItemsPerPage)
+                    .Take(_controllerSession.Register_ApprovedStandards.ItemsPerPage)
+                    .ToList()
+                    : organisationStandards;
+
+                return new PaginationViewModel<OrganisationStandardSummary>
+                    {
+                        PaginatedList = new PaginatedList<OrganisationStandardSummary>(
+                            pageOfOrganisationStandards,
+                            organisationStandards.Count,
+                            _controllerSession.Register_ApprovedStandards.PageIndex,
+                            _controllerSession.Register_ApprovedStandards.ItemsPerPage,
+                            DefaultPageSetSize),
+                        ItemsPerPage = _controllerSession.Register_ApprovedStandards.ItemsPerPage,
+                        Fragment = "approved",
+                        SortColumn = _controllerSession.Register_ApprovedStandards.SortColumn,
+                        SortDirection = _controllerSession.Register_ApprovedStandards.SortDirection,
+                        ChangePageAction = nameof(ChangePageViewOrganisationApprovedStandards),
+                        ChangeItemsPerPageAction = nameof(ChangeStandardsPerPageViewOrganisationApprovedStandards),
+                        SortColumnAction = nameof(SortViewOrganisationApprovedStandards)
+                    };
+            }
+
+            return null;
+        }
+
+        private async Task<PaginationViewModel<ApplicationSummaryItem>> GatherOrganisationStandardApplications(string organisationId, string reviewStatus)
+        {
+            var standardApplicationsRequest = new StandardApplicationsRequest
+            (
+                organisationId,
+                reviewStatus,
+                StandardApplicationsSortColumn.StandardName,
+                1,
+                short.MaxValue,
+                DefaultPageIndex,
+                DefaultPageSetSize
+            );
+
+            var standardApplications = await _applyApiClient.GetStandardApplications(standardApplicationsRequest);
+
+            return new PaginationViewModel<ApplicationSummaryItem>
+            {
+                PaginatedList = standardApplications,
+                ItemsPerPage = short.MaxValue,
+                Fragment = reviewStatus == ApplicationReviewStatus.InProgress ? "in-progress" : "feedback",
+                SortColumn = StandardApplicationsSortColumn.StandardName,
+                SortDirection = SortOrder.Asc,
+                ChangePageAction = string.Empty,
+                ChangeItemsPerPageAction = string.Empty,
+                SortColumnAction = string.Empty
+            };
+        }
+
+        private void UpdateSortDirection(string sortColumn, string sortDirection, IPagingState pagingState)
+        {
+            if (pagingState.SortColumn == sortColumn)
+            {
+                pagingState.SortDirection = sortDirection;
+            }
+            else
+            {
+                pagingState.SortColumn = sortColumn;
+                pagingState.SortDirection = SortOrder.Asc;
+            }
+        }
+
+        private List<OrganisationStandardSummary> SortOrganisationStandardSummary(List<OrganisationStandardSummary> organisationStandards)
+        {
+            string sortPropertyName = string.Empty;
+            switch (_controllerSession.Register_ApprovedStandards.SortColumn)
+            {
+                case OrganisationStandardSortColumn.StandardName:
+                    sortPropertyName = $"{nameof(OrganisationStandardSummary.StandardCollation)}.{nameof(OrganisationStandardSummary.StandardCollation.Title)}";
+                    break;
+                case OrganisationStandardSortColumn.StandardCode:
+                    sortPropertyName = $"{nameof(OrganisationStandardSummary.StandardCollation)}.{nameof(OrganisationStandardSummary.StandardCollation.ReferenceNumber)}";
+                    break;
+                case OrganisationStandardSortColumn.DateApproved:
+                    sortPropertyName = $"{nameof(OrganisationStandardSummary.DateStandardApprovedOnRegister)}";
+                    break;
+            }
+
+            if(_controllerSession.Register_ApprovedStandards.SortDirection == SortOrder.Asc)
+            {
+                return organisationStandards
+                    .AsQueryable()
+                    .OrderBy(sortPropertyName)
+                    .ToList();
+            }
+            else
+            {
+                return organisationStandards
+                    .AsQueryable()
+                    .OrderByDescending(sortPropertyName)
+                    .ToList();
+            }
         }
 
         private RegisterViewAndEditContactViewModel MapContactModel(AssessmentOrganisationContact contact, EpaOrganisation organisation)
@@ -495,8 +694,18 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
             }
         }
-    
-        private async Task<RegisterViewAndEditOrganisationViewModel> MapOrganisationModel(EpaOrganisation organisation)
+
+        private void SetDefaultSession()
+        {
+            _controllerSession.Register_SessionValid = true;
+
+            _controllerSession.Register_ApprovedStandards.PageIndex = DefaultPageIndex;
+            _controllerSession.Register_ApprovedStandards.ItemsPerPage = DefaultStandardsPerPage;
+            _controllerSession.Register_ApprovedStandards.SortColumn = OrganisationStandardSortColumn.StandardName;
+            _controllerSession.Register_ApprovedStandards.SortDirection = SortOrder.Desc;
+        }
+
+        private async Task<RegisterViewAndEditOrganisationViewModel> MapOrganisationModel(EpaOrganisation organisation, bool pageStandards)
         {
             var notSetDescription = "Not set";
             var viewModel = new RegisterViewAndEditOrganisationViewModel
@@ -535,7 +744,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
                
             await GatherOrganisationContacts(viewModel);
-            await GatherOrganisationStandards(viewModel);
+            await GatherOrganisationStandards(viewModel, pageStandards);
 
             return viewModel;
         }
