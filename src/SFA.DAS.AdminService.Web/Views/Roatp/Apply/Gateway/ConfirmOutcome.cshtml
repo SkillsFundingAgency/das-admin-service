@@ -150,7 +150,9 @@
                     Save and continue
                 </button>
             </form>
-            <p class="govuk-body"><a class="govuk-link" href="/Roatp/Gateway/@Model.ApplicationId">Back to application assessment overview</a></p>
+            <p class="govuk-body">
+                <a asp-controller="RoatpGateway" asp-action="ViewApplication" asp-route-applicationId="@Model.ApplicationId" class="govuk-link">Back to application assessment overview</a>
+            </p>
         </div>
     </div>
 </main>
