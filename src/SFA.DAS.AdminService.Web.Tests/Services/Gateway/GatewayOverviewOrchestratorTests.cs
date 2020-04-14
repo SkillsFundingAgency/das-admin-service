@@ -131,15 +131,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
             viewModel.ReadyToConfirm.Should().Be(false);
         }
 
-        [TestCase(GatewayReviewStatus.InProgress, "GatewayReviewStatus", "Error - GatewayReviewStatus")]
-        [TestCase(GatewayReviewStatus.Clarification, "OptionAskClarificationText", "Error - Clarification")]
-        [TestCase(GatewayReviewStatus.Declined, "OptionDeclinedText", "Error - Declined")]
-        [TestCase(GatewayReviewStatus.Approved, "OptionApprovedText", "Error - Approved")]
-        public void ProcessViewModelOnError_process_view_model_correctly(string gatewayReviewStatus, string field, string errorMessage)
+        private RoatpGatewayApplicationViewModel ProcessViewModelOnError(Guid applicationId, string gatewayReviewStatus, string field, string errorMessage)
         {
-            var applicationId = Guid.NewGuid();
-
-            var viewModelOnError = new RoatpGatewayApplicationViewModel 
+            var viewModelOnError = new RoatpGatewayApplicationViewModel
             {
                 ApplicationId = applicationId,
                 GatewayReviewStatus = gatewayReviewStatus
@@ -151,42 +145,65 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
                 GatewayReviewStatus = gatewayReviewStatus
             };
 
-            var validationResponse = new ValidationResponse 
-            { 
-                Errors = new List<ValidationErrorDetail> 
-                { 
-                    new ValidationErrorDetail 
-                    { 
-                        Field = field, 
+            var validationResponse = new ValidationResponse
+            {
+                Errors = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail
+                    {
+                        Field = field,
                         ErrorMessage = errorMessage
-                    } 
-                } 
+                    }
+                }
             };
-                        
+
             _orchestrator.ProcessViewModelOnError(viewModelOnError, viewModel, validationResponse);
+
+            return viewModelOnError;
+        }
+
+        [TestCase(GatewayReviewStatus.InProgress, "GatewayReviewStatus", "Error - GatewayReviewStatus")]
+        public void ProcessViewModelOnError_process_view_model_correctly_GatewayReviewStatus(string gatewayReviewStatus, string field, string errorMessage)
+        {
+            var applicationId = Guid.NewGuid();
+            var viewModelOnError = ProcessViewModelOnError(applicationId, gatewayReviewStatus, field, errorMessage);
 
             viewModelOnError.ApplicationId.Should().Be(applicationId);
             viewModelOnError.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
-           
-            if (field.Equals(nameof(viewModelOnError.GatewayReviewStatus)))
-            {
-                viewModelOnError.ErrorTextGatewayReviewStatus.Should().Be(errorMessage);
-            }
+            viewModelOnError.ErrorTextGatewayReviewStatus.Should().Be(errorMessage);
+        }
 
-            if (field.Equals(nameof(viewModelOnError.OptionAskClarificationText)))
-            {
-                viewModelOnError.ErrorTextAskClarification.Should().Be(errorMessage);
-            }
+        [TestCase(GatewayReviewStatus.Clarification, "OptionAskClarificationText", "Error - Clarification")]
+        public void ProcessViewModelOnError_process_view_model_correctly_OptionAskClarificationText(string gatewayReviewStatus, string field, string errorMessage)
+        {
+            var applicationId = Guid.NewGuid();
+            var viewModelOnError = ProcessViewModelOnError(applicationId, gatewayReviewStatus, field, errorMessage);
 
-            if (field.Equals(nameof(viewModelOnError.OptionDeclinedText)))
-            {
-                viewModelOnError.ErrorTextDeclined.Should().Be(errorMessage);
-            }
+            viewModelOnError.ApplicationId.Should().Be(applicationId);
+            viewModelOnError.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
+            viewModelOnError.ErrorTextAskClarification.Should().Be(errorMessage);
+        }
 
-            if (field.Equals(nameof(viewModelOnError.OptionApprovedText)))
-            {
-                viewModelOnError.ErrorTextApproved.Should().Be(errorMessage);
-            }
+        [TestCase(GatewayReviewStatus.Declined, "OptionDeclinedText", "Error - Declined")]
+        public void ProcessViewModelOnError_process_view_model_correctly_OptionDeclinedText(string gatewayReviewStatus, string field, string errorMessage)
+        {
+            var applicationId = Guid.NewGuid();
+            var viewModelOnError = ProcessViewModelOnError(applicationId, gatewayReviewStatus, field, errorMessage);
+
+            viewModelOnError.ApplicationId.Should().Be(applicationId);
+            viewModelOnError.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
+            viewModelOnError.ErrorTextDeclined.Should().Be(errorMessage);
+        }
+
+        [TestCase(GatewayReviewStatus.Approved, "OptionApprovedText", "Error - Approved")]
+        public void ProcessViewModelOnError_process_view_model_correctly_OptionApprovedText(string gatewayReviewStatus, string field, string errorMessage)
+        {
+            var applicationId = Guid.NewGuid();
+            var viewModelOnError = ProcessViewModelOnError(applicationId, gatewayReviewStatus, field, errorMessage);
+
+            viewModelOnError.ApplicationId.Should().Be(applicationId);
+            viewModelOnError.GatewayReviewStatus.Should().Be(gatewayReviewStatus);
+            viewModelOnError.ErrorTextApproved.Should().Be(errorMessage);
         }
     }
 }
