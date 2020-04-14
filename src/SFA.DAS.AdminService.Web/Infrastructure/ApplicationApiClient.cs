@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -39,6 +41,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
                 return await response.Content.ReadAsAsync<T>();
+            }
+        }
+
+        private async Task<U> Post<T, U>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+            {
+                return await response.Content.ReadAsAsync<U>();
             }
         }
 
@@ -82,19 +97,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
 
         #region Application
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceNo)
+        public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/OpenApplications?sequenceNo={sequenceNo}");
+            return await Get<ApplicationReviewStatusCounts>($"/Review/ApplicationReviewStatusCounts");
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/FeedbackAddedApplications");
+            return await Post<OrganisationApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
+                $"/Review/OrganisationApplications", organisationApplicationsRequest);
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
         {
-            return await Get<List<ApplicationSummaryItem>>($"/Review/ClosedApplications");
+            return await Post<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
+                $"/Review/StandardApplications", standardApplicationsRequest);
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)

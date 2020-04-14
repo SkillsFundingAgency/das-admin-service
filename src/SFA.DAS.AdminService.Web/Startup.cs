@@ -38,6 +38,7 @@ using MediatR;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -64,6 +65,7 @@ namespace SFA.DAS.AdminService.Web
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             
             services.AddHttpClient<ApiClient>("ApiClient", config =>
@@ -83,12 +85,14 @@ namespace SFA.DAS.AdminService.Web
                 .AddPolicyHandler(GetRetryPolicy());
 
             AddAuthentication(services);
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
@@ -97,11 +101,21 @@ namespace SFA.DAS.AdminService.Web
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+
+            services.Configure<RazorViewEngineOptions>(o =>
+                {
+                    o.ViewLocationFormats.Add("/Views/Application/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    o.ViewLocationFormats.Add("/Views/Application/{0}" + RazorViewEngine.ViewExtension);
+                });
+
+            services.AddSession(opt => 
+            {
+                opt.IdleTimeout = TimeSpan.FromHours(1);
+            });
 
             if (!_env.IsDevelopment())
             {
