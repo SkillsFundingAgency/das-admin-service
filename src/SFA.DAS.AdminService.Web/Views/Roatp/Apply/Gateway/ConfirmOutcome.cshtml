@@ -11,13 +11,13 @@
 <div class="govuk-breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/Dashboard">RoATP dashboard</a>
+            <a asp-controller="Dashboard" asp-action="Index" class="govuk-breadcrumbs__link">RoATP dashboard</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/New">RoATP applications</a>
+            <a asp-controller="RoatpGateway" asp-action="NewApplications" class="govuk-breadcrumbs__link">RoATP applications</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/Roatp/Gateway/@Model.ApplicationId">Application assessment overview</a>
+            <a asp-controller="RoatpGateway" asp-action="ViewApplication" asp-route-applicationId="@Model.ApplicationId" class="govuk-breadcrumbs__link">Application assessment overview</a>
         </li>
         <li class="govuk-breadcrumbs__list-item" aria-current="page">Gateway outcome</li>
     </ol>
