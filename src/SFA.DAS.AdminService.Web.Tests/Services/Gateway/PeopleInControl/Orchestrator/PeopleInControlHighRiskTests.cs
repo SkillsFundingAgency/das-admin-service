@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
 
 
         [Test]
-        public void check_people_in_control_high_risk_director_details_from_submitted_are_returned()
+        public void check_people_in_control_high_risk_director_details_from_cached_data_are_returned()
         {
 
             var directorsFromSubmitted = new List<PersonInControl>{
@@ -87,7 +87,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                     Name =PersonInControlName + DirectorsPostfix,
                     MonthYearOfBirth = PersonInControlDob + DirectorsPostfix ,
                 } };
-            _organisationSummaryApiClient.Setup(x => x.GetDirectorsFromSubmitted(_applicationId)).ReturnsAsync(directorsFromSubmitted);
+            _organisationSummaryApiClient.Setup(x => x.GetDirectorsFromCompaniesHouse(_applicationId)).ReturnsAsync(directorsFromSubmitted);
 
             var request = new GetPeopleInControlHighRiskRequest(_applicationId, UserName);
             var response = _orchestrator.GetPeopleInControlHighRiskViewModel(request);
@@ -111,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                     MonthYearOfBirth = PersonInControlDob + PscPostfix
                 }
             };
-            _organisationSummaryApiClient.Setup(x => x.GetPscsFromSubmitted(_applicationId)).ReturnsAsync(pcsFromSubmitted);
+            _organisationSummaryApiClient.Setup(x => x.GetPscsFromCompaniesHouse(_applicationId)).ReturnsAsync(pcsFromSubmitted);
 
             var request = new GetPeopleInControlHighRiskRequest(_applicationId, UserName);
             var response = _orchestrator.GetPeopleInControlHighRiskViewModel(request);
@@ -134,7 +134,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.PeopleInControl.Orches
                     MonthYearOfBirth = PersonInControlDob + TrusteesPostfix
                 }
             };
-            _organisationSummaryApiClient.Setup(x => x.GetTrusteesFromSubmitted(_applicationId)).ReturnsAsync(trusteesFromSubmitted);
+            _organisationSummaryApiClient.Setup(x => x.GetTrusteesFromCharityCommission(_applicationId)).ReturnsAsync(trusteesFromSubmitted);
 
             var request = new GetPeopleInControlHighRiskRequest(_applicationId, UserName);
             var response = _orchestrator.GetPeopleInControlHighRiskViewModel(request);

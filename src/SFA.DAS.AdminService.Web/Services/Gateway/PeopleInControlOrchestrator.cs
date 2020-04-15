@@ -96,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.CompanyDirectorsData = new PeopleInControlHighRiskData
             {
                 Heading = RoatpGatewayConstants.PeopleInControl.Heading.CompanyDirectors,
-                PeopleInControl = await _organisationSummaryApiClient.GetDirectorsFromSubmitted(request.ApplicationId)
+                PeopleInControl = await _organisationSummaryApiClient.GetDirectorsFromCompaniesHouse(request.ApplicationId)
             };
 
 
@@ -110,14 +110,14 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             model.PscData = new PeopleInControlHighRiskData
             {
                 Heading = RoatpGatewayConstants.PeopleInControl.Heading.PeopleWithSignificantControl,
-                PeopleInControl = await _organisationSummaryApiClient.GetPscsFromSubmitted(request.ApplicationId)
+                PeopleInControl = await _organisationSummaryApiClient.GetPscsFromCompaniesHouse(request.ApplicationId)
             };
 
             _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.Trustees}] for application {request.ApplicationId}");
             model.TrusteeData = new PeopleInControlHighRiskData
             {
                 Heading = RoatpGatewayConstants.PeopleInControl.Heading.Trustees,
-                PeopleInControl = await _organisationSummaryApiClient.GetTrusteesFromSubmitted(request.ApplicationId)
+                PeopleInControl = await _organisationSummaryApiClient.GetTrusteesFromCharityCommission(request.ApplicationId)
             };
 
             _logger.LogInformation($"Retrieving people in control high risk - [{RoatpGatewayConstants.PeopleInControl.Heading.WhosInControl}] for application {request.ApplicationId}");
