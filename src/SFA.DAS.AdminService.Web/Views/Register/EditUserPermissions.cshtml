@@ -1,4 +1,6 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts
+﻿@using SFA.DAS.AssessorService.Domain.Consts;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditUserViewModel
 
 @{
@@ -31,43 +33,43 @@
             <h1 class="govuk-heading-xl">Edit user permissions</h1>
             <dl class="govuk-summary-list">
                 <partial for="@Model" name="~/Views/Register/_UserDetails.cshtml" />
-             </dl>
-                <form asp-route="RegisterUser_EditPermissions">
-                    <input type="hidden" name="ContactId" value="@Model.EditPrivilegesViewModel.ContactId" />
-                    <input type="hidden" name="EndPointAssessorOrganisationId" value="@Model.EditPrivilegesViewModel.EndPointAssessorOrganisationId" />
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
-                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                                <h2 class="govuk-fieldset__heading">
-                                    Permissions
-                                </h2>
-                            </legend>
-                            <div class="govuk-checkboxes">
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" type="checkbox" id="viewDashboard" name="viewDashboard" value="true" checked disabled />
-                                    <label class="govuk-label govuk-checkboxes__label" for="viewDashboard">View dashboard</label>
-                                </div>
-                                @for (int i = 0; i < Model.EditPrivilegesViewModel.PrivilegeViewModels.Length; i++)
-                                {
-                                    <div class="govuk-checkboxes__item">
-                                        <input type="hidden" name="PrivilegeViewModels[@i].Privilege.Id" value="@Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id" />
-                                        <input class="govuk-checkboxes__input" type="checkbox" id="PrivilegeViewModels[@i].Selected" name="PrivilegeViewModels[@i].Selected" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "") />
-                                        <label class="govuk-label govuk-checkboxes__label" for="PrivilegeViewModels[@i].Selected">@Model.AllPrivilegeTypes[i].UserPrivilege</label>
-                                    </div>
-                                }
+            </dl>
+            <form asp-route="RegisterUser_EditPermissions">
+                <input type="hidden" name="ContactId" value="@Model.EditPrivilegesViewModel.ContactId" />
+                <input type="hidden" name="EndPointAssessorOrganisationId" value="@Model.EditPrivilegesViewModel.EndPointAssessorOrganisationId" />
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h2 class="govuk-fieldset__heading">
+                                Permissions
+                            </h2>
+                        </legend>
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" id="viewDashboard" name="viewDashboard" value="true" checked disabled />
+                                <label class="govuk-label govuk-checkboxes__label" for="viewDashboard">View dashboard</label>
                             </div>
-                        </fieldset>
-                    </div>
-                    @if (Model.Status == ContactStatus.InvitePending)
-                    {
-                        <button class="govuk-button" type="submit" name="Button" value="Approve">Approve</button>
-                        <button class="govuk-button govuk-button--secondary" name="Button" value="Reject">Reject</button>
-                    }
-                    else
-                    {
-                        <button class="govuk-button" type="submit" name="Button" value="Save">Save</button>
-                    }
-                </form>
+                            @for (int i = 0; i < Model.EditPrivilegesViewModel.PrivilegeViewModels.Length; i++)
+                            {
+                                <div class="govuk-checkboxes__item">
+                                    <input type="hidden" name="PrivilegeViewModels[@i].Privilege.Id" value="@Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Privilege.Id" />
+                                    <input class="govuk-checkboxes__input" type="checkbox" id="PrivilegeViewModels[@i].Selected" name="PrivilegeViewModels[@i].Selected" value="true" @(Model.EditPrivilegesViewModel.PrivilegeViewModels[i].Selected ? "checked" : "") />
+                                    <label class="govuk-label govuk-checkboxes__label" for="PrivilegeViewModels[@i].Selected">@Model.AllPrivilegeTypes[i].UserPrivilege</label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+                @if (Model.Status == ContactStatus.InvitePending)
+                {
+                    <button class="govuk-button" type="submit" name="Button" value="Approve">Approve</button>
+                    <button class="govuk-button govuk-button--secondary" name="Button" value="Reject">Reject</button>
+                }
+                else
+                {
+                    <button class="govuk-button" type="submit" name="Button" value="Save">Save</button>
+                }
+            </form>
 
         </div>
         <div class="govuk-grid-row">
