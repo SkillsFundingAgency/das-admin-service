@@ -1,5 +1,7 @@
-﻿@using SFA.DAS.AdminService.Web.Domain
-@using SFA.DAS.AssessorService.Domain.Consts
+﻿@using SFA.DAS.AdminService.Web.Domain;
+@using SFA.DAS.AssessorService.Domain.Consts;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditOrganisationViewModel
 @{
     ViewBag.Title = "View Organisation";
@@ -166,75 +168,75 @@
             <p class="govuk-body">A user has created an account to use the Apprenticeship assessment service.</p>
             @if (Model.Users.Any())
             {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">
-                                User details
-                            </th>
-                            <th class="govuk-table__header" scope="col">
-                                What they can do
-                            </th>
-                            <th class="govuk-table__header" scope="col">
-                                Status
-                            </th>
-                            <th class="govuk-table__header" scope="col" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                                Action required
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body" scope="col">
-                        @foreach (var contact in Model.Users)
-                        {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell das-no-wrap" data-label="User details">
-                                <a class="govuk-link" asp-route="RegisterUserController_Details" asp-route-contactId="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
-                                <br />
-                                <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
-                            </td>
-                            <td class="govuk-table__cell" data-label="What they can do">
-                                <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
-                                    <li>
-                                        View dashboard
-                                    </li>
-                                    @foreach (var role in contact.Privileges)
-                                    {
-                                        <li> @Html.DisplayFor(modelItem => role.UserPrivilege)</li>
-                                    }
-                                </ul>
-                            </td>
-                            <td class="govuk-table__cell" data-label="Status">
-                                @Html.DisplayFor(modelItem => contact.Contact.Status)
-                            </td>
-                            <td class="govuk-table__cell" data-label="Action required" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                                @if (contact.Contact.Status == ContactStatus.InvitePending)
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full">
+                        <table class="govuk-table">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">
+                                        User details
+                                    </th>
+                                    <th class="govuk-table__header" scope="col">
+                                        What they can do
+                                    </th>
+                                    <th class="govuk-table__header" scope="col">
+                                        Status
+                                    </th>
+                                    <th class="govuk-table__header" scope="col" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                                        Action required
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body" scope="col">
+                                @foreach (var contact in Model.Users)
                                 {
-                                    <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Approve</a>
-                                    <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Reject</a>   
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell das-no-wrap" data-label="User details">
+                                            <a class="govuk-link" asp-route="RegisterUserController_Details" asp-route-contactId="@contact.Contact.Id">@Html.DisplayFor(modelItem => contact.Contact.DisplayName)</a>
+                                            <br />
+                                            <span>@Html.DisplayFor(modelItem => contact.Contact.Email)</span>
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="What they can do">
+                                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                                <li>
+                                                    View dashboard
+                                                </li>
+                                                @foreach (var role in contact.Privileges)
+                                                {
+                                                    <li> @Html.DisplayFor(modelItem => role.UserPrivilege)</li>
+                                                }
+                                            </ul>
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Status">
+                                            @Html.DisplayFor(modelItem => contact.Contact.Status)
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Action required" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
+                                            @if (contact.Contact.Status == ContactStatus.InvitePending)
+                                            {
+                                                <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Approve" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Approve</a>
+                                                <a class="govuk-link" asp-route="Register_SetStatusAndNotify" asp-route-status="@ContactStatus.Reject" asp-route-organisationId="@Model.OrganisationId" asp-route-contactId="@contact.Contact.Id">Reject</a>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
-                            </td>
-                        </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
             }
             else
             {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <div class="info-summary">
-                        <h2 class="govuk-heading-m">There are no users to manage.</h2>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <div class="info-summary">
+                            <h2 class="govuk-heading-m">There are no users to manage.</h2>
+                        </div>
                     </div>
                 </div>
-            </div>
             }
         </div>
     </div>
-    
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-l">Contacts</h2>
@@ -242,74 +244,33 @@
             <div class="govuk-form-group">
                 @if (@Model.Contacts.Count > 0)
                 {
-                <table class="govuk-table govuk-table--s das-table--responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header">Name</th>
-                            <th class="govuk-table__header">Email</th>
-                            <th class="govuk-table__header">Phone number</th>
-                            <th class="govuk-table__header">Username</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                        {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" data-label="Name">
-                                <a class="govuk-link" href="/register/view-contact/@result.Id">
-                                    @result.DisplayName
-                                </a>
-                            </td>
-                            <td class="govuk-table__cell" data-label="Email">@result.Email</td>
-                            <td class="govuk-table__cell" data-label="Phone number">@result.PhoneNumber</td>
-                            <td class="govuk-table__cell" data-label="Username">
-                                @if (!result.Username.Contains("unknown"))
-                                {
-                                    @result.Username
-                                }
-                            </td>
-                                                        
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                }
-                else
-                {
-                    <p class="govuk-body">There are no contacts.</p>
-                }
-            </div>
-            <p class="govuk-body govuk-!-margin-bottom-6" >
-                <a class="govuk-link" href="/register/add-contact/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new contact</a>
-            </p>
-        </div>
-    </div>
-
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-
-            <h2 class="govuk-heading-l">Standards</h2>
-            <div class="govuk-form-group">
-                @if (@Model.OrganisationStandards.Count > 0)
-                {
-                    <table class="govuk-table">
+                    <table class="govuk-table govuk-table--s das-table--responsive">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">Name</th>
-                                <th class="govuk-table__header" scope="col">Code</th>
-                                <th class="govuk-table__header govuk-table__header--numeric"></th>
+                                <th class="govuk-table__header">Name</th>
+                                <th class="govuk-table__header">Email</th>
+                                <th class="govuk-table__header">Phone number</th>
+                                <th class="govuk-table__header">Username</th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
-                            @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
-                            x.StandardCollation.Title))
+                            @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
                             {
                                 <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
-                                    <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
-                                    <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a class="govuk-link" href="/register/view-standard/@result.Id">View</a>
+                                    <td class="govuk-table__cell" data-label="Name">
+                                        <a class="govuk-link" href="/register/view-contact/@result.Id">
+                                            @result.DisplayName
+                                        </a>
                                     </td>
+                                    <td class="govuk-table__cell" data-label="Email">@result.Email</td>
+                                    <td class="govuk-table__cell" data-label="Phone number">@result.PhoneNumber</td>
+                                    <td class="govuk-table__cell" data-label="Username">
+                                        @if (!result.Username.Contains("unknown"))
+                                        {
+                                            @result.Username
+                                        }
+                                    </td>
+
                                 </tr>
                             }
                         </tbody>
@@ -317,11 +278,28 @@
                 }
                 else
                 {
-                <p class="govuk-body">There are no standards.</p>
+                    <p class="govuk-body">There are no contacts.</p>
                 }
             </div>
+            <p class="govuk-body govuk-!-margin-bottom-6">
+                <a class="govuk-link" href="/register/add-contact/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new contact</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l">Standards</h2>
+            @if (@Model.RegisterViewOrganisationStandardsViewModel.HasStandards)
+            {
+                await Html.RenderPartialAsync("_OrganisationStandardTabsPartial", Model.RegisterViewOrganisationStandardsViewModel);
+            }
+            else
+            {
+                <p class="govuk-body">There are no standards.</p>
+            }
             <div class="form-group">
-                @if (@Model.Contacts.Count > 0)
+                @if (@Model.Contacts.Count > 0 || Model.Users.Count > 0)
                 {
                     <p class="govuk-body">
                         <a class="govuk-link" href="/register/search-standards/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new standard</a>
@@ -329,9 +307,18 @@
                 }
                 else
                 {
-                    <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts added to the organisation.</p>
+                    <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts or users added to the organisation.</p>
                 }
             </div>
         </div>
     </div>
 </main>
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/javascripts/das-view-organisation-service.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/javascripts/das-view-organisation-service.min.js"></script>
+    </environment>
+}

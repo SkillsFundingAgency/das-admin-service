@@ -1,13 +1,14 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
-@using SFA.DAS.AssessorService.Domain.Extensions
-@using SFA.DAS.AdminService.Web.Domain
+﻿@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Web.Domain;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditOrganisationStandardViewModel
 @{
     ViewBag.Title = "View Organisation Standard";
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" a href="/register/view-organisation/@Model.OrganisationId">Return to organisation</a>
+<a class="govuk-back-link" asp-action="ViewOrganisation" asp-controller="Register" asp-route-organisationId="@Model.OrganisationId" asp-fragment="approved">Return to organisation</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -113,8 +114,8 @@
                                     @deliveryArea.DeliveryArea
                                     if (index < Model.DeliveryAreasDetails.Count - 1)
                                     { @Html.Raw(", ")}
-                                }
                             }
+                        }
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -122,7 +123,7 @@
                             Delivery Area Notes
                         </dt>
                         <dd class="govuk-summary-list__value">
-                             @Model.DeliveryAreasComments
+                            @Model.DeliveryAreasComments
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -130,7 +131,7 @@
                             Comments
                         </dt>
                         <dd class="govuk-summary-list__value">
-                             @Model.Comments
+                            @Model.Comments
                         </dd>
                     </div>
                 </dl>

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {

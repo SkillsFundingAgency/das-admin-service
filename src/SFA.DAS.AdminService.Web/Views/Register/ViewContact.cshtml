@@ -1,5 +1,6 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
-@using SFA.DAS.AdminService.Web.Domain
+﻿@using SFA.DAS.AdminService.Web.Domain;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditContactViewModel
 @{
     ViewBag.Title = "View Contact";
@@ -11,9 +12,9 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-        
+
             <h1 class="govuk-heading-xl">View contact</h1>
-            
+
             <div id="organisationWrapper">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
@@ -61,6 +62,6 @@
             <div sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
                 <a class="govuk-button" href="/register/edit-contact/@Model.ContactId">Edit</a>
             </div>
-        </div>    
+        </div>
     </div>
 </main>
