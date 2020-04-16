@@ -7,9 +7,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public Guid ApplicationId { get; set; }
         public int SequenceNo { get; set; }
         public string OrganisationName { get; set; }
-        public string ApplicationType { get; set; }
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
+        public string StandardReference { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
         public DateTime? SubmittedDate { get; set; }
         public DateTime? FeedbackAddedDate { get; set; }
@@ -21,5 +21,25 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string FinancialGrade { get; set; }
 
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
+
+        public string DateValueForReviewStatus()
+        {
+            DateTime? dateValue = null;
+
+            if (ReviewStatus == ApplicationReviewStatus.New || ReviewStatus == ApplicationReviewStatus.InProgress)
+            {
+                dateValue = SubmittedDate;
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                dateValue = FeedbackAddedDate;
+            }
+            else if (ReviewStatus == ApplicationReviewStatus.Approved)
+            {
+                dateValue = ClosedDate;
+            }
+
+            return dateValue?.ToString("dd MMMM yyyy");
+        }
     }
 }

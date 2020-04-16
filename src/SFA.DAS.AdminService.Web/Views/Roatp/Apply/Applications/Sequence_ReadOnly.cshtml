@@ -1,12 +1,9 @@
 @using SFA.DAS.AssessorService.ApplyTypes
-@using SFA.DAS.AdminService.Web.Helpers;
-@using SFA.DAS.AssessorService.Domain.Extensions
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpSequenceViewModel
 
 @{
     ViewBag.Title = "Application overview";
-    var BackAction = ApplicationReviewHelpers.ApplicationBacklinkAction(Model.Status, Model.SequenceNo);
 }
 
 <a class="govuk-back-link" asp-action="Application" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
