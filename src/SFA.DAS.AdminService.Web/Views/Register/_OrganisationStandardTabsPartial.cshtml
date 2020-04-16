@@ -1,0 +1,56 @@
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
+@model RegisterViewOrganisationStandardsViewModel
+
+<div class="govuk-tabs" data-module="tabs">
+    <ul class="govuk-tabs__list">
+        @if (Model.OrganisationStandards.HasStandards)
+        {
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                <a class="govuk-tabs__tab" href="#approved">
+                    Approved
+                </a>
+            </li>
+        }
+        @if (Model.InProgressApplications.HasStandards)
+        {
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#in-progress">
+                    In progress
+                </a>
+            </li>
+        }
+        @if (Model.FeedbackApplications.HasStandards)
+        {
+            <li class="govuk-tabs__list-item">
+                <a class="govuk-tabs__tab" href="#feedback">
+                    Feedback
+                </a>
+            </li>
+        }
+    </ul>
+    @if (Model.OrganisationStandards.HasStandards)
+    {
+        <section class="govuk-tabs__panel" id="approved">
+            <div>
+                @{await Html.RenderPartialAsync("_OrganisationStandardsPartial", @Model.OrganisationStandards);}
+            </div>
+        </section>
+    }
+    @if (Model.InProgressApplications.HasStandards)
+    {
+        <section class="govuk-tabs__panel" id="in-progress">
+            <div>
+                @{await Html.RenderPartialAsync("_OrganisationStandardApplicationsPartial", @Model.InProgressApplications);}
+            </div>
+        </section>
+    }
+    @if (Model.FeedbackApplications.HasStandards)
+    {
+        <section class="govuk-tabs__panel" id="feedback">
+            <div>
+                @{await Html.RenderPartialAsync("_OrganisationStandardApplicationsPartial", @Model.FeedbackApplications);}
+            </div>
+        </section>
+    }
+</div>
