@@ -182,7 +182,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
-            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+            try 
+            { 
+                await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving Gateway Api checks details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Gateway Api checks details", ex);
+            }
         }
 
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
