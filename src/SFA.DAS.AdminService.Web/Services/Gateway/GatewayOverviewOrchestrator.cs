@@ -110,9 +110,9 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 viewModelOnError.OptionApprovedText = viewModel.OptionApprovedText;
 
                 viewModelOnError.CssFormGroupError = HtmlAndCssElements.CssFormGroupErrorClass;
-                viewModelOnError.RadioCheckedAskClarification = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Clarification ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
-                viewModelOnError.RadioCheckedDeclined = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Declined ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
-                viewModelOnError.RadioCheckedApproved = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Approved ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedAskClarification = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.AskForClarification ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedDeclined = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Decline ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedApproved = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Pass ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
 
                 foreach(var error in viewModelOnError.ErrorMessages)
                 {

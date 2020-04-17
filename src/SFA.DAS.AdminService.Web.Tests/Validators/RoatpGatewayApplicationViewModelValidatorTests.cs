@@ -21,12 +21,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             _validator = new RoatpGatewayApplicationViewModelValidator();
         }
 
-        [TestCase(GatewayReviewStatus.Clarification, "Clarification Message", "Declined Message", "Approved Message", false)]
-        [TestCase(GatewayReviewStatus.Clarification, null, "Declined Message", "Approved Message", true)]
-        [TestCase(GatewayReviewStatus.Declined, "Clarification Message", "Declined Message", "Approved Message", false)]
-        [TestCase(GatewayReviewStatus.Declined, "Clarification Message", null, "Approved Message", true)]
-        [TestCase(GatewayReviewStatus.Approved, "Clarification Message", "Declined Message", "Approved Message", false)]
-        [TestCase(GatewayReviewStatus.Approved, null, "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.AskForClarification, "Clarification Message", "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.AskForClarification, null, "Declined Message", "Approved Message", true)]
+        [TestCase(GatewayReviewStatus.Decline, "Clarification Message", "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.Decline, "Clarification Message", null, "Approved Message", true)]
+        [TestCase(GatewayReviewStatus.Pass, "Clarification Message", "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.Pass, null, "Declined Message", "Approved Message", false)]
         [TestCase(null, null, null, null, true)]
         public void Test_cases_for_no_status_and_no_fail_text_to_check_messages_as_expected(string gatewayReviewStatus, string clarificationMessage, string declinedMessage, string approvedMessage, bool hasErrorMessage)
         {
@@ -43,12 +43,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             Assert.AreEqual(hasErrorMessage, result.Errors.Any());
         }
 
-        [TestCase(GatewayReviewStatus.Clarification, 500, false)]
-        [TestCase(GatewayReviewStatus.Clarification, 501, true)]
-        [TestCase(GatewayReviewStatus.Declined, 500, false)]
-        [TestCase(GatewayReviewStatus.Declined, 501, true)]
-        [TestCase(GatewayReviewStatus.Approved, 500, false)]
-        [TestCase(GatewayReviewStatus.Approved, 501, true)]
+        [TestCase(GatewayReviewStatus.AskForClarification, 500, false)]
+        [TestCase(GatewayReviewStatus.AskForClarification, 501, true)]
+        [TestCase(GatewayReviewStatus.Decline, 500, false)]
+        [TestCase(GatewayReviewStatus.Decline, 501, true)]
+        [TestCase(GatewayReviewStatus.Pass, 500, false)]
+        [TestCase(GatewayReviewStatus.Pass, 501, true)]
         public void Test_cases_where_input_is_too_long(string gatewayReviewStatus, int wordCount, bool hasErrorMessage)
         {
             var words = string.Empty;

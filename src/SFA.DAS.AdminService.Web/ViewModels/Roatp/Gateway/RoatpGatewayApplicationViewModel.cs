@@ -56,11 +56,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
             ApplicationStatus = application.ApplicationStatus;
             GatewayReviewStatus = application.GatewayReviewStatus;
 
-            if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Approved)
+            if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Pass)
             {
                 IsGatewayApproved = true;
             }
-            else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Declined)
+            else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Decline)
             {
                 IsGatewayApproved = false;
             }

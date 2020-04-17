@@ -173,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
             viewModelOnError.ErrorTextGatewayReviewStatus.Should().Be(errorMessage);
         }
 
-        [TestCase(GatewayReviewStatus.Clarification, "OptionAskClarificationText", "Error - Clarification")]
+        [TestCase(GatewayReviewStatus.AskForClarification, "OptionAskClarificationText", "Error - Ask forClarification")]
         public void ProcessViewModelOnError_process_view_model_correctly_OptionAskClarificationText(string gatewayReviewStatus, string field, string errorMessage)
         {
             var applicationId = Guid.NewGuid();
@@ -184,7 +184,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
             viewModelOnError.ErrorTextAskClarification.Should().Be(errorMessage);
         }
 
-        [TestCase(GatewayReviewStatus.Declined, "OptionDeclinedText", "Error - Declined")]
+        [TestCase(GatewayReviewStatus.Decline, "OptionDeclinedText", "Error - Decline")]
         public void ProcessViewModelOnError_process_view_model_correctly_OptionDeclinedText(string gatewayReviewStatus, string field, string errorMessage)
         {
             var applicationId = Guid.NewGuid();
@@ -195,7 +195,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
             viewModelOnError.ErrorTextDeclined.Should().Be(errorMessage);
         }
 
-        [TestCase(GatewayReviewStatus.Approved, "OptionApprovedText", "Error - Approved")]
+        [TestCase(GatewayReviewStatus.Pass, "OptionApprovedText", "Error - Pass")]
         public void ProcessViewModelOnError_process_view_model_correctly_OptionApprovedText(string gatewayReviewStatus, string field, string errorMessage)
         {
             var applicationId = Guid.NewGuid();

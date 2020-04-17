@@ -192,6 +192,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             
         }
 
+        public async Task UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName)
+        {
+            _logger.LogInformation($"RoatpApplicationApiClient-UpdateGatewayReviewStatusAndComment - ApplicationId '{applicationId}' - GatewayReviewStatus '{gatewayReviewStatus}' - GatewayReviewComment '{gatewayReviewComment}' - UserName '{userName}'");
+
+            try
+            {
+                await Post($"/Gateway/UpdateGatewayReviewStatusAndComment", new { applicationId, gatewayReviewStatus, gatewayReviewComment, userName });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "RoatpApplicationApiClient-UpdateGatewayReviewStatusAndComment - Error: '" + ex.Message + "'");
+            }
+
+        }
+
         public async Task<ProviderDetails> GetUkrlpDetails(Guid applicationId)
         {
             return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");

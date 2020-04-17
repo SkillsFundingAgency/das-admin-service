@@ -1,6 +1,3 @@
-@using SFA.DAS.AssessorService.Domain.Extensions;
-@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayConfirmOutcomeViewModel
 
 @{
@@ -25,6 +22,19 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="ConfirmGatewayOutcome"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
             <span class="govuk-caption-m">Overall gateway outcome</span>
             <h1 class="govuk-heading-xl">Are you sure you want to pass this application?</h1>
         </div>
@@ -44,20 +54,27 @@
                     This application will pass and go to governance.
                 </strong>
             </div>
-            <form action="" method="post" class="form">
-                <div class="govuk-form-group">
+            <a name="ConfirmGatewayOutcome"></a>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <span class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> <span asp-validation-for="ConfirmGatewayOutcome"></span>
+                </span>
+
+            }
+            <form class="form" method="post" asp-action="AboutToConfirmOutcome" asp-controller="RoatpGateway">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GatewayReviewStatus" />
+                <input type="hidden" asp-for="GatewayReviewComment" />
+                <div class="govuk-form-group @Model.CssFormGroupError">
                     <div class="govuk-radios govuk-radios--inline">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="gw-abctraining-outcome-confirm-1" name="gw-abctraining-outcome-confirm" type="radio" value="Yes">
-                            <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-confirm-1">
-                                Yes
-                            </label>
+                            <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeYes" value="Yes" type="radio" class="govuk-radios__input" />
+                            <label for="ConfirmGatewayOutcomeYes" class="govuk-label govuk-radios__label">Yes</label>
                         </div>
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="gw-abctraining-outcome-confirm-2" name="gw-abctraining-outcome-confirm" type="radio" value="No">
-                            <label class="govuk-label govuk-radios__label" for="gw-abctraining-outcome-confirm-2">
-                                No
-                            </label>
+                            <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeNo" value="No" type="radio" class="govuk-radios__input" />
+                            <label for="ConfirmGatewayOutcomeNo" class="govuk-label govuk-radios__label">No</label>
                         </div>
                     </div>
                 </div>
@@ -65,7 +82,9 @@
                     Save and continue
                 </button>
             </form>
-            <p class="govuk-body"><a class="govuk-link" href="/mvp-gateway/v5/applications/gateway/tasklist-abctraining">Back to application assessment overview</a></p>
+            <p class="govuk-body">
+                <a asp-controller="RoatpGateway" asp-action="ViewApplication" asp-route-applicationId="@Model.ApplicationId" class="govuk-link">Back to application assessment overview</a>
+            </p>
         </div>
     </div>
 </main>

@@ -24,9 +24,9 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             if (string.IsNullOrEmpty(viewModel.GatewayReviewStatus) ||
                 (!string.IsNullOrEmpty(viewModel.GatewayReviewStatus) &&
-                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Clarification) &&
-                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Declined) &&
-                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Approved)))
+                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.AskForClarification) &&
+                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Decline) &&
+                !viewModel.GatewayReviewStatus.Equals(GatewayReviewStatus.Pass)))
             {
                 validationResponse.Errors.Add(new ValidationErrorDetail("GatewayReviewStatus", NoSelectionErrorMessage));
             }
@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
             switch (viewModel.GatewayReviewStatus)
             {
-                case GatewayReviewStatus.Clarification:
+                case GatewayReviewStatus.AskForClarification:
                     {
                         if (string.IsNullOrEmpty(viewModel.OptionAskClarificationText))
                         {
@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
                         break;
                     }
-                case GatewayReviewStatus.Declined:
+                case GatewayReviewStatus.Decline:
                     {
                         if (string.IsNullOrEmpty(viewModel.OptionDeclinedText))
                         {
@@ -70,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
                         }
                         break;
                     }
-                case GatewayReviewStatus.Approved when !string.IsNullOrEmpty(viewModel.OptionApprovedText):
+                case GatewayReviewStatus.Pass when !string.IsNullOrEmpty(viewModel.OptionApprovedText):
                     {
                         var wordCount = viewModel.OptionApprovedText.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).Length;
                         if (wordCount > 500)
