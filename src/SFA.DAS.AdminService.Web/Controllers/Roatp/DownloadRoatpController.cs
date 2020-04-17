@@ -9,10 +9,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using OfficeOpenXml;
+    using SFA.DAS.AdminService.Web.Domain;
     using SFA.DAS.AdminService.Web.Helpers;
     using SFA.DAS.AdminService.Web.Infrastructure;
 
-    [Authorize]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class DownloadRoatpController : Controller
     {
         private IRoatpApiClient _apiClient;
