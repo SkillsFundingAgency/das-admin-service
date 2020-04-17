@@ -24,6 +24,7 @@
 </div>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-xl">Financial health assessment overview</h1>
@@ -43,51 +44,51 @@
                 <h2 class="govuk-heading-l">@Html.Raw(section.LinkTitle)</h2>
             </div>
 
-            <div class="govuk-!-margin-bottom-8">
-                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
-                {
-                    <div class="govuk-grid-column-full">
-                        <table class="govuk-table">
-                            <thead class="govuk-table__head">
-                                <tr class="govuk-table__row">
-                                    <th class="govuk-table__header" scope="col">Application question</th>
-                                    <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">Applicant's answer</th>
-                                </tr>
-                            </thead>
-                            <tbody class="govuk-table__body">
-                                @foreach (var pg in section.QnAData.Pages)
-                                {
-                                    foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
-                                    {
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
-                                            <td class="govuk-table__cell govuk-table__cell--numeric">
-                                                @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
-                                                {
-                                                    <span>@Html.Raw(question.Input.InputPrefix)</span>
-                                                }
-                                                @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)
-                                            </td>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
+            @{ var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ? "" : "govuk-!-margin-bottom-9"; }
 
-                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
-                {
-                    <div class="govuk-grid-column-two-thirds">
-                        <p class="govuk-body">
-                            <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)</a>
-                        </p>
-                    </div>
-                }
-            </div>
+            @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
+            {
+                <div class="govuk-grid-column-full">
+                    <table class="govuk-table @isUploadCss">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Application question</th>
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">Applicant's answer</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var pg in section.QnAData.Pages)
+                            {
+                                foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
+                                        <td class="govuk-table__cell govuk-table__cell--numeric">
+                                            @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                            {
+                                                <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                            }
+                                            @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+            {
+                <div class="govuk-grid-column-two-thirds">
+                    <p class="govuk-body govuk-!-margin-bottom-9">
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)</a>
+                    </p>
+                </div>
+            }
+
         </div>
     }
-
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
