@@ -57,8 +57,8 @@
                 </p>
                     }
 
-                @if (Model.SourcesCheckedOn!=null)
-                    {
+                @if (Model.TypeOfOrganisation.ToLower()!="partnership" && Model.TypeOfOrganisation.ToLower()!="statutory institute" &&  Model.SourcesCheckedOn!=null)
+                {
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     Sources checked on:  @Model.SourcesCheckedOn.ToSfaShortDateString()
                 </p>
