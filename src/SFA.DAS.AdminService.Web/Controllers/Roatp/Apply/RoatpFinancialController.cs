@@ -256,7 +256,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
             organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeMainSupporting
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeEmployer).ToList();
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeEmployer
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.PublicBodyTypeMainSupporting
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.PublicBodyTypeEmployer
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.EducationalInstituteTypeMainSupporting
+                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.EducationalInstituteTypeEmployer).ToList();
 
             return organisationTypeSection;
         }
