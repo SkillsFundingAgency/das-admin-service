@@ -33,9 +33,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public static string PeopleInControl = "People in control check";
             public static string PeopleInControlHighRisk = "People in control high risk check";
 
-            public static string OfficeForStudents = "";
-            public static string InitialTeacherTraining = "";
-            public static string Ofsted = "";
+            public static string OfficeForStudents = "Office for Students (OfS) check";
+            public static string InitialTeacherTraining = "Initial teacher training (ITT) check";
+            public static string Ofsted = "Ofsted check";
             public static string SubcontractorDeclaration = "Subcontractor declaration check";
 
             public static string Roatp = "RoATP check";
