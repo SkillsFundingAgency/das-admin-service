@@ -145,12 +145,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
         }
 
-        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
-        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
-        {
-            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
-        }
-
         public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
             return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");

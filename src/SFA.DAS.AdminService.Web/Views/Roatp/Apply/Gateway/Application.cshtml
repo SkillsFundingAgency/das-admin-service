@@ -130,7 +130,7 @@
                                             @if (!currentSection.Status.Equals(SectionReviewStatus.New))
                                             {
                                                 var cssModifierClassName = currentSection.Status.ToLower().Replace(" ", "");
-                                                <strong class="govuk-tag app-task-list__task-@cssModifierClassName">@currentSection.Status</strong>
+                                                <strong class="govuk-tag app-task-list__task-@cssModifierClassName das-no-wrap">@currentSection.Status</strong>
                                             }
                                         }
 
