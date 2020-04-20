@@ -2,15 +2,14 @@
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
-    public class GetPeopleInControlRequest
+    public class GetPeopleInControlHighRiskRequest
     {
         public Guid ApplicationId { get; }
         public string UserName { get; }
-        public GetPeopleInControlRequest(Guid applicationId, string userName)
+        public GetPeopleInControlHighRiskRequest(Guid applicationId, string userName)
         {
             ApplicationId = applicationId;
             UserName = userName;
         }
     }
 }
-

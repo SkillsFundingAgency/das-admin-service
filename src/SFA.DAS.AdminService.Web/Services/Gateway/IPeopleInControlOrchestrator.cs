@@ -6,6 +6,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
     public interface IPeopleInControlOrchestrator
     {
-        Task<PeopleInControlPageViewModel> GetPeopleInControlViewModel(GetPeopleInControlRequest getLegalNameRequest);
+        Task<PeopleInControlPageViewModel> GetPeopleInControlViewModel(GetPeopleInControlRequest getPeopleInControlRequest);
+        Task<PeopleInControlHighRiskPageViewModel> GetPeopleInControlHighRiskViewModel(GetPeopleInControlHighRiskRequest getPeopleInControlRequest);
     }
 }

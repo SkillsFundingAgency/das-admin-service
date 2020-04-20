@@ -39,15 +39,52 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControl")]
             public async Task<IActionResult> EvaluatePeopleInControlPage(PeopleInControlPageViewModel viewModel)
             {
+                var validationCheck = await GatewayValidator.Validate(viewModel);
+
+                if (validationCheck.Errors == null || !validationCheck.Errors.Any())
+                    return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml",
+                        validationCheck.Errors);
+
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
-                var vmRebuild = await _orchestrator.GetPeopleInControlViewModel(new GetPeopleInControlRequest(viewModel.ApplicationId, username));
+                var vmRebuild =
+                    await _orchestrator.GetPeopleInControlViewModel(
+                        new GetPeopleInControlRequest(viewModel.ApplicationId, username));
                 viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
                 viewModel.PscData = vmRebuild?.PscData;
                 viewModel.TrusteeData = vmRebuild?.TrusteeData;
                 viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
+                viewModel.ErrorMessages = validationCheck.Errors;
 
-                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControl.cshtml");
+                return View($"{GatewayViewsLocation}/PeopleInControl.cshtml", viewModel);
             }
+
+
+            [HttpGet("/Roatp/Gateway/{applicationId}/Page/PeopleInControlRisk")]
+            public async Task<IActionResult> GetGatewayPeopleInControlRiskPage(Guid applicationId, string pageId)
+            {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var viewModel = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlHighRiskRequest(applicationId, username));
+                return View($"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", viewModel);
+            }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/PeopleInControlRisk")]
+        public async Task<IActionResult> EvaluatePeopleInControlHighRiskPage(PeopleInControlHighRiskPageViewModel viewModel)
+        {
+            var validationCheck = await GatewayValidator.Validate(viewModel);
+
+            if (validationCheck.Errors == null || !validationCheck.Errors.Any())
+                return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml",validationCheck.Errors);
+            
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var vmRebuild = await _orchestrator.GetPeopleInControlHighRiskViewModel(new GetPeopleInControlHighRiskRequest(viewModel.ApplicationId, username));
+            viewModel.CompanyDirectorsData = vmRebuild?.CompanyDirectorsData;
+            viewModel.PscData = vmRebuild?.PscData;
+            viewModel.TrusteeData = vmRebuild?.TrusteeData;
+            viewModel.WhosInControlData = vmRebuild?.WhosInControlData;
+            viewModel.ErrorMessages = validationCheck.Errors;
+
+            return View($"{GatewayViewsLocation}/PeopleInControlHighRisk.cshtml", viewModel);
+        }
     }
     
 }
