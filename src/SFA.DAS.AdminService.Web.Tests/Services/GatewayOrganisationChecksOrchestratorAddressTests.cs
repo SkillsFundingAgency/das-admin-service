@@ -6,6 +6,7 @@ using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
@@ -16,6 +17,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
+        private Mock<IRoatpOrganisationSummaryApiClient> _organisationSummaryApiClient;
 
         private static string ukprn = "12345678";
         private static string UKRLPLegalName = "John's workshop";
@@ -26,7 +28,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
+            _organisationSummaryApiClient = new Mock<IRoatpOrganisationSummaryApiClient>();
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _organisationSummaryApiClient.Object, _logger.Object);
         }
 
         [Test]
