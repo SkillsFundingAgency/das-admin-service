@@ -1,0 +1,43 @@
+﻿@using SFA.DAS.AdminService.Web.Domain.Apply;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+@model OrganisationStandardsApplicationsViewModel
+
+<h2 class="govuk-heading-m">@Model.PaginationViewModel.Title</h2>
+
+<p class="govuk-body">
+    Showing @Model?.PaginationViewModel.PaginatedList.TotalRecordCount<text> applications</text>
+</p>
+
+<table class="govuk-table govuk-table--small">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header govuk-!-width-three-quarters">Standard</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">Reference</th>
+            <th scope="col" class="govuk-table__header"></th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model?.PaginationViewModel != null)
+        {
+            @foreach (var standardApplication in Model.PaginationViewModel.PaginatedList.Items)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@standardApplication.StandardName</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@standardApplication.StandardReference</td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           asp-action="Sequence"
+                           asp-controller="Application"
+                           asp-route-applicationId="@standardApplication.ApplicationId"
+                           asp-route-sequenceNo="@standardApplication.SequenceNo"
+                           asp-route-backAction="ViewOrganisation"
+                           asp-route-backController="Register"
+                           asp-route-backOrganisationId="@Model.OrganisationId">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -13,7 +13,6 @@ using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpOrganisationCriminalComplianceChecksController : RoatpGatewayControllerBase<RoatpOrganisationCriminalComplianceChecksController>
     {
         private readonly IGatewayCriminalComplianceChecksOrchestrator _orchestrator;

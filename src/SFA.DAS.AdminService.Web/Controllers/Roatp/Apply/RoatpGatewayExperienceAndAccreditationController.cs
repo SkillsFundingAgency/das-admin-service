@@ -13,12 +13,11 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpGatewayExperienceAndAccreditationController : RoatpGatewayControllerBase<RoatpGatewayExperienceAndAccreditationController>
     {
         private readonly IGatewayExperienceAndAccreditationOrchestrator _orchestrator;
         
-        public RoatpGatewayExperienceAndAccreditationController(IRoatpApplicationApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
+        public RoatpGatewayExperienceAndAccreditationController( IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, IRoatpGatewayPageViewModelValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
         {
             _orchestrator = orchestrator;
         }

@@ -1,78 +1,24 @@
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AdminService.Web.Controllers.Apply;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {
     public static class ApplicationReviewHelpers
     {
-        public static string TranslateApplicationStatus(string sequenceStatus)
+        public static string ApplicationFragment(string reviewStatus)
         {
-            switch (sequenceStatus)
+            switch (reviewStatus)
             {
-                case ApplicationSectionStatus.Submitted:
-                    return "Not started";
-                case ApplicationSectionStatus.InProgress:
-                    return "Evaluation started";
-                case ApplicationSectionStatus.Evaluated:
-                    return "Evaluated";
+                case ApplicationReviewStatus.New:
+                    return "new";
+                case ApplicationReviewStatus.InProgress:
+                    return "in-progress";
+                case ApplicationReviewStatus.HasFeedback:
+                    return "feedback";
+                case ApplicationReviewStatus.Approved:
+                    return "approved";
             }
 
-            return "";
-        }
-
-        public static string TranslateFinancialStatus(string financeStatus, string grade)
-        {
-            switch (financeStatus)
-            {
-                case FinancialReviewStatus.New:
-                    return "Not started";
-                case FinancialReviewStatus.InProgress:
-                    return "In Progress";
-                case FinancialReviewStatus.Graded:
-                case FinancialReviewStatus.Approved:
-                    switch(grade)
-                    {
-                        case FinancialApplicationSelectedGrade.Outstanding:
-                        case FinancialApplicationSelectedGrade.Good:
-                        case FinancialApplicationSelectedGrade.Satisfactory:
-                        case FinancialApplicationSelectedGrade.Monitoring:
-                            return "Passed";
-                        case FinancialApplicationSelectedGrade.Exempt:
-                            return "Exempt";
-                        case FinancialApplicationSelectedGrade.Inadequate:
-                            return "Rejected";
-                    }
-                    break;
-                case FinancialReviewStatus.Exempt:
-                    return "Exempt";
-                case FinancialReviewStatus.Rejected:
-                    return "Rejected";
-            }
-
-            return "";
-        }
-
-        public static string ApplicationBacklinkAction(string sequenceStatus, int? sequenceNo)
-        {
-            switch(sequenceStatus)
-            {
-                case ApplicationSequenceStatus.FeedbackAdded:
-                    return nameof(ApplicationController.RejectedApplications);
-                case ApplicationSequenceStatus.Approved:
-                case ApplicationSequenceStatus.Declined:
-                    return nameof(ApplicationController.ClosedApplications);
-                case null:
-                default:
-                    switch (sequenceNo)
-                    {
-                        case 2:
-                            return nameof(ApplicationController.StandardApplications);
-                        case 1:
-                        case null:
-                        default:
-                            return nameof(ApplicationController.MidpointApplications);
-                    }
-            }
+            return string.Empty;
         }
     }
 }
