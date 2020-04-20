@@ -146,12 +146,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
         }
 
-        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
-        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
-        {
-            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
-        }
-
         public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
             try
@@ -271,6 +265,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get($"/Gateway/{applicationId}/TradingName");
         }
 
+        public async Task<string> GetProviderRouteName(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/ProviderRouteName");
+        }
 
         public async Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId)
         {
