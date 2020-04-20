@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {

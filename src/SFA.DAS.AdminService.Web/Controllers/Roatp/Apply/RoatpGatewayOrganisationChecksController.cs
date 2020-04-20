@@ -13,7 +13,6 @@ using SFA.DAS.AdminService.Web.Services.Gateway;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpGatewayOrganisationChecksController : RoatpGatewayControllerBase<RoatpGatewayOrganisationChecksController>
     {
         private readonly IGatewayOrganisationChecksOrchestrator _orchestrator;
@@ -110,6 +109,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> EvaluateWebsitePage(WebsiteViewModel viewModel)
         {
             return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/Website.cshtml");
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/Page/OrganisationRisk")]
+        public async Task<IActionResult> GetOrganisationRiskPage(Guid applicationId)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username));
+            return View($"{GatewayViewsLocation}/OrganisationRisk.cshtml", viewModel);
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/Page/OrganisationRisk")]
+        public async Task<IActionResult> EvaluateOrganisationRiskPage(OrganisationRiskViewModel viewModel)
+        {
+            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OrganisationRisk.cshtml");
         }
     }
 }

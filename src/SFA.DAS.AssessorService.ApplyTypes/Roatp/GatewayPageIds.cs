@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string PeopleInControlRisk = "PeopleInControlRisk";
 
         public const string Roatp = "Roatp";
-        public const string Repao = "Repao";
+        public const string Roepao = "Roepao";
 
         public const string OfficeForStudents = "OfficeForStudents";
         public const string InitialTeacherTraining = "InitialTeacherTraining";
@@ -32,14 +32,27 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public const string FailedToRepayFunds = "PayBack";
             public const string ContractTermination = "ContractTerm";
             public const string ContractWithdrawnEarly = "Withdrawn";
-            public const string Roto = "Roto";
+            public const string RemovedRoTO = "Roto";
             public const string FundingRemoved = "FundingRemoved";
-            public const string RemovedProfessionalRegister = "RemovedProfessionalRegister";
+            public const string RemovedRegister = "RemovedProfessionalRegister";
             public const string IttAccreditation = "IttAccreditation";
             public const string RemovedCharityRegister = "RemovedCharityRegister";
             public const string Safeguarding = "Safeguarding";
             public const string Whistleblowing = "Whistleblowing";
             public const string Insolvency = "Insolvency";
+        }           
+
+        public static class CriminalComplianceWhosInControlChecks
+        {
+            public const string UnspentCriminalConvictions = "UnspentCriminalConviction";
+            public const string FailedToRepayFunds = "FailedtoPayBack";
+            public const string FraudIrregularities = "FraudIrregularities";
+            public const string OngoingInvestigation = "OngoingInvestigation";
+            public const string ContractTerminated = "ContractTerminated";
+            public const string WithdrawnFromContract = "WithdrawnFromContract";
+            public const string BreachedPayments = "BreachedPayments";
+            public const string RegisterOfRemovedTrustees = "RegisterOfRemovedTrustees";
+            public const string Bankrupt = "Bankrupt";
         }
 
     }

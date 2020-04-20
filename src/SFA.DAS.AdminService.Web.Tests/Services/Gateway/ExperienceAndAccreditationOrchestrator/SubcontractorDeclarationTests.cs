@@ -24,8 +24,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
             var viewModel = response.Result;
 
             Assert.AreEqual(GatewayPageIds.SubcontractorDeclaration, viewModel.PageId);
+
             Assert.AreEqual(ApplicationId, viewModel.ApplicationId);
-            Assert.AreEqual(CommonDetails.GatewayReviewStatus, viewModel.GatewayReviewStatus);
             Assert.AreEqual(CommonDetails.OptionFailText, viewModel.OptionFailText);
             Assert.AreEqual(CommonDetails.OptionInProgressText, viewModel.OptionInProgressText);
             Assert.AreEqual(CommonDetails.OptionPassText, viewModel.OptionPassText);

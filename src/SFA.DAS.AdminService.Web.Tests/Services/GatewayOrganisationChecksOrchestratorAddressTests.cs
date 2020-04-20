@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             var viewModel = response.Result;
 
-            Assert.AreEqual(UKRLPLegalName, viewModel.UkrlpLegalName);
+            Assert.AreEqual(UKRLPLegalName, viewModel.ApplyLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
             Assert.AreEqual(SubmittedApplicationAddress, viewModel.SubmittedApplicationAddress);
             Assert.AreEqual(UkrlpAddress, viewModel.UkrlpAddress);

@@ -7,9 +7,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
 {
     public class IcoNumberViewModel : RoatpGatewayPageViewModel
     {
-        public DateTime? ApplicationSubmittedOn { get; set; }
-        public DateTime? SourcesCheckedOn { get; set; }
-
         public string OrganisationAddress { get; set; }
         public string IcoNumber { get; set; }
     }

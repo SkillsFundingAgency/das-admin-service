@@ -27,6 +27,7 @@ using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
+using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
@@ -35,8 +36,10 @@ using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace SFA.DAS.AdminService.Web
 { 
@@ -63,6 +66,7 @@ namespace SFA.DAS.AdminService.Web
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
             
             services.AddHttpClient<ApiClient>("ApiClient", config =>
@@ -82,24 +86,37 @@ namespace SFA.DAS.AdminService.Web
                 .AddPolicyHandler(GetRetryPolicy());
 
             AddAuthentication(services);
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
+                    options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+
+            services.Configure<RazorViewEngineOptions>(o =>
+                {
+                    o.ViewLocationFormats.Add("/Views/Application/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    o.ViewLocationFormats.Add("/Views/Application/{0}" + RazorViewEngine.ViewExtension);
+                });
+
+            services.AddSession(opt => 
+            {
+                opt.IdleTimeout = TimeSpan.FromHours(1);
+            });
 
             if (!_env.IsDevelopment())
             {
@@ -183,6 +200,12 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
+
+            services.AddTransient<IRoatpOrganisationSummaryApiClient>(x => new RoatpOrganisationSummaryApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationSummaryApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
             services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
@@ -222,6 +245,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<StandardServiceClient>>()));
 
             services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
+            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
             services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();

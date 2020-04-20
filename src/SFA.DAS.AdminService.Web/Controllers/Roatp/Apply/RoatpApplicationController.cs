@@ -17,10 +17,12 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 // NOTE: For future work, consider if these base types are acceptable or if we need Roatp versions
 using ApplicationSectionStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSectionStatus;
 using ApplicationSequenceStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSequenceStatus;
+using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
+    [Authorize(Roles = Roles.RoatpAssessorTeam)]
+    [FeatureToggle(FeatureToggles.EnableRoatpAssessorReview, "Dashboard", "Index")]
     public class RoatpApplicationController : Controller
     {
         private readonly IRoatpOrganisationApiClient _apiClient;
