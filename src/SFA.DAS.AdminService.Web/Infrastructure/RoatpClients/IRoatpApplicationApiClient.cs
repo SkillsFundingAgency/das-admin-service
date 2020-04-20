@@ -49,10 +49,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
        
          Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
-
-         //MFCMFC THIS NEEDS TO GO ONCE ALL TIDY UP IS DONE
-         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
-
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
          Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
         Task<string> GetIcoNumber(Guid applicationId);
@@ -68,10 +64,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId);
 
-        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId);
-
         Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId);
+
+        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId);
+      
         Task<string> GetTradingName(Guid applicationId);
+        Task<string> GetProviderRouteName(Guid applicationId);
         Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId);
         Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId);
         Task<string> GetOrganisationWebsiteAddress(Guid applicationId);

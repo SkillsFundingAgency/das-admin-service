@@ -36,6 +36,7 @@ using SFA.DAS.AdminService.Web.Domain;
 using System.Security.Claims;
 using MediatR;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -197,6 +198,12 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<RoatpOrganisationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<IRoatpOrganisationSummaryApiClient>(x => new RoatpOrganisationSummaryApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationSummaryApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
