@@ -8,14 +8,17 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class SequenceViewModel
+    public class SequenceViewModel : BackViewModel
     {
-        public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, List<Section> sections, List<ApplySection> applySections)
+        public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, 
+            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId)
+            : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
             StandardName = application.ApplyData.Apply.StandardName;
             StandardCode = application.ApplyData.Apply.StandardCode;
+            ReviewStatus = application.ReviewStatus;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
             FinancialDueDate = application.financialGrade?.FinancialDueDate;
@@ -49,6 +52,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
+        public string ReviewStatus { get; set; }
 
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }

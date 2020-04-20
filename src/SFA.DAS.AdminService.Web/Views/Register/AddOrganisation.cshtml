@@ -1,11 +1,12 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
+﻿@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterOrganisationViewModel
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Add organisation";
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" asp-action="Index" asp-controller="Register">Return to organisation search</a>
+<a class="govuk-back-link" asp-action="Index" asp-controller="Dashboard">Return to dashboard</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">

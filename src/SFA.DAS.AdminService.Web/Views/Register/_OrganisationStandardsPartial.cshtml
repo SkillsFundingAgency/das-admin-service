@@ -1,0 +1,111 @@
+﻿@using Newtonsoft.Json;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+@using SFA.DAS.AdminService.Web.ViewModels.Shared;
+@using SFA.DAS.AdminService.Web.Domain.Apply;
+
+@model OrganisationApprovedStandardsViewModel
+
+<h2 class="govuk-heading-m">@Model.PaginationViewModel.Title</h2>
+
+<p class="govuk-body">
+    Showing
+    @if (Model.PaginationViewModel.PaginatedList.TotalRecordCount > 0)
+    {
+        @Model.PaginationViewModel.PaginatedList.FirstVisibleItem<text> - </text>@Model.PaginationViewModel.PaginatedList.LastVisibleItem<text> of </text>
+    }
+    @Model.PaginationViewModel.PaginatedList.TotalRecordCount<text> standards</text>
+</p>
+
+<table class="govuk-table govuk-table--small">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-half">
+                <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@OrganisationStandardSortColumn.StandardName"
+                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            asp-action="@Model.PaginationViewModel.SortColumnAction"
+                                            asp-controller="Register"
+                                            asp-route-organisationId="@Model.OrganisationId"
+                                            asp-fragment="@Model.PaginationViewModel.Fragment"
+                                            sfa-sort-column="@OrganisationStandardSortColumn.StandardName"
+                                            sfa-table-sort-column="@Model.PaginationViewModel.SortColumn"
+                                            sfa-sort-direction="@Model.PaginationViewModel.SortDirection">Standard</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
+                <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@OrganisationStandardSortColumn.StandardCode"
+                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            asp-action="@Model.PaginationViewModel.SortColumnAction"
+                                            asp-controller="Register"
+                                            asp-route-organisationId="@Model.OrganisationId"
+                                            asp-fragment="@Model.PaginationViewModel.Fragment"
+                                            sfa-sort-column="@OrganisationStandardSortColumn.StandardCode"
+                                            sfa-table-sort-column="@Model.PaginationViewModel.SortColumn"
+                                            sfa-sort-direction="@Model.PaginationViewModel.SortDirection">Reference</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
+                <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
+                                            data-sortColumn="@OrganisationStandardSortColumn.DateApproved"
+                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            asp-action="@Model.PaginationViewModel.SortColumnAction"
+                                            asp-controller="Register"
+                                            asp-route-organisationId="@Model.OrganisationId"
+                                            asp-fragment="@Model.PaginationViewModel.Fragment"
+                                            sfa-sort-column="@OrganisationStandardSortColumn.DateApproved"
+                                            sfa-table-sort-column="@Model.PaginationViewModel.SortColumn"
+                                            sfa-sort-direction="@Model.PaginationViewModel.SortDirection">Date approved</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header"></th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model?.PaginationViewModel.PaginatedList != null)
+        {
+            @foreach (var standard in Model.PaginationViewModel.PaginatedList.Items)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">@standard.StandardCollation.Title</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@standard.StandardCollation.ReferenceNumber</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@standard.DateStandardApprovedOnRegister?.ToString("dd MMMM yyyy")</td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           asp-route="Register_ViewStandard"
+                           asp-route-organisationStandardId="@standard.Id">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+@if (Model != null)
+{
+    <form asp-action="@Model.PaginationViewModel.ChangeItemsPerPageAction" asp-controller="Register" method="get" asp-fragment="@Model.PaginationViewModel.Fragment">
+        <div class="das-flex-space-around">
+            <div>
+                @Html.HiddenFor(m => m.OrganisationId)
+                <select class=@(Model.PaginationViewModel.Fragment + "-per-page govuk-select govuk-!-margin-right-2")
+                        data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                        name="ItemsPerPage"
+                        asp-for="PaginationViewModel.ItemsPerPage"
+                        asp-items="Model.PaginationViewModel.ItemsPerPageList">
+                </select>
+                <label for="ApplicationsPerPage">Standards per page</label>
+            </div>
+            <div class="das-pagination-links">
+                @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+                    {
+                        PaginatedList = Model.PaginationViewModel.PaginatedList,
+                        ChangePageAction = Model.PaginationViewModel.ChangePageAction,
+                        ChangePageController = "Register",
+                        RouteValues = new { organisationId = Model.OrganisationId },
+                        Fragment = Model.PaginationViewModel.Fragment
+                    });}
+            </div>
+        </div>
+        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-3 js-hidden" type="submit">
+            Update table
+        </button>
+    </form>
+}
