@@ -1,0 +1,77 @@
+@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Web.Helpers;
+@using SFA.DAS.AssessorService.ApplyTypes;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationsDashboardViewModel
+
+@{
+    ViewBag.Title = "Organisation applications";
+    Layout = "_Layout";
+}
+
+<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <h1 class="govuk-heading-xl">Organisation applications</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <!-- tabs -->
+            <div class="govuk-tabs" data-module="tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                        <a class="govuk-tabs__tab" href="#new">
+                            New (@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#in-progress">
+                            In Progress (@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#feedback">
+                            Feedback (@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#approved">
+                            Approved (@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        </a>
+                    </li>
+                </ul>
+                <section class="govuk-tabs__panel" id="new">
+                    <div id="new-organisation-applications">
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.NewApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-progress">
+                    <div id="in-progress-organisation-applications">
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.InProgressApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="feedback">
+                    <div id="feedback-organisation-applications">
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.FeedbackApplications);}
+                    </div>
+                </section>
+                <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="approved">
+                    <div id="approved-organisation-applications">
+                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.ApprovedApplications);}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="ControllerName">
+</main>
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/javascripts/das-application-service.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/javascripts/das-application-service.min.js"></script>
+    </environment>
+}

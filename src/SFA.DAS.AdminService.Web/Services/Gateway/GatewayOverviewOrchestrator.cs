@@ -101,7 +101,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     Sections = new List<GatewaySection>
                     {
                         new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.Roatp, LinkTitle = "RoATP", HiddenText = "", Status = "" },
-                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.Repao,  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
+                        new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.Roepao,  LinkTitle = "Register of end-point assessment organisations", HiddenText = "", Status = "" }
                     }
                 },
 

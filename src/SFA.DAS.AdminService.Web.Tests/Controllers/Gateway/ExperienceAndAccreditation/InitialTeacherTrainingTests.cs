@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
             CoreSetup();
 
             _orchestrator = new Mock<IGatewayExperienceAndAccreditationOrchestrator>();
-            _controller = new RoatpGatewayExperienceAndAccreditationController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
+            _controller = new RoatpGatewayExperienceAndAccreditationController(ContextAccessor.Object, ApplyApiClient.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
