@@ -60,7 +60,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway
             {
                 IsGatewayApproved = true;
             }
-            else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Decline)
+            else if (application.GatewayReviewStatus == SFA.DAS.AssessorService.ApplyTypes.Roatp.GatewayReviewStatus.Fail)
             {
                 IsGatewayApproved = false;
             }

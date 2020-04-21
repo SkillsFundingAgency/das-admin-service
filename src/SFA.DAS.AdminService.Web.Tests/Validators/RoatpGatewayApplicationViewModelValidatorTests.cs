@@ -21,10 +21,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             _validator = new RoatpGatewayApplicationViewModelValidator();
         }
 
-        [TestCase(GatewayReviewStatus.AskForClarification, "Clarification Message", "Declined Message", "Approved Message", false)]
-        [TestCase(GatewayReviewStatus.AskForClarification, null, "Declined Message", "Approved Message", true)]
-        [TestCase(GatewayReviewStatus.Decline, "Clarification Message", "Declined Message", "Approved Message", false)]
-        [TestCase(GatewayReviewStatus.Decline, "Clarification Message", null, "Approved Message", true)]
+        [TestCase(GatewayReviewStatus.ClarificationSent, "Clarification Message", "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.ClarificationSent, null, "Declined Message", "Approved Message", true)]
+        [TestCase(GatewayReviewStatus.Fail, "Clarification Message", "Declined Message", "Approved Message", false)]
+        [TestCase(GatewayReviewStatus.Fail, "Clarification Message", null, "Approved Message", true)]
         [TestCase(GatewayReviewStatus.Pass, "Clarification Message", "Declined Message", "Approved Message", false)]
         [TestCase(GatewayReviewStatus.Pass, null, "Declined Message", "Approved Message", false)]
         [TestCase(null, null, null, null, true)]
@@ -43,10 +43,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             Assert.AreEqual(hasErrorMessage, result.Errors.Any());
         }
 
-        [TestCase(GatewayReviewStatus.AskForClarification, 500, false)]
-        [TestCase(GatewayReviewStatus.AskForClarification, 501, true)]
-        [TestCase(GatewayReviewStatus.Decline, 500, false)]
-        [TestCase(GatewayReviewStatus.Decline, 501, true)]
+        [TestCase(GatewayReviewStatus.ClarificationSent, 500, false)]
+        [TestCase(GatewayReviewStatus.ClarificationSent, 501, true)]
+        [TestCase(GatewayReviewStatus.Fail, 500, false)]
+        [TestCase(GatewayReviewStatus.Fail, 501, true)]
         [TestCase(GatewayReviewStatus.Pass, 500, false)]
         [TestCase(GatewayReviewStatus.Pass, 501, true)]
         public void Test_cases_where_input_is_too_long(string gatewayReviewStatus, int wordCount, bool hasErrorMessage)

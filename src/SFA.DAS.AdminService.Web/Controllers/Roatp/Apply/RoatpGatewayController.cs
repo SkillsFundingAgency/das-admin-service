@@ -90,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", viewModel);
                 case GatewayReviewStatus.Pass:
-                case GatewayReviewStatus.Decline:
+                case GatewayReviewStatus.Fail:
                     return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", viewModel);
                 default:
                     return RedirectToAction(nameof(NewApplications));
@@ -113,13 +113,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 switch (gatewayReviewStatus)
                 {
-                    case GatewayReviewStatus.AskForClarification:
+                    case GatewayReviewStatus.ClarificationSent:
                         {
                             viewModel.RadioCheckedAskClarification = HtmlAndCssElements.CheckBoxChecked;
                             viewModel.OptionAskClarificationText = gatewayReviewComment;
                             break;
                         }
-                    case GatewayReviewStatus.Decline:
+                    case GatewayReviewStatus.Fail:
                         {
                             viewModel.RadioCheckedDeclined = HtmlAndCssElements.CheckBoxChecked;
                             viewModel.OptionDeclinedText = gatewayReviewComment;
@@ -166,12 +166,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             switch (viewModel.GatewayReviewStatus)
             {
-                case GatewayReviewStatus.AskForClarification:
+                case GatewayReviewStatus.ClarificationSent:
                     {
                         confirmViewModel.GatewayReviewComment = viewModel.OptionAskClarificationText;
                         break;
                     }
-                case GatewayReviewStatus.Decline:
+                case GatewayReviewStatus.Fail:
                     {
                         confirmViewModel.GatewayReviewComment = viewModel.OptionDeclinedText;
                         viewName = "~/Views/Roatp/Apply/Gateway/ConfirmOutcomeDeclined.cshtml";
