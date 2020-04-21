@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 );
             _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
 
-            _controller = new RoatpGatewayExperienceAndAccreditationController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayExperienceAndAccreditationController(_contextAccessor.Object, _applyApiClient.Object,  _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
         }
 
         [Test]
