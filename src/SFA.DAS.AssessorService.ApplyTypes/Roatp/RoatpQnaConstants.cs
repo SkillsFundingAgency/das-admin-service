@@ -50,6 +50,8 @@
                     public static string PublicBodyTypeEmployer = "171";
                     public static string EducationalInstituteTypeMainSupporting = "160";
                     public static string EducationalInstituteTypeEmployer = "161";
+                    public static string HowTrainItsApprentices = "220";
+                    public static string HowDescribeYourOrganisation = "230";
                 }
 
                 public static class QuestionIds

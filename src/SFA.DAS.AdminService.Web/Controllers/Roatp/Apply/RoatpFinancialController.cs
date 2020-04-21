@@ -255,12 +255,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
-            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeMainSupporting
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeEmployer
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.PublicBodyTypeMainSupporting
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.PublicBodyTypeEmployer
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.EducationalInstituteTypeMainSupporting
-                                                                                                      || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.EducationalInstituteTypeEmployer).ToList();
+            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowTrainItsApprentices
+                                                                                                      && page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowDescribeYourOrganisation).ToList();
 
             return organisationTypeSection;
         }
