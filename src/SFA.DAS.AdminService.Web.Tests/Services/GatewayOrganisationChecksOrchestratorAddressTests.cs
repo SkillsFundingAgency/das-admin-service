@@ -17,7 +17,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
-        private Mock<IRoatpOrganisationSummaryApiClient> _organisationSummaryApiClient;
 
         private static string ukprn = "12345678";
         private static string UKRLPLegalName = "John's workshop";
@@ -28,8 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _organisationSummaryApiClient = new Mock<IRoatpOrganisationSummaryApiClient>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _organisationSummaryApiClient.Object, _logger.Object);
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, Mock.Of< IRoatpOrganisationSummaryApiClient>(), _logger.Object);
         }
 
         [Test]
