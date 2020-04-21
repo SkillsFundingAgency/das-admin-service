@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     {
         private readonly IGatewayExperienceAndAccreditationOrchestrator _orchestrator;
         
-        public RoatpGatewayExperienceAndAccreditationController(IRoatpApplicationApiClient roatpApiClient, IHttpContextAccessor contextAccessor, IRoatpGatewayPageViewModelValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
+        public RoatpGatewayExperienceAndAccreditationController( IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, IRoatpGatewayPageViewModelValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
         {
             _orchestrator = orchestrator;
         }
