@@ -296,6 +296,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                 section.Title = ParentCompanyFhaSectionTitle;
                             }
 
+                            // APR-1606 - Display in PageId order
+                            section.QnAData.Pages = section.QnAData.Pages.OrderBy(p => p.PageId).ToList();
+
                             financialSections.Add(section);
                         }
                     }
