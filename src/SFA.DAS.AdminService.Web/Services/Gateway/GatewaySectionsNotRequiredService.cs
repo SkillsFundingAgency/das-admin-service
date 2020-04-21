@@ -14,11 +14,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     public class GatewaySectionsNotRequiredService : IGatewaySectionsNotRequiredService
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
+        private readonly IRoatpExperienceAndAccreditationApiClient _accreditationClient;
         private readonly ILogger<GatewaySectionsNotRequiredService> _logger;
 
-        public GatewaySectionsNotRequiredService(IRoatpApplicationApiClient applyApiClient, ILogger<GatewaySectionsNotRequiredService> logger)
+        public GatewaySectionsNotRequiredService(IRoatpApplicationApiClient applyApiClient, IRoatpExperienceAndAccreditationApiClient accreditationClient, ILogger<GatewaySectionsNotRequiredService> logger)
         {
             _applyApiClient = applyApiClient;
+            _accreditationClient = accreditationClient;
             _logger = logger;
         }
 
@@ -74,7 +76,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
             {
-                var officeForStudent = await _applyApiClient.GetOfficeForStudents(applicationId);
+                var officeForStudent = await _accreditationClient.GetOfficeForStudents(applicationId);
                 if (officeForStudent != null && officeForStudent.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) officeForStudentStatus = string.Empty;
             }
             if (officeForStudentStatus.Equals(SectionReviewStatus.NotRequired))
@@ -93,8 +95,8 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             if (providerRoute.Equals(ProviderTypes.Main) || providerRoute.Equals(ProviderTypes.Employer))
             {
-                var initialTeacherTraining = await _applyApiClient.GetInitialTeacherTraining(applicationId);
-                if (initialTeacherTraining != null && initialTeacherTraining.Equals("Yes", StringComparison.InvariantCultureIgnoreCase)) initialTeacherTrainingStatus = string.Empty;
+                var initialTeacherTraining = await _accreditationClient.GetInitialTeacherTraining(applicationId);
+                if (initialTeacherTraining != null && initialTeacherTraining.DoesOrganisationOfferInitialTeacherTraining) initialTeacherTrainingStatus = string.Empty;
             }
 
             if (initialTeacherTrainingStatus.Equals(SectionReviewStatus.NotRequired))
