@@ -19,13 +19,10 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         //MFCMFC PARKING THIS TEST COVERAGE AS NEW STORY WILL BE CHANGING THE ORCHESTRATOR FLOW TO CHECK IF DETAILS ALREADY SET
         // WE WILL DO CHANGES AND COVERAGE WITHIN THAT STORY
         private readonly IRoatpApplicationApiClient _applyApiClient;
-
+		private readonly IGatewaySectionsNotRequiredService _sectionsNotRequiredService;
         private readonly ILogger<GatewayOverviewOrchestrator> _logger;
 
-        private readonly IGatewaySectionsNotRequiredService _sectionsNotRequiredService;
-
-        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger,
-                                           IGatewaySectionsNotRequiredService sectionsNotRequiredService)
+        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger, IGatewaySectionsNotRequiredService sectionsNotRequiredService)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
@@ -166,6 +163,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             if (savedStatuses != null && savedStatuses.Count.Equals(0))
             {                
                 var providerRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+
                 await _sectionsNotRequiredService.SetupNotRequiredLinks(request.ApplicationId, request.UserName, viewmodel, providerRoute);
             }
             else
