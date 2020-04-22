@@ -15,8 +15,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 
             public static string PeopleInControlChecks = "People in control checks";
             public static string ExperienceAndAccreditation = "Experience and accreditation checks";
-            
             public static string OrganisationsCriminalAndComplianceChecks = "Organisation’s criminal and compliance checks";
+            public static string RegisterChecks = "Register checks";
         }
 
         public static class Headings
@@ -35,6 +35,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
             public static string InitialTeacherTraining = "Initial teacher training (ITT) check";
             public static string Ofsted = "Ofsted check";
             public static string SubcontractorDeclaration = "Subcontractor declaration check";
+
+            public static string Roatp = "RoATP check";
+            public static string Roepao = "Register of end-point assessment organisations (EPAO) check";
         }
 
         public static class PeopleInControl
@@ -72,5 +75,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public static string InitialTeacherTraining = "Select the outcome for initial teacher training (ITT) check";
         public static string Ofsted = "Select the outcome for Ofsted check";
         public static string SubcontractorDeclaration = "Select the outcome for subcontractor declaration check";
+
+        public static string Roatp = "Select the outcome for the RoATP check";
+        public static string Roepao = "Select the outcome for the register of end-point assessment organisations check";
     }
 }

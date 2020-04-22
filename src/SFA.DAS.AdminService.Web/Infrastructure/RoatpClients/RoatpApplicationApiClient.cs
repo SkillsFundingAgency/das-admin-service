@@ -216,6 +216,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get($"/Gateway/{applicationId}/TradingName");
         }
 
+        public async Task<string> GetProviderRouteName(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/ProviderRouteName");
+        }
 
         public async Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId)
         {
