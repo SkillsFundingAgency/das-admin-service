@@ -48,68 +48,75 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell">Has your organisation had a full Ofsted inspection in further education and skills?</td>
-                        <td class="govuk-table__cell">@(Model.HasHadFullInspection ? "Yes" : "No")</td>
-                    </tr>
-                    @if (!Model.HasHadFullInspection)
+                    @if (Model.HasHadFullInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation had a full Ofsted inspection in further education and skills?</td>
+                            <td class="govuk-table__cell">@(Model.HasHadFullInspection.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                    @if (Model.HasHadMonitoringVisit.HasValue)
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">Has your organisation had a monitoring visit for apprenticeships in further education and skills?</td>
-                            <td class="govuk-table__cell">@(Model.HasHadMonitoringVisit ? "Yes" : "No")</td>
+                            <td class="govuk-table__cell">@(Model.HasHadMonitoringVisit.Value ? "Yes" : "No")</td>
                         </tr>
                     }
-                    else
+
+                    @if (Model.ReceivedFullInspectionGradeForApprenticeships.HasValue)
                     {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Did your organisation get a grade for apprenticeships in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.ReceivedFullInspectionGradeForApprenticeships.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
 
-                        @if (Model.ReceivedFullInspectionGradeForApprenticeships)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">Did your organisation get a grade for apprenticeships in this full Ofsted inspection?</td>
-                                <td class="govuk-table__cell">@(Model.ReceivedFullInspectionGradeForApprenticeships ? "Yes" : "No")</td>
-                            </tr>
+                    @if (!string.IsNullOrEmpty(Model.FullInspectionApprenticeshipGrade))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">What grade did your organisation get for apprenticeships in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@Model.FullInspectionApprenticeshipGrade</td>
+                        </tr>
+                    }
 
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">What grade did your organisation get for apprenticeships in this full Ofsted inspection?</td>
-                                <td class="govuk-table__cell">@Model.FullInspectionApprenticeshipGrade</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">What grade did your organisation get for overall effectiveness in this full Ofsted inspection?</td>
-                                <td class="govuk-table__cell">@Model.FullInspectionOverallEffectivenessGrade</td>
-                            </tr>
-                        }
+                    @if (!string.IsNullOrEmpty(Model.FullInspectionOverallEffectivenessGrade))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">What grade did your organisation get for overall effectiveness in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@Model.FullInspectionOverallEffectivenessGrade</td>
+                        </tr>
+                    }
 
+                    @if (Model.GradeWithinTheLast3Years.HasValue)
+                    {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">Did your organisation get this grade within the last 3 years?</td>
-                            <td class="govuk-table__cell">@(Model.GradeWithinTheLast3Years ? "Yes" : "No")</td>
+                            <td class="govuk-table__cell">@(Model.GradeWithinTheLast3Years.Value ? "Yes" : "No")</td>
                         </tr>
+                    }
 
-                        @if (!Model.GradeWithinTheLast3Years)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">Has your organisation had a short Ofsted inspection within the last 3 years?</td>
-                                <td class="govuk-table__cell">@(Model.HasHadShortInspectionWithinLast3Years ? "Yes" : "No")</td>
-                            </tr>
+                    @if (Model.HasHadShortInspectionWithinLast3Years.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation had a short Ofsted inspection within the last 3 years?</td>
+                            <td class="govuk-table__cell">@(Model.HasHadShortInspectionWithinLast3Years.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
 
-                            @if (Model.HasHadShortInspectionWithinLast3Years)
-                            {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?</td>
-                                    <td class="govuk-table__cell">@(Model.HasMaintainedFullGradeInShortInspection ? "Yes" : "No")</td>
-                                </tr>
-                            }
-                        }
+                    @if (Model.HasMaintainedFullGradeInShortInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.HasMaintainedFullGradeInShortInspection.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
 
-                        @if (Model.GradeWithinTheLast3Years || (!Model.ReceivedFullInspectionGradeForApprenticeships && !Model.GradeWithinTheLast3Years && Model.HasMaintainedFullGradeInShortInspection))
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">Has your organisation maintained funding from an education agency since its full Ofsted inspection?</td>
-                                <td class="govuk-table__cell">@(Model.HasMaintainedFundingSinceInspection ? "Yes" : "No")</td>
-                            </tr>
-                        }
+                    @if (Model.HasMaintainedFundingSinceInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation maintained funding from an education agency since its full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.HasMaintainedFundingSinceInspection.Value ? "Yes" : "No")</td>
+                        </tr>
                     }
                 </tbody>
             </table>
