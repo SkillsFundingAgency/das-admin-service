@@ -209,7 +209,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var parentCompanySection = await GetParentCompanySection(applicationFromAssessor.ApplicationId);
             var activelyTradingSection = await GetActivelyTradingSection(applicationFromAssessor.ApplicationId);
             var organisationTypeSection = await GetOrganisationTypeSection(applicationFromAssessor.ApplicationId);
-            var financialSections = await GetFinancialSections(applicationFromAssessor.ApplicationId);
+            var financialSections = await GetFinancialSections(applicationFromAssessor);
 
             return new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
         }
@@ -261,12 +261,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return organisationTypeSection;
         }
 
-        private async Task<List<Section>> GetFinancialSections(Guid applicationId)
+        private async Task<List<Section>> GetFinancialSections(RoatpApplicationResponse applicationFromAssessor)
         {
             const string CompanyFhaSectionTitle = "Organisation's financial health";
             const string ParentCompanyFhaSectionTitle = "UK ultimate parent company's financial health";
 
             var financialSections = new List<Section>();
+
+            var applicationId = applicationFromAssessor.ApplicationId;
+            var applicationSequences = applicationFromAssessor.ApplyData?.Sequences;
 
             var roatpSequences = await _applyApiClient.GetRoatpSequences();
             var financialSequences = roatpSequences.Where(x => x.Roles.Contains(Roles.ProviderRiskAssuranceTeam));
@@ -274,12 +277,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             foreach (var sequence in financialSequences)
             {
                 var qnaSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, sequence.Id);
-                var sections = await _qnaApiClient.GetSections(applicationId, qnaSequence.Id);
-                foreach (var section in sections)
+                var qnaSections = await _qnaApiClient.GetSections(applicationId, qnaSequence.Id);
+
+                foreach (var section in qnaSections)
                 {
                     var roatpSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.Id);
 
-                    if (!roatpSequence.ExcludeSections.Contains(section.SectionNo.ToString()))
+                    if (!roatpSequence.ExcludeSections.Contains(section.SectionNo.ToString()) && IsRequiredSection(applicationSequences, section))
                     {
                         // Ensure at least one active page is answered
                         if (section.QnAData.Pages.Any(p => p.Active && p.Complete))
@@ -306,6 +310,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             return financialSections;
+        }
+
+        private static bool IsRequiredSection(List<RoatpApplySequence> applicationSequences, Section section)
+        {
+            var appSequence = applicationSequences?.SingleOrDefault(appSeq => appSeq.SequenceNo == section.SequenceNo);
+
+            return appSequence != null
+                || !appSequence.NotRequired
+                || appSequence.Sections != null
+                || appSequence.Sections.Any(appSec => appSec.SectionNo == section.SectionNo && !appSec.NotRequired);
         }
 
         private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)
