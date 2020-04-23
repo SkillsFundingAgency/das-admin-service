@@ -40,9 +40,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             var context = new DefaultHttpContext { User = user };
             GatewayValidator.Setup(v => v.Validate(It.IsAny<RoatpGatewayPageViewModel>()))
                 .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
+                    {
+                        Errors = new List<ValidationErrorDetail>()
+                    }
                 );
             ContextAccessor.Setup(_ => _.HttpContext).Returns(context);
         }
