@@ -129,20 +129,6 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateOfstedDetailsPage" asp-controller="RoatpGatewayExperienceAndAccreditation">
-                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" name="PageId" value="@Model.PageId" />
-                    <input type="hidden" name="ApplicationSubmittedOn" value="@Model.ApplicationSubmittedOn" />
-                    <input type="hidden" name="Ukprn" value="@Model.Ukprn" />
-                    <input type="hidden" name="SourcesCheckedOn" value="@Model.SourcesCheckedOn" />
-                    <input type="hidden" name="HasHadFullInspection" value="@Model.HasHadFullInspection" />
-                    <input type="hidden" name="ReceivedFullInspectionGradeForApprenticeships" value="@Model.ReceivedFullInspectionGradeForApprenticeships" />
-                    <input type="hidden" name="FullInspectionOverallEffectivenessGrade" value="@Model.FullInspectionOverallEffectivenessGrade" />
-                    <input type="hidden" name="HasHadMonitoringVisit" value="@Model.HasHadMonitoringVisit" />
-                    <input type="hidden" name="HasMaintainedFundingSinceInspection" value="@Model.HasMaintainedFundingSinceInspection" />
-                    <input type="hidden" name="HasHadShortInspectionWithinLast3Years" value="@Model.HasHadShortInspectionWithinLast3Years" />
-                    <input type="hidden" name="HasMaintainedFullGradeInShortInspection" value="@Model.HasMaintainedFullGradeInShortInspection" />
-                    <input type="hidden" name="FullInspectionApprenticeshipGrade" value="@Model.FullInspectionApprenticeshipGrade" />
-                    <input type="hidden" name="GradeWithinTheLast3Years" value="@Model.GradeWithinTheLast3Years" />
 
                     @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
 
