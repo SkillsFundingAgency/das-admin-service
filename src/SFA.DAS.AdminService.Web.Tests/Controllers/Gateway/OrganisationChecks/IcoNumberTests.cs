@@ -17,7 +17,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using Microsoft.AspNetCore.Mvc;
-
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {
@@ -65,9 +65,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 OptionPassText = "Some pass text"
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            await _controller.EvaluateIcoNumberPage(vm);
+            GatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+
+            await _controller.EvaluateIcoNumberPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
@@ -87,7 +89,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 PageId = pageId
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -97,7 +101,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            await _controller.EvaluateIcoNumberPage(vm);
+            _orchestrator.Setup(x => x.GetIcoNumberViewModel(It.Is<GetIcoNumberRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(vm);
+
+            await _controller.EvaluateIcoNumberPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
         }
