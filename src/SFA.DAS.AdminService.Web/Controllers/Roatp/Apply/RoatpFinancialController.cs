@@ -316,10 +316,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var appSequence = applicationSequences?.SingleOrDefault(appSeq => appSeq.SequenceNo == section.SequenceNo);
 
-            return appSequence != null
-                || !appSequence.NotRequired
-                || appSequence.Sections != null
-                || appSequence.Sections.Any(appSec => appSec.SectionNo == section.SectionNo && !appSec.NotRequired);
+            var notRequired = appSequence is null
+                                || appSequence.NotRequired
+                                || appSequence.Sections is null
+                                || appSequence.Sections.Any(appSec => appSec.SectionNo == section.SectionNo && appSec.NotRequired);
+
+            return !notRequired;
         }
 
         private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)
