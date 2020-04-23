@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.LegalName, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.LegalName,
-                                                                                            NoSelectionErrorMessages.LegalName);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.LegalName]);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.TradingName, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.TradingName,
-                                                                                            NoSelectionErrorMessages.TradingName);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.TradingName]);
 
             var ukrlpDetail = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             if (ukrlpDetail.ProviderAliases != null && ukrlpDetail.ProviderAliases.Count > 0)
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OrganisationStatus, request.UserName,
                                                                                                 RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                                 RoatpGatewayConstants.Headings.OrganisationStatusCheck,
-                                                                                                NoSelectionErrorMessages.OrganisationStatusCheck);
+                                                                                                NoSelectionErrorMessages.Errors[GatewayPageIds.OrganisationStatus]);
 
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();
@@ -109,7 +109,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.Address, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.AddressCheck,
-                                                                                            NoSelectionErrorMessages.AddressCheck);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.Address]);
 
             var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
             if (organisationAddress != null)
@@ -144,7 +144,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.IcoNumber, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.IcoNumber,
-                                                                                            NoSelectionErrorMessages.IcoNumber);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.IcoNumber]);
             
 
             var organisationAddress = await _applyApiClient.GetOrganisationAddress(request.ApplicationId);
@@ -167,7 +167,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.WebsiteAddress, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.Website,
-                                                                                            NoSelectionErrorMessages.Website);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.WebsiteAddress]);
 
             model.SubmittedWebsite = await _applyApiClient.GetOrganisationWebsiteAddress(request.ApplicationId);
 
@@ -202,7 +202,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OrganisationRisk, request.UserName,
                                                                                             RoatpGatewayConstants.Captions.OrganisationChecks,
                                                                                             RoatpGatewayConstants.Headings.OrganisationRisk,
-                                                                                            NoSelectionErrorMessages.OrganisationRisk);
+                                                                                            NoSelectionErrorMessages.Errors[GatewayPageIds.OrganisationRisk]);
 
             model.OrganisationType = await _applyApiClient.GetTypeOfOrganisation(request.ApplicationId);
             model.TradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
