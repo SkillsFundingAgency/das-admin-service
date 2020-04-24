@@ -55,16 +55,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         [Test]
         public void post_people_in_control_high_risk_happy_path()
         {
-            var vm = ViewModel;
-            vm.Status = SectionReviewStatus.Pass;
-            vm.SourcesCheckedOn = DateTime.Now;
-            //vm.ErrorMessages = new List<ValidationErrorDetail>();
+            var command = new SubmitGatewayPageAnswerCommand
+            {
+                Status = SectionReviewStatus.Pass,
+                ApplicationId = ViewModel.ApplicationId,
+                PageId = ViewModel.PageId
+            };
 
-            //var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
+            var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(command).Result;
 
-            //GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
-            //Assert.AreEqual("ViewApplication",result.ActionName);
-            //Assert.AreEqual("RoatpGateway", result.ControllerName);
+            GatewayValidator.Verify(x => x.Validate(command), Times.Once);
+            Assert.AreEqual("ViewApplication", result.ActionName);
+            Assert.AreEqual("RoatpGateway", result.ControllerName);
         }
 
         [Test]
@@ -91,12 +93,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
-            //var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
+            var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(command).Result;
 
-            //var resultModel = (PeopleInControlHighRiskPageViewModel)result.Model;
+            var resultModel = (PeopleInControlHighRiskPageViewModel)result.Model;
 
-            //GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
-            //Assert.AreEqual(1, resultModel.ErrorMessages.Count);
+            GatewayValidator.Verify(x => x.Validate(command), Times.Once);
+            Assert.AreEqual(1, resultModel.ErrorMessages.Count);
         }
     }
 }
