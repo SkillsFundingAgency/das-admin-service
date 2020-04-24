@@ -132,7 +132,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
 
                 // For now, only replace selected grade with whatever was selected
-                newvm.FinancialReviewDetails.SelectedGrade = vm.FinancialReviewDetails.SelectedGrade;
+                if (vm.FinancialReviewDetails != null)
+                {
+                    newvm.FinancialReviewDetails.SelectedGrade = vm.FinancialReviewDetails.SelectedGrade;
+                }
 
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", newvm);
             }
