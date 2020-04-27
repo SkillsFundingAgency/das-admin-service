@@ -26,5 +26,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
             return result;
         }
+
+        public async Task<string> GetOfficeForStudents(Guid applicationId)
+        {
+            return await Get($"/Accreditation/{applicationId}/OfficeForStudents");
+        }
+
+        public async Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId)
+        {
+            return await Get<InitialTeacherTraining>($"/Accreditation/{applicationId}/InitialTeacherTraining");
+        }
     }
 }

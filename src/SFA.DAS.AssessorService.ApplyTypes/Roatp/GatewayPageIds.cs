@@ -19,7 +19,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public const string PeopleInControlRisk = "PeopleInControlRisk";
 
         public const string Roatp = "Roatp";
-        public const string Repao = "Repao";
+        public const string Roepao = "Roepao";
 
         public const string OfficeForStudents = "OfficeForStudents";
         public const string InitialTeacherTraining = "InitialTeacherTraining";

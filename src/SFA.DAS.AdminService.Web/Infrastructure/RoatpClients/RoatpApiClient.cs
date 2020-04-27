@@ -169,5 +169,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
             return res.Results;
         }
+
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
+        {
+            return await Get<OrganisationRegisterStatus>($"{_baseUrl}/api/v1/Organisation/register-status?ukprn={ukprn}");
+        }
     }
 }

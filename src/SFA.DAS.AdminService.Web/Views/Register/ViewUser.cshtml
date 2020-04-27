@@ -1,4 +1,6 @@
-﻿@using SFA.DAS.AdminService.Web.Domain
+﻿@using SFA.DAS.AdminService.Web.Domain;
+@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditUserViewModel
 
 @{
@@ -15,7 +17,7 @@
 
             <h1 class="govuk-heading-xl">View user</h1>
             <dl class="govuk-summary-list">
-            <partial for="@Model" name="~/Views/Register/_UserDetails.cshtml" />
+                <partial for="@Model" name="~/Views/Register/_UserDetails.cshtml" />
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         What can they do?

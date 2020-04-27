@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
@@ -42,6 +41,33 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(GetSubcontractorDeclarationContractFileRequest request)
         {
             return await _experienceAndAccreditationApiClient.GetSubcontractorDeclarationContractFile(request.ApplicationId);
+        }
+
+        public async Task<OfficeForStudentsViewModel> GetOfficeForStudentsViewModel(GetOfficeForStudentsRequest request)
+        {
+            _logger.LogInformation($"Retrieving office for students details for application {request.ApplicationId}");
+
+            var model = new OfficeForStudentsViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.OfficeForStudents, request.UserName, RoatpGatewayConstants.Captions.ExperienceAndAccreditation, RoatpGatewayConstants.Headings.OfficeForStudents, NoSelectionErrorMessages.OfficeForStudents);
+
+            model.IsOrganisationFundedByOfficeForStudents = await _experienceAndAccreditationApiClient.GetOfficeForStudents(request.ApplicationId) == "Yes";
+
+            return model;
+        }
+
+        public async Task<InitialTeacherTrainingViewModel> GetInitialTeacherTrainingViewModel(GetInitialTeacherTrainingRequest request)
+        {
+            _logger.LogInformation($"Retrieving initial teacher training details for application {request.ApplicationId}");
+
+            var model = new InitialTeacherTrainingViewModel();
+            await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.InitialTeacherTraining, request.UserName, RoatpGatewayConstants.Captions.ExperienceAndAccreditation, RoatpGatewayConstants.Headings.InitialTeacherTraining, NoSelectionErrorMessages.InitialTeacherTraining);
+
+            var initialTeacherTraining = await _experienceAndAccreditationApiClient.GetInitialTeacherTraining(request.ApplicationId);
+
+            model.DoesOrganisationOfferInitialTeacherTraining = initialTeacherTraining.DoesOrganisationOfferInitialTeacherTraining;
+            model.IsPostGradOnlyApprenticeship = initialTeacherTraining.IsPostGradOnlyApprenticeship;
+
+            return model;
         }
     }
 }
