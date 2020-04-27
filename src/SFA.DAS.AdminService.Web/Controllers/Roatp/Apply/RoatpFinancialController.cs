@@ -120,7 +120,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = await GetFinancialEvidence(vm.ApplicationId),
                     Comments = GetFinancialReviewComments(vm)
                 };
 
@@ -325,36 +324,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                 || appSequence.Sections.Any(appSec => appSec.SectionNo == section.SectionNo && appSec.NotRequired);
 
             return !notRequired;
-        }
-
-        private async Task<List<FinancialEvidence>> GetFinancialEvidence(Guid applicationId)
-        {
-            var listOfEvidence = new List<FinancialEvidence>();
-
-            var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(applicationId, RoatpQnaConstants.RoatpSequences.FinancialEvidence);
-            var financialSections = await _qnaApiClient.GetSections(applicationId, financialSequence.Id);
-
-            foreach(var financialSection in financialSections)
-            {
-                if (financialSection != null)
-                {
-                    var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
-                    foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
-                    {
-                        foreach (var uploadQuestion in uploadPage.Questions)
-                        {
-                            foreach (var answer in financialSection.QnAData.Pages.SelectMany(p => p.PageOfAnswers).SelectMany(a => a.Answers).Where(a => a.QuestionId == uploadQuestion.QuestionId))
-                            {
-                                if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
-                                var filenameWithFullPath = $"{financialSequence.ApplicationId}/{financialSequence.Id}/{financialSection.Id}/{uploadPage.PageId}/{uploadQuestion.QuestionId}/{answer.Value}";
-                                listOfEvidence.Add(new FinancialEvidence { Filename = filenameWithFullPath });
-                            }
-                        }
-                    }
-                }
-            }
-
-            return listOfEvidence;
         }
 
         private static DateTime? GetFinancialDueDate(RoatpFinancialApplicationViewModel vm)
