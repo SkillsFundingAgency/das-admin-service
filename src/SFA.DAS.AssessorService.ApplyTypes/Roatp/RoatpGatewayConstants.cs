@@ -13,12 +13,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         {
             public static string OrganisationChecks = "Organisation checks";
 
-            public static string ExperienceAndAccreditation = "Experience and accreditation checks";
-
             public static string PeopleInControlChecks = "People in control checks";
-         
+            public static string ExperienceAndAccreditation = "Experience and accreditation checks";
             public static string OrganisationsCriminalAndComplianceChecks = "Organisation’s criminal and compliance checks";
-
             public static string RegisterChecks = "Register checks";
         }
 
