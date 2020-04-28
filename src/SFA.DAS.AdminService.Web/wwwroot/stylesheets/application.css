@@ -1595,11 +1595,22 @@ TODO: change to 'das-page-navigation' and BEM
   background-color: #00823b;
 }
 
-/* Roatp org results.. remove for v4 */
+.govuk-tag--updated {
+  background-color: #ffbf47;
+}
 
+.govuk-tag--approved {
+  background-color: #00823b;
+}
+
+.govuk-tag--rejected {
+  background-color: #b10e1e;
+}
+
+/* Roatp org results.. remove for v4 */
 .selected-item {
-  background-color: #005ea5;
-  color: #ffffff;
+    background-color: #005ea5;
+    color: #ffffff;
 }
 
 .selected-item > .govuk-body > .govuk-link,
