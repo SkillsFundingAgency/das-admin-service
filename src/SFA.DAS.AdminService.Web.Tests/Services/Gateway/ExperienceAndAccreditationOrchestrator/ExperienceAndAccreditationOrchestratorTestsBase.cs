@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccreditationOrchestrator
@@ -45,6 +46,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
                 Status = "Status"
             };
             ApplyApiClient.Setup(x => x.GetPageCommonDetails(ApplicationId, GatewayPageId, UserName)).ReturnsAsync(CommonDetails);
+        }
+
+        protected void AssertCommonDetails(RoatpGatewayPageViewModel viewModel)
+        {
+            Assert.AreEqual(ApplicationId, viewModel.ApplicationId);
+            Assert.AreEqual(CommonDetails.OptionFailText, viewModel.OptionFailText);
+            Assert.AreEqual(CommonDetails.OptionInProgressText, viewModel.OptionInProgressText);
+            Assert.AreEqual(CommonDetails.OptionPassText, viewModel.OptionPassText);
+            Assert.AreEqual(CommonDetails.Status, viewModel.Status);
+            Assert.AreEqual(CommonDetails.Ukprn, viewModel.Ukprn);
+            Assert.AreEqual(CommonDetails.LegalName, viewModel.ApplyLegalName);
         }
     }
 }
