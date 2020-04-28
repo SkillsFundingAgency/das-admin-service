@@ -22,13 +22,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.ExperienceAndAccredita
             var viewModel = response.Result;
 
             Assert.AreEqual(GatewayPageIds.InitialTeacherTraining, viewModel.PageId);
-            Assert.AreEqual(ApplicationId, viewModel.ApplicationId);
-            Assert.AreEqual(CommonDetails.OptionFailText, viewModel.OptionFailText);
-            Assert.AreEqual(CommonDetails.OptionInProgressText, viewModel.OptionInProgressText);
-            Assert.AreEqual(CommonDetails.OptionPassText, viewModel.OptionPassText);
-            Assert.AreEqual(CommonDetails.Status, viewModel.Status);
-            Assert.AreEqual(CommonDetails.Ukprn, viewModel.Ukprn);
-            Assert.AreEqual(CommonDetails.LegalName, viewModel.ApplyLegalName);
+            AssertCommonDetails(viewModel);
             Assert.AreEqual(initialTeacherTraining.DoesOrganisationOfferInitialTeacherTraining, viewModel.DoesOrganisationOfferInitialTeacherTraining);
             Assert.AreEqual(initialTeacherTraining.IsPostGradOnlyApprenticeship, viewModel.IsPostGradOnlyApprenticeship);
         }

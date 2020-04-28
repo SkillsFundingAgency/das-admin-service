@@ -1,0 +1,158 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.OfstedDetailsViewModel
+
+@{
+    ViewBag.Title = $"Gateway - {@Model.Heading}";
+    Layout = "_Layout";
+}
+
+@{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+
+            <span class="govuk-caption-xl">
+                @Model.Caption
+            </span>
+
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+
+
+            <div class="govuk-!-margin-bottom-4">
+                @if (Model.Ukprn != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        UKPRN: @Model.Ukprn
+                    </p>
+                }
+
+                @if (Model.ApplyLegalName != null)
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Legal name: @Model.ApplyLegalName
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Application question</th>
+                        <th class="govuk-table__header" scope="col">Applicant's answer</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @if (Model.HasHadFullInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation had a full Ofsted inspection in further education and skills?</td>
+                            <td class="govuk-table__cell">@(Model.HasHadFullInspection.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                    @if (Model.HasHadMonitoringVisit.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation had a monitoring visit for apprenticeships in further education and skills?</td>
+                            <td class="govuk-table__cell">@(Model.HasHadMonitoringVisit.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+
+                    @if (Model.ReceivedFullInspectionGradeForApprenticeships.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Did your organisation get a grade for apprenticeships in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.ReceivedFullInspectionGradeForApprenticeships.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.FullInspectionApprenticeshipGrade))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">What grade did your organisation get for apprenticeships in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@Model.FullInspectionApprenticeshipGrade</td>
+                        </tr>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.FullInspectionOverallEffectivenessGrade))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">What grade did your organisation get for overall effectiveness in this full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@Model.FullInspectionOverallEffectivenessGrade</td>
+                        </tr>
+                    }
+
+                    @if (Model.GradeWithinTheLast3Years.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Did your organisation get this grade within the last 3 years?</td>
+                            <td class="govuk-table__cell">@(Model.GradeWithinTheLast3Years.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+
+                    @if (Model.HasHadShortInspectionWithinLast3Years.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation had a short Ofsted inspection within the last 3 years?</td>
+                            <td class="govuk-table__cell">@(Model.HasHadShortInspectionWithinLast3Years.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+
+                    @if (Model.HasMaintainedFullGradeInShortInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.HasMaintainedFullGradeInShortInspection.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+
+                    @if (Model.HasMaintainedFundingSinceInspection.HasValue)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Has your organisation maintained funding from an education agency since its full Ofsted inspection?</td>
+                            <td class="govuk-table__cell">@(Model.HasMaintainedFundingSinceInspection.Value ? "Yes" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateOfstedDetailsPage" asp-controller="RoatpGatewayExperienceAndAccreditation">
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="PageId" />
+                    <input type="hidden" asp-for="Caption" />
+                    <input type="hidden" asp-for="Heading" />
+                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
+                    <input type="hidden" asp-for="Ukprn" />
+                    <input type="hidden" asp-for="ApplicationSubmittedOn" />
+                    <input type="hidden" asp-for="SourcesCheckedOn" />
+                    <input type="hidden" asp-for="ApplyLegalName" />
+                    <input type="hidden" asp-for="HasHadFullInspection" />
+                    <input type="hidden" asp-for="ReceivedFullInspectionGradeForApprenticeships" />
+                    <input type="hidden" asp-for="FullInspectionOverallEffectivenessGrade" />
+                    <input type="hidden" asp-for="HasHadMonitoringVisit" />
+                    <input type="hidden" asp-for="HasMaintainedFundingSinceInspection" />
+                    <input type="hidden" asp-for="HasHadShortInspectionWithinLast3Years" />
+                    <input type="hidden" asp-for="HasMaintainedFullGradeInShortInspection" />
+                    <input type="hidden" asp-for="FullInspectionApprenticeshipGrade" />
+                    <input type="hidden" asp-for="GradeWithinTheLast3Years" />
+
+                    @{await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>
