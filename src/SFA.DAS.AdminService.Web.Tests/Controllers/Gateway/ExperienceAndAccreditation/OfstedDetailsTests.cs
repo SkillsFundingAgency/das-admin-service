@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -20,7 +13,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccreditation
 {
     [TestFixture]
-    public class SubcontractorDeclarationTests : RoatpGatewayControllerTestBase<RoatpGatewayExperienceAndAccreditationController>
+    public class OfstedDetailsTests : RoatpGatewayControllerTestBase<RoatpGatewayExperienceAndAccreditationController>
     {
         private RoatpGatewayExperienceAndAccreditationController _controller;
         private Mock<IGatewayExperienceAndAccreditationOrchestrator> _orchestrator;
@@ -35,36 +28,24 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
         }
 
         [Test]
-        public async Task subcontractor_declaration_is_returned()
+        public async Task ofsted_details_are_returned()
         {
             var applicationId = Guid.NewGuid();
-            var expectedViewModel = new SubcontractorDeclarationViewModel();
+            var expectedViewModel = new OfstedDetailsViewModel();
             
-            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
+            _orchestrator.Setup(x => x.GetOfstedDetailsViewModel(It.Is<GetOfstedDetailsRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
                 
-            var result = await _controller.SubcontractorDeclaration(applicationId);
+            var result = await _controller.OfstedDetails(applicationId);
             Assert.AreSame(expectedViewModel, result.Model);
         }
 
         [Test]
-        public async Task subcontractor_contract_file_is_returned()
+        public async Task saving_ofsted_details_saves_evaluation_result()
         {
             var applicationId = Guid.NewGuid();
-            var expectedContractFile = new FileStreamResult(new MemoryStream(), "application/pdf");
+            var pageId = GatewayPageIds.Ofsted;
 
-            _orchestrator.Setup(x => x.GetSubcontractorDeclarationContractFile(It.Is<GetSubcontractorDeclarationContractFileRequest>(y => y.ApplicationId == applicationId))).ReturnsAsync(expectedContractFile);
-
-            var result = await _controller.SubcontractorDeclarationContractFile(applicationId);
-            Assert.AreSame(expectedContractFile, result);
-        }
-
-        [Test]
-        public async Task saving_subcontractor_declaration_saves_evaluation_result()
-        {
-            var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.SubcontractorDeclaration;
-
-            var vm = new SubcontractorDeclarationViewModel {
+            var vm = new OfstedDetailsViewModel {
                 ApplicationId = applicationId,
                 PageId = pageId,
                 Status = SectionReviewStatus.Pass,
@@ -77,18 +58,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
 
             GatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            await _controller.EvaluateSubcontractorDeclarationPage(command);
+            await _controller.EvaluateOfstedDetailsPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
 
         [Test]
-        public async Task saving_subcontractor_declaration_without_required_fields_does_not_save()
+        public async Task saving_ofsted_details_without_required_fields_does_not_save()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.SubcontractorDeclaration;
+            var pageId = GatewayPageIds.Ofsted;
 
-            var vm = new SubcontractorDeclarationViewModel
+            var vm = new OfstedDetailsViewModel()
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
@@ -109,10 +90,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 }
                 );
 
-            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == vm.ApplicationId
+            _orchestrator.Setup(x => x.GetOfstedDetailsViewModel(It.Is<GetOfstedDetailsRequest>(y => y.ApplicationId == vm.ApplicationId
                                                                                 && y.UserName == Username))).ReturnsAsync(vm);
 
-            await _controller.EvaluateSubcontractorDeclarationPage(command);
+            await _controller.EvaluateOfstedDetailsPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }

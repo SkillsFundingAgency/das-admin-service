@@ -7,6 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -26,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         private RoatpGatewayOrganisationChecksController _controller;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
+        private Mock<IRoatpGatewayPageValidator> _gatewayValidator;
         private Mock<IGatewayOrganisationChecksOrchestrator> _orchestrator;
         private Mock<ILogger<RoatpGatewayOrganisationChecksController>> _logger;
 
@@ -41,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
+            _gatewayValidator = new Mock<IRoatpGatewayPageValidator>();
             _logger = new Mock<ILogger<RoatpGatewayOrganisationChecksController>>();
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
 
@@ -54,7 +55,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
              }));
 
             var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationRiskViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<SubmitGatewayPageAnswerCommand>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>()
@@ -99,10 +100,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 ErrorMessages = new List<ValidationErrorDetail>(),
                 OptionPassText = "Some pass text"
             };
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            _gatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            _gatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            await _controller.EvaluateOrganisationRiskPage(vm);
+            await _controller.EvaluateOrganisationRiskPage(command);
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText));
         }
@@ -123,7 +125,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationRiskViewModel>()))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            _gatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -134,17 +138,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 );
 
 
-            _orchestrator.Setup(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetOrganisationRiskViewModel(It.Is<GetOrganisationRiskRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == username))).ReturnsAsync(vm);
 
             _applyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment));
 
-            var result = _controller.EvaluateOrganisationRiskPage(vm).Result;
+            var result = _controller.EvaluateOrganisationRiskPage(command).Result;
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, comment), Times.Never);
-            _orchestrator.Verify(x => x.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(applicationId, username)), Times.Never());
         }
     }
 }

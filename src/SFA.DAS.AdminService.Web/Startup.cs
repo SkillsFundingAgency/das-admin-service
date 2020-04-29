@@ -219,7 +219,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            services.AddTransient<IRoatpGatewayPageViewModelValidator, RoatpGatewayPageViewModelValidator>();
+            services.AddTransient<IRoatpGatewayPageValidator, RoatpGatewayPageValidator>();
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
