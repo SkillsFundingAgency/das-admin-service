@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
     [Authorize(Roles = Roles.RoatpGatewayAssessorTeam)]
     [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
-    public class RoatpGatewayController : Controller
+    public class RoatpGatewayController : RoatpGatewayControllerBase<RoatpGatewayController>
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
@@ -111,9 +112,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             {
                 Errors = new List<ValidationErrorDetail>()
             };
-            GatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
-            var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
+            var command = new SubmitGatewayPageAnswerCommand(model);
+
+            GatewayValidator.Setup(x => x.Validate(command)).ReturnsAsync(validationResponse);
+
+            var result = _controller.EvaluateCriminalCompliancePage(command).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -169,9 +173,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                     }
                 }
             };
-            GatewayValidator.Setup(x => x.Validate(It.IsAny<RoatpGatewayPageViewModel>())).ReturnsAsync(validationResponse);
 
-            var result = _controller.EvaluateCriminalCompliancePage(model).GetAwaiter().GetResult();
+            var command = new SubmitGatewayPageAnswerCommand(model);
+
+            GatewayValidator.Setup(x => x.Validate(command)).ReturnsAsync(validationResponse);
+
+            _orchestrator.Setup(x => x.GetCriminalComplianceCheckViewModel(It.Is<GetCriminalComplianceCheckRequest>(y => y.ApplicationId == model.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(model);
+
+            var result = _controller.EvaluateCriminalCompliancePage(command).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             var viewModel = viewResult.Model as OrganisationCriminalCompliancePageViewModel;

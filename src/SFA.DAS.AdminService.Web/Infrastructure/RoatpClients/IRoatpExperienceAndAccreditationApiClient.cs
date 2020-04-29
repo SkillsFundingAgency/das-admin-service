@@ -11,5 +11,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<FileStreamResult> GetSubcontractorDeclarationContractFile(Guid applicationId);
         Task<string> GetOfficeForStudents(Guid applicationId);
         Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId);
+        Task<OfstedDetails> GetOfstedDetails(Guid applicationId);
     }
 }

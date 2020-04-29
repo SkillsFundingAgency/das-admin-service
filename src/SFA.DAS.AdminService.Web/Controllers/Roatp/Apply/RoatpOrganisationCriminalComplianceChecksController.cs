@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -20,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private const string CriminalComplianceView = "~/Views/Roatp/Apply/Gateway/pages/OrganisationCriminalComplianceChecks.cshtml";
 
         public RoatpOrganisationCriminalComplianceChecksController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor,
-                                                              IRoatpGatewayPageViewModelValidator gatewayValidator,
+                                                              IRoatpGatewayPageValidator gatewayValidator,
                                                               IGatewayCriminalComplianceChecksOrchestrator orchestrator,
                                                               ILogger<RoatpOrganisationCriminalComplianceChecksController> logger) : base(contextAccessor, applyApiClient, logger, gatewayValidator)
         {
@@ -37,9 +38,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/SubmitComplianceCheck")]
-        public async Task<IActionResult> EvaluateCriminalCompliancePage(OrganisationCriminalCompliancePageViewModel viewModel)
+        public async Task<IActionResult> EvaluateCriminalCompliancePage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, CriminalComplianceView);
+            Func<Task<OrganisationCriminalCompliancePageViewModel>> viewModelBuilder = () => _orchestrator.GetCriminalComplianceCheckViewModel(new GetCriminalComplianceCheckRequest(command.ApplicationId, command.PageId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, CriminalComplianceView);
         }
 
     }

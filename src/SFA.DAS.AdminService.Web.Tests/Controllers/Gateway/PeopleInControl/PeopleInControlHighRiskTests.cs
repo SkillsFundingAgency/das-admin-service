@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -54,15 +55,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         [Test]
         public void post_people_in_control_high_risk_happy_path()
         {
-            var vm = ViewModel;
-            vm.Status = SectionReviewStatus.Pass;
-            vm.SourcesCheckedOn = DateTime.Now;
-            vm.ErrorMessages = new List<ValidationErrorDetail>();
+            var command = new SubmitGatewayPageAnswerCommand
+            {
+                Status = SectionReviewStatus.Pass,
+                ApplicationId = ViewModel.ApplicationId,
+                PageId = ViewModel.PageId
+            };
 
-            var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
+            var result = (RedirectToActionResult)_controller.EvaluatePeopleInControlHighRiskPage(command).Result;
 
-            GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
-            Assert.AreEqual("ViewApplication",result.ActionName);
+            GatewayValidator.Verify(x => x.Validate(command), Times.Once);
+            Assert.AreEqual("ViewApplication", result.ActionName);
             Assert.AreEqual("RoatpGateway", result.ControllerName);
         }
 
@@ -70,7 +73,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
         public void post_people_in_control_high_risk_path_with_errors()
         {
             var vm = ViewModel;
-            GatewayValidator.Setup(v => v.Validate(It.IsAny<PeopleInControlHighRiskPageViewModel>()))
+
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -87,11 +93,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.PeopleInControl
                 .ReturnsAsync(vm)
                 .Verifiable("view model not returned");
 
-            var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(ViewModel).Result;
+            var result = (ViewResult)_controller.EvaluatePeopleInControlHighRiskPage(command).Result;
 
             var resultModel = (PeopleInControlHighRiskPageViewModel)result.Model;
 
-            GatewayValidator.Verify(x => x.Validate(ViewModel), Times.Once);
+            GatewayValidator.Verify(x => x.Validate(command), Times.Once);
             Assert.AreEqual(1, resultModel.ErrorMessages.Count);
         }
     }
