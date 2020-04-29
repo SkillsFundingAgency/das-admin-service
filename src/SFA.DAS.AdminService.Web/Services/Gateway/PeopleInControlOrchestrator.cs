@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControl, request.UserName,
                 RoatpGatewayConstants.Captions.PeopleInControlChecks,
                 RoatpGatewayConstants.Headings.PeopleInControl,
-                NoSelectionErrorMessages.PeopleInControlCheck);
+                NoSelectionErrorMessages.Errors[GatewayPageIds.PeopleInControl]);
 
             _logger.LogInformation($"Retrieving people in control - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
@@ -87,7 +87,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, GatewayPageIds.PeopleInControlRisk, request.UserName,
                 RoatpGatewayConstants.Captions.PeopleInControlChecks,
                 RoatpGatewayConstants.Headings.PeopleInControlHighRisk,
-                NoSelectionErrorMessages.PeopleInControlHighRiskCheck);
+                NoSelectionErrorMessages.Errors[GatewayPageIds.PeopleInControlRisk]);
 
             _logger.LogInformation($"Retrieving people in control high risk - type of organisation for application {request.ApplicationId}");
             model.TypeOfOrganisation = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);

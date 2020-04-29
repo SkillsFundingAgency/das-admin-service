@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -14,11 +15,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
     {
         private RoatpGatewayPageViewModel _viewModel;
 
-        private IRoatpGatewayPageViewModelValidator _validator;
+        private IRoatpGatewayPageValidator _validator;
         [SetUp]
         public void Setup()
         {
-            _validator = new RoatpGatewayPageViewModelValidator();
+            _validator = new RoatpGatewayPageValidator();
         }
 
         [TestCase(SectionReviewStatus.Pass,"","","",false)]
@@ -35,10 +36,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 Status = status,
                 OptionPassText = passMessage,
                 OptionFailText = failMessage,
-                OptionInProgressText = inProgressMessage
+                OptionInProgressText = inProgressMessage,
+                PageId = GatewayPageIds.LegalName
             };
 
-            var result = _validator.Validate(_viewModel).Result;
+            var command = new SubmitGatewayPageAnswerCommand(_viewModel);
+
+            var result = _validator.Validate(command).Result;
 
             Assert.AreEqual(hasErrorMessage,result.Errors.Any());
         }
@@ -57,8 +61,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             _viewModel.Status = SectionReviewStatus.Pass;
             _viewModel.OptionPassText = words;
 
+            var command = new SubmitGatewayPageAnswerCommand(_viewModel);
 
-            var result = _validator.Validate(_viewModel).Result;
+            var result = _validator.Validate(command).Result;
 
             Assert.AreEqual(hasErrorMessage, result.Errors.Any());
 
