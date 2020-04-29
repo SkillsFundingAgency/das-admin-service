@@ -8,6 +8,7 @@ using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 
 namespace SFA.DAS.AdminService.Web.Services.Gateway
 {
@@ -15,12 +16,13 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly ILogger<GatewayOrganisationChecksOrchestrator> _logger;
-
+        private readonly IRoatpOrganisationSummaryApiClient _organisationSummaryApiClient;
         public GatewayOrganisationChecksOrchestrator(IRoatpApplicationApiClient applyApiClient, 
-                                                     ILogger<GatewayOrganisationChecksOrchestrator> logger)
+                                                      IRoatpOrganisationSummaryApiClient organisationSummaryApiClient, ILogger<GatewayOrganisationChecksOrchestrator> logger)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
+            _organisationSummaryApiClient = organisationSummaryApiClient;
         }
 
         public async Task<LegalNamePageViewModel> GetLegalNameViewModel(GetLegalNameRequest request)
@@ -204,8 +206,14 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                                                                                             RoatpGatewayConstants.Headings.OrganisationRisk,
                                                                                             NoSelectionErrorMessages.Errors[GatewayPageIds.OrganisationRisk]);
 
-            model.OrganisationType = await _applyApiClient.GetTypeOfOrganisation(request.ApplicationId);
+            model.OrganisationType = await _organisationSummaryApiClient.GetTypeOfOrganisation(request.ApplicationId);
             model.TradingName = await _applyApiClient.GetTradingName(request.ApplicationId);
+            _logger.LogInformation($"Retrieving company number in organisation high risk for application {request.ApplicationId}");
+            model.CompanyNumber = await _organisationSummaryApiClient.GetCompanyNumber(request.ApplicationId);
+
+            _logger.LogInformation($"Retrieving charity number in organisation high risk for application {request.ApplicationId}");
+            model.CharityNumber = await _organisationSummaryApiClient.GetCharityNumber(request.ApplicationId);
+
 
             return model;
         }

@@ -49,7 +49,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
          Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
          Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
         Task<string> GetIcoNumber(Guid applicationId);
-        Task<string> GetTypeOfOrganisation(Guid applicationId);
         Task TriggerGatewayDataGathering(Guid applicationId, string userName);
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
