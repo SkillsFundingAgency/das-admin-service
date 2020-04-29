@@ -24,6 +24,19 @@
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     Type of organisation: @Model.OrganisationType
                 </p>
+                @if (!string.IsNullOrEmpty(Model.CompanyNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Company number: @Model.CompanyNumber
+                    </p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.CharityNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Charity number: @Model.CharityNumber
+                    </p>
+                }
             </div>
         </div>
     </div>
@@ -54,17 +67,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateOrganisationRiskPage" asp-controller="RoatpGatewayOrganisationChecks">
-                    <input type="hidden" asp-for="ApplicationId" />
-                    <input type="hidden" asp-for="PageId" />
-                    <input type="hidden" asp-for="Caption" />
-                    <input type="hidden" asp-for="Heading" />
-                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
-                    <input type="hidden" asp-for="Ukprn" />
-                    <input type="hidden" asp-for="ApplyLegalName" />
-                    <input type="hidden" asp-for="ApplicationSubmittedOn" />
-                    <input type="hidden" asp-for="SourcesCheckedOn" />
-                    <input type="hidden" asp-for="OrganisationType" />
-                    <input type="hidden" asp-for="TradingName" />
+
                     @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
                     <button class="govuk-button" type="submit">Save and continue</button>
                 </form>

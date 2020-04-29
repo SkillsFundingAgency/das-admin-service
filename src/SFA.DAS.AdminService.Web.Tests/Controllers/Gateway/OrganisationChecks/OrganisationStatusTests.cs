@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -53,11 +54,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             };
 
             viewModel.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(viewModel);
 
             ApplyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, Username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateOrganisationStatus(viewModel).Result;
+            var result = _controller.EvaluateOrganisationStatus(command).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _orchestrator.Verify(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()), Times.Never());
@@ -75,9 +77,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
 
-            };
+            };            
 
-            GatewayValidator.Setup(v => v.Validate(It.IsAny<OrganisationStatusViewModel>()))
+            viewModel.ApplicationId = applicationId;
+            viewModel.PageId = viewModel.PageId;
+            viewModel.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(viewModel);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -87,10 +94,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            viewModel.ApplicationId = applicationId;
-            viewModel.PageId = viewModel.PageId;
-            viewModel.SourcesCheckedOn = DateTime.Now;
-
             _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()))
                 .ReturnsAsync(viewModel)
                 .Verifiable("view model not returned");
@@ -98,7 +101,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             ApplyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, Username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateOrganisationStatus(viewModel).Result;
+            var result = _controller.EvaluateOrganisationStatus(command).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             _orchestrator.Verify(x => x.GetTradingNameViewModel(It.IsAny<GetTradingNameRequest>()), Times.Never());

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -17,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     {
         private readonly IGatewayExperienceAndAccreditationOrchestrator _orchestrator;
         
-        public RoatpGatewayExperienceAndAccreditationController( IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, IRoatpGatewayPageViewModelValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
+        public RoatpGatewayExperienceAndAccreditationController( IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient roatpApiClient, IRoatpGatewayPageValidator validator, IGatewayExperienceAndAccreditationOrchestrator orchestrator, ILogger<RoatpGatewayExperienceAndAccreditationController> logger) : base(contextAccessor, roatpApiClient, logger, validator)
         {
             _orchestrator = orchestrator;
         }
@@ -37,9 +38,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/SubcontractorDeclaration")]
-        public async Task<IActionResult> EvaluateSubcontractorDeclarationPage(SubcontractorDeclarationViewModel viewModel)
+        public async Task<IActionResult> EvaluateSubcontractorDeclarationPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/SubcontractorDeclaration.cshtml");
+            Func<Task<SubcontractorDeclarationViewModel>> viewModelBuilder = () => _orchestrator.GetSubcontractorDeclarationViewModel(new GetSubcontractorDeclarationRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/SubcontractorDeclaration.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/OfficeForStudents")]
@@ -51,9 +53,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/OfficeForStudents")]
-        public async Task<IActionResult> EvaluateOfficeForStudentsPage(OfficeForStudentsViewModel viewModel)
+        public async Task<IActionResult> EvaluateOfficeForStudentsPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OfficeForStudents.cshtml");
+            Func<Task<OfficeForStudentsViewModel>> viewModelBuilder = () => _orchestrator.GetOfficeForStudentsViewModel(new GetOfficeForStudentsRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/OfficeForStudents.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/InitialTeacherTraining")]
@@ -65,9 +68,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/InitialTeacherTraining")]
-        public async Task<IActionResult> EvaluateInitialTeacherTrainingPage(InitialTeacherTrainingViewModel viewModel)
+        public async Task<IActionResult> EvaluateInitialTeacherTrainingPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/InitialTeacherTraining.cshtml");
+            Func<Task<InitialTeacherTrainingViewModel>> viewModelBuilder = () => _orchestrator.GetInitialTeacherTrainingViewModel(new GetInitialTeacherTrainingRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/InitialTeacherTraining.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/Ofsted")]
@@ -79,9 +83,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/Ofsted")]
-        public async Task<IActionResult> EvaluateOfstedDetailsPage(OfstedDetailsViewModel viewModel)
+        public async Task<IActionResult> EvaluateOfstedDetailsPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OfstedDetails.cshtml");
+            Func<Task<OfstedDetailsViewModel>> viewModelBuilder = () => _orchestrator.GetOfstedDetailsViewModel(new GetOfstedDetailsRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/OfstedDetails.cshtml");
         }
     }
 }
