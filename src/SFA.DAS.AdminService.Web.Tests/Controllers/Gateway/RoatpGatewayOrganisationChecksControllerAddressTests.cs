@@ -16,6 +16,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
 {
@@ -62,13 +63,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             };
 
             vm.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
             var pageData = JsonConvert.SerializeObject(vm);
 
             ApplyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateAddressPage(vm).Result;
+            var result = _controller.EvaluateAddressPage(command).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
             _orchestrator.Verify(x => x.GetAddressViewModel(It.IsAny<GetAddressRequest>()), Times.Never());
@@ -86,9 +88,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
 
-            };
+            };         
 
-            GatewayValidator.Setup(v => v.Validate(It.IsAny<AddressCheckViewModel>()))
+            vm.ApplicationId = applicationId;
+            vm.PageId = vm.PageId;
+            vm.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -98,23 +105,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
                 }
                 );
 
-            vm.ApplicationId = applicationId;
-            vm.PageId = vm.PageId;
-            vm.SourcesCheckedOn = DateTime.Now;
-
-            _orchestrator.Setup(x => x.GetAddressViewModel(It.IsAny<GetAddressRequest>()))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetAddressViewModel(It.Is<GetAddressRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(vm);
 
             var pageData = JsonConvert.SerializeObject(vm);
 
             ApplyApiClient.Setup(x =>
                 x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
-            var result = _controller.EvaluateAddressPage(vm).Result;
+            var result = _controller.EvaluateAddressPage(command).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetAddressViewModel(It.IsAny<GetAddressRequest>()), Times.Never());
         }
 
     }

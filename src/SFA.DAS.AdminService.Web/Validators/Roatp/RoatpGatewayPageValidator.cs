@@ -2,46 +2,47 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
-
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
-    public  class RoatpGatewayPageViewModelValidator : IRoatpGatewayPageViewModelValidator
+    public class RoatpGatewayPageValidator : IRoatpGatewayPageValidator
     {
         private const string FailDetailsRequired = "Enter comments";
         private const string TooManyWords = "Your comments must be 150 words or less";
 
-        public async Task<ValidationResponse> Validate(RoatpGatewayPageViewModel vm)
+        public async Task<ValidationResponse> Validate(SubmitGatewayPageAnswerCommand command)
         {
             var validationResponse = new ValidationResponse
             {
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            if (string.IsNullOrWhiteSpace(vm.Status))
+            if (string.IsNullOrWhiteSpace(command.Status))
             {
-                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", vm.NoSelectionErrorMessage));
+                validationResponse.Errors.Add(new ValidationErrorDetail("OptionPass", NoSelectionErrorMessages.Errors[command.PageId]));
             }
             else
             {
-                if (vm.Status ==SectionReviewStatus.Fail && string.IsNullOrEmpty(vm.OptionFailText))
+                if (command.Status == SectionReviewStatus.Fail && string.IsNullOrEmpty(command.OptionFailText))
                 {
                     validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
                         FailDetailsRequired));
                 }
             }
 
-            if (validationResponse.Errors.Any()) return await Task.FromResult(validationResponse);
-
-       
-            switch (vm.Status)
+            if (validationResponse.Errors.Any())
             {
-                case SectionReviewStatus.Pass when !string.IsNullOrEmpty(vm.OptionPassText):
+                return await Task.FromResult(validationResponse);
+            }
+       
+            switch (command.Status)
+            {
+                case SectionReviewStatus.Pass when !string.IsNullOrEmpty(command.OptionPassText):
                 {
-                    var wordCount = vm.OptionPassText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var wordCount = command.OptionPassText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
                     if (wordCount > 150)
                     {
                         validationResponse.Errors.Add(new ValidationErrorDetail("OptionPassText",
@@ -50,9 +51,9 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
                     break;
                 }
-                case SectionReviewStatus.Fail when !string.IsNullOrEmpty(vm.OptionFailText):
+                case SectionReviewStatus.Fail when !string.IsNullOrEmpty(command.OptionFailText):
                 {
-                    var wordCount = vm.OptionFailText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var wordCount = command.OptionFailText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).Length;
                     if (wordCount > 150)
                     {
                         validationResponse.Errors.Add(new ValidationErrorDetail("OptionFailText",
@@ -61,9 +62,9 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
 
                     break;
                 }
-                case SectionReviewStatus.InProgress when !string.IsNullOrEmpty(vm.OptionInProgressText):
+                case SectionReviewStatus.InProgress when !string.IsNullOrEmpty(command.OptionInProgressText):
                 {
-                    var wordCount = vm.OptionInProgressText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)
+                    var wordCount = command.OptionInProgressText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)
                         .Length;
                     if (wordCount > 150)
                     {
@@ -76,13 +77,11 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
             }
 
             return await Task.FromResult(validationResponse);
-        }
-
-      
+        }      
     }
 
-    public interface IRoatpGatewayPageViewModelValidator
+    public interface IRoatpGatewayPageValidator
     {
-        Task<ValidationResponse> Validate(RoatpGatewayPageViewModel vm);
+        Task<ValidationResponse> Validate(SubmitGatewayPageAnswerCommand command);
     }
 }
