@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName,
                                                     RoatpGatewayConstants.Captions.RegisterChecks,
                                                     RoatpGatewayConstants.Headings.Roatp,
-                                                    NoSelectionErrorMessages.Roatp);
+                                                    NoSelectionErrorMessages.Errors[GatewayPageIds.Roatp]);
 
             model.ApplyProviderRoute = await _applyApiClient.GetProviderRouteName(model.ApplicationId);
 
@@ -57,7 +57,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, pageId, request.UserName,
                                                     RoatpGatewayConstants.Captions.RegisterChecks,
                                                     RoatpGatewayConstants.Headings.Roepao,
-                                                    NoSelectionErrorMessages.Roepao);
+                                                    NoSelectionErrorMessages.Errors[GatewayPageIds.Roepao]);
 
             return model;
         }

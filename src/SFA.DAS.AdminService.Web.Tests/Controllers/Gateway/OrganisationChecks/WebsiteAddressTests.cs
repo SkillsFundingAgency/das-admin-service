@@ -5,6 +5,7 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -66,8 +67,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 OptionPassText = comment,
                 PageId = pageId
             };
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            var result = _controller.EvaluateWebsitePage(vm).Result;
+            var result = _controller.EvaluateWebsitePage(command).Result;
 
 			ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, comment));
             _orchestrator.Verify(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)), Times.Never());
@@ -88,7 +90,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 
             };
 
-            GatewayValidator.Setup(v => v.Validate(It.IsAny<WebsiteViewModel>()))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -98,14 +102,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            _orchestrator.Setup(x => x.GetWebsiteViewModel(new GetWebsiteRequest(applicationId, Username)))
-                .ReturnsAsync(vm)
-                .Verifiable("view model not returned");
+            _orchestrator.Setup(x => x.GetWebsiteViewModel(It.Is<GetWebsiteRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                 && y.UserName == Username))).ReturnsAsync(vm);
 
-            var result = _controller.EvaluateWebsitePage(vm).Result;
+            var result = _controller.EvaluateWebsitePage(command).Result;
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            _orchestrator.Verify(x => x.GetWebsiteViewModel(It.IsAny<GetWebsiteRequest>()), Times.Never());
         }
     }
 }

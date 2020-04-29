@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             await model.PopulatePageCommonDetails(_applyApiClient, request.ApplicationId, request.PageId, request.UserName,
                                                     RoatpGatewayConstants.Captions.OrganisationsCriminalAndComplianceChecks,
                                                     CriminalCompliancePageConfiguration.Headings[request.PageId],
-                                                    CriminalCompliancePageConfiguration.NoSelectionErrorMessages[request.PageId]);
+                                                    NoSelectionErrorMessages.Errors[request.PageId]);
 
             var criminalComplianceCheckDetails = await _criminalChecksApiClient.GetCriminalComplianceQuestionDetails(request.ApplicationId, request.PageId);
             model.QuestionText = criminalComplianceCheckDetails.QuestionText;

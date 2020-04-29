@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -72,9 +73,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 OptionPassText = "Some pass text"
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            await _controller.EvaluateSubcontractorDeclarationPage(vm);
+            GatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+
+            await _controller.EvaluateSubcontractorDeclarationPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
@@ -94,7 +97,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 PageId = pageId
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -104,7 +109,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 }
                 );
 
-            await _controller.EvaluateSubcontractorDeclarationPage(vm);
+            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(vm);
+
+            await _controller.EvaluateSubcontractorDeclarationPage(command);
 
             ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
