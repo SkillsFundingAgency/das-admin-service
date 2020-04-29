@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -15,6 +19,7 @@ using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
+    [ExternalApiExceptionFilter]
     [Authorize(Roles = Roles.RoatpGatewayAssessorTeam)]
     [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
     public class RoatpGatewayControllerBase<T> : Controller
