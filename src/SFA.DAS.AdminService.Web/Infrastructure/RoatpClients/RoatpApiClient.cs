@@ -29,34 +29,34 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             string url = $"{_baseUrl}/api/v1/download/audit";
             _logger.LogInformation($"Retrieving RoATP register audit history data from {url}");
 
-            return await Get<IEnumerable<IDictionary<string, object>>>(url);
+            return await Get<List<IDictionary<string, object>>>(url);
         }
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetCompleteRegister()
         {
             string url = $"{_baseUrl}/api/v1/download/complete";
             _logger.LogInformation($"Retrieving RoATP complete register data from {url}");
-            return await Get<IEnumerable<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
+            return await Get<List<IDictionary<string, object>>>($"{_baseUrl}/api/v1/download/complete");
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId)
         {
-            return await Get<IEnumerable<OrganisationType>>($"{_baseUrl}/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
+            return await Get<List<OrganisationType>>($"{_baseUrl}/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
         }
 
         public async Task<IEnumerable<ProviderType>> GetProviderTypes()
         {
-            return await Get<IEnumerable<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
+            return await Get<List<ProviderType>>($"{_baseUrl}/api/v1/lookupData/providerTypes");
         }
 
         public async Task<IEnumerable<OrganisationStatus>> GetOrganisationStatuses(int? providerTypeId)
         {
-            return await Get<IEnumerable<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses?providerTypeId={providerTypeId}");
+            return await Get<List<OrganisationStatus>>($"{_baseUrl}/api/v1/lookupData/organisationStatuses?providerTypeId={providerTypeId}");
         }
 
         public async Task<IEnumerable<RemovedReason>> GetRemovedReasons()
         {
-            return await Get<IEnumerable<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
+            return await Get<List<RemovedReason>>($"{_baseUrl}/api/v1/lookupData/removedReasons");
         }
 
         public async Task<bool> CreateOrganisation(CreateRoatpOrganisationRequest organisationRequest)
@@ -174,53 +174,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             return await Get<OrganisationRegisterStatus>($"{_baseUrl}/api/v1/Organisation/register-status?ukprn={ukprn}");
         }
-
-        private async Task<T> Get<T>(string uri)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Absolute)))
-            {
-                return await response.Content.ReadAsAsync<T>();
-            }
-        }
-   
-        private async Task<HttpStatusCode> Post<T>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
-
-             return response.StatusCode;
-        }
-
-        private async Task<HttpStatusCode> Put<T>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            var response = await _client.PutAsync(new Uri(uri, UriKind.Absolute),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
-
-            return response.StatusCode;
-        }
-
-        private async Task<U> Post<T, U>(string uri, T model)
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
-
-            var response = await _client.PostAsync(new Uri(uri, UriKind.Absolute),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
-
-            return await response.Content.ReadAsAsync<U>();
-        }
-
     }
 }
