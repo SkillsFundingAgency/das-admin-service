@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -23,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
         private RoatpGatewayRegisterChecksController _controller;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
+        private Mock<IRoatpGatewayPageValidator> _gatewayValidator;
         private Mock<IGatewayRegisterChecksOrchestrator> _orchestrator;
         private Mock<ILogger<RoatpGatewayRegisterChecksController>> _logger;
 
@@ -36,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
+            _gatewayValidator = new Mock<IRoatpGatewayPageValidator>();
             _logger = new Mock<ILogger<RoatpGatewayRegisterChecksController>>();
             _orchestrator = new Mock<IGatewayRegisterChecksOrchestrator>();
 
@@ -50,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
 
             _contextAccessor.Setup(_ => _.HttpContext).Returns(new DefaultHttpContext { User = user });
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<RoepaoPageViewModel>()))
+            _gatewayValidator.Setup(v => v.Validate(It.IsAny<SubmitGatewayPageAnswerCommand>()))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>()
@@ -88,9 +89,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
                 OptionPassText = "Some pass text"
             };
 
-            _gatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            var result = await _controller.EvaluateRoepaoPage(vm);
+            _gatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+
+            var result = await _controller.EvaluateRoepaoPage(command);
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText), Times.Once);
         }
@@ -111,7 +114,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
                 OptionFailText = null
             };
 
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<RoepaoPageViewModel>()))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            _gatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -120,7 +125,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.RegisterChecks
                         }
                 });
 
-            var result = await _controller.EvaluateRoepaoPage(vm);
+            _orchestrator.Setup(x => x.GetRoepaoViewModel(It.Is<GetRoepaoRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == username))).ReturnsAsync(vm);
+
+            var result = await _controller.EvaluateRoepaoPage(command);
 
             _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText), Times.Never);
         }
