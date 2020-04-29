@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -34,58 +27,64 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         }
 
         [Test]
-        public async Task OrganisationStatus_details_are_returned()
+        public void check_organisation_status_request_is_called()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.OrganisationStatus;
-            var expectedViewModel = new OrganisationStatusViewModel();
+            var pageId = "1-10";
 
-            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(It.Is<GetOrganisationStatusRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
+            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(new GetOrganisationStatusRequest(applicationId, Username)))
+                .ReturnsAsync(new OrganisationStatusViewModel())
+                .Verifiable("view model not returned");
 
-            var result = await _controller.GetOrganisationStatusPage(applicationId, pageId);
-            var viewResult = result as ViewResult;
-            Assert.AreSame(expectedViewModel, viewResult.Model);
+            var _result = _controller.GetOrganisationStatusPage(applicationId, pageId).Result;
+            _orchestrator.Verify(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()), Times.Once());
         }
 
         [Test]
-        public async Task OrganisationStatus_saves_evaluation_result()
+        public void post_organisation_status_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.OrganisationStatus;
+            var pageId = "1-30";
 
-            var vm = new OrganisationStatusViewModel
+            var viewModel = new OrganisationStatusViewModel()
             {
-                ApplicationId = applicationId,
-                PageId = pageId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>(),
-                OptionPassText = "Some pass text"
+                ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            viewModel.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(viewModel);
 
-            await _controller.EvaluateOrganisationStatus(vm);
+            ApplyApiClient.Setup(x =>
+                x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, Username, It.IsAny<string>()));
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText), Times.Once);
+            var result = _controller.EvaluateOrganisationStatus(command).Result;
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _orchestrator.Verify(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()), Times.Never());
         }
 
         [Test]
-        public async Task OrganisationStatus_without_required_fields_does_not_save()
+        public void post_organisation_status_path_with_errors()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.OrganisationStatus;
+            var pageId = "1-20";
 
-            var vm = new OrganisationStatusViewModel()
+            var viewModel = new OrganisationStatusViewModel()
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>(),
-                ApplicationId = applicationId,
-                PageId = pageId
+                ErrorMessages = new List<ValidationErrorDetail>()
+
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm))
+            viewModel.ApplicationId = applicationId;
+            viewModel.PageId = viewModel.PageId;
+            viewModel.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(viewModel);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -95,9 +94,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            await _controller.EvaluateOrganisationStatus(vm);
+            _orchestrator.Setup(x => x.GetOrganisationStatusViewModel(It.IsAny<GetOrganisationStatusRequest>()))
+                .ReturnsAsync(viewModel)
+                .Verifiable("view model not returned");
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
+            ApplyApiClient.Setup(x =>
+                x.SubmitGatewayPageAnswer(applicationId, pageId, viewModel.Status, Username, It.IsAny<string>()));
+
+            var result = _controller.EvaluateOrganisationStatus(command).Result;
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _orchestrator.Verify(x => x.GetTradingNameViewModel(It.IsAny<GetTradingNameRequest>()), Times.Never());
         }
     }
 }

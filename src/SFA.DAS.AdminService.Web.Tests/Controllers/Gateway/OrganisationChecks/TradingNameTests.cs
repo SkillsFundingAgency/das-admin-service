@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -34,58 +27,64 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
         }
 
         [Test]
-        public async Task TradingName_details_are_returned()
+        public void check_trading_name_request_is_called()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.TradingName;
-            var expectedViewModel = new TradingNamePageViewModel();
+            var pageId = "1-10";
 
-            _orchestrator.Setup(x => x.GetTradingNameViewModel(It.Is<GetTradingNameRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
+            _orchestrator.Setup(x => x.GetTradingNameViewModel(new GetTradingNameRequest(applicationId, Username)))
+                .ReturnsAsync(new TradingNamePageViewModel())
+                .Verifiable("view model not returned");
 
-            var result = await _controller.GetGatewayTradingNamePage(applicationId, pageId);
-            var viewResult = result as ViewResult;
-            Assert.AreSame(expectedViewModel, viewResult.Model);
+            var _result = _controller.GetGatewayTradingNamePage(applicationId, pageId).Result;
+            _orchestrator.Verify(x => x.GetTradingNameViewModel(It.IsAny<GetTradingNameRequest>()), Times.Once());
         }
 
         [Test]
-        public async Task TradingName_saves_evaluation_result()
+        public void post_trading_name_happy_path()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.TradingName;
+            var pageId = "1-20";
 
             var vm = new TradingNamePageViewModel
             {
-                ApplicationId = applicationId,
-                PageId = pageId,
                 Status = SectionReviewStatus.Pass,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>(),
-                OptionPassText = "Some pass text"
+                ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            vm.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            await _controller.EvaluateTradingNamePage(vm);
+            ApplyApiClient.Setup(x =>
+                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText), Times.Once);
+            var result = _controller.EvaluateTradingNamePage(command).Result;
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _orchestrator.Verify(x => x.GetTradingNameViewModel(It.IsAny<GetTradingNameRequest>()), Times.Never());
         }
 
         [Test]
-        public async Task TradingName_without_required_fields_does_not_save()
+        public void post_trading_name_path_with_errors()
         {
             var applicationId = Guid.NewGuid();
-            var pageId = GatewayPageIds.TradingName;
+            var pageId = "1-20";
 
-            var vm = new TradingNamePageViewModel()
+            var vm = new TradingNamePageViewModel
             {
                 Status = SectionReviewStatus.Fail,
                 SourcesCheckedOn = DateTime.Now,
-                ErrorMessages = new List<ValidationErrorDetail>(),
-                ApplicationId = applicationId,
-                PageId = pageId
+                ErrorMessages = new List<ValidationErrorDetail>()
+
             };
 
-            GatewayValidator.Setup(v => v.Validate(vm))
+            vm.ApplicationId = applicationId;
+            vm.PageId = vm.PageId;
+            vm.SourcesCheckedOn = DateTime.Now;
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -95,9 +94,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 }
                 );
 
-            await _controller.EvaluateTradingNamePage(vm);
+            _orchestrator.Setup(x => x.GetTradingNameViewModel(It.Is<GetTradingNameRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(vm);
 
-            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, null), Times.Never);
+            ApplyApiClient.Setup(x =>
+                x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, It.IsAny<string>()));
+
+            var result = _controller.EvaluateTradingNamePage(command).Result;
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+
         }
     }
 }
