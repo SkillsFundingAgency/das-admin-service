@@ -48,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
             else
             {
-                foreach (var currentStatus in savedStatuses)
+                foreach (var currentStatus in savedStatuses ?? new List<GatewayPageAnswerSummary>())
                 {
                     // Inject the statuses into viewmodel
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus?.Status;
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             }
             else
             {
-                foreach (var currentStatus in savedStatuses)
+                foreach (var currentStatus in savedStatuses ?? new List<GatewayPageAnswerSummary>())
                 {
                     // Inject the statuses and comments into viewmodel
                     viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus?.Status;

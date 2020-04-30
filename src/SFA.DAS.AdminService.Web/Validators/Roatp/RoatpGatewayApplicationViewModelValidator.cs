@@ -86,11 +86,12 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
         }
     }
 
+    public interface IRoatpGatewayApplicationViewModelValidator
+    {
+        Task<ValidationResponse> Validate(RoatpGatewayApplicationViewModel viewModel);
+
+    }
 }
 
-public interface IRoatpGatewayApplicationViewModelValidator
-{
-    Task<ValidationResponse> Validate(RoatpGatewayApplicationViewModel viewModel);
 
-}
 
