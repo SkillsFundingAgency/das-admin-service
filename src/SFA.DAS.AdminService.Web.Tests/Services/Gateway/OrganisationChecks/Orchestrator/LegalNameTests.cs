@@ -2,12 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -21,14 +19,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
 
-
-        private static string PageId => "1-10";
-        private GatewayPageAnswer _gatewayPageAnswer;
         private static string ukprn => "12344321";
         private static string UKRLPLegalName => "Mark's workshop";
-
-        private static string CompanyNumber => "654321";
-        private static string CharityNumber => "123456";
 
         private static string ProviderName => "Mark's other workshop";
         private static string CompanyName => "Companies House Name";
@@ -57,25 +49,27 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
                 LegalName = UKRLPLegalName,
                 Ukprn = ukprn
             };
-            _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
+            _applyApiClient.Setup(x => x.GetPageCommonDetails(applicationId, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                VerifiedbyCharityCommission = true,
+                VerifiedByCompaniesHouse = true
             };
-            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(applicationId)).ReturnsAsync(ukrlpDetails);
 
             var companiesHouseDetails = new CompaniesHouseSummary
             {
                 CompanyName = CompanyName
             };
-            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(applicationId)).ReturnsAsync(companiesHouseDetails);
 
             var charityDetails = new CharityCommissionSummary
             {
                 CharityName = CharityName
             };
-            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(applicationId)).ReturnsAsync(charityDetails);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 
@@ -88,6 +82,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             Assert.AreEqual(CompanyName, viewModel.CompaniesHouseLegalName);
             Assert.AreEqual(CharityName, viewModel.CharityCommissionLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
+            _applyApiClient.Verify(x => x.GetUkrlpDetails(applicationId), Times.Once);
+            _applyApiClient.Verify(x => x.GetCompaniesHouseDetails(applicationId), Times.Once);
+            _applyApiClient.Verify(x => x.GetCharityCommissionDetails(applicationId), Times.Once);
         }
 
         [Test]
@@ -102,22 +99,24 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
                 LegalName = UKRLPLegalName,
                 Ukprn = ukprn
             };
-            _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
+            _applyApiClient.Setup(x => x.GetPageCommonDetails(applicationId, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                VerifiedByCompaniesHouse = true,
+                VerifiedbyCharityCommission = false
             };
-            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(applicationId)).ReturnsAsync(ukrlpDetails);
 
             var companiesHouseDetails = new CompaniesHouseSummary
             {
                 CompanyName = CompanyName
             };
-            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(applicationId)).ReturnsAsync(companiesHouseDetails);
 
             CharityCommissionSummary charityDetails = null;
-            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(applicationId)).ReturnsAsync(charityDetails);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 
@@ -130,6 +129,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             Assert.AreEqual(CompanyName, viewModel.CompaniesHouseLegalName);
             Assert.IsNull(viewModel.CharityCommissionLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
+            _applyApiClient.Verify(x => x.GetUkrlpDetails(applicationId), Times.Once);
+            _applyApiClient.Verify(x => x.GetCompaniesHouseDetails(applicationId), Times.Once);
+            _applyApiClient.Verify(x => x.GetCharityCommissionDetails(applicationId), Times.Never);
         }
 
         [Test]
@@ -144,22 +146,24 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
                 LegalName = UKRLPLegalName,
                 Ukprn = ukprn
             };
-            _applyApiClient.Setup(x => x.GetPageCommonDetails(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
+            _applyApiClient.Setup(x => x.GetPageCommonDetails(applicationId, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(commonDetails);
 
             var ukrlpDetails = new ProviderDetails
             {
-                ProviderName = ProviderName
+                ProviderName = ProviderName,
+                VerifiedByCompaniesHouse = false,
+                VerifiedbyCharityCommission = true
             };
-            _applyApiClient.Setup(x => x.GetUkrlpDetails(It.IsAny<Guid>())).ReturnsAsync(ukrlpDetails);
+            _applyApiClient.Setup(x => x.GetUkrlpDetails(applicationId)).ReturnsAsync(ukrlpDetails);
 
             CompaniesHouseSummary companiesHouseDetails = null;
-            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(It.IsAny<Guid>())).ReturnsAsync(companiesHouseDetails);
+            _applyApiClient.Setup(x => x.GetCompaniesHouseDetails(applicationId)).ReturnsAsync(companiesHouseDetails);
 
             var charityDetails = new CharityCommissionSummary
             {
                 CharityName = CharityName
             };
-            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(It.IsAny<Guid>())).ReturnsAsync(charityDetails);
+            _applyApiClient.Setup(x => x.GetCharityCommissionDetails(applicationId)).ReturnsAsync(charityDetails);
 
             var request = new GetLegalNameRequest(applicationId, UserName);
 
@@ -172,6 +176,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             Assert.IsNull(viewModel.CompaniesHouseLegalName);
             Assert.AreEqual(CharityName, viewModel.CharityCommissionLegalName);
             Assert.AreEqual(ukprn, viewModel.Ukprn);
+            _applyApiClient.Verify(x => x.GetUkrlpDetails(applicationId), Times.Once);
+            _applyApiClient.Verify(x => x.GetCompaniesHouseDetails(applicationId), Times.Never);
+            _applyApiClient.Verify(x => x.GetCharityCommissionDetails(applicationId), Times.Once);
         }
 
     }

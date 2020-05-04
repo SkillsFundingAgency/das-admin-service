@@ -39,17 +39,23 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
 
             model.UkrlpLegalName = ukrlpDetails?.ProviderName;
 
-            var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
-            if (companiesHouseDetails != null)
+            if (ukrlpDetails.VerifiedByCompaniesHouse)
             {
-                model.CompaniesHouseLegalName = companiesHouseDetails.CompanyName;
+                var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+                if (companiesHouseDetails != null)
+                {
+                    model.CompaniesHouseLegalName = companiesHouseDetails.CompanyName;
+                }
             }
-
-            var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
-            if (charityCommissionDetails != null)
+            
+            if (ukrlpDetails.VerifiedbyCharityCommission)
             {
-                model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
-            }
+                var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+                if (charityCommissionDetails != null)
+                {
+                    model.CharityCommissionLegalName = charityCommissionDetails.CharityName;
+                }
+            }            
 
             return model;
         }
@@ -88,16 +94,22 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
             var ukrlpDetails = await _applyApiClient.GetUkrlpDetails(request.ApplicationId);
             model.UkrlpStatus = ukrlpDetails?.ProviderStatus?.CapitaliseFirstLetter();
 
-            var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
-            if (companiesHouseDetails != null)
+            if (ukrlpDetails.VerifiedByCompaniesHouse)
             {
-                model.CompaniesHouseStatus = companiesHouseDetails?.Status.CapitaliseFirstLetter();
+                var companiesHouseDetails = await _applyApiClient.GetCompaniesHouseDetails(request.ApplicationId);
+                if (companiesHouseDetails != null)
+                {
+                    model.CompaniesHouseStatus = companiesHouseDetails?.Status.CapitaliseFirstLetter();
+                }
             }
 
-            var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
-            if (charityCommissionDetails != null)
+            if (ukrlpDetails.VerifiedbyCharityCommission)
             {
-                model.CharityCommissionStatus = charityCommissionDetails?.Status.CapitaliseFirstLetter();
+                var charityCommissionDetails = await _applyApiClient.GetCharityCommissionDetails(request.ApplicationId);
+                if (charityCommissionDetails != null)
+                {
+                    model.CharityCommissionStatus = charityCommissionDetails?.Status.CapitaliseFirstLetter();
+                }
             }
 
             return model;
