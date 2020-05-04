@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using System.Globalization;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
@@ -13,22 +14,25 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Exempt)
+                if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
-                    return;
+                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
-
-                if (string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateComments))
                 {
-                    context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select a grade for this application");
+                    context.AddFailure("InadequateComments", "Enter your comments");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
                 {
-                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application was graded inadequate");
+                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
                 {
-                    context.AddFailure("FinancialReviewDetails.Comments", "Enter why the application requires clarification");
+                    context.AddFailure("ClarificationComments", "Enter your clarification comments");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
+                {
+                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
@@ -68,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
             var month = dueDate.Month;
             var year = dueDate.Year;
 
-            var isValidDate = DateTime.TryParse($"{day}/{month}/{year}", out var parsedDate);
+            var isValidDate = DateTime.TryParseExact($"{day}/{month}/{year}", "d/M/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
 
             if (!isValidDate)
             {
@@ -80,6 +84,22 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
             {
                 context.AddFailure(propertyName, "Financial due date must be a future date");
             }
+        }
+
+        private static bool HasExceededWordCount(string input, int maxWordcount = 500)
+        {
+            bool hasExceeded = false;
+
+            var text = input?.Trim();
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                var wordCount = text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+                hasExceeded = (wordCount > maxWordcount);
+            }
+
+            return hasExceeded;
         }
     }
 }
