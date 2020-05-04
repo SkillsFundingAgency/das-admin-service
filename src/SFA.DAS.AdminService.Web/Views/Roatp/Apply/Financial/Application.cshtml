@@ -2,15 +2,26 @@
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
 @{
-    ViewBag.Title = "Financial health evaluation";
+    ViewBag.Title = "Financial health assessment overview";
     Layout = "_Layout";
 }
 
-<a asp-action="OpenApplications" asp-controller="RoatpFinancial" class="govuk-back-link">Back</a>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="OpenApplications" asp-controller="RoatpFinancial">RoATP assessments</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
+    </ol>
+</div>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -20,7 +31,8 @@
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
-                            <li><a sfa-validation-for="FinancialReviewDetails.Comments"></a></li>
+                            <li><a sfa-validation-for="InadequateComments"></a></li>
+                            <li><a sfa-validation-for="ClarificationComments"></a></li>
                             <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
@@ -29,10 +41,9 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Financial health evaluation</h1>
-            <h2 class="govuk-heading-m">Organisation details</h2>
+            <h1 class="govuk-heading-xl">Financial health assessment overview</h1>
 
-            <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
+            <partial name="~/Views/Roatp/Apply/Financial/_OrganisationDetails.cshtml" />
 
         </div>
     </div>
@@ -40,32 +51,20 @@
     @foreach (var section in Model.Sections)
     {
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                @if (section.QnAData.Pages.SelectMany(x => x.PageOfAnswers).Any())
-                {
-                    <h2 class="govuk-heading-m">@Html.Raw(section.LinkTitle)</h2>
-                }
-
-                @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
-                {
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">Download financial statements</a>
-                    </p>
-                }
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">@Html.Raw(section.LinkTitle)</h2>
             </div>
+
+            @{ var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ? "" : "govuk-!-margin-bottom-9"; }
 
             @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
             {
                 <div class="govuk-grid-column-full">
-                    <table class="govuk-table govuk-table--s">
+                    <table class="govuk-table @isUploadCss">
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <th class="govuk-table__header" scope="col">
-                                    Questions
-                                </th>
-                                <th class="govuk-table__header" scope="col">
-                                    Answers
-                                </th>
+                                <th class="govuk-table__header govuk-!-width-two-thirds" scope="col">Application question</th>
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">Applicant's answer</th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -75,7 +74,13 @@
                                 {
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
-                                        <td class="govuk-table__cell">@Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)</td>
+                                        <td class="govuk-table__cell govuk-table__cell--numeric">
+                                            @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                            {
+                                                <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                            }
+                                            @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)
+                                        </td>
                                     </tr>
                                 }
                             }
@@ -83,13 +88,21 @@
                     </table>
                 </div>
             }
+
+            @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload"))
+            {
+                <div class="govuk-grid-column-two-thirds">
+                    <p class="govuk-body govuk-!-margin-bottom-9">
+                        <a class="govuk-link" href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)</a>
+                    </p>
+                </div>
+            }
+
         </div>
     }
 
-
-
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-grid-column-full">
             <form class="js-disable-on-submit" asp-action="GradeApplication" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
@@ -98,17 +111,18 @@
 
                     <legend>
                         <h2 class="govuk-heading-l">
-                            What is the grade for this application?
+                            What is the outcome of this financial health assessment?
                         </h2>
                     </legend>
 
                     <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.SelectedGrade"></span>
-                    <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.Comments"></span>
                     <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
+                    <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
+                    <span class="govuk-error-message" asp-validation-for="ClarificationComments"></span>
 
-                    <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                    <div id="FinancialReviewDetails.SelectedGrade" class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="outstanding" data-aria-controls="outstanding-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Outstanding)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                             <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
@@ -122,7 +136,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="OutstandingFinancialDueDate.Day">Day</label>
@@ -158,7 +172,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="GoodFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="GoodFinancialDueDate.Day">Day</label>
@@ -194,7 +208,7 @@
                                     </span>
                                 </legend>
 
-                                <div class="govuk-date-input">
+                                <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
                                             <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Day">Day</label>
@@ -218,26 +232,23 @@
                         </div>
 
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="clarification" data-aria-controls="clarification-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Clarification)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification ? "checked" : "") />
-                            <label class="govuk-label govuk-radios__label" for="clarification">Clarification</label>
-                        </div>
-
-                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="clarification-conditional">
-                            <div class="govuk-form-group">
-                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Why is the application requiring clarification?</label>
-                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="inadequate" data-aria-controls="inadequate-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Inadequate)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                             <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
                         </div>
 
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
-                                <label class="govuk-label" for="FinancialReviewDetails.Comments">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="FinancialReviewDetails.Comments" id="FinancialReviewDetails.Comments" sfa-validation-for="FinancialReviewDetails.Comments" sfa-validationerror-class="govuk-input--error"></textarea>
+                                <label class="govuk-label" for="InadequateComments">Enter your comments</label>
+                                <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-input--error"
+                                              id="InadequateComments"
+                                              name="InadequateComments"
+                                              rows="4"
+                                              aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
+                                    <span id="InadequateComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                        You can enter up to 500 words
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -245,10 +256,34 @@
                             <input class="govuk-radios__input" id="exempt" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Exempt)">
                             <label class="govuk-label govuk-radios__label" for="exempt">Exempt</label>
                         </div>
+
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="clarification" data-aria-controls="clarification-conditional" type="radio" name="FinancialReviewDetails.SelectedGrade" value="@(FinancialApplicationSelectedGrade.Clarification)" @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification ? "checked" : "") />
+                            <label class="govuk-label govuk-radios__label" for="clarification">Ask for clarification</label>
+                        </div>
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="clarification-conditional">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="ClarificationComments">Enter your clarification comments</label>
+                                <span id="pmo-abc-clarification-hint" class="govuk-hint">
+                                    The applicant can use this information to change and resubmit their application.
+                                </span>
+                                <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="ClarificationComments" sfa-validationerror-class="govuk-input--error"
+                                              id="ClarificationComments"
+                                              name="ClarificationComments"
+                                              rows="4"
+                                              aria-describedby="ClarificationComments-info">@Model.ClarificationComments</textarea>
+                                    <span id="ClarificationComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                        You can enter up to 500 words
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <button class="govuk-button" type="submit">Confirm and submit</button>
+                <button class="govuk-button" type="submit">Save outcome</button>
             </form>
         </div>
     </div>

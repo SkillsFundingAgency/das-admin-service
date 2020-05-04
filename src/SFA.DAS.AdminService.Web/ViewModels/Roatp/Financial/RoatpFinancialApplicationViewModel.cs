@@ -14,26 +14,26 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
 
-        public FinancialDueDate OutstandingFinancialDueDate { get; set; } // TODO: CREATE RoatpFinancialDueDate
+        public string DeclaredInApplication { get; set; }
+
+        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+
+        public FinancialDueDate OutstandingFinancialDueDate { get; set; }
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+
+        public string InadequateComments { get; set; }
+        public string ClarificationComments { get; set; }
+        
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, List<Section> sections)
+        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
         {
-            if (sections != null && sections.Any())
-            {
-                Sections = sections;
-                ApplicationId = application.ApplicationId;
-            }
-            else
-            {
-                ApplicationId = application.ApplicationId;
-            }
-
+            ApplicationId = application.ApplicationId;
             OrgId = application.OrganisationId;
+
+            Sections = SetupSections(parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
             SetupGradeAndFinancialDueDate(application.FinancialGrade);
 
             OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
@@ -41,6 +41,35 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
             ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
             SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+
+            SetupDeclaredInApplication(application.ApplyData);
+        }
+
+        private List<Section> SetupSections(Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
+        {
+            var sections = new List<Section>();
+
+            if (parentCompanySection != null)
+            {
+                sections.Add(parentCompanySection);
+            }
+
+            if (activelyTradingSection != null)
+            {
+                sections.Add(activelyTradingSection);
+            }
+
+            if (organisationTypeSection != null)
+            {
+                sections.Add(organisationTypeSection);
+            }
+
+            if (financialSections != null)
+            {
+                sections.AddRange(financialSections);
+            }
+
+            return sections;
         }
 
         private void SetupGradeAndFinancialDueDate(FinancialReviewDetails financialReviewDetails)
@@ -72,7 +101,45 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
                         break;
                 }
             }
+
+            if(FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+            {
+                InadequateComments = FinancialReviewDetails.Comments;
+            }
+            else if (FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
+            {
+                ClarificationComments = FinancialReviewDetails.Comments;
+            }
+        }
+
+        private void SetupDeclaredInApplication(RoatpApplyData applyData)
+        {
+            var fhaSequence = applyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence);
+
+            if (fhaSequence != null)
+            {
+                DeclaredInApplication = fhaSequence.NotRequired ? "Exempt" : "Not exempt";
+            }
+        }
+
+        public string GetDownloadFilesLinkText(int sequenceNo, int sectionNo)
+        {
+            string linkText;
+
+            if (sequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && sectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourOrganisationsFinancialEvidence)
+            {
+                linkText = "Download organisation's financial statements";
+            }
+            else if (sequenceNo == RoatpQnaConstants.RoatpSequences.FinancialEvidence && sectionNo == RoatpQnaConstants.RoatpSections.FinancialEvidence.YourUkUltimateParentCompanysFinancialEvidence)
+            {
+                linkText = "Download parent company's financial statements";
+            }
+            else
+            {
+                linkText = "Download financial statements";
+            }
+            
+            return linkText;
         }
     }
-
 }
