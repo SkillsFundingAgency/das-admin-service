@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -11,17 +15,19 @@ using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
+    [ExternalApiExceptionFilter]
+    [Authorize(Roles = Roles.RoatpGatewayAssessorTeam)]
     [FeatureToggle(FeatureToggles.EnableRoatpGatewayReview, "Dashboard", "Index")]
     public class RoatpGatewayControllerBase<T> : Controller
     {
         protected readonly IHttpContextAccessor _contextAccessor;
         protected readonly IRoatpApplicationApiClient _applyApiClient;
         protected readonly ILogger<T> _logger;
-        private readonly IRoatpGatewayPageViewModelValidator _gatewayValidator;
+        protected readonly IRoatpGatewayPageValidator GatewayValidator;
         protected const string GatewayViewsLocation = "~/Views/Roatp/Apply/Gateway/pages";
 
         public RoatpGatewayControllerBase()
@@ -29,51 +35,63 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
         }
 
-        public RoatpGatewayControllerBase(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient applyApiClient, ILogger<T> logger, IRoatpGatewayPageViewModelValidator gatewayValidator)
+        public RoatpGatewayControllerBase(IHttpContextAccessor contextAccessor, IRoatpApplicationApiClient applyApiClient, 
+                                          ILogger<T> logger, IRoatpGatewayPageValidator gatewayValidator)
         {
             _contextAccessor = contextAccessor;
             _applyApiClient = applyApiClient;
             _logger = logger;
-            _gatewayValidator = gatewayValidator;
+            GatewayValidator = gatewayValidator;
         }
 
-        public string SetupGatewayPageOptionTexts(RoatpGatewayPageViewModel viewModel)
+        public string SetupGatewayPageOptionTexts(SubmitGatewayPageAnswerCommand command)
         {
-            if (viewModel?.Status == null) return string.Empty;
-            viewModel.OptionInProgressText = viewModel.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(viewModel.OptionInProgressText) ? viewModel.OptionInProgressText : string.Empty;
-            viewModel.OptionPassText = viewModel.Status == SectionReviewStatus.Pass && !string.IsNullOrEmpty(viewModel.OptionPassText) ? viewModel.OptionPassText : string.Empty;
-            viewModel.OptionFailText = viewModel.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(viewModel.OptionFailText) ? viewModel.OptionFailText : string.Empty;
+            if (command?.Status == null) return string.Empty;
+            command.OptionInProgressText = command.Status == SectionReviewStatus.InProgress && !string.IsNullOrEmpty(command.OptionInProgressText) ? command.OptionInProgressText : string.Empty;
+            command.OptionPassText = command.Status == SectionReviewStatus.Pass && !string.IsNullOrEmpty(command.OptionPassText) ? command.OptionPassText : string.Empty;
+            command.OptionFailText = command.Status == SectionReviewStatus.Fail && !string.IsNullOrEmpty(command.OptionFailText) ? command.OptionFailText : string.Empty;
 
-            switch (viewModel.Status)
+            switch (command.Status)
             {
                 case SectionReviewStatus.Pass:
-                    return viewModel.OptionPassText;
+                    return command.OptionPassText;
                 case SectionReviewStatus.Fail:
-                    return viewModel.OptionFailText;
+                    return command.OptionFailText;
                 case SectionReviewStatus.InProgress:
-                    return viewModel.OptionInProgressText;
+                    return command.OptionInProgressText;
                 default:
                     return string.Empty;
             }
         }
 
-        protected async Task<IActionResult> SubmitGatewayPageAnswer(RoatpGatewayPageViewModel viewModel, string errorViewName)
+        protected async Task<IActionResult> ValidateAndUpdatePageAnswer<T>(SubmitGatewayPageAnswerCommand command, 
+                                                                  Func<Task<T>> viewModelBuilder, 
+                                                                  string errorView) where T: RoatpGatewayPageViewModel
         {
-            var validationResponse = await _gatewayValidator.Validate(viewModel);
-
+            var validationResponse = await GatewayValidator.Validate(command);
             if (validationResponse.Errors != null && validationResponse.Errors.Any())
             {
+                var viewModel = await viewModelBuilder.Invoke();
+                viewModel.Status = command.Status;
+                viewModel.OptionFailText = command.OptionFailText;
+                viewModel.OptionInProgressText = command.OptionInProgressText;
+                viewModel.OptionPassText = command.OptionPassText;
                 viewModel.ErrorMessages = validationResponse.Errors;
-                return View(errorViewName, viewModel);
+                return View(errorView, viewModel);
             }
 
-            var username = _contextAccessor.HttpContext.User.UserDisplayName();
-            var comments = SetupGatewayPageOptionTexts(viewModel);
+            return await SubmitGatewayPageAnswer(command);
+        }
 
-            _logger.LogInformation($"{typeof(T).Name}-SubmitGatewayPageAnswer - ApplicationId '{viewModel.ApplicationId}' - PageId '{viewModel.PageId}' - Status '{viewModel.Status}' - UserName '{username}' - Comments '{comments}'");
+        protected async Task<IActionResult> SubmitGatewayPageAnswer(SubmitGatewayPageAnswerCommand command)
+        {
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var comments = SetupGatewayPageOptionTexts(command);
+
+            _logger.LogInformation($"{typeof(T).Name}-SubmitGatewayPageAnswer - ApplicationId '{command.ApplicationId}' - PageId '{command.PageId}' - Status '{command.Status}' - UserName '{username}' - Comments '{comments}'");
             try
             {
-                await _applyApiClient.SubmitGatewayPageAnswer(viewModel.ApplicationId, viewModel.PageId, viewModel.Status, username, comments);
+                await _applyApiClient.SubmitGatewayPageAnswer(command.ApplicationId, command.PageId, command.Status, username, comments);
             }
             catch (Exception ex)
             {
@@ -81,7 +99,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 throw;
             }
 
-            return RedirectToAction("ViewApplication", "RoatpGateway", new { viewModel.ApplicationId });
+            return RedirectToAction("ViewApplication", "RoatpGateway", new { command.ApplicationId });
         }
+
     }
 }

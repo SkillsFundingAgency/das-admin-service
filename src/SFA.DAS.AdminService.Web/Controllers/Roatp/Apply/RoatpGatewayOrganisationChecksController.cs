@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
@@ -10,17 +9,17 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
+using SFA.DAS.AdminService.Web.Models;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
-    [Authorize(Roles = Roles.RoatpGatewayTeam + "," + Roles.CertificationTeam)]
     public class RoatpGatewayOrganisationChecksController : RoatpGatewayControllerBase<RoatpGatewayOrganisationChecksController>
     {
         private readonly IGatewayOrganisationChecksOrchestrator _orchestrator;
 
         public RoatpGatewayOrganisationChecksController(IRoatpApplicationApiClient applyApiClient, 
                                                         IHttpContextAccessor contextAccessor, 
-                                                        IRoatpGatewayPageViewModelValidator gatewayValidator, 
+                                                        IRoatpGatewayPageValidator gatewayValidator, 
                                                         IGatewayOrganisationChecksOrchestrator orchestrator, 
                                                         ILogger<RoatpGatewayOrganisationChecksController> logger):base(contextAccessor, applyApiClient, logger, gatewayValidator)
         {
@@ -36,9 +35,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/LegalName")]
-        public async Task<IActionResult> EvaluateLegalNamePage(LegalNamePageViewModel viewModel)
+        public async Task<IActionResult> EvaluateLegalNamePage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/LegalName.cshtml");
+            Func<Task<LegalNamePageViewModel>> viewModelBuilder = () => _orchestrator.GetLegalNameViewModel(new GetLegalNameRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/LegalName.cshtml");
         }
         
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/TradingName")]
@@ -50,9 +50,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/TradingName")]
-        public async Task<IActionResult> EvaluateTradingNamePage(TradingNamePageViewModel viewModel)
+        public async Task<IActionResult> EvaluateTradingNamePage(SubmitGatewayPageAnswerCommand command)
         {
-             return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/TradingName.cshtml");
+            Func<Task<TradingNamePageViewModel>> viewModelBuilder = () => _orchestrator.GetTradingNameViewModel(new GetTradingNameRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/TradingName.cshtml");
         }
         
 
@@ -65,9 +66,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/OrganisationStatus")]
-        public async Task<IActionResult> EvaluateOrganisationStatus(OrganisationStatusViewModel viewModel)
+        public async Task<IActionResult> EvaluateOrganisationStatus(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OrganisationStatus.cshtml");
+            Func<Task<OrganisationStatusViewModel>> viewModelBuilder = () => _orchestrator.GetOrganisationStatusViewModel(new GetOrganisationStatusRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/OrganisationStatus.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/Address")]
@@ -79,9 +81,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/Address")]
-        public async Task<IActionResult> EvaluateAddressPage(AddressCheckViewModel viewModel)
+        public async Task<IActionResult> EvaluateAddressPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/AddressCheck.cshtml");
+            Func<Task<AddressCheckViewModel>> viewModelBuilder = () => _orchestrator.GetAddressViewModel(new GetAddressRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/AddressCheck.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/IcoNumber")]
@@ -93,9 +96,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/IcoNumber")]
-        public async Task<IActionResult> EvaluateIcoNumberPage(IcoNumberViewModel viewModel)
+        public async Task<IActionResult> EvaluateIcoNumberPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/IcoNumber.cshtml");
+            Func<Task<IcoNumberViewModel>> viewModelBuilder = () => _orchestrator.GetIcoNumberViewModel(new GetIcoNumberRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/IcoNumber.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
@@ -107,9 +111,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/WebsiteAddress")]
-        public async Task<IActionResult> EvaluateWebsitePage(WebsiteViewModel viewModel)
+        public async Task<IActionResult> EvaluateWebsitePage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/Website.cshtml");
+            Func<Task<WebsiteViewModel>> viewModelBuilder = () => _orchestrator.GetWebsiteViewModel(new GetWebsiteRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/Website.cshtml");
         }
 
         [HttpGet("/Roatp/Gateway/{applicationId}/Page/OrganisationRisk")]
@@ -121,9 +126,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/Page/OrganisationRisk")]
-        public async Task<IActionResult> EvaluateOrganisationRiskPage(OrganisationRiskViewModel viewModel)
+        public async Task<IActionResult> EvaluateOrganisationRiskPage(SubmitGatewayPageAnswerCommand command)
         {
-            return await SubmitGatewayPageAnswer(viewModel, $"{GatewayViewsLocation}/OrganisationRisk.cshtml");
+            Func<Task<OrganisationRiskViewModel>> viewModelBuilder = () => _orchestrator.GetOrganisationRiskViewModel(new GetOrganisationRiskRequest(command.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName()));
+            return await ValidateAndUpdatePageAnswer(command, viewModelBuilder, $"{GatewayViewsLocation}/OrganisationRisk.cshtml");
         }
     }
 }

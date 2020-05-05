@@ -69,18 +69,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form class="js-disable-on-submit" asp-action="EvaluateLegalNamePage" asp-controller="RoatpGatewayOrganisationChecks">
-                    <input type="hidden" asp-for="ApplicationId" />
-                    <input type="hidden" asp-for="PageId" />
-                    <input type="hidden" asp-for="Caption" />
-                    <input type="hidden" asp-for="Heading" />
-                    <input type="hidden" asp-for="NoSelectionErrorMessage" />
-                    <input type="hidden" asp-for="Ukprn" />
-                    <input type="hidden" asp-for="UkrlpLegalName" />
-                    <input type="hidden" asp-for="ApplicationSubmittedOn" />
-                    <input type="hidden" asp-for="SourcesCheckedOn" />
-                    <input type="hidden" asp-for="ApplyLegalName" />
-                    <input type="hidden" asp-for="CharityCommissionLegalName" />
-                    <input type="hidden" asp-for="CompaniesHouseLegalName" />
+
                     @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
                     <button class="govuk-button" type="submit">Save and continue</button>
                 </form>

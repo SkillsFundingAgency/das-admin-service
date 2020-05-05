@@ -75,6 +75,54 @@
   }
 }
 
+/* Pagination Links */
+.das-flex-space-around {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: end;
+    -ms-flex-align: end;
+    align-items: flex-end;
+    -webkit-box-pack: space-between;
+    -ms-flex-pack: space-between;
+    justify-content: space-between;
+}
+
+.das-pagination-links {
+    height: 40px;
+    line-height: 40px;
+}
+
+.sorted-descending::after {
+    content: "";
+    margin-left: 3px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    border-color: rgba(0, 0, 0, 0);
+    border-style: solid;
+    border-width: 10px 5px 0;
+    border-top-color: inherit;
+}
+
+.sorted-ascending::after {
+    content: "";
+    margin-left: 3px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
+    border-color: rgba(0, 0, 0, 0);
+    border-style: solid;
+    border-width: 0 5px 10px;
+    border-bottom-color: inherit;
+}
+
 .govuk-button--looks-like-link {
   display: block;
   padding: 0;
@@ -234,8 +282,6 @@
   }
 }
 
-/* Task list */
-
 .app-task-list {
   list-style-type: none;
   padding-left: 0;
@@ -251,7 +297,7 @@
 
 .app-task-list__section {
   display: table;
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 700;
@@ -293,7 +339,7 @@
 }
 
 .app-task-list__items {
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
@@ -362,6 +408,7 @@
 @media (min-width: 28.125em) {
   .app-task-list__task-name {
     float: left;
+    width: 75%;
   }
 }
 
@@ -1368,10 +1415,6 @@ TODO: change to 'das-page-navigation' and BEM
   border-bottom: 1px dotted #bfc1c3;
 }
 
-.das-table--responsive tr td .govuk-tag {
-  margin-right: 8px;
-}
-
 .das-table--responsive tr td:before {
   content: attr(data-label);
   float: left;
@@ -1381,6 +1424,7 @@ TODO: change to 'das-page-navigation' and BEM
 
 .das-table--responsive tr td:last-child {
   border-bottom: none;
+  padding-right: 10px;
 }
 
 .das-table--responsive tr.total {
@@ -1547,11 +1591,26 @@ TODO: change to 'das-page-navigation' and BEM
   background-color: #6f777b;
 }
 
-/* Roatp org results.. remove for v4 */
+.govuk-tag--startreview {
+  background-color: #00823b;
+}
 
+.govuk-tag--updated {
+
+}
+
+.govuk-tag--approved {
+  background-color: #00823b;
+}
+
+.govuk-tag--rejected {
+  background-color: #b10e1e;
+}
+
+/* Roatp org results.. remove for v4 */
 .selected-item {
-  background-color: #005ea5;
-  color: #ffffff;
+    background-color: #005ea5;
+    color: #ffffff;
 }
 
 .selected-item > .govuk-body > .govuk-link,

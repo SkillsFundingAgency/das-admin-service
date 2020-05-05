@@ -10,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
@@ -19,46 +20,18 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccreditation
 {
     [TestFixture]
-    public class SubcontractorDeclarationTests
+    public class SubcontractorDeclarationTests : RoatpGatewayControllerTestBase<RoatpGatewayExperienceAndAccreditationController>
     {
         private RoatpGatewayExperienceAndAccreditationController _controller;
-        private Mock<IRoatpApplicationApiClient> _applyApiClient;
-        private Mock<IHttpContextAccessor> _contextAccessor;
-        private Mock<IRoatpGatewayPageViewModelValidator> _gatewayValidator;
         private Mock<IGatewayExperienceAndAccreditationOrchestrator> _orchestrator;
-        private Mock<ILogger<RoatpGatewayExperienceAndAccreditationController>> _logger;
-
-        private string username => "user name";
-        private string givenName => "user";
-        private string surname => "name";
-
+        
         [SetUp]
         public void Setup()
         {
-            _applyApiClient = new Mock<IRoatpApplicationApiClient>();
-            _contextAccessor = new Mock<IHttpContextAccessor>();
-            _gatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
-            _logger = new Mock<ILogger<RoatpGatewayExperienceAndAccreditationController>>();
+            CoreSetup();
+
             _orchestrator = new Mock<IGatewayExperienceAndAccreditationOrchestrator>();
-
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", username),
-                new Claim(ClaimTypes.GivenName, givenName),
-                new Claim(ClaimTypes.Surname, surname)
-            }));
-
-            var context = new DefaultHttpContext { User = user };
-            _gatewayValidator.Setup(v => v.Validate(It.IsAny<LegalNamePageViewModel>()))
-                .ReturnsAsync(new ValidationResponse
-                    {
-                        Errors = new List<ValidationErrorDetail>()
-                    }
-                );
-            _contextAccessor.Setup(_ => _.HttpContext).Returns(context);
-
-            _controller = new RoatpGatewayExperienceAndAccreditationController(_applyApiClient.Object, _contextAccessor.Object, _gatewayValidator.Object, _orchestrator.Object, _logger.Object);
+            _controller = new RoatpGatewayExperienceAndAccreditationController(ContextAccessor.Object, ApplyApiClient.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
@@ -67,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
             var applicationId = Guid.NewGuid();
             var expectedViewModel = new SubcontractorDeclarationViewModel();
             
-            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == applicationId && y.UserName == username))).ReturnsAsync(expectedViewModel);
+            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == applicationId && y.UserName == Username))).ReturnsAsync(expectedViewModel);
                 
             var result = await _controller.SubcontractorDeclaration(applicationId);
             Assert.AreSame(expectedViewModel, result.Model);
@@ -100,11 +73,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 OptionPassText = "Some pass text"
             };
 
-            _gatewayValidator.Setup(v => v.Validate(vm)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
+            var command = new SubmitGatewayPageAnswerCommand(vm);
 
-            await _controller.EvaluateSubcontractorDeclarationPage(vm);
+            GatewayValidator.Setup(v => v.Validate(command)).ReturnsAsync(new ValidationResponse { Errors = new List<ValidationErrorDetail>() });
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, username, vm.OptionPassText));
+            await _controller.EvaluateSubcontractorDeclarationPage(command);
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(applicationId, pageId, vm.Status, Username, vm.OptionPassText));
         }
 
         [Test]
@@ -122,7 +97,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 PageId = pageId
             };
 
-            _gatewayValidator.Setup(v => v.Validate(vm))
+            var command = new SubmitGatewayPageAnswerCommand(vm);
+
+            GatewayValidator.Setup(v => v.Validate(command))
                 .ReturnsAsync(new ValidationResponse
                 {
                     Errors = new List<ValidationErrorDetail>
@@ -132,9 +109,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.ExperienceAndAccred
                 }
                 );
 
-            await _controller.EvaluateSubcontractorDeclarationPage(vm);
+            _orchestrator.Setup(x => x.GetSubcontractorDeclarationViewModel(It.Is<GetSubcontractorDeclarationRequest>(y => y.ApplicationId == vm.ApplicationId
+                                                                                && y.UserName == Username))).ReturnsAsync(vm);
 
-            _applyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            await _controller.EvaluateSubcontractorDeclarationPage(command);
+
+            ApplyApiClient.Verify(x => x.SubmitGatewayPageAnswer(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
     }
 }

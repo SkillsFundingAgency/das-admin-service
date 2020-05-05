@@ -13,6 +13,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UKRLP
         public DateTime? VerificationDate { get; set; }
         public List<ProviderAlias> ProviderAliases { get; set; }
         public List<VerificationDetails> VerificationDetails { get; set; }
+        public bool VerifiedByCompaniesHouse { get; set; }
+        public bool VerifiedbyCharityCommission { get; set; }
     }
 
     public class ProviderContact

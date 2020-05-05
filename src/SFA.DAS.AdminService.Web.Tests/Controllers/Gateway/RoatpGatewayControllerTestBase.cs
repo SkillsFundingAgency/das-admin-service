@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.Api.Types.Models.Validation;
@@ -14,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
     {
         protected Mock<IRoatpApplicationApiClient> ApplyApiClient;
         protected Mock<IHttpContextAccessor> ContextAccessor;
-        protected Mock<IRoatpGatewayPageViewModelValidator> GatewayValidator;
+        protected Mock<IRoatpGatewayPageValidator> GatewayValidator;
         protected Mock<ILogger<T>> Logger;
 
         protected string Username => "user name";
@@ -26,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
         {
             ApplyApiClient = new Mock<IRoatpApplicationApiClient>();
             ContextAccessor = new Mock<IHttpContextAccessor>();
-            GatewayValidator = new Mock<IRoatpGatewayPageViewModelValidator>();
+            GatewayValidator = new Mock<IRoatpGatewayPageValidator>();
             Logger = new Mock<ILogger<T>>();
 
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -38,11 +39,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway
             }));
 
             var context = new DefaultHttpContext { User = user };
-            GatewayValidator.Setup(v => v.Validate(It.IsAny<RoatpGatewayPageViewModel>()))
+            GatewayValidator.Setup(v => v.Validate(It.IsAny<SubmitGatewayPageAnswerCommand>()))
                 .ReturnsAsync(new ValidationResponse
-                {
-                    Errors = new List<ValidationErrorDetail>()
-                }
+                    {
+                        Errors = new List<ValidationErrorDetail>()
+                    }
                 );
             ContextAccessor.Setup(_ => _.HttpContext).Returns(context);
         }

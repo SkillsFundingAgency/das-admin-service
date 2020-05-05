@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orchestrator
 {
@@ -22,17 +23,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
         private GatewayOrganisationChecksOrchestrator _orchestrator;
         private Mock<IRoatpApplicationApiClient> _applyApiClient;
         private Mock<ILogger<GatewayOrganisationChecksOrchestrator>> _logger;
-
+        private Mock<IRoatpOrganisationSummaryApiClient> _organisationSummaryApiClient;
         private static string ukprn = "12345678";
         private static string UKRLPLegalName = "John LTD.";
         private static string UserName = "GatewayUser";
+        private static string CompanyNumber = "12345678";
+        private static string CharityNumber = "87654321";
 
         [SetUp]
         public void Setup()
         {
             _applyApiClient = new Mock<IRoatpApplicationApiClient>();
             _logger = new Mock<ILogger<GatewayOrganisationChecksOrchestrator>>();
-            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _logger.Object);
+            _organisationSummaryApiClient = new Mock<IRoatpOrganisationSummaryApiClient>();
+            _orchestrator = new GatewayOrganisationChecksOrchestrator(_applyApiClient.Object, _organisationSummaryApiClient.Object, _logger.Object);
         }
 
         [TestCase("Company and charity", "John Training and Consultancy")]
@@ -53,7 +57,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             };
             _applyApiClient.Setup(x => x.GetPageCommonDetails(applicationId, pageId, UserName)).ReturnsAsync(commonDetails);
 
-            _applyApiClient.Setup(x => x.GetTypeOfOrganisation(applicationId)).ReturnsAsync(organisationType);
+            _organisationSummaryApiClient.Setup(x => x.GetTypeOfOrganisation(applicationId)).ReturnsAsync(organisationType);
+            _organisationSummaryApiClient.Setup(x => x.GetCharityNumber(applicationId)).ReturnsAsync(CharityNumber);
+            _organisationSummaryApiClient.Setup(x => x.GetCompanyNumber(applicationId)).ReturnsAsync(CompanyNumber);
             _applyApiClient.Setup(x => x.GetTradingName(applicationId)).ReturnsAsync(tradingName);
             
             var request = new GetOrganisationRiskRequest(applicationId, UserName);
@@ -66,6 +72,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway.OrganisationChecks.Orc
             Assert.AreEqual(ukprn, viewModel.Ukprn);
             Assert.AreEqual(organisationType, viewModel.OrganisationType);
             Assert.AreEqual(tradingName, viewModel.TradingName);
+            Assert.AreEqual(CompanyNumber, viewModel.CompanyNumber);
+            Assert.AreEqual(CharityNumber, viewModel.CharityNumber);
+
         }
     }
 }

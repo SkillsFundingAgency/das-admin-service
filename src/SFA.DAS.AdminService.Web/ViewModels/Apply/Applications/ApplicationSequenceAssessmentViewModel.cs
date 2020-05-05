@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class ApplicationSequenceAssessmentViewModel
+    public class ApplicationSequenceAssessmentViewModel : BackViewModel
     {
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
@@ -18,7 +18,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string ReturnType { get; set; }
 
-        public ApplicationSequenceAssessmentViewModel(ApplicationResponse application, Sequence sequence, List<Section> sections)
+        public ApplicationSequenceAssessmentViewModel(ApplicationResponse application, Sequence sequence, List<Section> sections, string backAction, string backController, string backOrganisationId)
+            : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
             SequenceNo = sequence.SequenceNo;

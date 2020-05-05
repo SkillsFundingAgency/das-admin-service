@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Formatting;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -55,9 +56,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/FeedbackAdded");
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications()
         {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/FeedbackAddedApplications");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications");
         }
 
         public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
@@ -68,6 +69,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
         {
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications");
+        }
+
+        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        {
+            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
         }
 
         public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
@@ -145,15 +151,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<GatewayPageAnswerSummary>>($"/Gateway/Pages?applicationId={applicationId}");
         }
 
-        //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
-        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
-        {
-            return await Get<GatewayPageAnswer>($"/Gateway/Page/{applicationId}/{pageId}");
-        }
-
         public async Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName)
         {
-            return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+            try
+            {
+                return await Get<GatewayCommonDetails>($"Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving Gateway common details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Gateway common details", ex);
+            }
         }
 
         public async Task<ContactAddress> GetOrganisationAddress(Guid applicationId)
@@ -166,14 +174,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get($"/Gateway/{applicationId}/IcoNumber");
         }
 
-        public async Task<string> GetTypeOfOrganisation(Guid applicationId)
-        {
-            return await Get($"/organisation/TypeOfOrganisation/{applicationId}");
-        }
-
         public async Task TriggerGatewayDataGathering(Guid applicationId, string userName)
         {
-            await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+            try 
+            { 
+                await Get<object>($"Gateway/ApiChecks/{applicationId}/{userName}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving Gateway Api checks details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Gateway Api checks details", ex);
+            }
         }
 
         public  async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
@@ -194,22 +205,54 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task<ProviderDetails> GetUkrlpDetails(Guid applicationId)
         {
-            return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
+            try
+            {
+                return await Get<ProviderDetails>($"Gateway/UkrlpData/{applicationId}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving UKRLP details", ex);
+                throw new ExternalApiException("An error occurred when retrieving UKRLP details", ex);
+            }
         }
 
         public async Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId)
         {
-            return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+            try 
+            { 
+                return await Get<CompaniesHouseSummary>($"Gateway/CompaniesHouseData/{applicationId}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving Companies House details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Companies House details", ex);
+            }
         }
 
         public async Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId)
         {
-            return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+            try 
+            { 
+                return await Get<CharityCommissionSummary>($"Gateway/CharityCommissionData/{applicationId}");
+            }
+            catch (RoatpApiClientException ex)
+            {
+                _logger.LogError("An error occurred when retrieving Charity Commission details", ex);
+                throw new ExternalApiException("An error occurred when retrieving Charity Commission details", ex);
+            }
         }
 
         public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId)
         {
-            return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+            try
+            {
+                return await Get<OrganisationRegisterStatus>($"Gateway/RoatpRegisterData/{applicationId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred when retrieving RoATP details", ex);
+                throw new ExternalApiException("An error occurred when retrieving RoATP details", ex);
+            }
         }
 
         public async Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId)
@@ -222,6 +265,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get($"/Gateway/{applicationId}/TradingName");
         }
 
+        public async Task<string> GetProviderRouteName(Guid applicationId)
+        {
+            return await Get($"/Gateway/{applicationId}/ProviderRouteName");
+        }
 
         public async Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId)
         {
@@ -237,16 +284,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task<string> GetOrganisationWebsiteAddress(Guid applicationId)
         {
             return await Get($"/Gateway/{applicationId}/OrganisationWebsiteAddress");
-        }
-
-        public async Task<string> GetOfficeForStudents(Guid applicationId)
-        {
-            return await Get($"/Accreditation/{applicationId}/OfficeForStudents");
-        }
-
-        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
-        {
-            return await Get($"/Accreditation/{applicationId}/InitialTeacherTraining");
         }
     }
 }
