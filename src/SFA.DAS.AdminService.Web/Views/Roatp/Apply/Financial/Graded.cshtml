@@ -1,8 +1,20 @@
 @model SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialReviewDetails
 
 @{
-    ViewBag.Title = "Evaluation submitted";
+    ViewBag.Title = "Financial health assessment completed";
 }
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="OpenApplications" asp-controller="RoatpFinancial">RoATP assessments</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
+    </ol>
+</div>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -10,30 +22,22 @@
 
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    Evaluation submitted
+                    Financial health assessment completed
                 </h1>
                 <div class="govuk-panel__body">
                     <div>
                         <span class="govuk-!-font-size-24">
-                            The evaluation has been saved with a grade of
+                            Outcome saved as
                         </span>
                         <br>
                         <strong>@Model.SelectedGrade</strong>
                     </div>
                 </div>
             </div>
-            
-            <p class="govuk-body">You can view previous evaluations, including this one in the <a asp-action="ClosedApplications" asp-controller="RoatpFinancial">closed assessments</a> area.</p>
-
-            <h3 class="govuk-heading-m">What do you want to do next?</h3>
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-action="OpenApplications" asp-controller="RoatpFinancial">Return to account home</a>
+                <a class="govuk-link" asp-action="OpenApplications" asp-controller="RoatpFinancial">Back to RoATP financial applications</a>
             </p>
-            <p class="govuk-body">
-                <a class="govuk-link" href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
-            </p>
-
         </div>
     </div>
 </main>

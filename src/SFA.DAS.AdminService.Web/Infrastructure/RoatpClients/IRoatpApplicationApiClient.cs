@@ -19,9 +19,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
         Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
+
         Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
         Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
