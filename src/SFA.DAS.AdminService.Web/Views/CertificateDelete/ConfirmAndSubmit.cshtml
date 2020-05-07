@@ -1,0 +1,43 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateDelete.CertificateDeleteViewModel
+
+@{
+    ViewData["Title"] = "Confirm Delete";
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form class="js-disable-on-submit" asp-action="ConfirmAndSubmit" asp-controller="CertificateDelete" asp-route-certificateId="@Model.Id" 
+              asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+            <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                <fieldset class="govuk-fieldset">
+
+                    <legend id="IsSectionComplete">
+                        <h2 class="govuk-heading-l">
+                            Are you sure you want to delete @Model.FullName's certificate?
+                        </h2>
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="IsSectionComplete"></span>
+
+                    <div class="govuk-radios govuk-radios--inline">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" asp-for="IsSectionComplete" id="options_yes" type="radio" value="True" sfa-validation-for="IsSectionComplete" />
+                            <label class="govuk-label govuk-radios__label" for="options_yes">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" asp-for="IsSectionComplete" id="options_no" type="radio" value="False" sfa-validation-for="IsSectionComplete" />
+                            <label class="govuk-label govuk-radios__label" for="options_no">
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <button class="govuk-button" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
