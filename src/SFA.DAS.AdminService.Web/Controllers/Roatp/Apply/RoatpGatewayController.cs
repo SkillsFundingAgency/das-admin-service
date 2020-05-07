@@ -133,11 +133,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                         }
                 }
 
-                return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModel);
+                if (viewModel.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+                {
+                    return RedirectToAction(nameof(NewApplications));
+                }
+                else
+                {
+                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModel);
+                }
             }
             else
             {
-                return RedirectToAction(nameof(ViewApplication), new { applicationId = applicationId } );
+                return RedirectToAction(nameof(ViewApplication), new { applicationId = applicationId });
             }
         }
 
@@ -150,7 +157,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
                 var viewModelOnError = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(viewModel.ApplicationId, username));
-                if(viewModelOnError != null)
+                if (viewModelOnError != null)
                 {
                     _orchestrator.ProcessViewModelOnError(viewModelOnError, viewModel, validationResponse);
                     return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModelOnError);
@@ -185,15 +192,29 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     }
             }
 
-            return View(viewName, confirmViewModel);
+            var application = await _applyApiClient.GetApplication(viewModel.ApplicationId);
+
+            if (application is null || application.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+            else
+            {
+                return View(viewName, confirmViewModel);
+            }
         }
 
         [HttpPost("/Roatp/Gateway/{applicationId}/AboutToConfirmOutcome")]
         public async Task<IActionResult> AboutToConfirmOutcome(RoatpGatewayConfirmOutcomeViewModel viewModel)
         {
+            if (viewModel.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+
             if (ModelState.IsValid)
             {
-                if(viewModel.ConfirmGatewayOutcome.Equals(HtmlAndCssElements.RadioButtonValueYes, StringComparison.InvariantCultureIgnoreCase))
+                if (viewModel.ConfirmGatewayOutcome.Equals(HtmlAndCssElements.RadioButtonValueYes, StringComparison.InvariantCultureIgnoreCase))
                 {
                     var username = _contextAccessor.HttpContext.User.UserDisplayName();
                     await _applyApiClient.UpdateGatewayReviewStatusAndComment(viewModel.ApplicationId, viewModel.GatewayReviewStatus, viewModel.GatewayReviewComment, username);
@@ -201,10 +222,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 }
                 else
                 {
-                    return RedirectToAction(nameof(ConfirmOutcome), new {   applicationId = viewModel.ApplicationId, 
-                                                                            gatewayReviewStatus = viewModel.GatewayReviewStatus,
-                                                                            gatewayReviewComment = viewModel.GatewayReviewComment
-                                                                        });
+                    return RedirectToAction(nameof(ConfirmOutcome), new
+                    {
+                        applicationId = viewModel.ApplicationId,
+                        gatewayReviewStatus = viewModel.GatewayReviewStatus,
+                        gatewayReviewComment = viewModel.GatewayReviewComment
+                    });
                 }
             }
             else

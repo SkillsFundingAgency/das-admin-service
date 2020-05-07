@@ -62,26 +62,27 @@
                 </span>
 
             }
-            <form class="form" method="post" asp-action="AboutToConfirmOutcome" asp-controller="RoatpGateway">
-                <input type="hidden" asp-for="ApplicationId" />
-                <input type="hidden" asp-for="GatewayReviewStatus" />
-                <input type="hidden" asp-for="GatewayReviewComment" />
-                <div class="govuk-form-group @Model.CssFormGroupError">
-                    <div class="govuk-radios govuk-radios--inline">
-                        <div class="govuk-radios__item">
-                            <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeYes" value="Yes" type="radio" class="govuk-radios__input" />
-                            <label for="ConfirmGatewayOutcomeYes" class="govuk-label govuk-radios__label">Yes</label>
-                        </div>
-                        <div class="govuk-radios__item">
-                            <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeNo" value="No" type="radio" class="govuk-radios__input" />
-                            <label for="ConfirmGatewayOutcomeNo" class="govuk-label govuk-radios__label">No</label>
-                        </div>
+        <form class="form" method="post" asp-action="AboutToConfirmOutcome" asp-controller="RoatpGateway">
+            <input type="hidden" asp-for="ApplicationId" />
+            <input type="hidden" asp-for="ApplicationStatus" />
+            <input type="hidden" asp-for="GatewayReviewStatus" />
+            <input type="hidden" asp-for="GatewayReviewComment" />
+            <div class="govuk-form-group @Model.CssFormGroupError">
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item">
+                        <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeYes" value="Yes" type="radio" class="govuk-radios__input" />
+                        <label for="ConfirmGatewayOutcomeYes" class="govuk-label govuk-radios__label">Yes</label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input asp-for="ConfirmGatewayOutcome" id="ConfirmGatewayOutcomeNo" value="No" type="radio" class="govuk-radios__input" />
+                        <label for="ConfirmGatewayOutcomeNo" class="govuk-label govuk-radios__label">No</label>
                     </div>
                 </div>
-                <button type="submit" class="govuk-button">
-                    Save and continue
-                </button>
-            </form>
+            </div>
+            <button type="submit" class="govuk-button">
+                Save and continue
+            </button>
+        </form>
             <p class="govuk-body">
                 <a asp-controller="RoatpGateway" asp-action="ViewApplication" asp-route-applicationId="@Model.ApplicationId" class="govuk-link">Back to application assessment overview</a>
             </p>

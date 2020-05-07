@@ -67,7 +67,7 @@
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header govuk-!-width-one-third">Check</th>
-                                <th scope="col" class="govuk-table__header">Outome</th>
+                                <th scope="col" class="govuk-table__header">Outcome</th>
                                 <th scope="col" class="govuk-table__header govuk-!-width-one-half">Comments</th>
                             </tr>
                         </thead>
@@ -100,6 +100,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form class="form" method="post" asp-action="EvaluateConfirmOutcome" asp-controller="RoatpGateway">
                 <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="ApplicationStatus" />
                 <a name="GatewayReviewStatus"></a>
                 <h3 class="govuk-heading-m govuk-!-margin-top-5">What do you want to do?</h3>
                 @if (!string.IsNullOrEmpty(Model.ErrorTextGatewayReviewStatus))
