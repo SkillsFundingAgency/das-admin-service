@@ -1,0 +1,25 @@
+<script>
+
+var auditDetailsFormElement = $('.audit-details-form ');
+var auditDetailsValidationRulesObject = {
+    rules: {
+        IncidentNumber: {
+            required: true
+        },
+        ReasonForDeletion: {
+            required: true
+        }
+    },
+    messages: {
+        IncidentNumber: {
+            required: 'Enter a ticket or incident number'
+        },
+        ReasonForDeletion: {
+            required: 'Enter a reason for deleting this certificate'
+        }
+    }
+};
+
+GOVUK.epaoValidate(auditDetailsFormElement, auditDetailsValidationRulesObject);
+
+</script>

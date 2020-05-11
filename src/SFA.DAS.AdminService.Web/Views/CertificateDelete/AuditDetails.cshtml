@@ -1,0 +1,87 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateDelete.CertificateAuditDetailsViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Audit details";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="CertificateDelete" asp-action="ConfirmAndSubmit" asp-route-certificateId=@Model.Id>Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="audit-details-form js-disable-on-submit" method="post" asp-action="AuditDetails" asp-controller="CertificateDelete">
+                @Html.HiddenFor(c => c.StandardCode)
+                @Html.HiddenFor(c => c.CertificateReference)
+                @Html.HiddenFor(c => c.Id)
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="IncidentNumber"></a></li>
+                                <li><a sfa-validation-for="ReasonForDeletion"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">
+                    Audit details
+                </h1>
+                <span class="govuk-hint">
+                    Certificate number:@Model.CertificateReference
+                </span>
+              
+                <div class="govuk-form-group" sfa-validation-for="ReasonForDeletion" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForDeletion">
+                        What’s the reason for deleting this certificate?
+                    </label>
+                    <span class="govuk-hint">
+                        For example, the apprentice has not completed their end-point assessment.
+                    </span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="ReasonForDeletion"></span>
+                    }
+                    <textarea class="govuk-textarea" rows="10" name="ReasonForDeletion" sfa-validation-for="ReasonForDeletion" sfa-validationerror-class="govuk-textarea--error" 
+                              asp-for="ReasonForDeletion" type="text" maxlength="500"></textarea>
+                </div>
+                
+                <div class="govuk-form-group" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForDeletion">
+                        What’s the relevant Zendesk ticket number or Servicenow incident number?
+                    </label>
+                    <p>If there is not a ticket or incident yet, you must raise one before you delete this certificate.</p>
+                    <span class="govuk-hint">For example, 12345, INC012345678 or TASK01234567.</span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="IncidentNumber"></span>
+                    }
+                    <input class="govuk-input" name="IncidentNumber" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error" 
+                           asp-for="IncidentNumber" maxlength="20" />
+                </div>
+
+
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateDelete/_AuditDetailsScriptsPartial.cshtml"); }
+}

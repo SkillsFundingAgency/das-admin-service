@@ -5,11 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -23,75 +20,83 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(Guid certificateId, string searchString, int page, bool fromApproval)
+        public async Task<IActionResult> ConfirmAndSubmit(Guid certificateId, string searchString, int page)
         {
             var viewModel =
-                await LoadViewModel<CertificateDeleteViewModel>(certificateId,
-                    "~/Views/CertificateDelete/Delete.cshtml");
+                await LoadViewModel<CertificateSubmitDeleteViewModel>(certificateId,
+                    "~/Views/CertificateDelete/ConfirmAndSubmit.cshtml");
             var viewResult = (viewModel as ViewResult);
-            var certificateDeleteViewModel = viewResult.Model as CertificateDeleteViewModel;
+            var certificateDeleteViewModel = viewResult.Model as CertificateSubmitDeleteViewModel;
 
             certificateDeleteViewModel.Page = page;
             certificateDeleteViewModel.SearchString = searchString;
-            certificateDeleteViewModel.FromApproval = fromApproval;
+            //certificateDeleteViewModel.FromApproval = fromApproval;
 
             var options = await ApiClient.GetOptions(certificateDeleteViewModel.StandardCode);
             TempData["HideOption"] = !options.Any();
 
-            return viewModel;
+            return View(certificateDeleteViewModel);
         }
 
 
         [HttpPost(Name = "ConfirmAndSubmit")]
-        public async Task<IActionResult> ConfirmAndSubmit(CertificateDeleteViewModel vm)
+        public IActionResult ConfirmAndSubmit(CertificateSubmitDeleteViewModel vm)
         {
+            if (ModelState.IsValid)
+            {
+                if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == true)
+                {
+                    return RedirectToAction("AuditDetails", "CertificateDelete", new
+                    {
+                        searchString = vm.SearchString,
+                        page = vm.Page,
+                        certificateId = vm.Id
+                    });
+                }
+                if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == false)
+                {
+                    return RedirectToAction("Select", "Search", new
+                    {
+                        stdCode = vm.StandardCode,
+                        uln = vm.Uln,
+                        searchString = vm.SearchString,
+                        page = vm.Page
+                    });
+                }
+            }
             return View(vm);
-            //if (vm.Status == CertificateStatus.Printed ||
-            //    vm.Status == CertificateStatus.Reprint)
-            //{
-            //    return RedirectToAction("Index", "DuplicateRequest",
-            //        new
-            //        {
-            //            certificateId = vm.Id,
-            //            redirectToCheck = vm.RedirectToCheck,
-            //            Uln = vm.Uln,
-            //            StdCode = vm.StandardCode,
-            //            Page = vm.Page,
-            //            SearchString = vm.SearchString
-            //        });
-            //}
+        }
 
-            //if (vm.Status == CertificateStatus.Draft &
-            //    vm.PrivatelyFundedStatus == CertificateStatus.Rejected & vm.FromApproval)
-            //{
-            //    var certificate = await ApiClient.GetCertificate(vm.Id);
-            //    var approvalResults = new ApprovalResult[1];
-            //    approvalResults[0] = new ApprovalResult
-            //    {
-            //        IsApproved = CertificateStatus.Submitted,
-            //        CertificateReference = certificate.CertificateReference,
-            //        PrivatelyFundedStatus = CertificateStatus.Approved
-            //    };
+        [HttpGet]
+        public async Task<IActionResult> AuditDetails(Guid certificateId)
+        {
+            var viewModel =
+                await LoadViewModel<CertificateAuditDetailsViewModel>(certificateId,
+                    "~/Views/CertificateDelete/AuditDetails.cshtml");
+            var viewResult = (viewModel as ViewResult);
 
-            //    await ApiClient.ApproveCertificates(new CertificatePostApprovalViewModel
-            //    {
-            //        UserName = ContextAccessor.HttpContext.User
-            //            .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value,
-            //        ApprovalResults = approvalResults
-            //    });
-            //    return RedirectToAction("Approved", "CertificateApprovals");
-            //}
+            var certificateAuditDetailsViewModel = viewResult.Model as CertificateAuditDetailsViewModel;
 
-            //return RedirectToAction("Index", "Comment",
-            //    new
-            //    {
-            //        certificateId = vm.Id,
-            //        redirectToCheck = vm.RedirectToCheck,
-            //        Uln = vm.Uln,
-            //        StdCode = vm.StandardCode,
-            //        Page = vm.Page,
-            //        SearchString = vm.SearchString
-            //    });
+            //certificateAuditDetailsViewModel.Page = page;
+            //certificateAuditDetailsViewModel.SearchString = searchString;
+            //certificateAuditDetailsViewModel.FromApproval = fromApproval;
+
+            var options = await ApiClient.GetOptions(certificateAuditDetailsViewModel.StandardCode);
+            TempData["HideOption"] = !options.Any();
+
+            return View(certificateAuditDetailsViewModel);
+        }
+
+
+        [HttpPost(Name = "AuditDetails")]
+        public IActionResult AuditDetails(CertificateAuditDetailsViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            return View(vm);
         }
     }
 }

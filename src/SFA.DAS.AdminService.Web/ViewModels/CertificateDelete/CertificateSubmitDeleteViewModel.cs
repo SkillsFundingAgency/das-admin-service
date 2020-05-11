@@ -6,7 +6,7 @@ using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
 {
-    public class CertificateDeleteViewModel : CertificateBaseViewModel, ICertificateViewModel
+    public class CertificateSubmitDeleteViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public long Uln { get; set; }
         public string CertificateReference { get; set; }
@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
         public int StandardCode { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime? LearnerStartDate { get; set; }
-        public bool? IsSectionComplete { get; set; }
+        public bool? IsDeleteConfirmed { get; set; }
         public string FirstName { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
             AddressLine2 = CertificateData.ContactAddLine2;
             AddressLine3 = CertificateData.ContactAddLine3;
             City = CertificateData.ContactAddLine4;
-            Postcode = CertificateData.ContactPostCode;         
+            Postcode = CertificateData.ContactPostCode;
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)

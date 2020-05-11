@@ -1,0 +1,19 @@
+<script>
+
+var confirmDeleteFormElement = $('.confirm-delete-form ');
+var confirmDeleteValidationRulesObject = {
+    rules: {
+        IsDeleteConfirmed: {
+            required: true
+        }
+       },
+    messages: {
+        IsDeleteConfirmed: {
+            required: 'Select yes if you want to delete this certificate'
+        }
+    }
+};
+
+GOVUK.epaoValidate(confirmDeleteFormElement, confirmDeleteValidationRulesObject);
+
+</script>
