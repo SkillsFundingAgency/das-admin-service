@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
          Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
             string comments);
-
+        Task UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName);
         Task<ProviderDetails> GetUkrlpDetails(Guid applicationId);
 
         Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId);
