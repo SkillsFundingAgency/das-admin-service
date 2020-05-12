@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             certificateDeleteViewModel.Page = page;
             certificateDeleteViewModel.SearchString = searchString;
-            
+
             return View(certificateDeleteViewModel);
         }
 
@@ -109,9 +110,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmDelete(CertificateConfirmDeleteViewModel deleteViewModel)
+        public async Task<IActionResult> ConfirmDelete(CertificateConfirmDeleteViewModel deleteViewModel)
         {
-            return View("SuccessfullDeletion",deleteViewModel);
+            var request = new CertificateDeleteRequest
+            {
+                ReasonForChange = deleteViewModel.ReasonForChange,
+                IncidentNumber = deleteViewModel.IncidentNumber,
+                StandardCode = deleteViewModel.StandardCode,
+                Uln = deleteViewModel.Uln,
+                Username = deleteViewModel.UserName
+
+            };
+            var response = await ApiClient.DeleteCertificate(request);
+            return View("SuccessfullDeletion", deleteViewModel);
         }
     }
 }
