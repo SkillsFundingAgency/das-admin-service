@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
@@ -32,8 +31,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             certificateDeleteViewModel.SearchString = searchString;
             //certificateDeleteViewModel.FromApproval = fromApproval;
 
-            var options = await ApiClient.GetOptions(certificateDeleteViewModel.StandardCode);
-            TempData["HideOption"] = !options.Any();
+            //var options = await ApiClient.GetOptions(certificateDeleteViewModel.StandardCode);
+            //TempData["HideOption"] = !options.Any();
 
             return View(certificateDeleteViewModel);
         }
@@ -48,8 +47,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     return RedirectToAction("AuditDetails", "CertificateDelete", new
                     {
-                        searchString = vm.SearchString,
-                        page = vm.Page,
+                        //searchString = vm.SearchString,
+                        //page = vm.Page,
                         certificateId = vm.Id
                     });
                 }
@@ -81,8 +80,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             //certificateAuditDetailsViewModel.SearchString = searchString;
             //certificateAuditDetailsViewModel.FromApproval = fromApproval;
 
-            var options = await ApiClient.GetOptions(certificateAuditDetailsViewModel.StandardCode);
-            TempData["HideOption"] = !options.Any();
+            //var options = await ApiClient.GetOptions(certificateAuditDetailsViewModel.StandardCode);
+            //TempData["HideOption"] = !options.Any();
 
             return View(certificateAuditDetailsViewModel);
         }
@@ -93,10 +92,37 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-
+                return RedirectToAction("ConfirmDelete", "CertificateDelete", new
+                {
+                    certificateId = vm.Id,
+                    reasonForDeletion = vm.ReasonForDeletion,
+                    incidentNumber = vm.IncidentNumber
+                    //uln = vm.Uln,
+                    //searchString = vm.SearchString,
+                    //page = vm.Page
+                });
             }
-
             return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmDelete(Guid certificateId, string reasonForDeletion, string incidentNumber)
+        {
+            var viewModel =
+                await LoadViewModel<CertificateConfirmDeleteViewModel>(certificateId,
+                    "~/Views/CertificateDelete/ConfirmDelete.cshtml");
+            var viewResult = (viewModel as ViewResult);
+            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var certificateConfirmDeleteViewModel = viewResult.Model as CertificateConfirmDeleteViewModel;
+
+            certificateConfirmDeleteViewModel.ReasonForDeletion = reasonForDeletion;
+            certificateConfirmDeleteViewModel.IncidentNumber = incidentNumber;
+            certificateConfirmDeleteViewModel.UserName = username;
+
+            //var options = await ApiClient.GetOptions(certificateConfirmDeleteViewModel.StandardCode);
+            //TempData["HideOption"] = !options.Any();
+
+            return View(certificateConfirmDeleteViewModel);
         }
     }
 }

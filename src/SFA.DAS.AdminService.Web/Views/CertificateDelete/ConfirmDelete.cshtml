@@ -1,11 +1,12 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateDelete.CertificateConfirmDeleteViewModel
+﻿@using Microsoft.EntityFrameworkCore.Internal
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateDelete.CertificateConfirmDeleteViewModel
 
 @{
     ViewBag.Title = "Check your answers before deleting this certificate";
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" asp-action="AuditDetails" asp-controller="CertificateDelete" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+<a class="govuk-back-link" asp-action="AuditDetails" asp-controller="CertificateDelete">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -16,13 +17,13 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Certificate details</h2>
-            @*<dl class="govuk-summary-list">
+            <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Apprenticeship name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Learner.OrganisationName
+                        @Model.FullName
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -30,7 +31,7 @@
                         ULN
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Learner.OrganisationId
+                        @Model.Uln
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -38,23 +39,23 @@
                         Certificate number
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Learner.CertificateReference
+                        @Model.CertificateReference
                     </dd>
                 </div>
-            </dl>*@
+            </dl>
         </div>
     </div>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Audit details</h2>
-            @*<dl class="govuk-summary-list">
+            <dl class="govuk-summary-list__row-width-one-quarter">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Staff member
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Learner.Standard (@Model.Learner.StandardCode)
+                        @Model.UserName
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -62,7 +63,10 @@
                         Reason for deleting
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Learner.Level
+                        @Model.ReasonForDeletion
+                    </dd>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-action="AuditDetails" asp-controller="CertificateDelete">Change</a>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -70,10 +74,13 @@
                         Task or incident number
                     </dt>
                     <dd class="govuk-summary-list__value">
-
+                        @Model.IncidentNumber
+                    </dd>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-action="AuditDetails" asp-controller="CertificateDelete">Change</a>
                     </dd>
                 </div>
-            </dl>*@
+            </dl>
         </div>
     </div>
 </main>
