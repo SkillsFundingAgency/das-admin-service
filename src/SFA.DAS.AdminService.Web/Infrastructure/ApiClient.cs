@@ -103,6 +103,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
         }
 
+        public async Task<CertificateResponse> DeleteCertificate(CertificateDeleteRequest request)
+        {
+            return await Delete<CertificateResponse>($"api/v1/schedule?certificates={request}");
+        }
+
         public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
         {
             return await Get<PaginatedList<CertificateSummaryResponse>>($"/api/v1/certificates/approvals/?pageSize={pageSize}&pageIndex={pageIndex}&status={status}&privatelyFundedStatus={privatelyFundedStatus}");
