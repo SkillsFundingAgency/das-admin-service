@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 
@@ -10,10 +11,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class DashboardController : Controller
     {
         private readonly IApplicationApiClient _applicationApiClient;
-
-        public DashboardController(IApplicationApiClient applicationApiClient)
+        private readonly IWebConfiguration _configuration;
+        public DashboardController(IApplicationApiClient applicationApiClient, IWebConfiguration configuration)
         {
             _applicationApiClient = applicationApiClient;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -30,6 +32,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StandardApplicationsInProgress = applicationReviewStatusCounts.StandardApplicationsInProgress,
                 StandardApplicationsHasFeedback = applicationReviewStatusCounts.StandardApplicationsHasFeedback,
                 StandardApplicationsApproved = applicationReviewStatusCounts.StandardApplicationsApproved,
+                RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl
             };
 
             return View(viewModel);
