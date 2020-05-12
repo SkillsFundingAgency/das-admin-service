@@ -32,7 +32,7 @@
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
                                 <li><a sfa-validation-for="IncidentNumber"></a></li>
-                                <li><a sfa-validation-for="ReasonForDeletion"></a></li>
+                                <li><a sfa-validation-for="ReasonForChange"></a></li>
                             </ul>
                         </div>
                     </div>
@@ -44,9 +44,9 @@
                 <span class="govuk-hint">
                     Certificate number:@Model.CertificateReference
                 </span>
-              
-                <div class="govuk-form-group" sfa-validation-for="ReasonForDeletion" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="ReasonForDeletion">
+
+                <div class="govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForChange">
                         What’s the reason for deleting this certificate?
                     </label>
                     <span class="govuk-hint">
@@ -54,27 +54,25 @@
                     </span>
                     @if (!ViewData.ModelState.IsValid)
                     {
-                        <span class="govuk-error-message" asp-validation-for="ReasonForDeletion"></span>
+                        <span class="govuk-error-message" asp-validation-for="ReasonForChange"></span>
                     }
-                    <textarea class="govuk-textarea" rows="10" name="ReasonForDeletion" sfa-validation-for="ReasonForDeletion" sfa-validationerror-class="govuk-textarea--error" 
-                              asp-for="ReasonForDeletion" type="text" maxlength="500"></textarea>
+                    <textarea class="govuk-textarea" rows="10" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-textarea--error"
+                              asp-for="ReasonForChange" type="text" maxlength="500"></textarea>
                 </div>
-                
+
                 <div class="govuk-form-group" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="ReasonForDeletion">
+                    <label class="govuk-label govuk-label--m" for="ReasonForChange">
                         What’s the relevant Zendesk ticket number or Servicenow incident number?
                     </label>
-                    <p>If there is not a ticket or incident yet, you must raise one before you delete this certificate.</p>
+                    <p class="govuk-body">If there is not a ticket or incident yet, you must raise one before you delete this certificate.</p>
                     <span class="govuk-hint">For example, 12345, INC012345678 or TASK01234567.</span>
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <span class="govuk-error-message" asp-validation-for="IncidentNumber"></span>
                     }
-                    <input class="govuk-input" name="IncidentNumber" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error" 
+                    <input class="govuk-input" name="IncidentNumber" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error"
                            asp-for="IncidentNumber" maxlength="20" />
                 </div>
-
-
                 <button type="submit" class="govuk-button">Continue</button>
             </form>
         </div>
