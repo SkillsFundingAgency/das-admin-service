@@ -42,15 +42,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             };
             _dashboardUrl = "http://dashboard";
 
+            _apiClient.Setup(x => x.GetApplicationReviewStatusCounts()).ReturnsAsync(_statusCounts);
+            _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
+
+
             _controller = new DashboardController(_apiClient.Object,_configuration.Object);
         }
 
         [Test]
         public async Task confirm_viewModel_is_as_expected()
         {
-            _apiClient.Setup(x => x.GetApplicationReviewStatusCounts()).ReturnsAsync(_statusCounts);
-            _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
-
             var result = await _controller.Index() as ViewResult;
 
             var viewModel = result.Model as DashboardViewModel;
