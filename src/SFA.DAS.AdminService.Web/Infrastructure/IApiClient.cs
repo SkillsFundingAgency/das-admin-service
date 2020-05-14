@@ -34,7 +34,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType);
         Task<Certificate> GetCertificate(Guid certificateId);
         Task<List<CertificateResponse>> GetCertificates();
-        Task<CertificateResponse> DeleteCertificate(CertificateDeleteRequest request);
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex,
             string status, string privatelyFundedStatus);
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
