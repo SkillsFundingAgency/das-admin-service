@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
 {
-    public class CertificateDeleteRequest : IRequest<Certificate>
+    public class DeleteCertificateRequest : IRequest
     {
         public long Uln { get; set; }
         public int StandardCode { get; set; }

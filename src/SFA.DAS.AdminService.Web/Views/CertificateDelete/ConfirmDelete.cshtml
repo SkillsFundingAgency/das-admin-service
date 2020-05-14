@@ -92,8 +92,13 @@
         </div>
         <button class="govuk-button govuk-button--warning" type="submit">Delete certificate</button>
         @Html.HiddenFor(c => c.FullName)
+        @Html.HiddenFor(c => c.UserName)
         @Html.HiddenFor(c => c.CertificateReference)
         @Html.HiddenFor(c => c.Id)
+        @Html.HiddenFor(c => c.ReasonForChange)
+        @Html.HiddenFor(c => c.IncidentNumber)
+        @Html.HiddenFor(c => c.Uln)
+        @Html.HiddenFor(c => c.StandardCode)
     </form>
    <a class="govuk-link govuk-!-font-size-19" asp-controller="Search" asp-action="Index">Cancel and return to search</a>
 </main>
