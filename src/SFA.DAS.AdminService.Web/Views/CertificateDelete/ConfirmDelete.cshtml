@@ -55,7 +55,7 @@
                             Staff member
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.UserName
+                            @Model.Username
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -92,7 +92,7 @@
         </div>
         <button class="govuk-button govuk-button--warning" type="submit">Delete certificate</button>
         @Html.HiddenFor(c => c.FullName)
-        @Html.HiddenFor(c => c.UserName)
+        @Html.HiddenFor(c => c.Username)
         @Html.HiddenFor(c => c.CertificateReference)
         @Html.HiddenFor(c => c.Id)
         @Html.HiddenFor(c => c.ReasonForChange)

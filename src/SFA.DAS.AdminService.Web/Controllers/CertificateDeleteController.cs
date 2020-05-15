@@ -110,7 +110,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             certificateConfirmDeleteViewModel.ReasonForChange = vm.ReasonForChange;
             certificateConfirmDeleteViewModel.IncidentNumber = vm.IncidentNumber;
-            certificateConfirmDeleteViewModel.UserName = username;
+            certificateConfirmDeleteViewModel.Username = username;
 
             return View(certificateConfirmDeleteViewModel);
         }
@@ -126,7 +126,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     IncidentNumber = deleteViewModel.IncidentNumber,
                     StandardCode = deleteViewModel.StandardCode,
                     Uln = deleteViewModel.Uln,
-                    Username = deleteViewModel.UserName
+                    Username = deleteViewModel.Username
                 };
                 await _certificateApiClient.Delete(request);
                 return View("SuccessfullDeletion", deleteViewModel);
