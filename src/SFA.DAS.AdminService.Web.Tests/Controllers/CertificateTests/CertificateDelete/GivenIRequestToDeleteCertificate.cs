@@ -9,18 +9,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
     public class GivenIRequestToDeleteCertificate : CertificateDeleteQueryBase
     {
         private IActionResult _result;
-        private CertificateDeleteController _certificateDeleteController;
+        private CertificateDeleteController _sut;
 
         [SetUp]
         public void Arrange()
         {
-            _certificateDeleteController = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient, CertificateApiClient);
+            _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient, CertificateApiClient);
         }
 
         [Test]
         public void ThenShouldReturnValidCertificateSubmitDeleteViewModel()
         {
-            _result = _certificateDeleteController.ConfirmAndSubmit(Certificate.Id, "searchstring", 0).GetAwaiter().GetResult();
+            _result = _sut.ConfirmAndSubmit(Certificate.Id, "searchstring", 0).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             var certificateSubmitDeleteViewModel = result.Model as CertificateSubmitDeleteViewModel;
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         [Test]
         public void ThenShouldReturnValidCertificateAuditDeleteViewModel()
         {
-            _result = _certificateDeleteController.AuditDetails(Certificate.Id, "reasonForChange", "INC123").GetAwaiter().GetResult();
+            _result = _sut.AuditDetails(Certificate.Id, "reasonForChange", "INC123").GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             var certificateSubmitDeleteViewModel = result.Model as CertificateAuditDetailsViewModel;
@@ -42,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         [Test]
         public void ThenShouldReturnValidCertificateConfirmDeleteViewModel()
         {
-            _result = _certificateDeleteController.ConfirmDelete(Certificate.Id, "reasonForChange", "INC123").GetAwaiter().GetResult();
+            _result = _sut.ConfirmDelete(Certificate.Id, "reasonForChange", "INC123").GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             var certificateSubmitDeleteViewModel = result.Model as CertificateConfirmDeleteViewModel;

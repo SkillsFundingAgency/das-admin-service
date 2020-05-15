@@ -68,17 +68,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AuditDetails(Guid certificateId, string reasonForChange, string incidentNumber)
+        public async Task<IActionResult> AuditDetails(CertificateDeleteViewModel vm)
         {
             var viewModel =
-                await LoadViewModel<CertificateAuditDetailsViewModel>(certificateId,
+                await LoadViewModel<CertificateAuditDetailsViewModel>(vm.CertificateId,
                     "~/Views/CertificateDelete/AuditDetails.cshtml");
             var viewResult = (viewModel as ViewResult);
 
             var certificateAuditDetailsViewModel = viewResult.Model as CertificateAuditDetailsViewModel;
 
-            certificateAuditDetailsViewModel.ReasonForChange = reasonForChange;
-            certificateAuditDetailsViewModel.IncidentNumber = incidentNumber;
+            certificateAuditDetailsViewModel.ReasonForChange = vm.ReasonForChange;
+            certificateAuditDetailsViewModel.IncidentNumber = vm.IncidentNumber;
 
             return View(certificateAuditDetailsViewModel);
         }
@@ -91,7 +91,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("ConfirmDelete", "CertificateDelete", new
                 {
                     certificateId = vm.Id,
-                    reasonForDeletion = vm.ReasonForChange,
+                    reasonForChange = vm.ReasonForChange,
                     incidentNumber = vm.IncidentNumber
                 });
             }
@@ -99,17 +99,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ConfirmDelete(Guid certificateId, string reasonForChange, string incidentNumber)
+        public async Task<IActionResult> ConfirmDelete(CertificateDeleteViewModel vm)
         {
             var viewModel =
-                await LoadViewModel<CertificateConfirmDeleteViewModel>(certificateId,
+                await LoadViewModel<CertificateConfirmDeleteViewModel>(vm.CertificateId,
                     "~/Views/CertificateDelete/ConfirmDelete.cshtml");
             var viewResult = (viewModel as ViewResult);
             var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
             var certificateConfirmDeleteViewModel = viewResult.Model as CertificateConfirmDeleteViewModel;
 
-            certificateConfirmDeleteViewModel.ReasonForChange = reasonForChange;
-            certificateConfirmDeleteViewModel.IncidentNumber = incidentNumber;
+            certificateConfirmDeleteViewModel.ReasonForChange = vm.ReasonForChange;
+            certificateConfirmDeleteViewModel.IncidentNumber = vm.IncidentNumber;
             certificateConfirmDeleteViewModel.UserName = username;
 
             return View(certificateConfirmDeleteViewModel);
