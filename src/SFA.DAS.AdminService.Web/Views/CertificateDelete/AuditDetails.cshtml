@@ -23,21 +23,6 @@
                     </div>
                 </div>
 
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                        <h2 class="govuk-error-summary__title" id="error-summary-title">
-                            There is a problem
-                        </h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="IncidentNumber"></a></li>
-                                <li><a sfa-validation-for="ReasonForChange"></a></li>
-                            </ul>
-                        </div>
-                    </div>
-                }
-
                 <h1 class="govuk-heading-xl">
                     Audit details
                 </h1>
@@ -70,7 +55,7 @@
                     {
                         <span class="govuk-error-message" asp-validation-for="IncidentNumber"></span>
                     }
-                    <input class="govuk-input" name="IncidentNumber" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error"
+                    <input class="govuk-input" id="IncidentNumber" name="IncidentNumber" sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error"
                            asp-for="IncidentNumber" maxlength="20" />
                 </div>
                 <button type="submit" class="govuk-button">Continue</button>
