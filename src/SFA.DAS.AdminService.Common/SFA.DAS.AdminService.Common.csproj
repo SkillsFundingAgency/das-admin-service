@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ProjectGuid>299A5643-96E7-41F8-8F62-9B364F912728</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <PackageId>SFA.DAS.AdminService.Common</PackageId>
     <Version>0.1.0</Version>
