@@ -8,6 +8,6 @@ namespace SFA.DAS.AdminService.Common.Settings
 
         [JsonRequired] public string MetadataAddress { get; set; }
 
-        [JsonRequired] public string Role { get; set; }
+        public string Role { get; set; }
     }
 }
