@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AdminService.Web.Domain
+﻿namespace SFA.DAS.AdminService.Common.Extensions
 {
     using Microsoft.Extensions.Logging;
     using System.Linq;
@@ -6,6 +6,9 @@
 
     public static class UserExtensions
     {
+        private const string _unknownGivenName = "Unknown";
+        private const string _unknownSurname = "Unknown";
+
         static public ILogger<ClaimsPrincipal> Logger { set; get; }
 
         public static string UserDisplayName(this ClaimsPrincipal user)
@@ -42,5 +45,12 @@
 
             return surname?.Value ?? "User";
         }
+
+        public static string UserId(this ClaimsPrincipal user)
+        {
+            var upn = user.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn");
+            return upn?.Value ?? $"{_unknownGivenName}-{_unknownSurname}";
+        }
+
     }
 }

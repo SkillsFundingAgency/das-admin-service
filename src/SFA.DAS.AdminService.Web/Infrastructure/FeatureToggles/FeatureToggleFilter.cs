@@ -3,6 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Settings;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles

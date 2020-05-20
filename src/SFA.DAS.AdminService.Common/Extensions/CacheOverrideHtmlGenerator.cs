@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
-namespace SFA.DAS.AdminService.Web.Extensions
+namespace SFA.DAS.AdminService.Common.Extensions
 {
     public class CacheOverrideHtmlGenerator : DefaultHtmlGenerator
     {
@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Extensions
         public override IHtmlContent GenerateAntiforgery(ViewContext viewContext)
         {
             var result = base.GenerateAntiforgery(viewContext);
-                         
+
             viewContext.HttpContext.Response.Headers[HeaderNames.CacheControl] = "no-cache, no-store, must-revalidate";
 
             return result;

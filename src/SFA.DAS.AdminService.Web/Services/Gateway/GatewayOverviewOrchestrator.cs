@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;

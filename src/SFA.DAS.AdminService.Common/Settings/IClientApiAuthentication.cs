@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AdminService.Settings
+﻿namespace SFA.DAS.AdminService.Common.Settings
 {
     public interface IClientApiAuthentication
     {

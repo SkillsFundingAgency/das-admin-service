@@ -1,7 +1,7 @@
 using System;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 
 
 namespace SFA.DAS.AdminService.Web.Helpers

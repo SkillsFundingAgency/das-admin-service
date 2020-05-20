@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AdminService.Common.Settings;
 
-namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
+namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers
 {
     [HtmlTargetElement("div", Attributes = FeatureToggleHelperAttributeName)]
     [HtmlTargetElement("a", Attributes = FeatureToggleHelperAttributeName)]
@@ -17,10 +17,10 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
         [HtmlAttributeName(FeatureToggleHelperAttributeName)]
         public string FeatureToggle { get; set; }
 
-        public FeatureToggleTagHelper(ILogger<FeatureToggleTagHelper> logger, IWebConfiguration configuration)
+        public FeatureToggleTagHelper(ILogger<FeatureToggleTagHelper> logger, IFeatureToggles featureToggles)
         {
             _logger = logger;
-            _featureToggles = configuration?.FeatureToggles;
+            _featureToggles = featureToggles;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)

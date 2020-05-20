@@ -14,6 +14,7 @@ using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using System.Linq;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

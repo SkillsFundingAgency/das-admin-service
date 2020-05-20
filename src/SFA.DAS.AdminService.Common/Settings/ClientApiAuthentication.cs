@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SFA.DAS.AdminService.Settings
+namespace SFA.DAS.AdminService.Common.Settings
 {
     public class ClientApiAuthentication : IClientApiAuthentication
     {

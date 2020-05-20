@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Internal;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp

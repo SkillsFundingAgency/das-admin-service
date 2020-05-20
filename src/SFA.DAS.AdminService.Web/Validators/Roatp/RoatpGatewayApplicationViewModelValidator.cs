@@ -1,5 +1,5 @@
-﻿using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+﻿using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
