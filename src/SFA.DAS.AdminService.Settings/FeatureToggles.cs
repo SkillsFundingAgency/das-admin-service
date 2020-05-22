@@ -8,5 +8,6 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public bool EnableRoatpFinancialReview { get; set; }
         [JsonRequired] public bool EnableRoatpGatewayReview { get; set; }
         [JsonRequired] public bool EnableRoatpSnapshot { get; set; }
+        [JsonRequired] public bool EnableRoatpOversightReview { get; set; }
     }
 }
