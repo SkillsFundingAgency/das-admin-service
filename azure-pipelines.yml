@@ -67,6 +67,7 @@ stages:
         command: pack
         packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'
         versioningScheme: byBuildNumber
+        packDirectory: $(build.artifactstagingdirectory)/NugetPackages
 
     - task: SonarCloudAnalyze@1
       displayName: 'Run SonarCloud analysis'  
@@ -98,7 +99,7 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
         
-    - publish: $(build.artifactstagingdirectory)/NugetPackages
+    - publish: $(System.DefaultWorkingDirectory)/NugetPackages
       artifact: NugetPackages
 
 - stage: NugetPublish
@@ -124,6 +125,6 @@ stages:
             displayName: 'NuGet push'
             inputs:
               command: push
-              packagesToPush: '$(Pipeline.Workspace)\NugetPackages\*.nupkg;!$(Pipeline.Workspace)\NugetPackages\*.symbols.nupkg'
+              packagesToPush: '$(Pipeline.Workspace)/NugetPackages/*.nupkg;!$(Pipeline.Workspace)/NugetPackages/*.symbols.nupkg'
               nuGetFeedType: external
               publishFeedCredentials: 'SFA NuGet'
