@@ -27,84 +27,83 @@ stages:
 - stage: Build
   displayName: 'Build and Test'
   jobs:
-    - job: 'BuildAndTest'
-      pool:
-        name: 'DAS - Continuous Integration'
-      
-      steps:
-        - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-          displayName: GitVersion
-          inputs:
-            updateAssemblyInfo: true
+  - job: 'BuildAndTest'
+    pool:
+      name: 'DAS - Continuous Integration'
+    steps:
+      - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+        displayName: GitVersion
+        inputs:
+          updateAssemblyInfo: true
 
-        - task: SonarCloudPrepare@1
-          displayName: 'Prepare Sonarcloud analysis configuration'
-          inputs:
-            SonarCloud: "$(SonarCloudConnectionId)"
-            organization: "$(SonarCloudOrganisationKey)"
-            scannerMode: 'MSBuild'
-            projectName: "$(Build.DefinitionName)"
-            projectKey: "$(sonarCloudProjectKey)"
+      - task: SonarCloudPrepare@1
+        displayName: 'Prepare Sonarcloud analysis configuration'
+        inputs:
+          SonarCloud: "$(SonarCloudConnectionId)"
+          organization: "$(SonarCloudOrganisationKey)"
+          scannerMode: 'MSBuild'
+          projectName: "$(Build.DefinitionName)"
+          projectKey: "$(sonarCloudProjectKey)"
 
-        - task: DotNetCoreCLI@2
-          displayName: 'dotnet restore'
-          inputs:
-            command: restore
-            projects: 'src/**/*.csproj'
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet restore'
+        inputs:
+          command: restore
+          projects: 'src/**/*.csproj'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'dotnet build'
-          inputs:
-            projects: 'src/**/*.csproj'
-            arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet build'
+        inputs:
+          projects: 'src/**/*.csproj'
+          arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'dotnet test'
-          inputs:
-            command: test
-            projects: '**/*Tests.csproj'
-            arguments: '--configuration $(buildConfiguration) --no-build'
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet test'
+        inputs:
+          command: test
+          projects: '**/*Tests.csproj'
+          arguments: '--configuration $(buildConfiguration) --no-build'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'dotnet pack'
-          inputs:
-            command: pack
-            packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'                      
-            versioningScheme: byBuildNumber    
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet pack'
+        inputs:
+          command: pack
+          packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'
+          versioningScheme: byBuildNumber
 
-        - task: SonarCloudAnalyze@1
-          displayName: 'Run SonarCloud analysis'
-            
-        - task: SonarCloudPublish@1
-          displayName: 'Publish results on build summary'
-          inputs:
-            pollingTimeoutSec: '300'
+      - task: SonarCloudAnalyze@1
+        displayName: 'Run SonarCloud analysis'
+          
+      - task: SonarCloudPublish@1
+        displayName: 'Publish results on build summary'
+        inputs:
+          pollingTimeoutSec: '300'
 
-        - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
+      - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
-        - task: DotNetCoreCLI@2
-          displayName: 'dotnet publish'
-          inputs:
-            command: publish
-            publishWebProjects: true
-            arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet publish'
+        inputs:
+          command: publish
+          publishWebProjects: true
+          arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
 
-        - task: CopyFiles@2
-          displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-          inputs:
-            Contents: |
-              azure/**
-              **/*.nupkg
-            TargetFolder: '$(build.artifactstagingdirectory)'
-            OverWrite: true
+      - task: CopyFiles@2
+        displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+        inputs:
+          Contents: |
+            azure/**
+            **/*.nupkg
+          TargetFolder: '$(build.artifactstagingdirectory)'
+          OverWrite: true
 
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Artifact'
-          inputs:
-            PathtoPublish: '$(build.artifactstagingdirectory)'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Artifact'
+        inputs:
+          PathtoPublish: '$(build.artifactstagingdirectory)'
 
-        - publish: $(build.artifactstagingdirectory)\NugetPackages
-          artifact: NugetPackages
+      - publish: $(build.artifactstagingdirectory)\NugetPackages
+        artifact: NugetPackages
 
 - stage: NugetPublish
   displayName: 'Publish Nuget Package'
