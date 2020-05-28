@@ -89,32 +89,3 @@ stages:
       displayName: 'Publish Artifact'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
-    - publish: $(build.artifactstagingdirectory)\NugetPackages
-      artifact: NugetPackages
-
-- stage: NugetPublish
-  displayName: 'Publish Nuget Package'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/APR-1634_shared_code_nuget'))
-  jobs:
-  - job: 'CleanArtifacts'
-    displayName: Clean artifacts directory
-    pool:
-      name: "DAS - Continuous Deployment"
-    workspace:
-      clean: all
-  - deployment: 'NugetPush'
-    dependsOn: 'CleanArtifacts'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-            steps:
-            - download: current
-              artifact: NugetPackages
-            - task: NuGetCommand@2
-              displayName: 'NuGet push'
-              inputs:
-                command: push
-                packagesToPush: '$(Pipeline.Workspace)\NugetPackages\*.nupkg;!$(Pipeline.Workspace)\NugetPackages\*.symbols.nupkg'
-                nuGetFeedType: external
-                publishFeedCredentials: 'SFA NuGet'
