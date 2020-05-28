@@ -27,7 +27,7 @@ stages:
 - stage: Build
   displayName: 'Build and Test'
   jobs:
-  - job: 'BuildAndTest'
+  - job: BuildAndTest
     pool:
       name: 'DAS - Continuous Integration'
     steps:
