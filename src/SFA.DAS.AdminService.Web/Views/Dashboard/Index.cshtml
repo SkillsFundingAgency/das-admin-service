@@ -287,25 +287,7 @@
             <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">RoATP financial applications</a>
         </h2>
         <p class="govuk-body">Assess applications and view outcomes.</p>
-    </div>
-    <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-            <a class="govuk-link" asp-controller="RoatpApplication" asp-action="OpenApplications">RoATP applications</a>
-        </h2>
-        <p class="govuk-body">Assess new applications and view outcomes.</p>
-    </div>
-    <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-            <a class="govuk-link" asp-controller="RoatpGateway" asp-action="NewApplications">RoATP applications</a>
-        </h2>
-        <p class="govuk-body">Assess new applications and view outcomes.</p>
-    </div>
-    <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-            <a class="govuk-link" href="#">RoATP applications</a>
-        </h2>
-        <p class="govuk-body">Assess new applications and view outcomes.</p>
-    </div>
+    </div>    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
@@ -315,7 +297,7 @@
         </div>
         <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="RoatpGateway" asp-action="NewApplications">RoATP applications</a>
+                <a class="govuk-link" href="@Model.RoatpGatewayBaseUrl">RoATP applications</a>
             </h2>
             <p class="govuk-body">Assess new applications and view outcomes.</p>
         </div>
