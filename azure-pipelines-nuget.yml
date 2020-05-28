@@ -2,43 +2,90 @@ trigger:
   batch: true
   branches:
     include:
-      - "APR-1634_shared_code_nuget"
+      - "*"
+      
+workspace:
+    clean: all
 
 variables:
+  - group: "ESFA - SonarCloud"
+  - name: sonarCloudProjectKey
+    value: "SkillsFundingAgency_das-admin-service"
+  - group: 'Prod Management Resources'
   - name: buildConfiguration
     value: 'release'
 
-jobs:
-  - job: 'NugetPackage'
-    pool:
-      name: 'DAS - Continuous Integration'
-    workspace:
-      clean: all
-    steps:
-      - task: gittools.gitversion.gitversion-task.GitVersion@5
-        displayName: GitVersion
-        inputs:
-          updateAssemblyInfo: true
+pool:
+  name: 'DAS - Continuous Integration'
 
-      - task: DotNetCoreCLI@2
-        displayName: 'dotnet restore'
-        inputs:
-          command: restore
-          projects: |
-            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
+resources:
+  repositories:
+  - repository: das-platform-building-blocks
+    type: github
+    name: SkillsFundingAgency/das-platform-building-blocks
+    ref: refs/heads/master
+    endpoint: "GitHub (SFA)"
 
-      - task: DotNetCoreCLI@2
-        displayName: 'dotnet build'
-        inputs:
-          projects: |
-            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
-          arguments: '/p:Configuration=$(BuildConfiguration)'     
+steps:
+- task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+  displayName: GitVersion
+  inputs:
+    updateAssemblyInfo: true
 
-      - task: DotNetCoreCLI@2
-        displayName: 'dotnet pack'
-        inputs:
-          command: pack
-          packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'                      
-          versioningScheme: byBuildNumber
+- task: SonarCloudPrepare@1
+  displayName: 'Prepare Sonarcloud analysis configuration'
+  inputs:
+    SonarCloud: "$(SonarCloudConnectionId)"
+    organization: "$(SonarCloudOrganisationKey)"
+    scannerMode: 'MSBuild'
+    projectName: "$(Build.DefinitionName)"
+    projectKey: "$(sonarCloudProjectKey)"
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: 'src/**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    projects: 'src/**/*.csproj'
+    arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration $(buildConfiguration) --no-build'
+
+- task: SonarCloudAnalyze@1
+  displayName: 'Run SonarCloud analysis'
+    
+- task: SonarCloudPublish@1
+  displayName: 'Publish results on build summary'
+  inputs:
+    pollingTimeoutSec: '300'
+
+- template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish'
+  inputs:
+    command: publish
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(build.artifactstagingdirectory) --no-restore --no-build'
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    Contents: |
+     azure/**
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    OverWrite: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
