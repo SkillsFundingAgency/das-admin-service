@@ -6,5 +6,6 @@
         bool EnableRoatpFinancialReview { get; set; }
         bool EnableRoatpGatewayReview { get; set; }
         bool EnableRoatpSnapshot { get; set; }
+        bool EnableRoatpOversightReview { get; set; }
     }
 }
