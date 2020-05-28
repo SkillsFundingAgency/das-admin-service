@@ -40,7 +40,5 @@ jobs:
         displayName: 'dotnet pack'
         inputs:
           command: pack
-          packagesToPack: >
-            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
+          packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'                      
           versioningScheme: byBuildNumber
