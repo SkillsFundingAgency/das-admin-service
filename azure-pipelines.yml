@@ -98,7 +98,7 @@ stages:
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)'
         
-    - publish: $(build.artifactstagingdirectory)\NugetPackages
+    - publish: $(build.artifactstagingdirectory)/NugetPackages
       artifact: NugetPackages
 
 - stage: NugetPublish
