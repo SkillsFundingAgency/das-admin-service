@@ -9,7 +9,7 @@ variables:
     value: 'release'
 
 jobs:
-  - job: 'Nuget Package'
+  - job: 'NugetPackage'
     pool:
       name: 'DAS - Continuous Integration'
     workspace:
