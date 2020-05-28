@@ -116,14 +116,13 @@ stages:
     strategy:
       runOnce:
         deploy:
-          steps:
-            steps:
-            - download: current
-              artifact: NugetPackages
-            - task: NuGetCommand@2
-              displayName: 'NuGet push'
-              inputs:
-                command: push
-                packagesToPush: '$(Pipeline.Workspace)\NugetPackages\*.nupkg;!$(Pipeline.Workspace)\NugetPackages\*.symbols.nupkg'
-                nuGetFeedType: external
-                publishFeedCredentials: 'SFA NuGet'
+          steps:            
+          - download: current
+            artifact: NugetPackages
+          - task: NuGetCommand@2
+            displayName: 'NuGet push'
+            inputs:
+              command: push
+              packagesToPush: '$(Pipeline.Workspace)\NugetPackages\*.nupkg;!$(Pipeline.Workspace)\NugetPackages\*.symbols.nupkg'
+              nuGetFeedType: external
+              publishFeedCredentials: 'SFA NuGet'
