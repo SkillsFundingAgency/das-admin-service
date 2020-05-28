@@ -104,7 +104,7 @@ stages:
 
 - stage: NugetPublish
   displayName: 'Publish Nuget Package'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/multistage-yaml'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory
