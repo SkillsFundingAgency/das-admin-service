@@ -24,7 +24,7 @@ resources:
     endpoint: "GitHub (SFA)"
 
 stages:
-- stage: 'Build'
+- stage: Build
   displayName: 'Build and Test'
   jobs:
     - job: 'BuildAndTest'
@@ -106,7 +106,7 @@ stages:
         - publish: $(build.artifactstagingdirectory)\NugetPackages
           artifact: NugetPackages
 
-- stage: 'NugetPublish'
+- stage: NugetPublish
   displayName: 'Publish Nuget Package'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/APR-1634_shared_code_nuget'))
   jobs:
