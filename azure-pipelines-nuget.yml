@@ -24,16 +24,12 @@ jobs:
         displayName: 'dotnet restore'
         inputs:
           command: restore
-          projects: |
-            SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
+          projects: SFA.DAS.AdminService.Web.sln
 
       - task: DotNetCoreCLI@2
         displayName: 'dotnet build'
         inputs:
-          projects: |
-            SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
+          projects: SFA.DAS.AdminService.Web.sln
           arguments: '/p:Configuration=$(BuildConfiguration)'     
 
       - task: DotNetCoreCLI@2
