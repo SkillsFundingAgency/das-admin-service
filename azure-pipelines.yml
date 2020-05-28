@@ -113,6 +113,7 @@ stages:
       clean: all
   - deployment: 'NugetPush'
     dependsOn: 'CleanArtifacts'
+    environment: 'Nuget'
     strategy:
       runOnce:
         deploy:
