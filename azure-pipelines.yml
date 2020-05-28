@@ -25,7 +25,7 @@ resources:
 
 stages:
 - stage: Build
-  displayName: 'Build and Test'
+  displayName: 'Build'
   jobs:
   - job: BuildAndTest
     pool:
@@ -35,3 +35,14 @@ stages:
       displayName: GitVersion
       inputs:
         updateAssemblyInfo: true
+- stage: Test
+  displayName: 'Test'
+  jobs:
+  - job: BuildAndTest
+    pool:
+      name: 'DAS - Continuous Integration'
+    steps:
+    - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
+      displayName: GitVersion
+      inputs:
+        updateAssemblyInfo: true     
