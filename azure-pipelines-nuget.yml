@@ -24,12 +24,16 @@ jobs:
         displayName: 'dotnet restore'
         inputs:
           command: restore
-          projects: SFA.DAS.AdminService.Web.sln
+          projects: |
+            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
+            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
 
       - task: DotNetCoreCLI@2
         displayName: 'dotnet build'
         inputs:
-          projects: SFA.DAS.AdminService.Web.sln
+          projects: |
+            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
+            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
           arguments: '/p:Configuration=$(BuildConfiguration)'     
 
       - task: DotNetCoreCLI@2
@@ -37,6 +41,6 @@ jobs:
         inputs:
           command: pack
           packagesToPack: |
-            SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
-            SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
+            src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
+            src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
           versioningScheme: byBuildNumber
