@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -68,6 +70,30 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             Assert.AreEqual(_statusCounts.StandardApplicationsInProgress, viewModel.StandardApplicationsInProgress);
             Assert.AreEqual(_statusCounts.StandardApplicationsHasFeedback, viewModel.StandardApplicationsHasFeedback);
             Assert.AreEqual(_statusCounts.StandardApplicationsApproved, viewModel.StandardApplicationsApproved);
+        }
+
+        [Test]
+        public async Task confirm_exception_when_getting_statuscounts_is_handled_correctly()
+        {
+            var exception = new HttpRequestException();
+
+            _apiClient.Setup(x => x.GetApplicationReviewStatusCounts()).ThrowsAsync(exception);
+
+            var result = await _controller.Index() as ViewResult;
+            var viewModel = result.Model as DashboardViewModel;
+
+            _logger.Verify(
+                m => m.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<object>(), exception, It.IsAny<Func<object, Exception, string>>()),
+                Times.Once());
+
+            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsNew);
+            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsInProgress);
+            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsHasFeedback);
+            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsApproved);
+            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsNew);
+            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsInProgress);
+            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsHasFeedback);
+            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsApproved);
         }
     }
 }
