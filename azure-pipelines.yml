@@ -12,6 +12,9 @@ variables:
   - name: buildConfiguration
     value: 'release'
 
+pool:
+  name: 'DAS - Continuous Integration'
+
 resources:
   repositories:
   - repository: das-platform-building-blocks

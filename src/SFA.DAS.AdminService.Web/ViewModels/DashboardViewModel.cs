@@ -11,5 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public int StandardApplicationsInProgress { get; set; }
         public int StandardApplicationsHasFeedback { get; set; }
         public int StandardApplicationsApproved { get; set; }
+
+        public string RoatpOversightBaseUrl { get; set; }
     }
 }
