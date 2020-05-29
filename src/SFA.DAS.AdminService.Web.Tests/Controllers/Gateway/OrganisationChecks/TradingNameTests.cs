@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
 
-            };                       
+            };
 
             vm.ApplicationId = applicationId;
             vm.PageId = vm.PageId;

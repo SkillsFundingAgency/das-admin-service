@@ -77,50 +77,50 @@
 
 /* Pagination Links */
 .das-flex-space-around {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    -webkit-box-align: end;
-    -ms-flex-align: end;
-    align-items: flex-end;
-    -webkit-box-pack: space-between;
-    -ms-flex-pack: space-between;
-    justify-content: space-between;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+  -webkit-box-pack: space-between;
+  -ms-flex-pack: space-between;
+  justify-content: space-between;
 }
 
 .das-pagination-links {
-    height: 40px;
-    line-height: 40px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .sorted-descending::after {
-    content: "";
-    margin-left: 3px;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
-    clip-path: polygon(0 0, 50% 100%, 100% 0);
-    border-color: rgba(0, 0, 0, 0);
-    border-style: solid;
-    border-width: 10px 5px 0;
-    border-top-color: inherit;
+  content: "";
+  margin-left: 3px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  -webkit-clip-path: polygon(0 0, 50% 100%, 100% 0);
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+  border-width: 10px 5px 0;
+  border-top-color: inherit;
 }
 
 .sorted-ascending::after {
-    content: "";
-    margin-left: 3px;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
-    clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
-    border-color: rgba(0, 0, 0, 0);
-    border-style: solid;
-    border-width: 0 5px 10px;
-    border-bottom-color: inherit;
+  content: "";
+  margin-left: 3px;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  -webkit-clip-path: polygon(50% 0, 0 100%, 100% 100%);
+  clip-path: polygon(50% 1%, 1% 100%, 100% 100%);
+  border-color: rgba(0, 0, 0, 0);
+  border-style: solid;
+  border-width: 0 5px 10px;
+  border-bottom-color: inherit;
 }
 
 .govuk-button--looks-like-link {
@@ -462,6 +462,29 @@
 
 .app-task-list__task-hidden {
   display: none;
+}
+
+/* Status tags */
+
+.govuk-tag--pass {
+  background-color: #00703c;
+}
+
+.govuk-tag--fail {
+  background-color: #d4351c;
+}
+
+.govuk-tag--inprogress {
+  background-color: #005ea5;
+}
+
+.govuk-tag--notrequired {
+  background-color: #6f777b;
+}
+
+.govuk-tag--next {
+  background-color: #ffbf47;
+  color: #0b0c0c;
 }
 
 .das-user-panel {
@@ -1596,7 +1619,6 @@ TODO: change to 'das-page-navigation' and BEM
 }
 
 .govuk-tag--updated {
-
 }
 
 .govuk-tag--approved {
@@ -1609,8 +1631,8 @@ TODO: change to 'das-page-navigation' and BEM
 
 /* Roatp org results.. remove for v4 */
 .selected-item {
-    background-color: #005ea5;
-    color: #ffffff;
+  background-color: #005ea5;
+  color: #ffffff;
 }
 
 .selected-item > .govuk-body > .govuk-link,

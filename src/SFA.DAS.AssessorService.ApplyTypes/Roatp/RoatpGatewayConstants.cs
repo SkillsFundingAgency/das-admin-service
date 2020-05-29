@@ -101,4 +101,13 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         };
 
     }
+
+    public static class HtmlAndCssElements
+    {
+        public static string CheckBoxChecked = "checked";
+        public static string RadioButtonValueYes = "Yes";
+        public static string CssFormGroupErrorClass = "govuk-form-group--error";
+        public static string CssTextareaErrorOverrideClass = "govuk-textarea--error-override";
+       
+    }
 }

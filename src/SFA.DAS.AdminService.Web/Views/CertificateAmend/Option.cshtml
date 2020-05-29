@@ -39,7 +39,6 @@ else
                         </h2>
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="HasAdditionalLearningOption"></a></li>
                                 <li><a sfa-validation-for="Option"></a></li>
                                 <li><a sfa-validation-for="ReasonForChange"></a></li>
                             </ul>
@@ -47,46 +46,51 @@ else
                     </div>
                 }
 
-                <h1 class="govuk-heading-xl">
-                    Did the apprentice take a learning option?
-                </h1>
-
-                <p class="govuk-body">You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.</p>
-                <p class="govuk-body">The option will appear on the certificate.</p>
-
-                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                    <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption">
-                        @if (!ViewData.ModelState.IsValid)
-                        {
-                            <span class="govuk-error-message" asp-validation-for="HasAdditionalLearningOption"></span>
-                        }
-                    </div>
-
-                    <div class="govuk-radios">
-                        <div class="govuk-radios__item" data-target="show-option-input">
-                            <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_yes" type="radio" value="True" />
-                            <label class="govuk-label govuk-radios__label" for="options_yes">
-                                Yes
-                            </label>
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="options-conditional-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                            <h1 class="govuk-heading-xl">
+                                Did the apprentice take a learning option?
+                            </h1>
+                        </legend>
+                        <p class="govuk-body">
+                            You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.
+                        </p>
+                        <span id="options-conditional-hint" class="govuk-hint">
+                            The option will appear on the certificate.
+                        </span>
+                        <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                            <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption">
+                            </div>
+                            <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_yes-conditional" type="radio" value="True" aria-controls="conditional-options_yes-conditional"/>
+                                    <label class="govuk-label govuk-radios__label" for="options_yes-conditional">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="govuk-radios__conditional @(Model.HasAdditionalLearningOption ? string.Empty : "govuk-radios__conditional--hidden")"
+                                     id="conditional-options_yes-conditional">                                    
+                                    <div class="govuk-form-group">
+                                        @if (!ViewData.ModelState.IsValid)
+                                        {
+                                            <span class="govuk-error-message" asp-validation-for="Option"></span>
+                                        }
+                                    <label class="govuk-label" asp-for="Option">
+                                        What was the option?
+                                    </label>
+                                        <input class="govuk-input" sfa-validation-for="Option" sfa-validationerror-class="govuk-input--error" asp-for="Option" type="text" />
+                                    </div>
+                                </div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_no-conditional" type="radio" value="False" />
+                                    <label class="govuk-label govuk-radios__label" for="options_no-conditional">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="panel panel-border-narrow js-hidden" id="show-option-input">
-                            <label class="govuk-label" for="surname">
-                                What was the option?
-                            </label>
-                            @if (!ViewData.ModelState.IsValid)
-                            {
-                                <span class="govuk-error-message" asp-validation-for="Option"></span>
-                            }
-                            <input class="govuk-input" sfa-validation-for="Option" sfa-validationerror-class="govuk-input--error" asp-for="Option" type="text" />
-                        </div>
-
-                        <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_no" type="radio" value="False" />
-                            <label class="govuk-label govuk-radios__label" for="options_no">
-                                No
-                            </label>
-                        </div>
-                    </div>
+                    </fieldset>
                 </div>
 
                 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">

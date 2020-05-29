@@ -1,8 +1,9 @@
-﻿using System.Net.Http;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -14,11 +15,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly ILogger<DashboardController> _logger;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IWebConfiguration _configuration;
 
-        public DashboardController(ILogger<DashboardController> logger, IApplicationApiClient applicationApiClient)
+        public DashboardController(ILogger<DashboardController> logger, IApplicationApiClient applicationApiClient, IWebConfiguration configuration)
         {
             _logger = logger;
             _applicationApiClient = applicationApiClient;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index()
@@ -56,6 +59,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StandardApplicationsInProgress = applicationReviewStatusCounts.StandardApplicationsInProgress,
                 StandardApplicationsHasFeedback = applicationReviewStatusCounts.StandardApplicationsHasFeedback,
                 StandardApplicationsApproved = applicationReviewStatusCounts.StandardApplicationsApproved,
+                RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl
             };
 
             return View(viewModel);
