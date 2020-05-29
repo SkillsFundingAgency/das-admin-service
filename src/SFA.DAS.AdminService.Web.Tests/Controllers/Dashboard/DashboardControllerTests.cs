@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Settings;
@@ -17,6 +18,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
     public class DashboardControllerTests
     {
         private DashboardController _controller;
+        private Mock<ILogger<DashboardController>> _logger;
         private Mock<IApplicationApiClient> _apiClient;
         private Mock<IWebConfiguration> _configuration;
 
@@ -27,6 +29,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
         [SetUp]
         public void Setup()
         {
+            _logger = new Mock<ILogger<DashboardController>>();
             _apiClient = new Mock<IApplicationApiClient>();
             _configuration = new Mock<IWebConfiguration>();
             _statusCounts = new ApplicationReviewStatusCounts
@@ -46,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
 
 
-            _controller = new DashboardController(_apiClient.Object,_configuration.Object);
+            _controller = new DashboardController(_logger.Object, _apiClient.Object,_configuration.Object);
         }
 
         [Test]
