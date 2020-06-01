@@ -107,12 +107,12 @@ stages:
 
 - stage: NugetPublish
   displayName: 'Publish Nuget Package'
+  pool:
+    name: "DAS - Continuous Deployment"
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory
-    pool:
-      name: "DAS - Continuous Deployment"
     workspace:
       clean: all
   - deployment: 'NugetPush'
