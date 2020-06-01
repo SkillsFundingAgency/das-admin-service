@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Settings
 {

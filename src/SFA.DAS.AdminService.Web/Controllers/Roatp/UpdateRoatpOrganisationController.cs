@@ -13,7 +13,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using AutoMapper;
     using System.Collections.Generic;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+    using SFA.DAS.AdminService.Common.Extensions;
+    using SFA.DAS.AdminService.Common.Validation;
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase

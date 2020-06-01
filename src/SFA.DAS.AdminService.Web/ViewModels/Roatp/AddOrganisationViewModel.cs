@@ -5,8 +5,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using SFA.DAS.AdminService.Common.Validation;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
     public class AddOrganisationViewModel
     {

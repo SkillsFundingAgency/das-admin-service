@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SFA.DAS.AdminService.Settings
+namespace SFA.DAS.AdminService.Common.Settings
 {
     public class AuthSettings : IAuthSettings
     {
@@ -8,6 +8,6 @@ namespace SFA.DAS.AdminService.Settings
 
         [JsonRequired] public string MetadataAddress { get; set; }
 
-        [JsonRequired] public string Role { get; set; }
+        public string Role { get; set; }
     }
 }

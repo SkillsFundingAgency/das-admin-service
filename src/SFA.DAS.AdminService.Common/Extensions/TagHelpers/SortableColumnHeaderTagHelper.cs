@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
+namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers
 {
     [HtmlTargetElement(TagName)]
     public class SfaSortableColumnHeaderTagHelper : TagHelper
@@ -26,12 +26,12 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 
         private const string SfaSortColumnName = "sfa-sort-column";
         private const string SfaSortDirectionName = "sfa-sort-direction";
-        
+
         private const string SfaTableSortColumnName = "sfa-table-sort-column";
         private const string DataSortDirectionName = "data-SortDirection";
-        
+
         private IDictionary<string, string> _routeValues;
-        private readonly IHtmlGenerator _generator;        
+        private readonly IHtmlGenerator _generator;
 
         public SfaSortableColumnHeaderTagHelper(IHtmlGenerator generator)
         {
