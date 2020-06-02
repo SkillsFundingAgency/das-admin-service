@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 SourcesCheckedOn = DateTime.Now,
                 ErrorMessages = new List<ValidationErrorDetail>()
 
-            };                       
+            };
 
             vm.ApplicationId = applicationId;
             vm.PageId = vm.PageId;

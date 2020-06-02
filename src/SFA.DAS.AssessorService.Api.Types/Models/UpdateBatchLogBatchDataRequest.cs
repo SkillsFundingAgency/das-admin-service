@@ -1,6 +1,6 @@
 ﻿using System;
 using MediatR;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AssessorService.Domain.JsonData.Printing;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models

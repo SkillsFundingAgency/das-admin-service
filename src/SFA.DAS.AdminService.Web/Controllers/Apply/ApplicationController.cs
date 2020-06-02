@@ -15,6 +15,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {

@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
+using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
@@ -14,10 +16,11 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
         //MFCMFC PARKING THIS TEST COVERAGE AS NEW STORY WILL BE CHANGING THE ORCHESTRATOR FLOW TO CHECK IF DETAILS ALREADY SET
         // WE WILL DO CHANGES AND COVERAGE WITHIN THAT STORY
         private readonly IRoatpApplicationApiClient _applyApiClient;
-		private readonly IGatewaySectionsNotRequiredService _sectionsNotRequiredService;
         private readonly ILogger<GatewayOverviewOrchestrator> _logger;
+        private readonly IGatewaySectionsNotRequiredService _sectionsNotRequiredService;
 
-        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger, IGatewaySectionsNotRequiredService sectionsNotRequiredService)
+        public GatewayOverviewOrchestrator(IRoatpApplicationApiClient applyApiClient, ILogger<GatewayOverviewOrchestrator> logger,
+                                           IGatewaySectionsNotRequiredService sectionsNotRequiredService)
         {
             _applyApiClient = applyApiClient;
             _logger = logger;
@@ -32,8 +35,131 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 return null;
             }
 
-            // Setting Application Data => TODO: To be stored in session.
-            var applicationData = new AssessorService.ApplyTypes.Roatp.Apply.Apply
+            var applicationData = GetApplicationData(application);
+
+            var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
+            viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
+
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && !savedStatuses.Any())
+            {
+                var providerRoute = application.ApplyData.ApplyDetails.ProviderRoute;
+                await _sectionsNotRequiredService.SetupNotRequiredLinks(request.ApplicationId, request.UserName, viewmodel, providerRoute);
+            }
+            else
+            {
+                foreach (var currentStatus in savedStatuses ?? new List<GatewayPageAnswerSummary>())
+                {
+                    // Inject the statuses into viewmodel
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus?.Status;
+                }
+            }
+
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
+
+            return viewmodel;
+        }
+
+        public async Task<RoatpGatewayApplicationViewModel> GetConfirmOverviewViewModel(GetApplicationOverviewRequest request)
+        {
+            var application = await _applyApiClient.GetApplication(request.ApplicationId);
+            if (application is null)
+            {
+                return null;
+            }
+
+            var applicationData = GetApplicationData(application);
+
+            var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
+            viewmodel.Sequences = GetCoreGatewayApplicationViewModel();
+
+            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
+            if (savedStatuses != null && !savedStatuses.Any())
+            {
+                viewmodel.ReadyToConfirm = false;
+                return viewmodel;
+            }
+            else
+            {
+                foreach (var currentStatus in savedStatuses ?? new List<GatewayPageAnswerSummary>())
+                {
+                    // Inject the statuses and comments into viewmodel
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus?.Status;
+                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Comment = currentStatus?.Comments;
+                }
+            }
+
+            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
+
+            return viewmodel;
+        }
+
+        public void ProcessViewModelOnError(RoatpGatewayApplicationViewModel viewModelOnError, RoatpGatewayApplicationViewModel viewModel, ValidationResponse validationResponse)
+        {
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                viewModelOnError.IsInvalid = true;
+                viewModelOnError.ErrorMessages = validationResponse.Errors;
+                viewModelOnError.GatewayReviewStatus = viewModel.GatewayReviewStatus;
+                viewModelOnError.OptionAskClarificationText = viewModel.OptionAskClarificationText;
+                viewModelOnError.OptionDeclinedText = viewModel.OptionDeclinedText;
+                viewModelOnError.OptionApprovedText = viewModel.OptionApprovedText;
+
+                viewModelOnError.CssFormGroupError = HtmlAndCssElements.CssFormGroupErrorClass;
+                viewModelOnError.RadioCheckedAskClarification = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.ClarificationSent ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedDeclined = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Fail ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+                viewModelOnError.RadioCheckedApproved = viewModelOnError.GatewayReviewStatus == GatewayReviewStatus.Pass ? HtmlAndCssElements.CheckBoxChecked : string.Empty;
+
+                foreach(var error in viewModelOnError.ErrorMessages)
+                {
+                    if (error.Field.Equals(nameof(viewModelOnError.GatewayReviewStatus)))
+                    {
+                        viewModelOnError.ErrorTextGatewayReviewStatus = error.ErrorMessage;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionAskClarificationText)))
+                    {
+                        viewModelOnError.ErrorTextAskClarification = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorAskClarification = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionDeclinedText)))
+                    {
+                        viewModelOnError.ErrorTextDeclined = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorDeclined = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+
+                    if (error.Field.Equals(nameof(viewModelOnError.OptionApprovedText)))
+                    {
+                        viewModelOnError.ErrorTextApproved = error.ErrorMessage;
+                        viewModelOnError.CssOnErrorApproved = HtmlAndCssElements.CssTextareaErrorOverrideClass;
+                    }
+                }
+            }
+        }
+
+        private bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
+        {
+            var isReadyToConfirm = true;
+
+            foreach (var sequence in viewmodel.Sequences)
+            {
+                foreach (var section in sequence.Sections)
+                {
+                    if (section.Status == null || (!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired)))
+                    {
+                        isReadyToConfirm = false;
+                        break;
+                    }
+                }
+            }
+
+            return isReadyToConfirm;
+        }
+
+        private AssessorService.ApplyTypes.Roatp.Apply.Apply GetApplicationData(RoatpApplicationResponse application)
+        {
+            return new AssessorService.ApplyTypes.Roatp.Apply.Apply
             {
                 ApplyData = new RoatpApplyData
                 {
@@ -55,12 +181,12 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                 AssessorReviewStatus = application.AssessorReviewStatus,
                 FinancialReviewStatus = application.FinancialReviewStatus
             };
+        }
 
-            var viewmodel = new RoatpGatewayApplicationViewModel(applicationData);
-
-            // APR-1467 Code Stubbing Data - TODO: Store it somewhere 
-            #region Sequences Stubbed Data
-            viewmodel.Sequences = new List<GatewaySequence>
+        // APR-1467 Code Stubbed Data - TODO: Store it somewhere 
+        private List<GatewaySequence> GetCoreGatewayApplicationViewModel()
+        {
+            return new List<GatewaySequence>
             {
                 new GatewaySequence
                 {
@@ -122,7 +248,7 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                         new GatewaySection { SectionNumber = 1, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.CompositionCreditors,  LinkTitle = "Composition with creditors", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 2, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FailedToRepayFunds, LinkTitle = "Failed to pay back funds", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 3, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractTermination,  LinkTitle = "Contract terminated early by a public body", HiddenText = "for the organisation", Status = "" },
-                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly,LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
+                        new GatewaySection { SectionNumber = 4, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.ContractWithdrawnEarly, LinkTitle = "Withdrawn from a contract with a public body", HiddenText = "for the organisation", Status = "" },
                         new GatewaySection { SectionNumber = 5, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRoTO, LinkTitle = "Register of Training Organisations (RoTO)", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 6, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.FundingRemoved, LinkTitle = "Funding removed from any education bodies", HiddenText = "", Status = "" },
                         new GatewaySection { SectionNumber = 7, PageId = GatewayPageIds.CriminalComplianceOrganisationChecks.RemovedRegister, LinkTitle = "Removed from any professional or trade registers", HiddenText = "", Status = "" },
@@ -152,46 +278,6 @@ namespace SFA.DAS.AdminService.Web.Services.Gateway
                     }
                 }
             };
-            #endregion
-
-            var savedStatuses = await _applyApiClient.GetGatewayPageAnswers(request.ApplicationId);
-            if (savedStatuses != null && savedStatuses.Count.Equals(0))
-            {                
-                var providerRoute = application.ApplyData.ApplyDetails.ProviderRoute;
-
-                await _sectionsNotRequiredService.SetupNotRequiredLinks(request.ApplicationId, request.UserName, viewmodel, providerRoute);
-            }
-            else
-            {
-                foreach (var currentStatus in savedStatuses)
-                {
-                    // Inject the statuses into viewmodel
-                    viewmodel.Sequences.SelectMany(seq => seq.Sections).FirstOrDefault(sec => sec.PageId == currentStatus.PageId).Status = currentStatus.Status;
-                }
-            }
-
-            viewmodel.ReadyToConfirm = CheckIsItReadyToConfirm(viewmodel);
-
-            return viewmodel;
-        }
-
-        public bool CheckIsItReadyToConfirm(RoatpGatewayApplicationViewModel viewmodel)
-        {
-            var isReadyToConfirm = true;
-
-            foreach (var sequence in viewmodel.Sequences)
-            {
-                foreach (var section in sequence.Sections)
-                {
-                    if (section.Status == null || (!section.Status.Equals(SectionReviewStatus.Pass) && !section.Status.Equals(SectionReviewStatus.Fail) && !section.Status.Equals(SectionReviewStatus.NotRequired)))
-                    {
-                        isReadyToConfirm = false;
-                        break;
-                    }
-                }
-            }
-
-            return isReadyToConfirm;
         }
     }
 }

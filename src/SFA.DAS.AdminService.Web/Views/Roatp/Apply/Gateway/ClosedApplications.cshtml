@@ -1,4 +1,4 @@
-@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Common.Extensions;
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayDashboardViewModel
@@ -72,12 +72,12 @@
                                     @{
                                         switch (item.GatewayReviewStatus)
                                         {
-                                            case GatewayReviewStatus.Approved:
+                                            case GatewayReviewStatus.Pass:
                                                 <div class="govuk-tag govuk-tag--approved">
                                                     accepted
                                                 </div>
                                                 break;
-                                            case GatewayReviewStatus.Declined:
+                                            case GatewayReviewStatus.Fail:
                                                 <div class="govuk-tag govuk-tag--rejected">
                                                     declined
                                                 </div>

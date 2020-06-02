@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Settings
+﻿using SFA.DAS.AdminService.Common.Settings;
+
+namespace SFA.DAS.AdminService.Settings
 {
     public interface IWebConfiguration
     {
@@ -16,6 +18,9 @@
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }
+
+        string RoatpOversightBaseUrl { get; set; }
+
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
         ClientApiAuthentication QnaApiAuthentication { get; set; }

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {

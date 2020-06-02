@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using System.Reflection;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -22,7 +21,6 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Settings;
-using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
@@ -32,17 +30,16 @@ using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
-using SFA.DAS.AdminService.Web.Domain;
-using System.Security.Claims;
-using MediatR;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using Microsoft.AspNetCore.Mvc.Razor;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Web
-{ 
+{
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -248,7 +245,11 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
             services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
-            UserExtensions.Logger = services.BuildServiceProvider().GetService<ILogger<ClaimsPrincipal>>();
+            Common.DependencyInjection.ConfigureDependencyInjection(services);
+            services.AddTransient<IFeatureToggles>(x => { 
+                var config = x.GetService<IWebConfiguration>(); 
+                return config.FeatureToggles; 
+            });
         }
 
         private void AddAuthentication(IServiceCollection services)

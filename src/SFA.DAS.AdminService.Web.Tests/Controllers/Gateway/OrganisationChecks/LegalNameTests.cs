@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
@@ -13,7 +14,6 @@ using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
@@ -30,11 +30,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
             CoreSetup();
 
             _orchestrator = new Mock<IGatewayOrganisationChecksOrchestrator>();
-            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object,ContextAccessor.Object,GatewayValidator.Object, _orchestrator.Object,Logger.Object);
+            _controller = new RoatpGatewayOrganisationChecksController(ApplyApiClient.Object, ContextAccessor.Object, GatewayValidator.Object, _orchestrator.Object, Logger.Object);
         }
 
         [Test]
-        public  void check_legal_name_request_is_sent()
+        public void check_legal_name_request_is_sent()
         {
             var applicationId = Guid.NewGuid();
             var pageId = "1-10";
@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
                 .ReturnsAsync(new LegalNamePageViewModel())
                 .Verifiable("view model not returned");
 
-            var _result =  _controller.GetGatewayLegalNamePage(applicationId, pageId).Result;
+            var _result = _controller.GetGatewayLegalNamePage(applicationId, pageId).Result;
             _orchestrator.Verify(x => x.GetLegalNameViewModel(It.IsAny<GetLegalNameRequest>()), Times.Once());
         }
 

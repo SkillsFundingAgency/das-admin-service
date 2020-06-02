@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.FeatureToggles
         {
             _WebConfiguration = new WebConfiguration
             {
-                FeatureToggles = new Settings.FeatureToggles { }
+                FeatureToggles = new Common.Settings.FeatureToggles { }
             };
 
             var filterLogger = Mock.Of<ILogger<FeatureToggleFilter>>();

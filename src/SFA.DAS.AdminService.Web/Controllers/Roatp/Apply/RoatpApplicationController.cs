@@ -18,6 +18,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using ApplicationSectionStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSectionStatus;
 using ApplicationSequenceStatus = SFA.DAS.AssessorService.ApplyTypes.ApplicationSequenceStatus;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

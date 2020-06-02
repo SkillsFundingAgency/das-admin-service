@@ -12,6 +12,9 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
+using System.Linq;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -22,12 +25,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IGatewayOverviewOrchestrator _orchestrator;
+        private readonly IRoatpGatewayApplicationViewModelValidator _validator;
         private readonly ILogger<RoatpGatewayController> _logger;
-        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor,  IGatewayOverviewOrchestrator orchestrator, ILogger<RoatpGatewayController> logger)
+        public RoatpGatewayController(IRoatpApplicationApiClient applyApiClient, IHttpContextAccessor contextAccessor, IGatewayOverviewOrchestrator orchestrator, IRoatpGatewayApplicationViewModelValidator validator, ILogger<RoatpGatewayController> logger)
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _orchestrator = orchestrator;
+            _validator = validator;
             _logger = logger;
         }
 
@@ -85,11 +90,151 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 case GatewayReviewStatus.New:
                 case GatewayReviewStatus.InProgress:
                     return View("~/Views/Roatp/Apply/Gateway/Application.cshtml", viewModel);
-                case GatewayReviewStatus.Approved:
-                case GatewayReviewStatus.Declined:
+                case GatewayReviewStatus.Pass:
+                case GatewayReviewStatus.Fail:
                     return View("~/Views/Roatp/Apply/Gateway/Application_ReadOnly.cshtml", viewModel);
                 default:
                     return RedirectToAction(nameof(NewApplications));
+            }
+        }
+
+        [HttpGet("/Roatp/Gateway/{applicationId}/ConfirmOutcome")]
+        public async Task<IActionResult> ConfirmOutcome(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+
+            var username = _contextAccessor.HttpContext.User.UserDisplayName();
+            var viewModel = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(applicationId, username));
+
+            if (viewModel.ReadyToConfirm)
+            {
+                switch (gatewayReviewStatus)
+                {
+                    case GatewayReviewStatus.ClarificationSent:
+                        {
+                            viewModel.RadioCheckedAskClarification = HtmlAndCssElements.CheckBoxChecked;
+                            viewModel.OptionAskClarificationText = gatewayReviewComment;
+                            break;
+                        }
+                    case GatewayReviewStatus.Fail:
+                        {
+                            viewModel.RadioCheckedDeclined = HtmlAndCssElements.CheckBoxChecked;
+                            viewModel.OptionDeclinedText = gatewayReviewComment;
+                            break;
+                        }
+                    case GatewayReviewStatus.Pass:
+                        {
+                            viewModel.RadioCheckedApproved = HtmlAndCssElements.CheckBoxChecked;
+                            viewModel.OptionApprovedText = gatewayReviewComment;
+                            break;
+                        }
+                }
+
+                if (viewModel.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+                {
+                    return RedirectToAction(nameof(NewApplications));
+                }
+                else
+                {
+                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModel);
+                }
+            }
+            else
+            {
+                return RedirectToAction(nameof(ViewApplication), new { applicationId = applicationId });
+            }
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/ConfirmOutcome")]
+        public async Task<IActionResult> EvaluateConfirmOutcome(RoatpGatewayApplicationViewModel viewModel)
+        {
+            var validationResponse = await _validator.Validate(viewModel);
+
+            if (validationResponse.Errors != null && validationResponse.Errors.Any())
+            {
+                var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                var viewModelOnError = await _orchestrator.GetConfirmOverviewViewModel(new GetApplicationOverviewRequest(viewModel.ApplicationId, username));
+                if (viewModelOnError != null)
+                {
+                    _orchestrator.ProcessViewModelOnError(viewModelOnError, viewModel, validationResponse);
+                    return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcome.cshtml", viewModelOnError);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(ViewApplication), new { applicationId = viewModel.ApplicationId });
+                }
+            }
+
+            var viewName = "~/Views/Roatp/Apply/Gateway/ConfirmOutcomeAskClarification.cshtml";
+            var confirmViewModel = new RoatpGatewayConfirmOutcomeViewModel { ApplicationId = viewModel.ApplicationId, GatewayReviewStatus = viewModel.GatewayReviewStatus };
+
+            switch (viewModel.GatewayReviewStatus)
+            {
+                case GatewayReviewStatus.ClarificationSent:
+                    {
+                        confirmViewModel.GatewayReviewComment = viewModel.OptionAskClarificationText;
+                        break;
+                    }
+                case GatewayReviewStatus.Fail:
+                    {
+                        confirmViewModel.GatewayReviewComment = viewModel.OptionDeclinedText;
+                        viewName = "~/Views/Roatp/Apply/Gateway/ConfirmOutcomeDeclined.cshtml";
+                        break;
+                    }
+                case GatewayReviewStatus.Pass:
+                    {
+                        confirmViewModel.GatewayReviewComment = viewModel.OptionApprovedText;
+                        viewName = "~/Views/Roatp/Apply/Gateway/ConfirmOutcomeApproved.cshtml";
+                        break;
+                    }
+            }
+
+            var application = await _applyApiClient.GetApplication(viewModel.ApplicationId);
+
+            if (application is null || application.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+            else
+            {
+                return View(viewName, confirmViewModel);
+            }
+        }
+
+        [HttpPost("/Roatp/Gateway/{applicationId}/AboutToConfirmOutcome")]
+        public async Task<IActionResult> AboutToConfirmOutcome(RoatpGatewayConfirmOutcomeViewModel viewModel)
+        {
+            if (viewModel.ApplicationStatus == ApplicationStatus.GatewayAssessed)
+            {
+                return RedirectToAction(nameof(NewApplications));
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (viewModel.ConfirmGatewayOutcome.Equals(HtmlAndCssElements.RadioButtonValueYes, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var username = _contextAccessor.HttpContext.User.UserDisplayName();
+                    await _applyApiClient.UpdateGatewayReviewStatusAndComment(viewModel.ApplicationId, viewModel.GatewayReviewStatus, viewModel.GatewayReviewComment, username);
+                    return View("~/Views/Roatp/Apply/Gateway/GatewayOutcomeConfirmation.cshtml", viewModel);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(ConfirmOutcome), new
+                    {
+                        applicationId = viewModel.ApplicationId,
+                        gatewayReviewStatus = viewModel.GatewayReviewStatus,
+                        gatewayReviewComment = viewModel.GatewayReviewComment
+                    });
+                }
+            }
+            else
+            {
+                viewModel.CssFormGroupError = HtmlAndCssElements.CssFormGroupErrorClass;
+                return View("~/Views/Roatp/Apply/Gateway/ConfirmOutcomeApproved.cshtml", viewModel);
             }
         }
 
@@ -135,14 +280,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpGet("/Roatp/GatewayCheckStatus/{applicationId}/Page/{PageId}/Status/{gatewayReviewStatus}")]
         public async Task<IActionResult> CheckStatus(Guid applicationId, string PageId, string gatewayReviewStatus)
         {
-            if (gatewayReviewStatus.Equals(GatewayReviewStatus.New)) 
+            if (gatewayReviewStatus.Equals(GatewayReviewStatus.New))
             {
                 var username = _contextAccessor.HttpContext.User.UserDisplayName();
                 await _applyApiClient.TriggerGatewayDataGathering(applicationId, username);
-                await _applyApiClient.StartGatewayReview(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                await _applyApiClient.StartGatewayReview(applicationId, username);
             }
 
-            return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}"); 
+            return Redirect($"/Roatp/Gateway/{applicationId}/Page/{PageId}");
         }
     }
 }

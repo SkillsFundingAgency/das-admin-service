@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Resources;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+    using SFA.DAS.AdminService.Common.Validation;
 
     public class SearchTermValidator : ISearchTermValidator
     {
