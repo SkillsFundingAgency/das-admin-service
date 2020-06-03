@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Settings
+﻿using SFA.DAS.AdminService.Common.Settings;
+
+namespace SFA.DAS.AdminService.Settings
 {
     public interface IWebConfiguration
     {

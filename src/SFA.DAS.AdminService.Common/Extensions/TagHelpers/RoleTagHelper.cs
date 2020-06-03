@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
+namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers
 {
     [HtmlTargetElement("div", Attributes = RoleTagHelperAttributeName)]
     [HtmlTargetElement("a", Attributes = RoleTagHelperAttributeName)]
@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Extensions.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if(!ShowForRoles(Roles))
+            if (!ShowForRoles(Roles))
             {
                 output.SuppressOutput();
             }

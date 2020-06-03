@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {

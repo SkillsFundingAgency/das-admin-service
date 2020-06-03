@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace SFA.DAS.AssessorService.Api.Types.Models.Validation
+namespace SFA.DAS.AdminService.Common.Validation
 {
     public enum ValidationStatusCode
     {
@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Validation
         BadRequest,
         [EnumMember(Value = "AlreadyExists")]
         AlreadyExists,
-        [EnumMember(Value="NotFound")]
+        [EnumMember(Value = "NotFound")]
         NotFound
     }
 }
