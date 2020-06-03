@@ -19,6 +19,8 @@
 
         string RoatpOversightBaseUrl { get; set; }
 
+        string RoatpAssessorBaseUrl { get; set; }
+
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
 
         ClientApiAuthentication QnaApiAuthentication { get; set; }
