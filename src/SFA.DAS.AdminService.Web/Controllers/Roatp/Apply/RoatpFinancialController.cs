@@ -217,9 +217,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var organisationTypeSection = await GetOrganisationTypeSection(applicationFromAssessor.ApplicationId);
             var financialSections = await GetFinancialSections(applicationFromAssessor);
 
-            var viewModel = new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
-
-            return viewModel;
+            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
         }
 
         private async Task<Section> GetParentCompanySection(Guid applicationId)
