@@ -36,6 +36,18 @@
             </dd>
         </div>
     }
+    @if (!string.IsNullOrWhiteSpace(Model.ApplicantEmailAddress))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Applicant's email address
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.ApplicantEmailAddress
+            </dd>
+        </div>
+    }
+
     @if (!string.IsNullOrWhiteSpace(Model.DeclaredInApplication))
     {
         <div class="govuk-summary-list__row">

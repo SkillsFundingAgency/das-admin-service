@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Entities;
+using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 using UpdateFinancialsRequest = SFA.DAS.AssessorService.Api.Types.Models.Register.UpdateFinancialsRequest;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -179,6 +181,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
         }
+
+       
+
         #endregion
     }
 }

@@ -4,6 +4,7 @@
     <ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

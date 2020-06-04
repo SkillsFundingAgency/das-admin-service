@@ -91,6 +91,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
+            var contact = await _applyApiClient.GetContactForApplication(applicationId);
+            vm.ApplicantEmailAddress = contact.Email;
+
             var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
 
             if (activeFinancialReviewStatuses.Contains(application.FinancialReviewStatus))
@@ -214,7 +217,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var organisationTypeSection = await GetOrganisationTypeSection(applicationFromAssessor.ApplicationId);
             var financialSections = await GetFinancialSections(applicationFromAssessor);
 
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
+            var viewModel = new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
+
+            return viewModel;
         }
 
         private async Task<Section> GetParentCompanySection(Guid applicationId)
