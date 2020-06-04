@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-namespace SFA.DAS.AdminService.Settings
+namespace SFA.DAS.AdminService.Common.Settings
 {
     public class ClientApiAuthentication : IClientApiAuthentication
     {
-        [JsonRequired] public string Instance { get; set; }
+        public string Instance { get; set; }
 
         [JsonRequired] public string TenantId { get; set; }
 

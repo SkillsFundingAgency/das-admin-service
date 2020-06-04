@@ -16,8 +16,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using SFA.DAS.AdminService.Common.Extensions;
+    using SFA.DAS.AdminService.Common.Validation;
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using System.Linq;
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]

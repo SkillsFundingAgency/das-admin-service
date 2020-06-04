@@ -1,9 +1,8 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using SFA.DAS.AdminService.Web.Resources;
-
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Services
 {

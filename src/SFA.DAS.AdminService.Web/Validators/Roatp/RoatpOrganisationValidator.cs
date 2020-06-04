@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using SFA.DAS.AdminService.Web.Resources;
     using SFA.DAS.AdminService.Web.Services;
+    using SFA.DAS.AdminService.Common.Validation;
 
     public class RoatpOrganisationValidator : IRoatpOrganisationValidator
     {

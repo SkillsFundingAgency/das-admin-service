@@ -7,9 +7,9 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
     using System.Linq;
     using System.Threading.Tasks;
     using Infrastructure;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using SFA.DAS.AdminService.Web.Resources;
     using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+    using SFA.DAS.AdminService.Common.Validation;
 
     public class AddOrganisationValidator : IAddOrganisationValidator
     {
