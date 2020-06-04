@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +46,21 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpPost(Name = "ConfirmAndSubmit")]
         public IActionResult ConfirmAndSubmit(CertificateSubmitDeleteViewModel vm)
         {
+            var errorMessages = new Dictionary<string, string>();
+
+            if (!vm.IsDeleteConfirmed.HasValue)
+            {
+                errorMessages["IsDeleteConfirmed"] = "Select yes if you want to delete this certificate";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach (var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == true)
@@ -137,7 +154,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                                  $"Exception message:{exception.Message}");
                 throw new HttpRequestException();
             }
-            
+
         }
     }
 }
