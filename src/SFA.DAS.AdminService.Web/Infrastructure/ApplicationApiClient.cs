@@ -179,9 +179,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
         }
-
-       
-
         #endregion
     }
 }
