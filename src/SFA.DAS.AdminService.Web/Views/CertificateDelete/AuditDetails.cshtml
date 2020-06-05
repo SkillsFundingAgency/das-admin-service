@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" asp-controller="CertificateDelete" asp-action="ConfirmAndSubmit" asp-route-certificateId=@Model.Id>Back</a>
+<a class="govuk-back-link" asp-controller="CertificateDelete" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -27,6 +27,7 @@
                 @Html.HiddenFor(c => c.StandardCode)
                 @Html.HiddenFor(c => c.CertificateReference)
                 @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(c => c.IsDeleteConfirmed)
 
                 <div class="character-count govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error"
                      data-module="character-count" data-maxlength="500">

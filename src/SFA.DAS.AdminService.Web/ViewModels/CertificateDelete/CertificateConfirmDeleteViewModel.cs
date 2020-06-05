@@ -11,6 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
         public string CertificateReference { get; set; }
         public int StandardCode { get; set; }
         public string IncidentNumber { get; set; }
+        public bool? IsDeleteConfirmed { get; set; }
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);

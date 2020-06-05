@@ -27,8 +27,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             _certificateApiClient = certificateApiClient;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ConfirmAndSubmit(Guid certificateId, string searchString, int page)
+        [HttpGet("confirm-delete-certificate", Name = "ConfirmAndSubmit")]
+        public async Task<IActionResult> ConfirmAndSubmit(Guid certificateId, string searchString, int page, bool? isDeleteConfirmed)
         {
             var viewModel =
                 await LoadViewModel<CertificateSubmitDeleteViewModel>(certificateId,
@@ -38,12 +38,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             certificateDeleteViewModel.Page = page;
             certificateDeleteViewModel.SearchString = searchString;
+            certificateDeleteViewModel.IsDeleteConfirmed = isDeleteConfirmed;
 
             return View(certificateDeleteViewModel);
         }
 
 
-        [HttpPost(Name = "ConfirmAndSubmit")]
+        [HttpPost("confirm-delete-certificate", Name = "ConfirmAndSubmit")]
         public IActionResult ConfirmAndSubmit(CertificateSubmitDeleteViewModel vm)
         {
             var errorMessages = new Dictionary<string, string>();
@@ -67,7 +68,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     return RedirectToAction("AuditDetails", "CertificateDelete", new
                     {
-                        certificateId = vm.Id
+                        certificateId = vm.Id,
+                        isDeleteConfirmed = vm.IsDeleteConfirmed
                     });
                 }
                 if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == false)
@@ -84,7 +86,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(vm);
         }
 
-        [HttpGet]
+        [HttpGet("audit-details", Name = "AuditDetails")]
         public async Task<IActionResult> AuditDetails(CertificateDeleteViewModel vm)
         {
             var viewModel =
@@ -96,11 +98,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             certificateAuditDetailsViewModel.ReasonForChange = vm.ReasonForChange;
             certificateAuditDetailsViewModel.IncidentNumber = vm.IncidentNumber;
+            certificateAuditDetailsViewModel.IsDeleteConfirmed = vm.IsDeleteConfirmed;
 
             return View(certificateAuditDetailsViewModel);
         }
 
-        [HttpPost(Name = "AuditDetails")]
+        [HttpPost("audit-details", Name = "AuditDetails")]
         public async Task<IActionResult> AuditDetails(CertificateAuditDetailsViewModel vm)
         {
             if (ModelState.IsValid)
@@ -109,13 +112,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     certificateId = vm.Id,
                     reasonForChange = vm.ReasonForChange,
-                    incidentNumber = vm.IncidentNumber
+                    incidentNumber = vm.IncidentNumber,
+                    isDeleteConfirmed = vm.IsDeleteConfirmed
                 });
             }
             return View(vm);
         }
 
-        [HttpGet]
+        [HttpGet("check-your-answers", Name = "ConfirmDelete")]
         public async Task<IActionResult> ConfirmDelete(CertificateDeleteViewModel vm)
         {
             var viewModel =
@@ -128,12 +132,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
             certificateConfirmDeleteViewModel.ReasonForChange = vm.ReasonForChange;
             certificateConfirmDeleteViewModel.IncidentNumber = vm.IncidentNumber;
             certificateConfirmDeleteViewModel.Username = username;
-
+            certificateConfirmDeleteViewModel.IsDeleteConfirmed = vm.IsDeleteConfirmed;
             return View(certificateConfirmDeleteViewModel);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ConfirmDelete(CertificateConfirmDeleteViewModel deleteViewModel)
+        [HttpPost("successfully-deleted-this-certificate", Name = "SuccessfulDelete")]
+        public async Task<IActionResult> SuccessfulDelete(CertificateConfirmDeleteViewModel deleteViewModel)
         {
             try
             {
