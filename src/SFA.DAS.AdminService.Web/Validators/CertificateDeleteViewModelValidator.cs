@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System;
+using System.Text.RegularExpressions;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
@@ -21,16 +22,18 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         {
             bool hasExceeded = false;
 
-            var text = input?.Trim();
-
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(input))
             {
-                var wordCount = text.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).Length;
-
+                var wordCount = CountWords(input);
                 hasExceeded = (wordCount > maxWordcount);
             }
-
             return hasExceeded;
+        }
+
+        public static int CountWords(string s)
+        {
+            MatchCollection collection = Regex.Matches(s, @"[\S]+");
+            return collection.Count;
         }
     }
 }
