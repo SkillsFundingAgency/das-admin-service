@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         [Test]
         public void ThenShouldReturnValidCertificateSubmitDeleteViewModel()
         {
-            _result = _sut.ConfirmAndSubmit(Certificate.Id, "searchstring", 0).GetAwaiter().GetResult();
+            _result = _sut.ConfirmAndSubmit(Certificate.Id, "searchstring", 0, true).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             var certificateSubmitDeleteViewModel = result.Model as CertificateSubmitDeleteViewModel;
@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
                 Username = "admin"
             };
             Mock<ICertificateApiClient> client = new Mock<ICertificateApiClient>();
-            
+
             client.Setup(c => c.Delete(It.IsAny<DeleteCertificateRequest>())).Throws(new HttpRequestException());
 
             _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient, client.Object);
@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             try
             {
                 //act
-                _result = _sut.ConfirmDelete(model).GetAwaiter().GetResult();
+                _result = _sut.SuccessfulDelete(model).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
