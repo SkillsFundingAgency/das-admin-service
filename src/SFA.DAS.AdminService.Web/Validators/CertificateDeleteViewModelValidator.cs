@@ -11,7 +11,15 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (HasExceededWordCount(vm.ReasonForChange))
+                if (vm?.ReasonForChange is null || string.IsNullOrWhiteSpace(vm.ReasonForChange))
+                {
+                    context.AddFailure("ReasonForChange", "Enter a reason for deleting this certificate");
+                }
+                if (vm?.IncidentNumber is null || string.IsNullOrWhiteSpace(vm.IncidentNumber))
+                {
+                    context.AddFailure("IncidentNumber", "Enter a ticket or incident number");
+                }
+                if (HasExceededWordCount(vm?.ReasonForChange))
                 {
                     context.AddFailure("ReasonForChange", "Reason for deleting this certificate must be 500 words or less");
                 }

@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         [Test]
         public void ThenShouldReturnValidCertificateSubmitDeleteViewModel()
         {
-            _result = _sut.ConfirmAndSubmit(Certificate.Id, "searchstring", 0, true).GetAwaiter().GetResult();
+            _result = _sut.ConfirmAndSubmit(_deleteViewModel).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             var certificateSubmitDeleteViewModel = result.Model as CertificateSubmitDeleteViewModel;

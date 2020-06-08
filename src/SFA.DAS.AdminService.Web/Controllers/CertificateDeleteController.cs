@@ -28,17 +28,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet("confirm-delete-certificate", Name = "ConfirmAndSubmit")]
-        public async Task<IActionResult> ConfirmAndSubmit(Guid certificateId, string searchString, int page, bool? isDeleteConfirmed)
+        public async Task<IActionResult> ConfirmAndSubmit(CertificateDeleteViewModel vm)
         {
             var viewModel =
-                await LoadViewModel<CertificateSubmitDeleteViewModel>(certificateId,
+                await LoadViewModel<CertificateSubmitDeleteViewModel>(vm.CertificateId,
                     "~/Views/CertificateDelete/ConfirmAndSubmit.cshtml");
             var viewResult = (viewModel as ViewResult);
             var certificateDeleteViewModel = viewResult.Model as CertificateSubmitDeleteViewModel;
 
-            certificateDeleteViewModel.Page = page;
-            certificateDeleteViewModel.SearchString = searchString;
-            certificateDeleteViewModel.IsDeleteConfirmed = isDeleteConfirmed;
+            certificateDeleteViewModel.Page = vm.Page;
+            certificateDeleteViewModel.SearchString = vm.SearchString;
+            certificateDeleteViewModel.IsDeleteConfirmed = vm.IsDeleteConfirmed;
+            certificateDeleteViewModel.IncidentNumber = vm.IncidentNumber;
+            certificateDeleteViewModel.ReasonForChange = vm.ReasonForChange;
 
             return View(certificateDeleteViewModel);
         }
@@ -69,7 +71,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     return RedirectToAction("AuditDetails", "CertificateDelete", new
                     {
                         certificateId = vm.Id,
-                        isDeleteConfirmed = vm.IsDeleteConfirmed
+                        isDeleteConfirmed = vm.IsDeleteConfirmed,
+                        incidentNumber = vm.IncidentNumber,
+                        reasonForChange = vm.ReasonForChange
                     });
                 }
                 if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == false)

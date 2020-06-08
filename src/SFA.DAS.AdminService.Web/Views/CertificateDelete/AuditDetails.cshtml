@@ -5,7 +5,9 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" asp-controller="CertificateDelete" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed">Back</a>
+<a class="govuk-back-link" asp-controller="CertificateDelete" asp-action="ConfirmAndSubmit" asp-route-certificateId="@Model.Id" 
+   asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed" asp-route-reasonForChange="@Model.ReasonForChange"
+   asp-route-incidentNumber="@Model.IncidentNumber">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -66,7 +68,3 @@
 </main>
 
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    @{await Html.RenderPartialAsync("~/Views/CertificateDelete/_AuditDetailsScriptsPartial.cshtml"); }
-}

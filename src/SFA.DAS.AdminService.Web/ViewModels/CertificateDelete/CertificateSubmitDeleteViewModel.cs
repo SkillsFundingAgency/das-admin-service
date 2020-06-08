@@ -13,6 +13,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
         public bool? IsDeleteConfirmed { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
+        public string IncidentNumber { get; set; }
 
         public void FromCertificate(Certificate cert)
         {
