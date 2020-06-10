@@ -308,20 +308,17 @@ else
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">What do you want to do next?</h2>
             <ul class="govuk-list">
-                @if (Model.Learner.CertificateReference != null)
+                @if(Model.CanRequestDuplicate())
+                { 
+                    <li>
+                        <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request duplicate certificate</a>
+                    </li>
+                }
+                else if (Model.CanAmendCertificate())
                 {
-                    if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
-                    { 
-                        <li>
-                            <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request duplicate certificate</a>
-                        </li>
-                    }
-                    else if (Model.Learner.CertificateStatus == CertificateStatus.Draft || Model.Learner.CertificateStatus == CertificateStatus.Submitted)
-                    {
-                        <li>
-                            <a class="govuk-link" asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Amend certificate information</a>
-                        </li>
-                    }
+                    <li>
+                        <a class="govuk-link" asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Amend certificate information</a>
+                    </li>
                 }
                 <li>
                     <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another apprentice</a>

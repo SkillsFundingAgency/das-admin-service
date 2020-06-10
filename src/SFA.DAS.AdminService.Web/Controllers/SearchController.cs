@@ -6,6 +6,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -79,6 +81,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public int Page { get; set; }
         public bool ShowDetail { get; set; }
         public int? BatchNumber { get; set; }
+
+        public bool CanRequestDuplicate()
+        {
+            return CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
+        }
+
+        public bool CanAmendCertificate()
+        {
+            return CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
+        }
     }
 
     public class SearchViewModel

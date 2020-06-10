@@ -17,7 +17,7 @@
 
             <h1 class="govuk-heading-xl">Re-print certificate</h1>
 
-            @if (! (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint) )
+            @if (!Model.CanRequestDuplicate())
             {
                 <p class="govuk-body-l">Certificate is in an invalid status to request a reprint.</p>
             }

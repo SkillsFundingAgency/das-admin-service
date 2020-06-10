@@ -73,5 +73,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         {
             return IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
         }
+
+        public bool CanRequestDuplicate()
+        {
+            return CertificateStatus.CanRequestDuplicateCertificate(Status);
+        }
     }
 }
