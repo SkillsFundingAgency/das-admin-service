@@ -137,13 +137,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");
         }
-
+        
 
         public async Task<EpaOrganisation> GetEpaOrganisation(string organisationId)
         {
             return await Get<EpaOrganisation>($"api/ao/assessment-organisations/{organisationId}");
         }
-
+        
         public async Task<AssessmentOrganisationContact> GetEpaContact(string contactId)
         {
             return await Get<AssessmentOrganisationContact>($"api/ao/assessment-organisations/contacts/{contactId}");
@@ -157,7 +157,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<EpaContact> GetEpaContactByEmail(string email)
         {
             return await Get<EpaContact>($"api/ao/assessment-organisations/contacts/email/{email}");
-        }
+        }     
 
         public async Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId)
         {
@@ -312,7 +312,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint",
                 staffCertificateDuplicateRequest);
-        }
+                }
 
         public async Task<List<StandardCollation>> SearchStandards(string searchString)
         {
@@ -358,7 +358,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task GatherAndCollateStandards()
         {
-            await Post($"api/ao/update-standards", new GatherStandardsRequest());
+             await Post($"api/ao/update-standards", new GatherStandardsRequest());
         }
 
         public async Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure)
