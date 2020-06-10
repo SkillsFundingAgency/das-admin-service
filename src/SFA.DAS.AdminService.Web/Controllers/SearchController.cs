@@ -82,15 +82,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public bool ShowDetail { get; set; }
         public int? BatchNumber { get; set; }
 
-        public bool CanRequestDuplicate()
-        {
-            return CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
-        }
-
-        public bool CanAmendCertificate()
-        {
-            return CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
-        }
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
+        public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
     }
 
     public class SearchViewModel

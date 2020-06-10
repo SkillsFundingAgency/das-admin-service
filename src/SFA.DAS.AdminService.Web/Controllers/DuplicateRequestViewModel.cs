@@ -18,9 +18,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public string PrivatelyFundedStatus { get; set; }
         public string FullName { get; set; }
 
-        public bool CanRequestDuplicate()
-        {
-            return CertificateStatus.CanRequestDuplicateCertificate(Status);
-        }
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
     }
 }
