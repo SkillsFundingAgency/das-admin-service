@@ -115,7 +115,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("ConfirmDelete", "CertificateDelete", new
                 {
                     certificateId = vm.Id,
-                    reasonForChange = vm.ReasonForChange,
+                    reasonForChange = vm.ReasonForChange.Replace("\r\n", ""),
                     incidentNumber = vm.IncidentNumber,
                     isDeleteConfirmed = vm.IsDeleteConfirmed
                 });
