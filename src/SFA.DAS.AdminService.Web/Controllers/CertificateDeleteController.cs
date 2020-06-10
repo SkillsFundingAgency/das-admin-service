@@ -108,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpPost("audit-details", Name = "AuditDetails")]
-        public async Task<IActionResult> AuditDetails(CertificateAuditDetailsViewModel vm)
+        public IActionResult AuditDetails(CertificateAuditDetailsViewModel vm)
         {
             if (ModelState.IsValid)
             {
