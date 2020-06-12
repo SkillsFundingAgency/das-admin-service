@@ -9,16 +9,10 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
     {
         public CertificateDeleteViewModelValidator()
         {
+            RuleFor(vm => vm.IncidentNumber).NotEmpty().WithMessage("Enter a ticket or incident number");
+            RuleFor(vm => vm.ReasonForChange).NotEmpty().WithMessage("Enter a reason for deleting this certificate");
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (vm?.ReasonForChange is null || string.IsNullOrWhiteSpace(vm.ReasonForChange))
-                {
-                    context.AddFailure("ReasonForChange", "Enter a reason for deleting this certificate");
-                }
-                if (vm?.IncidentNumber is null || string.IsNullOrWhiteSpace(vm.IncidentNumber))
-                {
-                    context.AddFailure("IncidentNumber", "Enter a ticket or incident number");
-                }
                 if (HasExceededWordCount(vm?.ReasonForChange))
                 {
                     context.AddFailure("ReasonForChange", "Reason for deleting this certificate must be 500 words or less");
