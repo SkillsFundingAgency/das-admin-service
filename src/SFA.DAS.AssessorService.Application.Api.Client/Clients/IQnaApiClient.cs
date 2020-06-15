@@ -14,9 +14,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     public interface IQnaApiClient
     {
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
+        Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId);
         Task<Dictionary<string, object>> GetApplicationData(Guid applicationId);
+        Task<string> GetQuestionTag(Guid applicationId, string questionTag);
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId);
+        Task<List<Section>> GetAllApplicationSections(Guid applicationId);
         Task<Sequence> GetSequence(Guid applicationId, Guid sequenceId);
         Task<Sequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo);
         Task<List<Section>> GetSections(Guid applicationId, Guid sequenceId);

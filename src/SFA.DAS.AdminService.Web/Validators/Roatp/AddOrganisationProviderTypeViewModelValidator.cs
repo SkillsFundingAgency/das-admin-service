@@ -1,10 +1,10 @@
 ﻿namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {
     using FluentValidation;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
     using SFA.DAS.AdminService.Web.Resources;
     using System.Collections.Generic;
     using ViewModels.Roatp;
+    using SFA.DAS.AdminService.Common.Validation;
 
     public class AddOrganisationProviderTypeViewModelValidator : AbstractValidator<AddOrganisationProviderTypeViewModel>
     {

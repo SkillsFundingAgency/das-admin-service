@@ -6,26 +6,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 {
     public class CertificateOptionViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public bool? HasAdditionalLearningOption { get; set; }
+        public bool HasAdditionalLearningOption { get; set; }
         public string Option { get; set; }
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             Option = CertificateData.CourseOption;
-
-            if (CertificateData.CourseOption == null)
-            {
-                HasAdditionalLearningOption = null;
-            }
-            else
-            {
-                HasAdditionalLearningOption = CertificateData.CourseOption != "";
-            }
+            HasAdditionalLearningOption = !string.IsNullOrWhiteSpace(Option);
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
-            data.CourseOption = HasAdditionalLearningOption.Value ? Option : "";
+            data.CourseOption = HasAdditionalLearningOption ? Option : string.Empty;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
 
             return certificate;

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators
 {

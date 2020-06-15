@@ -1,0 +1,156 @@
+@using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayApplicationViewModel
+
+@{
+    ViewBag.Title = "Gateway - Overall gateway outcome";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a asp-controller="Dashboard" asp-action="Index" class="govuk-breadcrumbs__link">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a asp-controller="RoatpGateway" asp-action="NewApplications" class="govuk-breadcrumbs__link">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a asp-controller="RoatpGateway" asp-action="ViewApplication" asp-route-applicationId="@Model.ApplicationId" class="govuk-breadcrumbs__link">Application assessment overview</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Gateway outcome</li>
+    </ol>
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.IsInvalid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var error in Model.ErrorMessages)
+                            {
+                                <li><a href="#@error.Field">@error.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            <span class="govuk-caption-xl">Overall gateway outcome </span>
+            <h1 class="govuk-heading-xl">Confirm gateway outcome</h1>
+            <div class="govuk-!-margin-bottom-4">
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    UKPRN: @Model.Ukprn
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Legal name: @Model.OrganisationName
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Provider route: @Model.ApplicationRoute
+                </p>
+            </div>
+        </div>
+    </div>
+    @if (Model.Sequences.Any())
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                @foreach (var sequence in Model.Sequences)
+                {
+                    <h2 class="govuk-heading-l govuk-!-margin-top-5">@sequence.SequenceTitle</h2>
+                    <table class="govuk-table govuk-!-margin-bottom-9">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-third">Check</th>
+                                <th scope="col" class="govuk-table__header">Outcome</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-half">Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var currentSection in sequence.Sections)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__header">
+                                        @currentSection.LinkTitle@Html.Raw((string.IsNullOrWhiteSpace(currentSection.HiddenText) ? "" : "<span class=\"govuk-visually-hidden\"> " + currentSection.HiddenText + "</span>"))
+                                    </td>
+                                    <td class="govuk-table__cell">
+                                        @if (!string.IsNullOrWhiteSpace(currentSection.Status))
+                                        {
+                                            var cssModifierClassName = currentSection.Status.ToLower().Replace(" ", "");
+                                            <strong class="govuk-tag govuk-tag--@cssModifierClassName das-no-wrap">@currentSection.Status</strong>
+                                        }
+                                    </td>
+                                    <td class="govuk-table__cell">
+                                        @currentSection.Comment
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="form" method="post" asp-action="EvaluateConfirmOutcome" asp-controller="RoatpGateway">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="ApplicationStatus" />
+                <a name="GatewayReviewStatus"></a>
+                <h3 class="govuk-heading-m govuk-!-margin-top-5">What do you want to do?</h3>
+                @if (!string.IsNullOrEmpty(Model.ErrorTextGatewayReviewStatus))
+                {
+                    <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> @Model.ErrorTextGatewayReviewStatus
+                    </span>
+                }
+                <div class="govuk-form-group @Model.CssFormGroupError">
+                    <div class="govuk-radios govuk-radios--conditional " data-module="radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input"
+                                   id="OptionApproved"
+                                   name="GatewayReviewStatus"
+                                   type="radio"
+                                   value="Pass"
+                                   data-aria-controls="conditional-OptionApproved"
+                                   @Model.RadioCheckedApproved>
+                            <label class="govuk-label govuk-radios__label" for="OptionApproved">
+                                Pass this application
+                            </label>
+                        </div>
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-OptionApproved">
+                            <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                <div class="govuk-form-group">
+                                    <a name="OptionApprovedText"></a>
+                                    <label class="govuk-label" for="OptionApprovedText">
+                                        Add comments (optional)
+                                    </label>
+                                    @if (!string.IsNullOrEmpty(Model.ErrorTextApproved))
+                                    {
+                                        <span class="govuk-error-message">
+                                            <span class="govuk-visually-hidden">Error:</span> @Model.ErrorTextApproved
+                                        </span>
+                                    }
+                                    <textarea class="govuk-textarea js-character-count @Model.CssOnErrorApproved"
+                                              id="OptionApprovedText"
+                                              name="OptionApprovedText"
+                                              rows="5"
+                                              aria-describedby="OptionApprovedText-info">@Model.OptionApprovedText</textarea>
+                                    <span id="OptionApprovedText-info" class="govuk-hint govuk-character-count__message" aria-live="polite"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="govuk-button">
+                    Save and continue
+                </button>
+            </form>
+        </div>
+    </div>
+</main>

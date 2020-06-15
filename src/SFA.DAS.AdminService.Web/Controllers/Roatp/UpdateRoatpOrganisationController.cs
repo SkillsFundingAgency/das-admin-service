@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
@@ -12,9 +13,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using AutoMapper;
     using System.Collections.Generic;
-    using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+    using SFA.DAS.AdminService.Common.Extensions;
+    using SFA.DAS.AdminService.Common.Validation;
 
-    [Authorize]
+    [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;

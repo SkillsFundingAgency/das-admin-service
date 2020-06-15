@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {   

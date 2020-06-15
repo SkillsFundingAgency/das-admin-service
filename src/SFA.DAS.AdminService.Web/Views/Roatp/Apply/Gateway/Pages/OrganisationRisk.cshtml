@@ -1,0 +1,77 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.OrganisationRiskViewModel
+
+@{
+    ViewBag.Title = $"Gateway - {Model.Heading}";
+    Layout = "_Layout";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayAssessmentBreadcrumb.cshtml"); }
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalValidationSummary.cshtml"); }
+            <span class="govuk-caption-xl">@Model.Caption</span>
+            <h1 class="govuk-heading-xl">@Model.Heading</h1>
+            <div class="govuk-!-margin-bottom-4">
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    UKPRN: @Model.Ukprn
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Legal name: @Model.ApplyLegalName
+                </p>
+                <p class="govuk-body govuk-!-margin-bottom-0">
+                    Type of organisation: @Model.OrganisationType
+                </p>
+                @if (!string.IsNullOrEmpty(Model.CompanyNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Company number: @Model.CompanyNumber
+                    </p>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.CharityNumber))
+                {
+                    <p class="govuk-body govuk-!-margin-bottom-0">
+                        Charity number: @Model.CharityNumber
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <table class="govuk-table govuk-!-margin-bottom-9">
+                <tbody class="govuk-table__body">
+                    @if (!string.IsNullOrWhiteSpace(Model.ApplyLegalName))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Legal name</td>
+                            <td class="govuk-table__cell">@Model.ApplyLegalName</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.TradingName))
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Trading name</td>
+                            <td class="govuk-table__cell">@Model.TradingName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (Model.ApplicationId != Guid.Empty)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form class="js-disable-on-submit" asp-action="EvaluateOrganisationRiskPage" asp-controller="RoatpGatewayOrganisationChecks">
+
+                    @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/Gateway/Pages/_GatewayApprovalSection.cshtml"); }
+                    <button class="govuk-button" type="submit">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>

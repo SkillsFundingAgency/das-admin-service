@@ -13,6 +13,8 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UKRLP
         public DateTime? VerificationDate { get; set; }
         public List<ProviderAlias> ProviderAliases { get; set; }
         public List<VerificationDetails> VerificationDetails { get; set; }
+        public bool VerifiedByCompaniesHouse { get; set; }
+        public bool VerifiedbyCharityCommission { get; set; }
     }
 
     public class ProviderContact
@@ -56,5 +58,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.UKRLP
     {
         public string VerificationAuthority { get; set; }
         public string VerificationId { get; set; }
+    }
+    
+    public class VerificationAuthorities
+    {
+        public const string CompaniesHouseAuthority = "Companies House";
+        public const string CharityCommissionAuthority = "Charity Commission";
+        public const string SoleTraderPartnershipAuthority = "Sole Trader or Non-limited Partnership";
     }
 }

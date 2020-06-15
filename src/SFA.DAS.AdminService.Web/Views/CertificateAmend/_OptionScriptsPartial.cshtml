@@ -2,18 +2,14 @@
 var epaoOptionFormElement = $('.apprentice-option-form');
 var epaoOptionValidationRulesObject = {
   rules: {
-    HasAdditionalLearningOption: {
-      required: true
-    },
     Option: {
-      required: '#options_yes[value="True"]:checked'
+      required: '#options_yes-conditional[value="True"]:checked'
     },
     ReasonForChange: {
       required: true
     }
   },
   messages: {
-    HasAdditionalLearningOption  : 'Select yes or no',
     Option  : 'Enter the learning option',
     ReasonForChange: 'Enter a reason'
   }

@@ -1,0 +1,150 @@
+@using SFA.DAS.QnA.Api.Types.Page
+@using System.Text.RegularExpressions;
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpSectionViewModel
+
+@{
+    ViewBag.Title = @Model.Title ?? "Section not active";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (Model.Section == null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Section not active</h1>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
+
+                @{ await Html.RenderPartialAsync("~/Views/Roatp/Apply/_OrganisationDetails.cshtml", Model); }
+            </div>
+        </div>
+        
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
+                    <dl class="govuk-summary-list">
+                        @foreach (var pg in Model.Section.QnAData.Pages.Where(p => p.Active))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
+                                        @pg.LinkTitle
+                                    </h3>
+
+                                    @if (pg.HasNewFeedback)
+                                    {
+                                        <div class="govuk-tag">
+                                            Feedback added
+                                        </div>
+                                    }
+                                    @* TODO: This no longer exists *@
+                                    @if (pg.HasFeedback && pg.AllFeedbackIsCompleted)
+                                    {
+                                        <div class="govuk-tag">
+                                            Answer updated
+                                        </div>
+                                    }
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @foreach (var answerPage in pg.PageOfAnswers)
+                                    {
+                                        foreach (var answer in answerPage.Answers)
+                                        {
+                                            var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                            if (question != null)
+                                            {
+                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(Regex.Replace(question.Label, "<.*?>", string.Empty))</h3>
+                                            }
+
+                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                            {
+                                                <details class="govuk-details">
+                                                    <summary class="govuk-details__summary">
+                                                        <span class="govuk-details__summary-text">
+                                                            View question details
+                                                        </span>
+                                                    </summary>
+                                                    <div class="govuk-details__text">
+                                                        @Html.Raw(question.QuestionBodyText)
+                                                    </div>
+                                                </details>
+                                            }
+                                            if (question != null && question.Input.Type == "FileUpload")
+                                            {
+                                                <p class="govuk-body">
+                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "RoatpApplication",
+                                                                  new
+                                                            {
+                                                                Id = Model.ApplicationId,
+                                                                sequenceNo = Model.SequenceNo,
+                                                                sectionNo = Model.SectionNo,
+                                                                pageId = pg.PageId,
+                                                                questionId = answer.QuestionId,
+                                                                filename = answer.Value
+                                                            })">
+                                                        @answer.Value
+                                                    </a>
+                                                </p>
+                                            }
+                                            else if (question != null && question.Input.Type == "Address")
+                                            {
+                                                var address = Model.Addresses[question.QuestionId];
+                                                if (address != null)
+                                                {
+                                                    <p class="govuk-body">
+                                                        @address.CommaSeperatedAddress()
+                                                    </p>
+                                                }
+                                            }
+                                            else if (question != null && question.Input.Type == "TabularData")
+                                            {
+                                                await Html.RenderPartialAsync("~/Views/Roatp/Apply/Applications/_TabularData.cshtml", answer.Value);
+                                            }
+                                            else if (question != null && question.Input.Type == "Hidden")
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                                @if (Model.QuestionContainsPredefinedOptions(question))
+                                                {
+                                                    <p class="govuk-body">@Html.Raw(Model.DisplayAnswerValue(answer, question))</p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                                }
+                                            }
+                                        }
+                                    }
+                                </dd>
+
+                                @if (pg.HasFeedback)
+                                {
+                                    <dd class="govuk-summary-list__actions">
+                                        <p class="govuk-body">
+                                            <a class="govuk-link" asp-action="Page" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@pg.PageId">View feedback</a>
+                                        </p>
+                                    </dd>
+                                }
+                            </div>
+                        }
+                    </dl>
+                </div>
+            </div>
+        
+    }
+
+    <p class="govuk-body">
+        <a class="govuk-link" asp-action="Sequence" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo">Return to section overview</a>
+    </p>
+    
+</main>

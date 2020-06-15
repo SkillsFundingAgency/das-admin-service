@@ -1,0 +1,61 @@
+@using SFA.DAS.AdminService.Web.Helpers;
+@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.RoatpTaskListViewModel
+
+@{
+    ViewBag.Title = "Application overview";
+    var BackAction = "OpenApplications";
+
+}
+
+<a class="govuk-back-link" asp-controller="RoatpApplication" asp-action="@BackAction">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            @if (Model.Sequences == null)
+            {
+                <h1 class="govuk-heading-xl">Application not active</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Application overview</h1>
+
+                <partial name="~/Views/Roatp/Apply/_OrganisationDetails.cshtml" />
+
+                <ul class="govuk-list">
+                    @foreach (var applicationSequence in Model.ApplySequences.OrderBy(x => x.SequenceNo))
+                    {
+                        <li>
+                            <h2 class="govuk-heading-m">
+                                <a class="govuk-link" href="@Url.Action("Sequence", "RoatpApplication", new {Model.ApplicationId, applicationSequence.SequenceNo})">
+                                    @applicationSequence.Description
+                                </a>
+                            </h2>
+                            @if (!String.IsNullOrWhiteSpace(applicationSequence.Status))
+                            {
+                                <div class="govuk-tag">
+                                    @Html.Raw(applicationSequence.Status)
+                                </div>
+                            }
+                            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        </li>
+                    }
+                </ul>
+
+                @*@if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
+            {
+                <form class="js-disable-on-submit" asp-controller="RoatpApplication" asp-action="Assessment" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" method="get">
+                    <button class="govuk-button" type="submit">Complete review</button>
+                </form>
+            }*@
+            }
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="RoatpApplication" asp-action="@BackAction">Return to applications</a>
+            </p>
+        </div>`
+    </div>
+</main>
