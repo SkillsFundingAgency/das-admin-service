@@ -5,7 +5,6 @@ trigger:
       - "*"
 
 variables:
-  - group: "ESFA - SonarCloud"
   - group: 'Prod Management Resources'
   - name: buildConfiguration
     value: 'release'
@@ -67,8 +66,7 @@ stages:
 - stage: NugetPublish
   displayName: 'Publish Nuget Package'
   pool:
-    name: "DAS - Continuous Deployment"
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    name: "DAS - Continuous Deployment"  
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory
