@@ -84,6 +84,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
         public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
+        public bool CanDeleteCertificate => Learner.CertificateStatus != CertificateStatus.Deleted;
     }
 
     public class SearchViewModel
