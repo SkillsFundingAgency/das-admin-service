@@ -91,6 +91,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
+            var contact = await _applyApiClient.GetContactForApplication(applicationId);
+            vm.ApplicantEmailAddress = contact.Email;
+
             var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
 
             if (activeFinancialReviewStatuses.Contains(application.FinancialReviewStatus))
