@@ -28,18 +28,26 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Batch Number
+                            Batch
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @(Model.PaginatedList.Items.FirstOrDefault()?.BatchNumber ?? Model.BatchNumber)
+                            @(Model.BatchNumber)
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Print date
+                            Sent Date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.PaginatedList.Items.FirstOrDefault()?.BatchPrintDate.UtcToTimeZoneTime()
+                            @Model.SentToPrinterDate.UtcToTimeZoneTime()
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Printed Date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @(Model.PrintedDate?.UtcToTimeZoneTime().ToString() ?? string.Empty)
                         </dd>
                     </div>
                 </dl>
@@ -58,6 +66,7 @@
                             <th class="govuk-table__header">Standard</th>
                             <th class="govuk-table__header">Certificate Reference</th>
                             <th class="govuk-table__header">Status</th>
+                            <th class="govuk-table__header">Status Date</th>
                             <th class="govuk-table__header">Overall Grade</th>
                             <th class="govuk-table__header"></th>
                         </tr>
@@ -65,15 +74,16 @@
                     <tbody class="govuk-table__body">
                         @foreach (var result in Model.PaginatedList.Items)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
-                                <td class="govuk-table__cell">@result.Uln</td>
-                                <td class="govuk-table__cell">@result.CertificateData.StandardName (@result.StandardCode)</td>
-                                <td class="govuk-table__cell">@result.CertificateReference</td>
-                                <td class="govuk-table__cell">@result.Status</td>
-                                <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
-                                <td class="govuk-table__cell"><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
+                            <td class="govuk-table__cell">@result.Uln</td>
+                            <td class="govuk-table__cell">@result.CertificateData.StandardName (@result.StandardCode)</td>
+                            <td class="govuk-table__cell">@result.CertificateReference</td>
+                            <td class="govuk-table__cell">@result.Status</td>
+                            <td class="govuk-table__cell">@result.StatusAt.UtcToTimeZoneTime()</td>
+                            <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
+                            <td class="govuk-table__cell"><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
+                        </tr>
                         }
                     </tbody>
                 </table>

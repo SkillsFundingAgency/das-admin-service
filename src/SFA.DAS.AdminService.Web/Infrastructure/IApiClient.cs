@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel);
         Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page);
-        Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page);
+        Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page);
         Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request);
         Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
