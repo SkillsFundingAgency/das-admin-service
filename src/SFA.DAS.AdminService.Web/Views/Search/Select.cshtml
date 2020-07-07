@@ -27,7 +27,7 @@ else
                     Certificate @Model.Learner.CertificateReference
                     <span class="govuk-caption-xl">Status: @Model.Learner.CertificateStatus</span>
                 </h1>
-                
+
             }
             else
             {
@@ -200,7 +200,11 @@ else
                             <th class="govuk-table__header" scope="col">User</th>
                             <th class="govuk-table__header" scope="col">Status</th>
                             <th class="govuk-table__header" scope="col">Batch</th>
-                            <th class="govuk-table__header" scope="col">@if (Model.Learner.CertificateLogs.Count() > 1) { @Html.Raw("Changes"); }</th>
+                            <th class="govuk-table__header" scope="col">
+                                @if (Model.Learner.CertificateLogs.Count() > 1)
+                                {@Html.Raw("Changes");
+                            }
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
@@ -310,8 +314,8 @@ else
             <ul class="govuk-list">
                 @if (Model.Learner.CertificateReference != null)
                 {
-                    if(Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
-                    { 
+                    if (Model.Learner.CertificateStatus == CertificateStatus.Printed || Model.Learner.CertificateStatus == CertificateStatus.Reprint)
+                    {
                         <li>
                             <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request duplicate certificate</a>
                         </li>
@@ -320,6 +324,12 @@ else
                     {
                         <li>
                             <a class="govuk-link" asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Amend certificate information</a>
+                        </li>
+                    }
+                    if (Model.Learner.CertificateStatus != CertificateStatus.Deleted)
+                    {
+                        <li>
+                            <a class="govuk-link" asp-action="ConfirmAndSubmit" asp-controller="CertificateDelete" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Delete certificate</a>
                         </li>
                     }
                 }
