@@ -10,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
@@ -21,23 +20,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
     [Route("certificate/privatestandardcodes")]
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
-        private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly CacheService _cacheHelper;
-        private readonly ApiClient _apiClient;       
 
         public CertificatePrivateStandardCodeController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheService cacheHelper,
             ApiClient apiClient,
             IStandardServiceClient standardServiceClient, IOrganisationsApiClient organisationsApiClient)
             : base(logger, contextAccessor, apiClient)
         {
-            _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
-            _apiClient = apiClient;
             _standardServiceClient = standardServiceClient;
             _organisationsApiClient = organisationsApiClient;
         }

@@ -24,7 +24,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
                     new CacheService(distributedCacheMock.Object),
                     MockApiClient,
                     MockStandardServiceClient.Object
