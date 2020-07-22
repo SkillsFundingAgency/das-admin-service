@@ -4,9 +4,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.ExternalApis.Services;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Controllers.Private;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Posts
@@ -23,11 +21,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
                     new CacheService(distributedCacheMock.Object),
                     MockApiClient,
-                    MockStandardServiceClient.Object
-                    );
+                    MockStandardServiceClient.Object, MockOrganisationsApiClient.Object);
 
             var vm = new CertificateStandardCodeListViewModel
             {

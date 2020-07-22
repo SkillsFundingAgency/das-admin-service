@@ -22,6 +22,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
     public class CertificatePrivateStandardCodeController : CertificateBaseController
     {
         private readonly IAssessmentOrgsApiClient _assessmentOrgsApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IStandardServiceClient _standardServiceClient;
         private readonly CacheService _cacheHelper;
         private readonly ApiClient _apiClient;       
@@ -31,13 +32,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
             IAssessmentOrgsApiClient assessmentOrgsApiClient,
             CacheService cacheHelper,
             ApiClient apiClient,
-            IStandardServiceClient standardServiceClient)
+            IStandardServiceClient standardServiceClient, IOrganisationsApiClient organisationsApiClient)
             : base(logger, contextAccessor, apiClient)
         {
             _assessmentOrgsApiClient = assessmentOrgsApiClient;
             _cacheHelper = cacheHelper;
             _apiClient = apiClient;
             _standardServiceClient = standardServiceClient;
+            _organisationsApiClient = organisationsApiClient;
         }
 
         [HttpGet]
@@ -94,13 +96,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Private
 
         private async Task<List<string>> GetFilteredStatusCodes(Guid certificateId)
         {
-            var certificate = await ApiClient.GetCertificate(certificateId);
+           var certificate = await ApiClient.GetCertificate(certificateId);
             var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);         
 
             var filteredStandardCodes =
-                (await _assessmentOrgsApiClient
-                    .FindAllStandardsByOrganisationIdAsync(organisation.EndPointAssessorOrganisationId))
-                .Select(q => q.StandardCode).ToList();
+                (await _organisationsApiClient
+                    .GetOrganisationStandardsByOrganisation(organisation.EndPointAssessorOrganisationId))
+                .Select(q => q.StandardCode.ToString()).ToList();
             return filteredStandardCodes;
         }
 

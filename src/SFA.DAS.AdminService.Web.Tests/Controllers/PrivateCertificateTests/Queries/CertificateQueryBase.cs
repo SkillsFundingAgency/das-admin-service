@@ -26,8 +26,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
         protected Mock<ILogger<CertificateAmendController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient MockApiClient;
-        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;        
-
+        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
+        protected IOrganisationsApiClient MockOrganisationsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;

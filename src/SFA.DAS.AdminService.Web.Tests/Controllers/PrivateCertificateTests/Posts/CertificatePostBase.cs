@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
 
         protected Mock<ISessionService> MockSession;
-
+        protected Mock<IOrganisationsApiClient> MockOrganisationsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;
