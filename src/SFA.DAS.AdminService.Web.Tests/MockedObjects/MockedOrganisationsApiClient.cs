@@ -59,20 +59,6 @@ namespace SFA.DAS.AdminService.Web.Tests.MockedObjects
             };
 
             var mockHttp = new MockHttpMessageHandler();
-
-            //var client = mockHttp.ToHttpClient();
-            //client.BaseAddress = new Uri("https://findapprenticeshiptraining-api.sfa.bis.gov.uk/");
-
-            //mockHttp.When($"/assessment-organisations/EPA00001/standards")
-            //    .Respond("application/json", JsonConvert.SerializeObject(standardOrganisartionSummaries));
-
-            //mockHttp.When($"https://findapprenticeshiptraining-api.sfa.bis.gov.uk/standards")
-            //    .Respond("application/json", JsonConvert.SerializeObject(standards));
-
-            //var apiClient = new AssessmentOrgsApiClient(client);
-
-            //return apiClient;
-
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("https://findapprenticeshiptraining-api.sfa.bis.gov.uk/");
 
