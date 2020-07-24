@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
         }
 
         [Test]
-        public async Task batch_log_view_model_is_as_expected()
+        public async Task batch_log_view_model_is_correctly_populated_from_staff_batch_log_result()
         {
             var result = await _controller.Index() as ViewResult;
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
         }
 
         [Test]
-        public async Task staff_batch_result_view_model_is_as_expected()
+        public async Task staff_batch_result_view_model_is_correctly_populated_from_staff_batch_search_result()
         {
             var result = await _controller.Results(1,1) as ViewResult;
 
