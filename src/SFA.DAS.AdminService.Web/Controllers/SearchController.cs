@@ -61,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
 
-            var vm = new LearnerDetailViewModel
+            var vm = new LearnerDetailForStaffViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
@@ -74,9 +74,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
     }
 
-    public class LearnerDetailViewModel
+    public class LearnerDetailForStaffViewModel
     {
-        public LearnerDetail Learner { get; set; }
+        public LearnerDetailResult Learner { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
         public bool ShowDetail { get; set; }

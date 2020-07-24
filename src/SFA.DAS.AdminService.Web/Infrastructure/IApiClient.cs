@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<EpaContact> GetEpaContactByEmail(string email);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
-        Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs);
+        Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
         Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);

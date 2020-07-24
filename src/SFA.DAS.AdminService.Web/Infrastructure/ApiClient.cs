@@ -242,9 +242,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<PaginatedList<StaffBatchLogResult>>($"/api/v1/staffsearch/batchlog?page={page}");
         }
 
-        public async Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
+        public async Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs)
         {
-            return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
+            return await Get<LearnerDetailResult>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
         }
 
         public async Task<Certificate> GetCertificate(Guid certificateId)
