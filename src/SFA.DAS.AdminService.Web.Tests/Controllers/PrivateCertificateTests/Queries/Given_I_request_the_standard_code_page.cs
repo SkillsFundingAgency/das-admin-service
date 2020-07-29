@@ -6,9 +6,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.ExternalApis.Services;
-using SFA.DAS.AssessorService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Controllers.Private;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Queries
@@ -26,10 +24,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             var certificatePrivateStandardCodeController =
                 new CertificatePrivateStandardCodeController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
-                    MockAssessmentOrgsApiClient,
                     new CacheService(mockDistributedCache.Object),
                     MockApiClient,
-                    MockStandardServiceClient.Object
+                    MockStandardServiceClient.Object, MockOrganisationsApiClient
                     );      
 
             _result = certificatePrivateStandardCodeController.StandardCode(Certificate.Id, true).GetAwaiter().GetResult();
