@@ -5,9 +5,9 @@ namespace SFA.DAS.AdminService.Settings
 {
     public class WebConfiguration : IWebConfiguration
     {
-        public AuthSettings Authentication { get; set; }
+       // public AuthSettings Authentication { get; set; }
 
-        [JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
+        //[JsonRequired] public ApiAuthentication ApiAuthentication { get; set; }
 
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
 
