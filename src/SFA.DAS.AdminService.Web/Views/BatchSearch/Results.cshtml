@@ -36,7 +36,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Sent Date
+                            Sent to printer
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.SentToPrinterDate.UtcToTimeZoneTime()
@@ -44,7 +44,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Printed Date
+                            Printed date
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @(Model.PrintedDate?.UtcToTimeZoneTime().ToString() ?? string.Empty)
@@ -64,9 +64,9 @@
                             <th class="govuk-table__header">Name</th>
                             <th class="govuk-table__header">ULN</th>
                             <th class="govuk-table__header">Standard</th>
-                            <th class="govuk-table__header">Certificate Reference</th>
+                            <th class="govuk-table__header">Certificate reference</th>
                             <th class="govuk-table__header">Status</th>
-                            <th class="govuk-table__header">Status Date</th>
+                            <th class="govuk-table__header">Status updated</th>
                             <th class="govuk-table__header">Overall Grade</th>
                             <th class="govuk-table__header"></th>
                         </tr>
