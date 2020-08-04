@@ -4,8 +4,6 @@ namespace SFA.DAS.AdminService.Settings
 {
     public interface IWebConfiguration
     {
-       // AuthSettings Authentication { get; set; }
-       // ApiAuthentication ApiAuthentication { get; set; }
         AzureApiAuthentication AzureApiAuthentication { get; set; }
         ClientApiAuthentication ClientApiAuthentication { get; set; }
 
