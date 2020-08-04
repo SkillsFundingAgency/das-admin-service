@@ -231,9 +231,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
         }
 
-        public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
+        public async Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page)
         {
-            return await Get<PaginatedList<StaffBatchSearchResult>>(
+            return await Get<StaffBatchSearchResponse>(
                 $"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
         }
 
