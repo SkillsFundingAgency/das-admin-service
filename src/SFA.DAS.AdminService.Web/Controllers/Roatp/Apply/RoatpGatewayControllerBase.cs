@@ -16,6 +16,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

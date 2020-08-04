@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
@@ -89,6 +90,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
 
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
+
+            var contact = await _applyApiClient.GetContactForApplication(applicationId);
+            vm.ApplicantEmailAddress = contact.Email;
 
             var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
 

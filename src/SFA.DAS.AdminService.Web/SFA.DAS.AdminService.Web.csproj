@@ -4,6 +4,7 @@
     <ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -41,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj" />
+    <ProjectReference Include="..\SFA.DAS.AdminService.Common\SFA.DAS.AdminService.Common.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
@@ -75,6 +77,9 @@
   <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\CertificateDelete\AuditDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>

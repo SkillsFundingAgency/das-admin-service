@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services.Gateway
 {

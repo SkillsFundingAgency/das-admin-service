@@ -25,6 +25,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public string InadequateComments { get; set; }
         public string ClarificationComments { get; set; }
         
+        public string ApplicantEmailAddress { get; set; }
 
         public RoatpFinancialApplicationViewModel() { }
 

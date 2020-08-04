@@ -9,6 +9,7 @@ using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -33,6 +34,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
 
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
+
+        Task<Contact> GetContactForApplication(Guid applicationId);
 
         Task<List<RoatpSequence>> GetRoatpSequences();
 

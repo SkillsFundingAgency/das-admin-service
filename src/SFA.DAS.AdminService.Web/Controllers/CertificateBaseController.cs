@@ -16,11 +16,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class CertificateBaseController : Controller
     {
-        protected readonly ILogger<CertificateAmendController> Logger;
+        protected readonly ILogger<CertificateBaseController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
         protected readonly ApiClient ApiClient;     
 
-        public CertificateBaseController(ILogger<CertificateAmendController> logger, 
+        public CertificateBaseController(ILogger<CertificateBaseController> logger, 
             IHttpContextAccessor contextAccessor, 
             ApiClient apiClient)
         {

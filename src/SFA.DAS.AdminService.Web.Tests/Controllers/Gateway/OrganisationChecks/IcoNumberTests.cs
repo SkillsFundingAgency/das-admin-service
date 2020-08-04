@@ -8,7 +8,6 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services.Gateway;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using System.Collections.Generic;
@@ -18,6 +17,7 @@ using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Gateway.OrganisationChecks
 {

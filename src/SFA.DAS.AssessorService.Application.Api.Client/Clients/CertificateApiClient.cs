@@ -14,10 +14,12 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
     {
         public CertificateApiClient(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(baseUri, tokenService, logger)
         {
+
         }
 
         public CertificateApiClient(HttpClient httpClient, ITokenService tokenService, ILogger<ApiClientBase> logger) : base(httpClient, tokenService, logger)
         {
+
         }
 
         public async Task<Certificate> Start(StartCertificateRequest request)
@@ -48,7 +50,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Put, "api/v1/certificates/update"))
             {
-                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);                
+                return await PostPutRequestWithResponse<UpdateCertificateRequest, Certificate>(httpRequest, certificateRequest);
             }
         }
 
@@ -82,6 +84,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"api/v1/certificates/options/?stdCode={stdCode}"))
             {
                 return await RequestAndDeserialiseAsync<List<Option>>(httpRequest, "Could not get Options");
+            }
+        }
+
+        public async Task Delete(DeleteCertificateRequest deleteCertificateRequest)
+        {
+            using (var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "api/v1/certificates/DeleteCertificate"))
+            {
+                await PostPutRequest(httpRequest, deleteCertificateRequest);
             }
         }
     }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Extensions.TagHelpers;
+using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using System.Threading.Tasks;
 

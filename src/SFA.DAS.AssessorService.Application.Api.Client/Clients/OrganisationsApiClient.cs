@@ -5,13 +5,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using SFA.DAS.AssessorService.Domain.Entities;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
     using AssessorService.Api.Types.Models;
+    using SFA.DAS.AdminService.Common.Validation;
     using SFA.DAS.AssessorService.Api.Types.Models.Register;
     using System.Net;
 

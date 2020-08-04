@@ -8,6 +8,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Surname { get; set; }
         public long Uln { get; set; }
         public DateTime SearchTime { get; set; }
+        public SearchData SearchData { get; set; }
         public int NumberOfResults { get; set; }
         public string Username { get; set; }
     }

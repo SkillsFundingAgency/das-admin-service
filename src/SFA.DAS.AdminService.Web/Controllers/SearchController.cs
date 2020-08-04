@@ -6,6 +6,8 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -59,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
 
-            var vm = new LearnerDetailViewModel
+            var vm = new LearnerDetailForStaffViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
@@ -72,13 +74,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
     }
 
-    public class LearnerDetailViewModel
+    public class LearnerDetailForStaffViewModel
     {
-        public LearnerDetail Learner { get; set; }
+        public LearnerDetailResult Learner { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
         public bool ShowDetail { get; set; }
         public int? BatchNumber { get; set; }
+
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
+        public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
+        public bool CanDeleteCertificate => Learner.CertificateReference != null && Learner.CertificateStatus != CertificateStatus.Deleted;
     }
 
     public class SearchViewModel
