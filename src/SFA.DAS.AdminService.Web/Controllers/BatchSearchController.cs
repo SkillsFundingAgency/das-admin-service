@@ -39,10 +39,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Results(int batchNumber, int page = 1)
         {
-            var searchResults = await _apiClient.BatchSearch(batchNumber, page);
+            var searchResponse = await _apiClient.BatchSearch(batchNumber, page);
             var batchSearchViewModel = new BatchSearchViewModel<StaffBatchSearchResult>
             {
-                PaginatedList = searchResults,
+                SentToPrinterDate = searchResponse.SentToPrinterDate,
+                PrintedDate = searchResponse.PrintedDate,
+                PaginatedList = searchResponse.Results,
                 BatchNumber = batchNumber,
                 Page = page
             };
