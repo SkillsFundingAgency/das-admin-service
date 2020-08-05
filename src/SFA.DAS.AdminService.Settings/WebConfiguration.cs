@@ -7,7 +7,7 @@ namespace SFA.DAS.AdminService.Settings
     {
         [JsonRequired] public AzureApiAuthentication AzureApiAuthentication { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication ClientApiAuthentication { get; set; }
+        [JsonRequired] public ClientApiAuthentication EpaoApiAuthentication { get; set; }
 
         [JsonRequired] public string AssessmentOrgsApiClientBaseUrl { get; set; }
 

@@ -5,7 +5,7 @@ namespace SFA.DAS.AdminService.Settings
     public interface IWebConfiguration
     {
         AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ClientApiAuthentication ClientApiAuthentication { get; set; }
+        ClientApiAuthentication EpaoApiAuthentication { get; set; }
 
 
         string AssessmentOrgsApiClientBaseUrl { get; set; }
