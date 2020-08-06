@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-@if (Model.BackToApprovals())
+@if (Model.CanReturnToApprovals)
 {
     <a class="govuk-back-link" asp-controller="CertificateApprovals" asp-action="Rejected">Back to approvals</a>
 }
@@ -259,7 +259,7 @@ else
                 </div>
             </dl>
 
-            @if (Model.Status == CertificateStatus.Printed || Model.Status == CertificateStatus.Reprint)
+            @if(Model.CanRequestDuplicate)
             {
                 <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
                     @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })

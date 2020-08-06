@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Formatting;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -100,6 +101,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
         {
             
+        }
+
+        public async  Task<Contact> GetContactForApplication(Guid applicationId)
+        {
+            return await Get<Contact>($"/Application/{applicationId}/Contact");
         }
 
         public async Task<List<RoatpSequence>> GetRoatpSequences()

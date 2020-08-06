@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
         protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
 
         protected Mock<ISessionService> MockSession;
-
+        protected IOrganisationsApiClient MockOrganisationsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;
@@ -38,14 +38,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
 
             MockLogger = new Mock<ILogger<CertificateAmendController>>();
             var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
-
+            var mockedOrganisationApiClientLogger = new Mock<ILogger<OrganisationsApiClient>>();
             MockSession = new Mock<ISessionService>();
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
             MockStandardServiceClient = new Mock<IStandardServiceClient>();
-
-
+            
             var standards = new List<StandardCollation>
             {
                 new StandardCollation
@@ -82,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
 
             MockStandardServiceClient.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(standards.AsEnumerable()));
             MockAssessmentOrgsApiClient = MockedAssessmentOrgsApiClient.Setup(mockedApiClientLogger);
-
+            MockOrganisationsApiClient = MockedOrganisationsApiClient.Setup(mockedOrganisationApiClientLogger);
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
 
