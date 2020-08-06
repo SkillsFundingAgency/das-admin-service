@@ -1,6 +1,5 @@
-﻿using System;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
+﻿using SFA.DAS.AssessorService.Domain.Consts;
+using System;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -18,5 +17,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public string Status { get; set; }
         public string PrivatelyFundedStatus { get; set; }
         public string FullName { get; set; }
+
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
     }
 }

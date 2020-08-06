@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel);
         Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page);
-        Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page);
+        Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page);
         Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request);
         Task<string> CreateEpaContact(CreateEpaOrganisationContactRequest request);  
         Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request);
@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<EpaContact> GetEpaContactByEmail(string email);
         Task<EpaOrganisation> GetEpaOrganisation(string organisationId);
         Task<List<OrganisationStandardSummary>> GetEpaOrganisationStandards(string organisationId);
-        Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs);
+        Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
         Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);

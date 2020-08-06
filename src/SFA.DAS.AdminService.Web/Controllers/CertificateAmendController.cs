@@ -42,8 +42,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            if (vm.Status == CertificateStatus.Printed ||
-                vm.Status == CertificateStatus.Reprint)
+            if(vm.CanRequestDuplicate)
             {
                 return RedirectToAction("Index", "DuplicateRequest",
                     new
