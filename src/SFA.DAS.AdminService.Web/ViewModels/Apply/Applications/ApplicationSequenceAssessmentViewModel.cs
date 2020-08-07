@@ -1,38 +1,37 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes;
+﻿using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.QnA.Api.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
-    public class ApplicationSequenceAssessmentViewModel
+    public class ApplicationSequenceAssessmentViewModel : BackViewModel
     {
-        public ApplicationSequence Sequence { get; }
-
-        public string Title { get; }
-
         public Guid ApplicationId { get; }
-
-        public int SequenceId { get; }
+        public int SequenceNo { get; }
+        public List<Section> Sections { get; }
 
         public bool HasNewFeedback { get; }
-
         public bool HasInadequateFhaButNoFeedbackGiven { get; }
 
         public string ReturnType { get; set; }
 
-        public ApplicationSequenceAssessmentViewModel(ApplicationSequence sequence)
+        public ApplicationSequenceAssessmentViewModel(ApplicationResponse application, Sequence sequence, List<Section> sections, string backAction, string backController, string backOrganisationId)
+            : base (backAction, backController, backOrganisationId)
         {
-            Sequence = sequence;
-            Title = "Assessment summary";
-            ApplicationId = sequence.ApplicationId;
-            SequenceId = sequence.SequenceId;
-            HasNewFeedback = sequence.Sections.Any(s => s.HasNewPageFeedback);
+            ApplicationId = application.Id;
+            SequenceNo = sequence.SequenceNo;
+            Sections = sections;
 
-            var fhaSection = sequence.Sections.Where(s => s.SectionId == 3).FirstOrDefault();
+            HasNewFeedback = sections.Any(sec => sec.QnAData.RequestedFeedbackAnswered.HasValue && !sec.QnAData.RequestedFeedbackAnswered.Value);
 
-            if(fhaSection != null && !fhaSection.HasNewPageFeedback)
+            var fhaSection = sections.FirstOrDefault(s => s.SectionNo == 3);
+
+            if(fhaSection != null && !fhaSection.QnAData.Pages.Any(p => p.HasNewFeedback))
             {
-                HasInadequateFhaButNoFeedbackGiven = fhaSection.QnAData?.FinancialApplicationGrade?.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate;
+                HasInadequateFhaButNoFeedbackGiven = application.financialGrade?.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate;
             }
         }
     }

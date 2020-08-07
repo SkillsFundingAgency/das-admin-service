@@ -11,7 +11,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public long Uln { get; set; }
         public string CertificateReference { get; set; }
         public int? Ukprn { get; set; }
-        public int Level { get; set; }
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
         public int StandardCode { get; set; }
@@ -70,9 +69,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             return certificate;
         }
 
-        public bool BackToApprovals()
-        {
-            return IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
-        }
+        public bool CanReturnToApprovals => IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
+
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
     }
 }

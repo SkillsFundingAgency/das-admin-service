@@ -1,4 +1,4 @@
-@using SFA.DAS.AssessorService.Domain.Extensions;
+@using SFA.DAS.AdminService.Common.Extensions;
 @using SFA.DAS.AssessorService.ApplyTypes;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.FinancialDashboardViewModel
@@ -54,28 +54,32 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell das-no-wrap" data-label="Organisation name" class="nowrap">
-                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="Financial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="Financial" asp-route-Id="@item.ApplicationId">@item.OrganisationName</a>
                                 </td>
                                 <td class="govuk-table__cell" data-label="Date submitted">
                                     @item.SubmittedDate.ToSfaShortDateString()
                                 </td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Current status">
                                     @{
-                                        switch (item.CurrentStatus)
+                                        switch (item.FinancialStatus)
                                         {
-                                            case ApplicationSectionStatus.Submitted:
-                                                <div class="govuk-tag govuk-tag--inactive">
-                                                    unassigned
-                                                </div>
+                                            case FinancialReviewStatus.New:
+                                                if (item.ApplicationStatus == ApplicationStatus.Resubmitted)
+                                                {
+                                                    <div class="govuk-tag govuk-tag--updated">
+                                                        updated
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="govuk-tag govuk-tag--inactive">
+                                                        unassigned
+                                                    </div>
+                                                }
                                                 break;
-                                            case ApplicationSectionStatus.InProgress:
+                                            case FinancialReviewStatus.InProgress:
                                                 <div class="govuk-tag">
                                                     in progress
-                                                </div>
-                                                break;
-                                            case ApplicationSequenceStatus.Resubmitted:
-                                                <div class="govuk-tag govuk-tag--updated">
-                                                    Updated
                                                 </div>
                                                 break;
                                             default:

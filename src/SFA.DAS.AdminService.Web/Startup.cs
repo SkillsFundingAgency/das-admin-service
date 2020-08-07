@@ -21,18 +21,25 @@ using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Settings;
-using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
+using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
+using SFA.DAS.AdminService.Web.Services.Gateway;
+using Microsoft.AspNetCore.Mvc.Razor;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Web
-{ 
+{
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -56,7 +63,9 @@ namespace SFA.DAS.AdminService.Web
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
                 config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
@@ -64,35 +73,47 @@ namespace SFA.DAS.AdminService.Web
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
-            services.AddHttpClient<ApplyApiClient>("ApplyApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress);
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
+
+            services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
+            {
+                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
-            
-            
+
             AddAuthentication(services);
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-GB");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+
             services.AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
+                    options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+
+            services.Configure<RazorViewEngineOptions>(o =>
+                {
+                    o.ViewLocationFormats.Add("/Views/Application/{1}/{0}" + RazorViewEngine.ViewExtension);
+                    o.ViewLocationFormats.Add("/Views/Application/{0}" + RazorViewEngine.ViewExtension);
+                });
+
+            services.AddSession(opt => 
+            {
+                opt.IdleTimeout = TimeSpan.FromHours(1);
+            });
 
             if (!_env.IsDevelopment())
             {
@@ -105,7 +126,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-            
+   
             ConfigureDependencyInjection(services);           
         }
 
@@ -119,7 +140,8 @@ namespace SFA.DAS.AdminService.Web
                 .WithTransientLifetime());
 
             services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IApplyTokenService, ApplyTokenService>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
+
             services.AddTransient(x => ApplicationConfiguration);
 
             services.AddTransient<ISessionService>(x =>
@@ -132,31 +154,74 @@ namespace SFA.DAS.AdminService.Web
                         x.GetService<ITokenService>(), 
                         x.GetService<ILogger<OrganisationsApiClient>>()));
 
-            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
-                x.GetService<ITokenService>(), 
-                x.GetService<ILogger<ContactsApiClient>>(),
-                x.GetService<IContactApplyClient>()));
-            
-            services.AddTransient<IApplyApiClient>(x => new ApplyApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<ApplyApiClient>>(),
-                x.GetService<IApplyTokenService>()));
-
             services.AddTransient<IApiClient>(x => new ApiClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
 
-            services.AddTransient<IContactApplyClient>(x => new ContactApplyClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress, 
-                x.GetService<ITokenService>(), 
-                x.GetService<ILogger<ContactApplyClient>>()));
+            services.AddTransient<ICertificateApiClient>(x => new CertificateApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<CertificateApiClient>>()));
+
+            services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<ApplicationApiClient>>(),
+                x.GetService<ITokenService>()));
+
+            services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CompaniesHouseApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<ICharityCommissionApiClient>(x => new CharityCommissionApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<CharityCommissionApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
+                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                x.GetService<ITokenService>(),
+                x.GetService<ILogger<ContactsApiClient>>()));
+
+            services.AddTransient<IQnaApiClient>(x => new QnaApiClient(
+              ApplicationConfiguration.QnaApiAuthentication.ApiBaseAddress,
+              x.GetService<IQnaTokenService>(),
+              x.GetService<ILogger<QnaApiClient>>()));
+
+            services.AddTransient<IRoatpApplyTokenService, RoatpApplyTokenService>();
+
+            services.AddTransient<IRoatpApplicationApiClient>(x => new RoatpApplicationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpApplicationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+
+            services.AddTransient<IRoatpOrganisationSummaryApiClient>(x => new RoatpOrganisationSummaryApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpOrganisationSummaryApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpExperienceAndAccreditationApiClient>(x => new RoatpExperienceAndAccreditationApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
+				x.GetService<IRoatpApplyTokenService>()));
+
+            services.AddTransient<IRoatpGatewayCriminalComplianceChecksApiClient>(x => new RoatpGatewayCriminalComplianceChecksApiClient(
+                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
+                x.GetService<ILogger<RoatpGatewayCriminalComplianceChecksApiClient>>(),
+                x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            
+            services.AddTransient<IRoatpGatewayPageValidator, RoatpGatewayPageValidator>();
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
@@ -175,11 +240,21 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-
+            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
+
+            services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
+            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
+            services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
+
+            Common.DependencyInjection.ConfigureDependencyInjection(services);
+            services.AddTransient<IFeatureToggles>(x => { 
+                var config = x.GetService<IWebConfiguration>(); 
+                return config.FeatureToggles; 
+            });
         }
 
         private void AddAuthentication(IServiceCollection services)

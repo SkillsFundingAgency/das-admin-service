@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+      <ProjectGuid>83078990-F41B-4938-99C9-94A3BC50DDBA</ProjectGuid>
+      <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,8 +10,13 @@
         <Version>4.5.0</Version>
       </PackageReference>
       <PackageReference Include="Newtonsoft.Json">
-        <Version>11.0.2</Version>
+        <Version>12.0.2</Version>
       </PackageReference>
+      <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.170" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj" />
     </ItemGroup>
 
 </Project>

@@ -26,23 +26,23 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
         protected Mock<ILogger<CertificateAmendController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient MockApiClient;
-        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;        
-
+        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;
+        protected IOrganisationsApiClient MockOrganisationsApiClient;
 
         public CertificateQueryBase()
         {
             Certificate = SetupCertificate();
 
             MockLogger = new Mock<ILogger<CertificateAmendController>>();
-            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();            
-
+            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
+            var mockedOrganisationApiClientLogger = new Mock<ILogger<OrganisationsApiClient>>();
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
             MockStandardServiceClient = new Mock<IStandardServiceClient>();
-
+            MockOrganisationsApiClient = MockedOrganisationsApiClient.Setup(mockedOrganisationApiClientLogger); ;
             var standards = new List<StandardCollation>
             {
                 new StandardCollation

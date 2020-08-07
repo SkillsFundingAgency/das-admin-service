@@ -1,8 +1,9 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
+﻿@using SFA.DAS.AdminService.Web.ViewModels.Register;
+
 @model RegisterViewAndEditOrganisationViewModel
 @{
-ViewBag.Title = "Edit organisation";
-Layout = "_Layout";
+    ViewBag.Title = "Edit organisation";
+    Layout = "_Layout";
 }
 
 <a class="govuk-back-link" asp-action="Index" asp-controller="Register">Return to register search</a>
@@ -225,32 +226,32 @@ Layout = "_Layout";
             <div class="govuk-form-group">
                 @if (@Model.Contacts.Count > 0)
                 {
-                <table class="govuk-table govuk-table--s das-table--responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header">Name</th>
-                            <th class="govuk-table__header">Email</th>
-                            <th class="govuk-table__header">Username</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
-                        {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" data-label="Name">@result.DisplayName</td>
-                            <td class="govuk-table__cell" data-label="ID">@result.Email</td>
-                            <td class="govuk-table__cell" data-label="Username">@result.Username</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+                    <table class="govuk-table govuk-table--s das-table--responsive">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header">Name</th>
+                                <th class="govuk-table__header">Email</th>
+                                <th class="govuk-table__header">Username</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var result in Model.Contacts.OrderBy(x => x.DisplayName))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Name">@result.DisplayName</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.Email</td>
+                                    <td class="govuk-table__cell" data-label="Username">@result.Username</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
                 else
                 {
                     <div class="govuk-form-group" sfa-validation-for="ContactsCount" sfa-validationerror-class="govuk-form-group--error">
-                        <span>There are no contacts</span>
+                        <p class="govuk-body">There are no contacts</p>
                         <span class="govuk-error-message" asp-validation-for="ContactsCount"></span>
-                        </div>
+                    </div>
                 }
             </div>
         </div>
@@ -260,32 +261,32 @@ Layout = "_Layout";
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-l">Standards</h2>
             <div class="govuk-form-group">
-                @if (@Model.OrganisationStandards.Count > 0)
+                @if (@Model.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items.Count > 0)
                 {
-                <table class="govuk-table govuk-table--s">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header">Name</th>
-                            <th class="govuk-table__header">Code</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var result in Model.OrganisationStandards.OrderBy(x =>
-                        x.StandardCollation.Title))
-                        {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
-                            <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+                    <table class="govuk-table govuk-table--s">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header">Name</th>
+                                <th class="govuk-table__header">Code</th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var result in Model.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items.OrderBy(x =>
+                           x.StandardCollation.Title))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 }
                 else
                 {<div class="govuk-form-group" sfa-validation-for="StandardsCount" sfa-validationerror-class="govuk-form-group--error">
-                    <p class="govuk-body">There are no standards</p>
-                    <span class="govuk-error-message" asp-validation-for="StandardsCount"></span>
-                </div>
+                        <p class="govuk-body">There are no standards</p>
+                        <span class="govuk-error-message" asp-validation-for="StandardsCount"></span>
+                    </div>
                 }
             </div>
         </div>

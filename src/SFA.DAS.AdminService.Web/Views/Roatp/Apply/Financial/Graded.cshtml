@@ -1,0 +1,43 @@
+@model SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialReviewDetails
+
+@{
+    ViewBag.Title = "Financial health assessment completed";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="OpenApplications" asp-controller="RoatpFinancial">RoATP assessments</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Financial health assessment completed
+                </h1>
+                <div class="govuk-panel__body">
+                    <div>
+                        <span class="govuk-!-font-size-24">
+                            Outcome saved as
+                        </span>
+                        <br>
+                        <strong>@Model.SelectedGrade</strong>
+                    </div>
+                </div>
+            </div>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="OpenApplications" asp-controller="RoatpFinancial">Back to RoATP financial applications</a>
+            </p>
+        </div>
+    </div>
+</main>

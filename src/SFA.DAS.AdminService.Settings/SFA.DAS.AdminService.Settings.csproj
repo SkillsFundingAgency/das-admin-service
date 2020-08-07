@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <ProjectGuid>7597DE7D-2942-4E5C-B64E-4F2BA69FDE26</ProjectGuid>
     <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.json" Version="11.0.2" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SFA.DAS.AdminService.Common\SFA.DAS.AdminService.Common.csproj" />
   </ItemGroup>
 
 </Project>

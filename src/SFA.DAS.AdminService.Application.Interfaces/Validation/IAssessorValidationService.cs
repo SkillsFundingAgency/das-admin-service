@@ -1,5 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Application.Interfaces.Validation
@@ -9,5 +9,6 @@ namespace SFA.DAS.AdminService.Application.Interfaces.Validation
         Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request);
         Task<ValidationResponse> ValidateNewContactRequest(CreateEpaOrganisationContactRequest request);
         Task<ValidationResponse> ValidateNewOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request);
+        Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request);
     }
 }

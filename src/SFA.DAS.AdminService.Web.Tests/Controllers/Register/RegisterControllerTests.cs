@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [SetUp]
         public void Arrange()
         {
-            Sut = new RegisterController(ApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
         }
 
         [Test]

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
@@ -33,6 +32,12 @@ namespace SFA.DAS.AdminService.Web.Services
         {
             var validationRequest = MapToCreateEpaOrganisationStandardValidateRequest(request);
             return await _apiClient.CreateOrganisationStandardValidate(validationRequest);
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request)
+        {
+            var validationRequest = MapToUpdateEpaOrganisationValidateRequest(request);
+            return await _apiClient.UpdateOrganisationValidate(validationRequest);
         }
 
         private CreateEpaOrganisationValidationRequest MapToCreateEpaOrganisationValidateRequest(CreateEpaOrganisationRequest request)
@@ -69,6 +74,26 @@ namespace SFA.DAS.AdminService.Web.Services
                 EffectiveTo = request?.EffectiveTo,
                 ContactId = request?.ContactId,
                 DeliveryAreas = request?.DeliveryAreas
+            };
+        }
+
+        private UpdateEpaOrganisationValidationRequest MapToUpdateEpaOrganisationValidateRequest(UpdateEpaOrganisationRequest request)
+        {
+            return new UpdateEpaOrganisationValidationRequest
+            {
+                Name = request?.Name,
+                Ukprn = request?.Ukprn,
+                OrganisationTypeId = request?.OrganisationTypeId,
+                OrganisationId = request?.OrganisationId,
+                Address1 = request?.Address1,
+                Address2 = request?.Address2,
+                Address3 = request?.Address3,
+                Address4 = request?.Address4,
+                Postcode = request?.Postcode,
+                CompanyNumber = request?.CompanyNumber,
+                CharityNumber = request?.CharityNumber,
+                Status = request?.Status,
+                ActionChoice = request?.ActionChoice
             };
         }
     }

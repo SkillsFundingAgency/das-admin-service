@@ -1,23 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.Paging;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
-using SFA.DAS.Apprenticeships.Api.Types;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using OrganisationType = SFA.DAS.AssessorService.Api.Types.Models.AO.OrganisationType;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -72,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             var serializeObject = JsonConvert.SerializeObject(model);
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
         }
 
         protected async Task<U> Put<T, U>(string uri, T model)
@@ -170,6 +169,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<CreateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-new", request);
         }
 
+        public async Task<ValidationResponse> UpdateOrganisationValidate(UpdateEpaOrganisationValidationRequest request)
+        {
+            return await Post<UpdateEpaOrganisationValidationRequest, ValidationResponse>("api/ao/assessment-organisations/validate-existing", request);
+        }
+
         public async Task<string> CreateEpaOrganisation(CreateEpaOrganisationRequest request)
         {
             var result =
@@ -227,9 +231,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
         }
 
-        public async Task<PaginatedList<StaffBatchSearchResult>> BatchSearch(int batchNumber, int page)
+        public async Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page)
         {
-            return await Get<PaginatedList<StaffBatchSearchResult>>(
+            return await Get<StaffBatchSearchResponse>(
                 $"/api/v1/staffsearch/batch?batchNumber={batchNumber}&page={page}");
         }
 
@@ -238,9 +242,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<PaginatedList<StaffBatchLogResult>>($"/api/v1/staffsearch/batchlog?page={page}");
         }
 
-        public async Task<LearnerDetail> GetLearner(int stdCode, long uln, bool allLogs)
+        public async Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs)
         {
-            return await Get<LearnerDetail>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
+            return await Get<LearnerDetailResult>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
         }
 
         public async Task<Certificate> GetCertificate(Guid certificateId)
@@ -253,9 +257,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<Organisation>($"/api/v1/organisations/organisation/{id}");
         }
 
-        public async Task<List<Option>> GetOptions(int stdCode)
+        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
         {
-            return await Get<List<Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
+            return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
+        }
+
+        public async Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
+        {
+            return await Get<List<AssessorService.Domain.Entities.Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
         }
 
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
@@ -357,10 +366,5 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<IEnumerable<IDictionary<string, object>>>($"api/v1/staffreports/report-content/{storedProcedure}");
         }
         #endregion
-
-        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
-        {
-            await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
-        }
     }
 }

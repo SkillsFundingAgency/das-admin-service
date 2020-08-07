@@ -1,0 +1,32 @@
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Gateway.RoatpGatewayConfirmOutcomeViewModel
+
+@{
+    ViewBag.Title = "Gateway - Overall gateway outcome";
+    Layout = "_Layout";
+}
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a asp-controller="Dashboard" asp-action="Index" class="govuk-breadcrumbs__link">RoATP dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a asp-controller="RoatpGateway" asp-action="NewApplications" class="govuk-breadcrumbs__link">RoATP applications</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Overall gateway outcome </li>
+    </ol>
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation  govuk-!-margin-bottom-9">
+                <h1 class="govuk-panel__title">
+                    Gateway outcome saved
+                </h1>
+                <div class="govuk-panel__body">
+                    <strong>@Model.GatewayReviewStatus</strong>
+                </div>
+            </div>
+            <p><a asp-controller="RoatpGateway" asp-action="NewApplications" class="govuk-link">Go to RoATP applications</a></p>
+        </div>
+    </div>
+</main>

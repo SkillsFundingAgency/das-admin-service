@@ -1,0 +1,63 @@
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Snapshot.SnapshotViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+
+@{
+    ViewBag.Title = "Snapshot Application";
+    Layout = "_Layout";
+}
+
+@* This is Developer WIP *@
+@if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+{
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="ApplicationId"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">Snapshot Application</h1>
+
+                @if (Model.SnapshotSuccessful.HasValue)
+                {
+                    if (Model.SnapshotSuccessful.Value)
+                    {
+                        <h2 class="govuk-heading-l">Snapshot Created</h2>
+                        <h3 class="govuk-heading-m">@Model.SnapshotApplicationId</h3>
+                    }
+                    else
+                    {
+                        <h2 class="govuk-heading-l">Snapshot Failed</h2>
+                    }
+                }
+
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <form class="js-disable-on-submit" method="post" asp-action="PerformSnapshot" asp-controller="RoatpSnapshot">
+
+                            <div class="govuk-form-group" sfa-validation-for="ApplicationId" sfa-validationerror-class="govuk-form-group--error">
+                                <label for="ApplicationId" class="govuk-label">ApplicationId</label>
+                                <input id="ApplicationId" name="ApplicationId" type="text" class="govuk-input govuk-input--width-10" asp-for="ApplicationId"
+                                       sfa-validation-for="ApplicationId" sfa-validationerror-class="govuk-input--error" />
+                            </div>
+
+                            <button class="govuk-button" type="submit">Confirm and submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+}

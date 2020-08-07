@@ -1,0 +1,84 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
+
+<dl class="govuk-summary-list govuk-!-margin-bottom-9">
+    @if (!string.IsNullOrWhiteSpace(Model.Ukprn))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                UKPRN
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.Ukprn
+            </dd>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.OrganisationName))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Legal name
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.OrganisationName
+            </dd>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ApplicationRoute))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Provider route
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.ApplicationRouteShortText
+            </dd>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ApplicantEmailAddress))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Applicant's email address
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <a href="mailto:@Model.ApplicantEmailAddress">@Model.ApplicantEmailAddress</a>
+</dd>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.DeclaredInApplication))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Declared in application
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.DeclaredInApplication
+            </dd>
+        </div>
+    }
+    @if (Model.SubmittedDate.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Submitted date
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.SubmittedDate.ToSfaShortDateString()
+            </dd>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Application reference number
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.ApplicationReference
+            </dd>
+        </div>
+    }
+</dl>

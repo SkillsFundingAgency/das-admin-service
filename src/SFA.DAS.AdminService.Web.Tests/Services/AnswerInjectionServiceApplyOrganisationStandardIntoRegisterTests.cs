@@ -14,7 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Services
 {
@@ -24,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         private AnswerInjectionService _answerInjectionService;
         private IValidationService _validationService;
         private Mock<IApiClient> _mockApiClient;
+        private Mock<IApplicationApiClient> _mockApplyClient;
         private IAssessorValidationService _assessorValidationService;
         private Mock<ILogger<AnswerService>> _mockLogger;
         private Mock<ISpecialCharacterCleanserService> _mockSpecialCharacterCleanserService;
@@ -31,8 +32,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         [SetUp]
         public void Setup()
         {
-            var applicationId = Guid.NewGuid();
-
             _mockApiClient = new Mock<IApiClient>();
 
             _mockApiClient.Setup(r => r.SearchOrganisations(It.IsAny<string>()))
@@ -40,6 +39,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _mockApiClient.Setup(r => r.GetDeliveryAreas())
                .ReturnsAsync(new List<DeliveryArea> { new DeliveryArea { Id = 1, Area = "East Midlands" } });
+
+            _mockApplyClient = new Mock<IApplicationApiClient>();
 
             _validationService = new ValidationService();
             _assessorValidationService = new AssessorValidationService(_mockApiClient.Object);
@@ -51,6 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
             _answerInjectionService = new AnswerInjectionService(
                 _mockApiClient.Object,
+                _mockApplyClient.Object,
                 _validationService,
                 _assessorValidationService,
                 _mockSpecialCharacterCleanserService.Object,
@@ -101,15 +103,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
         {
             get
             {
-                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid(), Guid.NewGuid(), "EPA0001",
                     1, DateTime.UtcNow.Date, "East Midlands", false, "EPA Standard Id", null);
-                yield return new InjectionTestCase(Guid.NewGuid().ToString(), null,
+                yield return new InjectionTestCase(Guid.NewGuid(), Guid.NewGuid(), null,
                     0, DateTime.UtcNow.Date, "East Midlands", false, null, "organisation id missing");
-                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "INVALID",
+                yield return new InjectionTestCase(Guid.NewGuid(), Guid.NewGuid(), "INVALID",
                     0, DateTime.UtcNow.Date, "East Midlands", false, null, "organisation id invalid");
-                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid(), Guid.NewGuid(), "EPA0001",
                     0, DateTime.UtcNow.Date, "East Midlands", false, null, "standard invalid");
-                yield return new InjectionTestCase(Guid.NewGuid().ToString(), "EPA0001",
+                yield return new InjectionTestCase(Guid.NewGuid(), Guid.NewGuid(), "EPA0001",
                     99, DateTime.UtcNow.Date, "East Midlands", true, null, "standard taken");
             }
         }
@@ -122,8 +124,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             public bool IsOrganisationStandardTaken { get; set; }
 
 
-            public InjectionTestCase(string createdBy,
-                string organisationId, int standardCode, DateTime effectiveFrom, string deliveryAreas,
+            public InjectionTestCase(Guid applyingContactId,
+                Guid organisationId, string endPointAssessorOrganisationId, int standardCode, DateTime effectiveFrom, string deliveryAreas,
                 bool isOrganisationStandardTaken, string epaoStandardId, string warningMessage)
             {
                 var warningMessages = new List<string>();
@@ -142,11 +144,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
 
                 Command = new CreateOrganisationStandardCommand
                 {
-                    CreatedBy = createdBy,
                     OrganisationId = organisationId,
+                    EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
                     StandardCode = standardCode,
                     EffectiveFrom = DateTime.Parse(effectiveFrom.ToString()),
                     DeliveryAreas = deliveryAreas?.Split(",").ToList(),
+                    ApplyingContactId = applyingContactId,
                 };
                 ExpectedResponse = response;
             }
