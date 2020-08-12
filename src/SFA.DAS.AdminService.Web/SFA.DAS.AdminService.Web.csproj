@@ -4,6 +4,7 @@
     <ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -76,6 +77,9 @@
   <ItemGroup>
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\CertificateDelete\AuditDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>

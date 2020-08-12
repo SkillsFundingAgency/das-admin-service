@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
 using SFA.DAS.Apprenticeships.Api.Types;
 using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AdminService.Web.Infrastructure;
 

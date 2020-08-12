@@ -1,0 +1,106 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateDelete.CertificateConfirmDeleteViewModel
+
+@{
+    ViewBag.Title = "Check your answers before deleting this certificate";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-action="AuditDetails" asp-controller="CertificateDelete" asp-route-certificateId="@Model.Id" asp-route-reasonForChange="@Model.ReasonForChange"
+   asp-route-incidentNumber="@Model.IncidentNumber" asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <form class="confirm-delete-form js-disable-on-submit" method="post" asp-action="SuccessfulDelete" asp-controller="CertificateDelete">
+        <h1 class="govuk-heading-xl">
+            Check your answers before deleting this certificate
+        </h1>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">Apprentice and certificate details</h2>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Apprentice name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.FullName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            ULN
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Uln
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.CertificateReference
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-l">Audit details</h2>
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            User
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Username
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Reason for deleting
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ReasonForChange
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateDelete" asp-action="AuditDetails"
+                               asp-route-reasonForChange="@Model.ReasonForChange"
+                               asp-route-incidentNumber="@Model.IncidentNumber" asp-route-certificateId="@Model.Id"
+                               asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed">
+                                Change<span class="govuk-visually-hidden"> reason for change</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Task or incident number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.IncidentNumber
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateDelete" asp-action="AuditDetails" asp-route-reasonForChange="@Model.ReasonForChange"
+                               asp-route-incidentNumber="@Model.IncidentNumber" asp-route-certificateId="@Model.Id"
+                               asp-route-IsDeleteConfirmed="@Model.IsDeleteConfirmed">
+                                Change<span class="govuk-visually-hidden"> incident number</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        <button class="govuk-button govuk-button--warning" type="submit">Delete certificate</button>
+        @Html.HiddenFor(c => c.FullName)
+        @Html.HiddenFor(c => c.Username)
+        @Html.HiddenFor(c => c.CertificateReference)
+        @Html.HiddenFor(c => c.Id)
+        @Html.HiddenFor(c => c.ReasonForChange)
+        @Html.HiddenFor(c => c.IncidentNumber)
+        @Html.HiddenFor(c => c.Uln)
+        @Html.HiddenFor(c => c.StandardCode)
+    </form>
+   <a class="govuk-link govuk-!-font-size-19" asp-controller="Search" asp-action="Index">Cancel and return to search</a>
+</main>
