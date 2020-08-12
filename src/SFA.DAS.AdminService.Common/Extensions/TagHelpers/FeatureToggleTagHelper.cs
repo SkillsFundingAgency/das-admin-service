@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers
@@ -11,47 +11,45 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers
     {
         private const string FeatureToggleHelperAttributeName = "sfa-feature-toggle";
 
-        private readonly ILogger<FeatureToggleTagHelper> _logger;
         private readonly IFeatureToggles _featureToggles;
 
         [HtmlAttributeName(FeatureToggleHelperAttributeName)]
         public string FeatureToggle { get; set; }
 
-        public FeatureToggleTagHelper(ILogger<FeatureToggleTagHelper> logger, IFeatureToggles featureToggles)
+        public FeatureToggleTagHelper( IFeatureToggles featureToggles)
         {
-            _logger = logger;
             _featureToggles = featureToggles;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (!IsFeatureToggleEnabled())
+            if (!IsFeatureToggleEnabled(FeatureToggle))
             {
                 output.SuppressOutput();
             }
         }
 
-        private bool IsFeatureToggleEnabled()
+        public bool IsFeatureToggleEnabled(string featureToggle)
         {
             var toggleEnabled = false;
 
-            if (!string.IsNullOrWhiteSpace(FeatureToggle))
+            if (!string.IsNullOrWhiteSpace(featureToggle))
             {
                 try
                 {
-                    var property = _featureToggles.GetType().GetProperty(FeatureToggle);
+                    var property = _featureToggles.GetType().GetProperty(featureToggle);
                     var propertyValue = property.GetValue(_featureToggles, null);
                     toggleEnabled = Convert.ToBoolean(propertyValue);
                 }
                 catch (SystemException ex) when (ex is InvalidCastException || ex is FormatException)
                 {
                     toggleEnabled = false;
-                    _logger.LogError(ex, $"FeatureToogle '{FeatureToggle}' is not in the expected format");
+                    Debug.WriteLine($"FeatureToogle '{featureToggle}' is not in the expected format");
                 }
                 catch (SystemException ex) when (ex is NullReferenceException)
                 {
                     toggleEnabled = false;
-                    _logger.LogError(ex, $"FeatureToogle '{FeatureToggle}' is not defined in the configuration");
+                    Debug.WriteLine($"FeatureToogle '{featureToggle}' is not defined in the configuration");
                 }
             }
 
