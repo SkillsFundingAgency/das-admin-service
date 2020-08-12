@@ -4,10 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AssessorService.ApplyTypes;
 
@@ -44,6 +41,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
 
             _apiClient.Setup(x => x.GetApplicationReviewStatusCounts()).ReturnsAsync(_statusCounts);
             _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
+            _configuration.Setup(c => c.RoatpGatewayBaseUrl).Returns(_dashboardUrl);
+            _configuration.Setup(c => c.RoatpAssessorBaseUrl).Returns(_dashboardUrl);
 
 
             _controller = new DashboardController(_apiClient.Object,_configuration.Object);
@@ -56,7 +55,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
 
             var viewModel = result.Model as DashboardViewModel;
 
-            Assert.AreEqual(viewModel.RoatpOversightBaseUrl,_dashboardUrl);
+            Assert.AreEqual(viewModel.RoatpOversightBaseUrl, _dashboardUrl);
+            Assert.AreEqual(viewModel.RoatpGatewayBaseUrl, _dashboardUrl);
+            Assert.AreEqual(viewModel.RoatpAssessorBaseUrl, _dashboardUrl);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsNew,viewModel.OrganisationApplicationsNew);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsInProgress, viewModel.OrganisationApplicationsInProgress);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsHasFeedback, viewModel.OrganisationApplicationsHasFeedback);

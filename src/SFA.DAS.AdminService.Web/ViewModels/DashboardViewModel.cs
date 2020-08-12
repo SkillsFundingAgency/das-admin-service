@@ -12,6 +12,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public int StandardApplicationsHasFeedback { get; set; }
         public int StandardApplicationsApproved { get; set; }
 
+        public string RoatpAssessorBaseUrl { get; set; }
+        public string RoatpGatewayBaseUrl { get; set; }
         public string RoatpOversightBaseUrl { get; set; }
     }
 }

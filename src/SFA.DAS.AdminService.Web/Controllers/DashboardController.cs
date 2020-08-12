@@ -32,7 +32,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StandardApplicationsInProgress = applicationReviewStatusCounts.StandardApplicationsInProgress,
                 StandardApplicationsHasFeedback = applicationReviewStatusCounts.StandardApplicationsHasFeedback,
                 StandardApplicationsApproved = applicationReviewStatusCounts.StandardApplicationsApproved,
-                RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl
+                RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl,
+                RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl,
+                RoatpAssessorBaseUrl = _configuration.RoatpAssessorBaseUrl
             };
 
             return View(viewModel);
