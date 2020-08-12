@@ -19,6 +19,8 @@ namespace SFA.DAS.AdminService.Settings
 
         string RoatpApiClientBaseUrl { get; set; }
 
+        string RoatpAssessorBaseUrl { get; set; }
+        string RoatpGatewayBaseUrl { get; set; }
         string RoatpOversightBaseUrl { get; set; }
 
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
