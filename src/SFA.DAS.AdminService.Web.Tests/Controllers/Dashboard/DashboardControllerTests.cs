@@ -4,10 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Services.Gateway;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AssessorService.ApplyTypes;
 
