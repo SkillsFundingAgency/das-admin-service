@@ -2,7 +2,6 @@
 @using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.AspNetCore.Authorization;
-@using SFA.DAS.AdminService.Settings
 @using FeatureToggles = SFA.DAS.AdminService.Web.Domain.FeatureToggles
 @inject IHttpContextAccessor HttpContextAccessor;
 @model SFA.DAS.AdminService.Web.ViewModels.DashboardViewModel;
@@ -17,6 +16,114 @@
             <h1 class="govuk-heading-xl">Staff dashboard</h1>
         </div>
     </div>
+
+    <!-- RoATP PMO -->
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpFinancialReview" id="roatp-financial-review">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                RoATP financial applications
+            </h2>
+            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">
+                        Assess applications and view outcomes
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /RoATP PMO -->
+
+    <!-- RoATP assessor -->
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                RoATP assessor applications
+            </h2>
+            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" href="@Model.RoatpAssessorBaseUrl">
+                        Go to RoATP assessor applications
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /RoATP assessor -->
+
+    <!-- RoATP oversight -->
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpOversightReview" id="roatp-application-oversight">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                RoATP application outcomes
+            </h2>
+            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" href="@Model.RoatpOversightBaseUrl">
+                        Go to RoATP application outcomes
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /RoATP oversight -->
+
+    <!-- RoATP gateway assessor -->
+    <div class="govuk-grid-row" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview" id="roatp-gateway-review">
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                RoATP gateway applications
+            </h2>
+            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" href="@Model.RoatpGatewayBaseUrl">
+                        Go to RoATP gateway applications
+                    </a>
+                </li>
+            </ul>
+            </p>
+        </div>
+    </div>
+    <!-- /RoATP gateway assessor -->
+
+    <!-- /RoATP gateway -->
+    <div class="govuk-grid-row" sfa-show-for-roles="@Roles.RoatpGatewayTeam" id="register-of-apprenticeship-training-providers">
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Manage the RoATP
+            </h2>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">
+                        Search for an apprenticeship training provider
+                    </a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                        Add a new apprenticeship training provider
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Reporting
+            </h2>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="DownloadRoatp" asp-action="Download">
+                        Download list of apprenticeship training providers
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /RoATP gateway -->
 
     @{
         var roleTagHelper = new RoleTagHelper(HttpContextAccessor, (IAuthorizationService)HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAuthorizationService)));
@@ -256,64 +363,11 @@
             </ul>
         </div>
 
-        @*
+    </div>
 
-            THIS SECTION HAS BEEN REMOVED AS ROATP TEAM HAS NOT APPROVED THE CONTENT ON THIS PAGE - BUT IT REALLY SHOULD MATCH
-            THE OTHERS SO THE SECTION BELOW IS CODED AS AN EXAMPLE
-
-            @if (sectionsShown % 2 == 0)
-            {
-            @:</div>
-            @:<div class="govuk-grid-row">
-            }
-            @{
-                var registerOfApprenticeshipTrainingProvidersRoles = Roles.RoatpGatewayTeam;
-                if (roleTagHelper.ShowForRoles(registerOfApprenticeshipTrainingProvidersRoles)) { sectionsShown++; }
-            }
-            <div class="govuk-grid-column-one-half" sfa-show-for-roles="@registerOfApprenticeshipTrainingProvidersRoles" id="register-of-apprenticeship-training-providers">
-                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                    Register of Apprenticeship Training Providers
-                </h2>
-                <p class="govuk-body">Search for add and edit Apprenticeship Training Providers</p>
-                <ul class="govuk-list">
-                    <li>
-                        <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">Search</a>
-                    </li>
-                </ul>
-            </div>*@
-    </div>
-    <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpFinancialReview">
-        <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-            <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">RoATP financial applications</a>
-        </h2>
-        <p class="govuk-body">Assess applications and view outcomes.</p>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" asp-controller="RoatpApplication" asp-action="OpenApplications">RoATP applications</a>
-            </h2>
-            <p class="govuk-body">Assess new applications and view outcomes.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                <a class="govuk-link" href="@Model.RoatpGatewayBaseUrl">RoATP applications</a>
-            </h2>
-            <p class="govuk-body">Assess new applications and view outcomes.</p>
-        </div>
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpOversightReview">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                RoATP application outcomes
-            </h2>
-            <a class="govuk-link" href="@Model.RoatpOversightBaseUrl">Go to RoATP application outcomes</a>
-        </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
-                <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                    <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">Manage the RoATP</a>
-                </h2>
-                <p class="govuk-body">Search for add and edit Apprenticeship Training Providers</p>
-            </div>
-        </div>
-    </div>
 </main>
+
+
+
+
+
