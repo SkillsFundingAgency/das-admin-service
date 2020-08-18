@@ -13,5 +13,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public int StandardApplicationsApproved { get; set; }
 
         public string RoatpOversightBaseUrl { get; set; }
+        public string RoatpGatewayBaseUrl { get; set; }
     }
 }
