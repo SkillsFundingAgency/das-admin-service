@@ -8,23 +8,15 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
-
-<div>
-    <nav class="app-navigation govuk-clearfix">
-        <ul class="app-navigation__list">
-            <li class="app-navigation">
-                <a asp-action="NewApplications" asp-controller="RoatpGateway">New</a>
-            </li>
-            <li class="app-navigation">
-                <a asp-action="InProgressApplications" asp-controller="RoatpGateway">In progress</a>
-            </li>
-            <li class="app-navigation--current-page">
-                <a asp-action="ClosedApplications" asp-controller="RoatpGateway">Gateway outcome</a>
-            </li>
-        </ul>
-    </nav>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">RoATP applications</li>
+    </ol>
 </div>
+
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -40,98 +32,119 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            @if (@Model.Applications.Items.Any())
-            {
-                <table class="govuk-table govuk-table--s das-table--responsive">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">Organisation name</th>
-                            <th class="govuk-table__header" scope="col">UKPRN</th>
-                            <th class="govuk-table__header" scope="col">Application reference number</th>
-                            <th class="govuk-table__header" scope="col">Application submitted</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Outcome</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @foreach (var item in Model.Applications.Items)
-                        {
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" asp-action="NewApplications" asp-controller="RoatpGateway">
+                        New
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" asp-action="InProgressApplications" asp-controller="RoatpGateway">
+                        In progress
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab govuk-tabs__tab--selected" asp-action="ClosedApplications" asp-controller="RoatpGateway">
+                        Gateway outcome
+                    </a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel" id="outcome">
+
+                @if (@Model.Applications.Items.Any())
+                {
+                    <table class="govuk-table govuk-table--s das-table--responsive">
+                        <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
-                                    <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpGateway" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                                </td>
-                                <td class="govuk-table__cell" data-label="UKPRN">
-                                    @item.Ukprn
-                                </td>
-                                <td class="govuk-table__cell" data-label="Application reference number">
-                                    @item.ApplicationReferenceNumber
-                                </td>
-                                <td class="govuk-table__cell" data-label="Application submitted">
-                                    @item.SubmittedDate.ToSfaShortDateString()
-                                </td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Outcome">
-                                    @{
-                                        switch (item.GatewayReviewStatus)
-                                        {
-                                            case GatewayReviewStatus.Pass:
-                                                <div class="govuk-tag govuk-tag--approved">
-                                                    accepted
-                                                </div>
-                                                break;
-                                            case GatewayReviewStatus.Fail:
-                                                <div class="govuk-tag govuk-tag--rejected">
-                                                    declined
-                                                </div>
-                                                break;
-                                            default:
-                                                <text>---</text>
-                                                break;
-                                        }
-                                    }
-                                </td>
+                                <th class="govuk-table__header" scope="col">Organisation name</th>
+                                <th class="govuk-table__header" scope="col">UKPRN</th>
+                                <th class="govuk-table__header" scope="col">Application reference number</th>
+                                <th class="govuk-table__header" scope="col">Application submitted</th>
+                                <th class="govuk-table__header govuk-table__header--numeric" scope="col">Outcome</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <p class="govuk-body-l">There are no applications at this time.</p>
-            }
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            @foreach (var item in Model.Applications.Items)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell das-no-wrap" data-label="Organisation name">
+                                        <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpGateway" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="UKPRN">
+                                        @item.Ukprn
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Application reference number">
+                                        @item.ApplicationReferenceNumber
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Application submitted">
+                                        @item.SubmittedDate.ToSfaShortDateString()
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Outcome">
+                                        @{
+                                            switch (item.GatewayReviewStatus)
+                                            {
+                                                case GatewayReviewStatus.Pass:
+                                                    <div class="govuk-tag govuk-tag--approved">
+                                                        accepted
+                                                    </div>
+                                                    break;
+                                                case GatewayReviewStatus.Fail:
+                                                    <div class="govuk-tag govuk-tag--rejected">
+                                                        declined
+                                                    </div>
+                                                    break;
+                                                default:
+                                                    <text>---</text>
+                                                    break;
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-        </div>
-    </div>
-
-    @if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-                <div class="page-navigation">
-
-                    @if (Model.Applications.HasPreviousPage)
+                    @if (Model.Applications.HasPreviousPage || Model.Applications.HasNextPage)
                     {
-                        <a asp-action="ClosedApplications"
-                           asp-controller="RoatpGateway"
-                           asp-route-page="@(Model.Applications.PageIndex - 1)"
-                           class="govuk-link previous">
-                            <i class="arrow-button icon-left-open">&#xe800;</i>
-                            <span class="description">Previous <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
-                        </a>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                <div class="page-navigation">
+
+                                    @if (Model.Applications.HasPreviousPage)
+                                    {
+                                        <a asp-action="ClosedApplications"
+                                        asp-controller="RoatpGateway"
+                                        asp-route-page="@(Model.Applications.PageIndex - 1)"
+                                        class="govuk-link previous">
+                                            <i class="arrow-button icon-left-open">&#xe800;</i>
+                                            <span class="description">Previous <span class="hide-mob">page</span></span>
+                                            <span class="counter">Page <span class="prevPage">@(Model.Applications.PageIndex - 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                                        </a>
+                                    }
+
+                                    @if (Model.Applications.HasNextPage)
+                                    {
+                                        <a asp-action="ClosedApplications"
+                                        asp-controller="RoatpGateway"
+                                        asp-route-page="@(Model.Applications.PageIndex + 1)"
+                                        class="govuk-link next">
+                                            <i class="arrow-button icon-right-open">&#xe801;</i>
+                                            <span class="description">Next <span class="hide-mob">page</span></span>
+                                            <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     }
 
-                    @if (Model.Applications.HasNextPage)
-                    {
-                        <a asp-action="ClosedApplications"
-                           asp-controller="RoatpGateway"
-                           asp-route-page="@(Model.Applications.PageIndex + 1)"
-                           class="govuk-link next">
-                            <i class="arrow-button icon-right-open">&#xe801;</i>
-                            <span class="description">Next <span class="hide-mob">page</span></span>
-                            <span class="counter">Page <span class="nextPage">@(Model.Applications.PageIndex + 1)</span> of <span class="totalPage">@(Model.Applications.TotalPages)</span></span>
-                        </a>
-                    }
-                </div>
+                }
+                else
+                {
+                    <p class="govuk-body-l">There are no applications at this time.</p>
+                }
+
             </div>
         </div>
-    }
+    </div>
 </main>
