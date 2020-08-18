@@ -35,6 +35,12 @@ namespace SFA.DAS.AdminService.Web.Services
             return await _apiClient.CreateOrganisationStandardValidate(validationRequest);
         }
 
+        public async Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request)
+        {
+            var validationRequest = MapToUpdateEpaOrganisationValidateRequest(request);
+            return await _apiClient.UpdateOrganisationValidate(validationRequest);
+        }
+
         private CreateEpaOrganisationValidationRequest MapToCreateEpaOrganisationValidateRequest(CreateEpaOrganisationRequest request)
         {
             return new CreateEpaOrganisationValidationRequest
@@ -46,13 +52,6 @@ namespace SFA.DAS.AdminService.Web.Services
                 CharityNumber = request?.CharityNumber
             };
         }
-
-        public async Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request)
-        {
-            var validationRequest = MapToUpdateEpaOrganisationValidateRequest(request);
-            return await _apiClient.UpdateOrganisationValidate(validationRequest);
-        }
-
 
         private CreateEpaContactValidationRequest MapToCreateEpaContactValidateRequest(CreateEpaOrganisationContactRequest request)
         {
