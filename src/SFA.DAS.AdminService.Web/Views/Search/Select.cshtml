@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
 
-@model SFA.DAS.AdminService.Web.Controllers.LearnerDetailForStaffViewModel
+@model SFA.DAS.AdminService.Web.Models.Search.LearnerDetailForStaffViewModel
 
 @{
     ViewBag.Title = "Certificate details";
@@ -184,6 +184,17 @@ else
                             @Model.Learner.CertificateStatus
                         </dd>
                     </div>
+                    @if (Model.Learner.CertificateLogs.Any())
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.DateStatusTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Learner.CertificateLogs.FirstOrDefault().EventTime.UtcToTimeZoneTime()
+                            </dd>
+                        </div>
+                    }
                 </dl>
             </div>
         </div>

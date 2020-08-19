@@ -1,28 +1,21 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Domain.Paging;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Domain.Consts;
-using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
     [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class SearchController : Controller
     {
-        private readonly ILogger<SearchController> _logger;
         private readonly ApiClient _apiClient;
-        private readonly ISessionService _sessionService;
 
-        public SearchController(ILogger<SearchController> logger, ApiClient apiClient, ISessionService sessionService)
+        public SearchController(ApiClient apiClient)
         {
-            _logger = logger;
             _apiClient = apiClient;
-            _sessionService = sessionService;
         }
 
         [HttpGet]
@@ -72,19 +65,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             return View(vm);
         }
-    }
-
-    public class LearnerDetailForStaffViewModel
-    {
-        public LearnerDetailResult Learner { get; set; }
-        public string SearchString { get; set; }
-        public int Page { get; set; }
-        public bool ShowDetail { get; set; }
-        public int? BatchNumber { get; set; }
-
-        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
-        public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
-        public bool CanDeleteCertificate => Learner.CertificateReference != null && Learner.CertificateStatus != CertificateStatus.Deleted;
     }
 
     public class SearchViewModel
