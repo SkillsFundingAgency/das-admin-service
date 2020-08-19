@@ -22,11 +22,11 @@ namespace SFA.DAS.AdminService.Web.Models.Search
             {
                 case "Submitted":
                     return dateTitle + "submitted";
-                case "SentToPrinter":
+                case "Sent to printer":
                     return dateTitle + "sent to printer";
                 case "Printed":
                     return dateTitle + "printed";
-                case "NotDelivered":
+                case "Not delivered":
                     return dateTitle + "delivery attempted";
                 case "Delivered":
                     return dateTitle + "delivered";
