@@ -191,7 +191,7 @@ else
                                 @Model.DateStatusTitle
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.Learner.CertificateLogs.FirstOrDefault().EventTime.UtcToTimeZoneTime()
+                                @Model.UpdatedStatusDate
                             </dd>
                         </div>
                     }
@@ -213,8 +213,9 @@ else
                             <th class="govuk-table__header" scope="col">Batch</th>
                             <th class="govuk-table__header" scope="col">
                                 @if (Model.Learner.CertificateLogs.Count() > 1)
-                                {@Html.Raw("Changes");
-                            }
+                                {
+                                    @Html.Raw("Changes");
+                                }
                             </th>
                         </tr>
                     </thead>
