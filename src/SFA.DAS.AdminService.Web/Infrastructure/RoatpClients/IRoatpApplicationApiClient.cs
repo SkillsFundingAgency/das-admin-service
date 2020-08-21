@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -39,41 +35,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         Task<List<RoatpSequence>> GetRoatpSequences();
 
-
-        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
-        Task StartGatewayReview(Guid applicationId, string reviewer);
-        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
-
         Task StartAssessorReview(Guid applicationId, string reviewer);
 
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
 
-       
-         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
-         Task<GatewayCommonDetails> GetPageCommonDetails(Guid applicationId, string pageId, string userName);
-         Task<ContactAddress> GetOrganisationAddress(Guid applicationId);
-        Task<string> GetIcoNumber(Guid applicationId);
-        Task TriggerGatewayDataGathering(Guid applicationId, string userName);
-
-         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string status, string username,
-            string comments);
-        Task UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName);
-        Task<ProviderDetails> GetUkrlpDetails(Guid applicationId);
-
-        Task<CompaniesHouseSummary> GetCompaniesHouseDetails(Guid applicationId);
-
-        Task<CharityCommissionSummary> GetCharityCommissionDetails(Guid applicationId);
-
-        Task<DateTime?> GetSourcesCheckedOnDate(Guid applicationId);
-
-        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid applicationId);
-      
-        Task<string> GetTradingName(Guid applicationId);
-        Task<string> GetProviderRouteName(Guid applicationId);
-        Task<string> GetWebsiteAddressSourcedFromUkrlp(Guid applicationId);
-        Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId);
-        Task<string> GetOrganisationWebsiteAddress(Guid applicationId);
     }
 }

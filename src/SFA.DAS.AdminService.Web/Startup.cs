@@ -33,7 +33,6 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
-using SFA.DAS.AdminService.Web.Services.Gateway;
 using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
@@ -213,15 +212,9 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
 				x.GetService<IRoatpApplyTokenService>()));
 
-            services.AddTransient<IRoatpGatewayCriminalComplianceChecksApiClient>(x => new RoatpGatewayCriminalComplianceChecksApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<RoatpGatewayCriminalComplianceChecksApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            services.AddTransient<IRoatpGatewayPageValidator, RoatpGatewayPageValidator>();
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
@@ -240,15 +233,10 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
                 ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
-
-            services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
-            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
-            services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
             services.AddTransient<IFeatureToggles>(x => { 
