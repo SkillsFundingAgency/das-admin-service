@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             bool allLogs = false,
             int? batchNumber = null)
         {
-            var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
+            var learner = await _apiClient.GetLearner(stdCode, uln, true);
 
             var vm = new LearnerDetailForStaffViewModel
             {
