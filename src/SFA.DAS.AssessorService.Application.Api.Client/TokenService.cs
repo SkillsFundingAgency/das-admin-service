@@ -20,10 +20,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.ClientApiAuthentication.TenantId;// 
-            var clientId = _configuration.ClientApiAuthentication.ClientId;// 
-            var appKey = _configuration.ClientApiAuthentication.ClientSecret;// 
-            var resourceId = _configuration.ClientApiAuthentication.ResourceId;// 
+            var tenantId = _configuration.EpaoApiAuthentication.TenantId;// 
+            var clientId = _configuration.EpaoApiAuthentication.ClientId;// 
+            var appKey = _configuration.EpaoApiAuthentication.ClientSecret;// 
+            var resourceId = _configuration.EpaoApiAuthentication.ResourceId;// 
 
             var authority = $"https://login.microsoftonline.com/{tenantId}";
             var clientCredential = new ClientCredential(clientId, appKey);

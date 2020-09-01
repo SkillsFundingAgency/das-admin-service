@@ -1,4 +1,5 @@
-﻿@{ 
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.ExternalApisUnavailableViewModel
+@{
     ViewBag.Title = "We were unable to get information";
 }
 
@@ -22,7 +23,7 @@
                 You'll need to come back later to assess this application.
             </p>
             <p class="govuk-body">
-                While you wait, you can assess another application using <a class="govuk-link" asp-controller="RoatpGateway" asp-action="NewApplications">RoATP applications</a>
+                While you wait, you can assess another application using <a class="govuk-link" href="@Model.RoatpGatewayBaseUrl">RoATP applications</a>
             </p>
 
         </div>

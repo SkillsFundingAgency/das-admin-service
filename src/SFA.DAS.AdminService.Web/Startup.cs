@@ -33,7 +33,6 @@ using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
-using SFA.DAS.AdminService.Web.Services.Gateway;
 using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
@@ -68,7 +67,7 @@ namespace SFA.DAS.AdminService.Web
             
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
@@ -76,7 +75,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
@@ -150,22 +149,22 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<CertificateDateViewModelValidator>();
 
             services.AddTransient<IOrganisationsApiClient>(x =>
-                    new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                    new OrganisationsApiClient(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                         x.GetService<ITokenService>(), 
                         x.GetService<ILogger<OrganisationsApiClient>>()));
 
             services.AddTransient<IApiClient>(x => new ApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
 
             services.AddTransient<ICertificateApiClient>(x => new CertificateApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<CertificateApiClient>>()));
 
             services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
@@ -181,7 +180,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<ContactsApiClient>>()));
 
@@ -213,15 +212,9 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<RoatpExperienceAndAccreditationApiClient>>(),
 				x.GetService<IRoatpApplyTokenService>()));
 
-            services.AddTransient<IRoatpGatewayCriminalComplianceChecksApiClient>(x => new RoatpGatewayCriminalComplianceChecksApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<RoatpGatewayCriminalComplianceChecksApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            services.AddTransient<IRoatpGatewayPageValidator, RoatpGatewayPageValidator>();
             services.AddTransient<IAssessmentOrgsApiClient>(x =>
                 new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
 
@@ -240,15 +233,10 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-            services.AddTransient<IGatewayOverviewOrchestrator, GatewayOverviewOrchestrator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
-
-            services.AddTransient<IGatewayOrganisationChecksOrchestrator, GatewayOrganisationChecksOrchestrator>();
-            services.AddTransient<IGatewaySectionsNotRequiredService, GatewaySectionsNotRequiredService>();
-            services.AddTransient<IGatewayExperienceAndAccreditationOrchestrator, GatewayExperienceAndAccreditationOrchestrator>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
             services.AddTransient<IFeatureToggles>(x => { 
