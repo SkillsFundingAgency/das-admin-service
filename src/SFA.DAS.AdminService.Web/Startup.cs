@@ -67,7 +67,7 @@ namespace SFA.DAS.AdminService.Web
             
             services.AddHttpClient<ApiClient>("ApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
             {
-                config.BaseAddress = new Uri(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress);
+                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
@@ -149,22 +149,22 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<CertificateDateViewModelValidator>();
 
             services.AddTransient<IOrganisationsApiClient>(x =>
-                    new OrganisationsApiClient(ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                    new OrganisationsApiClient(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                         x.GetService<ITokenService>(), 
                         x.GetService<ILogger<OrganisationsApiClient>>()));
 
             services.AddTransient<IApiClient>(x => new ApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
 
             services.AddTransient<ICertificateApiClient>(x => new CertificateApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<CertificateApiClient>>()));
 
             services.AddTransient<IApplicationApiClient>(x => new ApplicationApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
@@ -180,7 +180,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<ContactsApiClient>>()));
 
@@ -234,7 +234,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
             services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
-                ApplicationConfiguration.ClientApiAuthentication.ApiBaseAddress,
+                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
 
