@@ -52,8 +52,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             bool allLogs = false,
             int? batchNumber = null)
         {
-            var learner = await _apiClient.GetLearner(stdCode, uln, true);
-
+            var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
+            
             var vm = new LearnerDetailForStaffViewModel
             {
                 Learner = learner,
@@ -62,8 +62,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ShowDetail = !allLogs,
                 BatchNumber = batchNumber
             };
-
-            return View(vm);
+        return View(vm);
         }
     }
 

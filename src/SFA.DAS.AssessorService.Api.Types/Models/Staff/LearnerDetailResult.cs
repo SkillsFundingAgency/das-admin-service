@@ -27,5 +27,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Staff
         public DateTime? AchievementDate { get; set; }
         public Guid? CertificateId { get; set; }
         public List<CertificateLogSummary> CertificateLogs { get; set; }
+        public string ReasonForChange { get; set; }
+        public DateTime? PrintStatusAt { get; set; }
     }
 }

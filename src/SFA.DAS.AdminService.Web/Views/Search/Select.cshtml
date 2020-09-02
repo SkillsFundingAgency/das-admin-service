@@ -1,6 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
-
 @model SFA.DAS.AdminService.Web.Models.Search.LearnerDetailForStaffViewModel
 
 @{
@@ -181,17 +180,42 @@ else
                             Status
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.CertificateStatus
+                            @CertificateStatus.GetDisplayName(Model.Learner.CertificateStatus)
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            @Model.DateStatusTitle
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.UpdatedStatusDate
-                        </dd>
-                    </div>
+                    @if (!string.IsNullOrEmpty(Model.DateStatusTitle))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.DateStatusTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.UpdatedStatusDate
+                            </dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Learner.ReasonForChange))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.RecipientTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.AddressedTo
+                            </dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Learner.ReasonForChange))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.ExplanationTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Learner.ReasonForChange
+                            </dd>
+                        </div>
+                    }
                 </dl>
             </div>
         </div>
