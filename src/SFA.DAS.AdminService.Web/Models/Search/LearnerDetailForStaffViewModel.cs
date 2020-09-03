@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
@@ -20,16 +19,13 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public int? BatchNumber { get; set; }
         public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Learner.CertificateStatus);
         public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
-
         public bool CanDeleteCertificate => Learner.CertificateReference != null &&
                                             Learner.CertificateStatus != CertificateStatus.Deleted;
-
         public string DateStatusTitle => GetDateStatusTitle(Learner.CertificateStatus);
         public string AddressedTo => GetAddressedTo(Learner.CertificateLogs);
         public DateTime? UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateLogs);
         public string ExplanationTitle => GetExplanationTitle(Learner.CertificateStatus);
         public string RecipientTitle => GetRecipientTitle(Learner.CertificateStatus);
-
         private string GetAddressedTo(List<CertificateLogSummary> learnerCertificateLogs)
         {
             if (learnerCertificateLogs.Any())
