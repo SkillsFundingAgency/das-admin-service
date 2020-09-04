@@ -1,5 +1,6 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
+
 @model SFA.DAS.AdminService.Web.Models.Search.LearnerDetailForStaffViewModel
 
 @{
@@ -183,7 +184,7 @@ else
                             @CertificateStatus.GetDisplayName(Model.Learner.CertificateStatus)
                         </dd>
                     </div>
-                    @if (!string.IsNullOrEmpty(Model.DateStatusTitle))
+                    @if (Model.UpdatedStatusDate != null)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -194,7 +195,7 @@ else
                             </dd>
                         </div>
                     }
-                    @if (!string.IsNullOrEmpty(Model.Learner.ReasonForChange))
+                    @if (Model.ShowToAdress)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -205,14 +206,14 @@ else
                             </dd>
                         </div>
                     }
-                    @if (!string.IsNullOrEmpty(Model.Learner.ReasonForChange))
+                    @if (Model.Learner.CertificateStatus == CertificateStatus.NotDelivered)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                @Model.ExplanationTitle
+                                Reason
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.Learner.ReasonForChange
+                                @Model.ReasonForChange
                             </dd>
                         </div>
                     }

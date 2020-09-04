@@ -29,5 +29,12 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Staff
         public List<CertificateLogSummary> CertificateLogs { get; set; }
         public string ReasonForChange { get; set; }
         public DateTime? PrintStatusAt { get; set; }
+        public string ContactName { get; set; }
+        public string ContactOrganisation { get; set; }
+        public string ContactAddLine1 { get; set; }
+        public string ContactAddLine2 { get; set; }
+        public string ContactAddLine3 { get; set; }
+        public string ContactAddLine4 { get; set; }
+        public string ContactPostCode { get; set; }
     }
 }

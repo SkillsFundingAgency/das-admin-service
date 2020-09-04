@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AdminService.Web.Models.Search
 {
@@ -21,45 +15,46 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);
         public bool CanDeleteCertificate => Learner.CertificateReference != null &&
                                             Learner.CertificateStatus != CertificateStatus.Deleted;
-        public string DateStatusTitle => GetDateStatusTitle(Learner.CertificateStatus);
-        public string AddressedTo => GetAddressedTo(Learner.CertificateLogs);
-        public DateTime? UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateLogs);
-        public string ExplanationTitle => GetExplanationTitle(Learner.CertificateStatus);
-        public string RecipientTitle => GetRecipientTitle(Learner.CertificateStatus);
-        private string GetAddressedTo(List<CertificateLogSummary> learnerCertificateLogs)
-        {
-            if (learnerCertificateLogs.Any())
-            {
-                var learnerLog = learnerCertificateLogs.OrderByDescending(e => e.EventTime)
-                    .FirstOrDefault(l => l.Status == Learner.CertificateStatus);
-                if (learnerLog != null)
-                {
-                    var certData = JsonConvert.DeserializeObject<CertificateData>(learnerLog.CertificateData);
-                    return certData.ContactAddLine1
-                           + Environment.NewLine
-                           + certData.ContactAddLine2
-                           + Environment.NewLine
-                           + certData.ContactAddLine3
-                           + Environment.NewLine
-                           + certData.ContactAddLine4
-                           + Environment.NewLine
-                           + certData.ContactPostCode;
-                }
-            }
 
+        public bool ShowToAdress => Learner.CertificateStatus == CertificateStatus.NotDelivered ||
+                                    Learner.CertificateStatus == CertificateStatus.Delivered;
+        public string DateStatusTitle => GetDateStatusTitle(Learner.CertificateStatus);
+        public string AddressedTo => GetAddressedTo(Learner);
+        public DateTime? UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateStatus);
+        public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
+
+        private string GetReasonForChange(string learnerReasonForChange)
+        {
+            if (string.IsNullOrWhiteSpace(learnerReasonForChange))
+                return "No reason entered";
+            return learnerReasonForChange;
+        }
+
+        public string RecipientTitle => GetRecipientTitle(Learner.CertificateStatus);
+        private string GetAddressedTo(LearnerDetailResult learnerDetailResult)
+        {
+            if (learnerDetailResult != null)
+            {
+                return learnerDetailResult.ContactName
+                       + Environment.NewLine
+                       + learnerDetailResult.ContactAddLine1
+                       + Environment.NewLine
+                       + learnerDetailResult.ContactAddLine2
+                       + Environment.NewLine
+                       + learnerDetailResult.ContactAddLine3
+                       + Environment.NewLine
+                       + learnerDetailResult.ContactAddLine4
+                       + Environment.NewLine
+                       + learnerDetailResult.ContactPostCode;
+            }
             return string.Empty;
         }
 
-        private DateTime? GetUpdatedStatusDate(List<CertificateLogSummary> learnerCertificateLogs)
+        private DateTime? GetUpdatedStatusDate(string learnerCertificateStatus)
         {
-            if (learnerCertificateLogs.Any())
-            {
-                var learnerLog = learnerCertificateLogs.OrderByDescending(e => e.EventTime)
-                    .FirstOrDefault(l => l.Status == Learner.CertificateStatus);
-                return learnerLog?.EventTime.UtcToTimeZoneTime();
-            }
-
-            return null;
+            if (learnerCertificateStatus == "SentToPrinter")
+                return Learner.PrintStatusAt;
+            return Learner.LastUpdatedAt;
         }
 
         private string GetDateStatusTitle(string learnerCertificateStatus)
@@ -79,20 +74,10 @@ namespace SFA.DAS.AdminService.Web.Models.Search
                     return dateTitle + "delivered";
                 case "Deleted":
                     return dateTitle + "deleted";
+                case "Reprint":
+                    return dateTitle + "reprint requested";
             }
 
-            return string.Empty;
-        }
-
-        private string GetExplanationTitle(string learnerCertificateStatus)
-        {
-            switch (learnerCertificateStatus)
-            {
-                case "Delivered":
-                    return "Comment";
-                case "NotDelivered":
-                    return "Reason";
-            }
             return string.Empty;
         }
 
