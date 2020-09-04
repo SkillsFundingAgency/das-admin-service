@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
 
         private DateTime? GetUpdatedStatusDate(string learnerCertificateStatus)
         {
-            if (learnerCertificateStatus == "SentToPrinter")
+            if (CertificateStatus.HasPrintNotificateStatus(learnerCertificateStatus))
                 return Learner.PrintStatusAt;
             return Learner.LastUpdatedAt;
         }
