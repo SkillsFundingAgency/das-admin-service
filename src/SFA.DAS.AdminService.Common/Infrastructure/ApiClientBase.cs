@@ -17,13 +17,13 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
     /// <typeparam name="AC">The inherited ApiClient.</typeparam>
     public abstract class ApiClientBase<AC>
     {
-        private const string _acceptHeaderName = "Accept";
+        protected const string _acceptHeaderName = "Accept";
         protected const string _contentType = "application/json";
 
         protected readonly HttpClient _httpClient;
         protected readonly ILogger<AC> _logger;
 
-        public ApiClientBase(HttpClient httpClient, ILogger<AC> logger)
+        protected ApiClientBase(HttpClient httpClient, ILogger<AC> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
@@ -62,29 +62,6 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// HTTP GET to the specified URI
         /// </summary>
         /// <param name="uri">The URI to the end point you wish to interact with.</param>
-        /// <returns>A Task yielding the result (as a string).</returns>
-        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
-        protected async Task<string> Get(string uri)
-        {
-            try
-            {
-                using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
-                {
-                    await LogErrorIfUnsuccessfulResponse(response);
-                    return await response.Content.ReadAsStringAsync();
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Get} - {uri}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// HTTP GET to the specified URI
-        /// </summary>
-        /// <param name="uri">The URI to the end point you wish to interact with.</param>
         /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpResponseMessage> GetResponse(string uri)
@@ -106,6 +83,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <summary>
         /// HTTP POST to the specified URI
         /// </summary>
+        /// <typeparam name="T">The type of the object to POST.</typeparam>
         /// <param name="uri">The URI to the end point you wish to interact with.</param>
         /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
@@ -158,8 +136,35 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         }
 
         /// <summary>
+        /// HTTP POST to the specified URI
+        /// </summary>
+        /// <typeparam name="T">The type of the object to POST.</typeparam>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpResponseMessage> PostResponse<T>(string uri, T model)
+        {
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            try
+            {
+                var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative),
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType));
+
+                await LogErrorIfUnsuccessfulResponse(response);
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Post} - {uri}");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// HTTP PUT to the specified URI
         /// </summary>
+        /// <typeparam name="T">The type of the object to PUT.</typeparam>
         /// <param name="uri">The URI to the end point you wish to interact with.</param>
         /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
@@ -211,6 +216,77 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
             }
         }
 
+        /// <summary>
+        /// HTTP PUT to the specified URI
+        /// </summary>
+        /// <typeparam name="T">The type of the object to PUT.</typeparam>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpResponseMessage> PutResponse<T>(string uri, T model)
+        {
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            try
+            {
+                var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative),
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType));
+
+                await LogErrorIfUnsuccessfulResponse(response);
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Put} - {uri}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// HTTP DELETE to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpStatusCode> Delete(string uri)
+        {
+            try
+            {
+                using (var response = await _httpClient.DeleteAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    await LogErrorIfUnsuccessfulResponse(response);
+                    return response.StatusCode;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Delete} - {uri}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// HTTP DELETE to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpResponseMessage, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpResponseMessage> DeleteResponse(string uri)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync(new Uri(uri, UriKind.Relative));
+
+                await LogErrorIfUnsuccessfulResponse(response);
+                return response;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Delete} - {uri}");
+                throw;
+            }
+        }
+
         private async Task LogErrorIfUnsuccessfulResponse(HttpResponseMessage response)
         {
             if (response?.RequestMessage != null && !response.IsSuccessStatusCode)
@@ -221,9 +297,14 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
                 var requestUri = response.RequestMessage.RequestUri;
 
                 var responseContent = await response.Content.ReadAsStringAsync();
-                var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
+                var apiErrorMessage = responseContent;
 
-                _logger.LogError($"HTTP {statusCode} {reasonPhrase} || {httpMethod}: {requestUri} || Message: {message}");
+                if (TryParseJson<ApiError>(responseContent, out var apiError) && !string.IsNullOrWhiteSpace(apiError?.Message))
+                {
+                    apiErrorMessage = apiError.Message;
+                }
+
+                _logger.LogError($"HTTP {statusCode} {reasonPhrase} || {httpMethod}: {requestUri} || Message: {apiErrorMessage}");
             }
         }
 
