@@ -189,7 +189,7 @@ else
                             @Model.DateStatusTitle
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.UpdatedStatusDate
+                            @Model.UpdatedStatusDate.UtcToTimeZoneTime()
                         </dd>
                     </div>
                     @if (Model.ShowToAdress)

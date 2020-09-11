@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
                                     Learner.CertificateStatus == CertificateStatus.Delivered;
         public string DateStatusTitle => GetDateStatusTitle(Learner.CertificateStatus);
         public string AddressedTo => GetAddressedTo(Learner);
-        public DateTime? UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateStatus);
+        public DateTime UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateStatus);
         public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
 
         private string GetReasonForChange(string learnerReasonForChange)
@@ -50,11 +50,14 @@ namespace SFA.DAS.AdminService.Web.Models.Search
             return string.Empty;
         }
 
-        private DateTime? GetUpdatedStatusDate(string learnerCertificateStatus)
+        private DateTime GetUpdatedStatusDate(string learnerCertificateStatus)
         {
             if (CertificateStatus.HasPrintNotificateStatus(learnerCertificateStatus))
-                return Learner.PrintStatusAt;
-            return Learner.LastUpdatedAt;
+                if (Learner.PrintStatusAt != null)
+                    return (DateTime)Learner.PrintStatusAt;
+            if (Learner.LastUpdatedAt != null)
+                return (DateTime)Learner.LastUpdatedAt;
+            return default;
         }
 
         private string GetDateStatusTitle(string learnerCertificateStatus)
