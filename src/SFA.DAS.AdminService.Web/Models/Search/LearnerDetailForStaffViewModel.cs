@@ -63,6 +63,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
             switch (learnerCertificateStatus)
             {
                 case "Submitted":
+                case "ToBeApproved":
                     return dateTitle + "submitted";
                 case "SentToPrinter":
                     return dateTitle + "sent to printer";
