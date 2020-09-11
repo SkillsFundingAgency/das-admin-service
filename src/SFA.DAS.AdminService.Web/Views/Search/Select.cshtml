@@ -184,14 +184,17 @@ else
                             @CertificateStatus.GetDisplayName(Model.Learner.CertificateStatus)
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            @Model.DateStatusTitle
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.UpdatedStatusDate.UtcToTimeZoneTime()
-                        </dd>
-                    </div>
+                    @if (Model.Learner.CertificateStatus!=CertificateStatus.Draft)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.DateStatusTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.UpdatedStatusDate.UtcToTimeZoneTime()
+                            </dd>
+                        </div>
+                    }
                     @if (Model.ShowToAdress)
                     {
                         <div class="govuk-summary-list__row">
