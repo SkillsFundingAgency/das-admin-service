@@ -98,7 +98,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
                 case "Delivered":
                     return "Delivered to";
                 case "NotDelivered":
-                    return "Sent to";
+                    return "Delivery attempted to";
             }
             return string.Empty;
         }
