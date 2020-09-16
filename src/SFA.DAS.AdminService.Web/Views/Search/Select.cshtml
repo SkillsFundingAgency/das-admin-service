@@ -213,7 +213,31 @@ else
                                 @Model.RecipientTitle
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.AddressedTo)
+                                @Model.Learner.ContactName<br />
+                                @if (Model.Learner.ContactOrganisation != null)
+                                {
+                                    @Model.Learner.ContactOrganisation<br />
+                                }
+                                @if (Model.Learner.ContactAddLine1 != null)
+                                {
+                                    @Model.Learner.ContactAddLine1<br />
+                                }
+                                @if (Model.Learner.ContactAddLine2 != null)
+                                {
+                                    @Model.Learner.ContactAddLine2<br />
+                                }
+                                @if (Model.Learner.ContactAddLine3 != null)
+                                {
+                                    @Model.Learner.ContactAddLine3<br />
+                                }
+                                @if (Model.Learner.ContactAddLine4 != null)
+                                {
+                                    @Model.Learner.ContactAddLine4<br />
+                                }
+                                @if (Model.Learner.ContactPostCode != null)
+                                {
+                                    @Model.Learner.ContactPostCode<br />
+                                }
                             </dd>
                         </div>
                     }
