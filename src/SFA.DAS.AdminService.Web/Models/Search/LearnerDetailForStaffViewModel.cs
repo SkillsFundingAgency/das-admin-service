@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Consts;
 
@@ -33,21 +34,24 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public string RecipientTitle => GetRecipientTitle(Learner.CertificateStatus);
         private string GetAddressedTo(LearnerDetailResult learnerDetailResult)
         {
+            string message = string.Empty;
+            StringBuilder sb = new StringBuilder();
             if (learnerDetailResult != null)
             {
-                return learnerDetailResult.ContactName
-                       + Environment.NewLine
-                       + learnerDetailResult.ContactAddLine1
-                       + Environment.NewLine
-                       + learnerDetailResult.ContactAddLine2
-                       + Environment.NewLine
-                       + learnerDetailResult.ContactAddLine3
-                       + Environment.NewLine
-                       + learnerDetailResult.ContactAddLine4
-                       + Environment.NewLine
-                       + learnerDetailResult.ContactPostCode;
+                sb.Append(learnerDetailResult.ContactName);
+                sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactAddLine1);
+                sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactAddLine2);
+                sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactAddLine3);
+                sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactAddLine4);
+                sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactPostCode);
+                message = sb.ToString();
             }
-            return string.Empty;
+            return message;
         }
 
         private DateTime GetUpdatedStatusDate(string learnerCertificateStatus)
