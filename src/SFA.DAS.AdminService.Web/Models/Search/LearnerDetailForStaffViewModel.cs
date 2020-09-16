@@ -40,6 +40,8 @@ namespace SFA.DAS.AdminService.Web.Models.Search
             {
                 sb.Append(learnerDetailResult.ContactName);
                 sb.Append(Environment.NewLine);
+                sb.Append(learnerDetailResult.ContactOrganisation);
+                sb.Append(Environment.NewLine);
                 sb.Append(learnerDetailResult.ContactAddLine1);
                 sb.Append(Environment.NewLine);
                 sb.Append(learnerDetailResult.ContactAddLine2);
