@@ -20,7 +20,6 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public bool ShowToAdress => Learner.CertificateStatus == CertificateStatus.NotDelivered ||
                                     Learner.CertificateStatus == CertificateStatus.Delivered;
         public string DateStatusTitle => GetDateStatusTitle(Learner.CertificateStatus);
-        public string AddressedTo => GetAddressedTo(Learner);
         public DateTime UpdatedStatusDate => GetUpdatedStatusDate(Learner.CertificateStatus);
         public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
 
@@ -32,30 +31,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         }
 
         public string RecipientTitle => GetRecipientTitle(Learner.CertificateStatus);
-        private string GetAddressedTo(LearnerDetailResult learnerDetailResult)
-        {
-            string message = string.Empty;
-            StringBuilder sb = new StringBuilder();
-            if (learnerDetailResult != null)
-            {
-                sb.Append(learnerDetailResult.ContactName);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactOrganisation);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactAddLine1);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactAddLine2);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactAddLine3);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactAddLine4);
-                sb.Append(Environment.NewLine);
-                sb.Append(learnerDetailResult.ContactPostCode);
-                message = sb.ToString();
-            }
-            return message;
-        }
-
+        
         private DateTime GetUpdatedStatusDate(string learnerCertificateStatus)
         {
             if (CertificateStatus.HasPrintNotificateStatus(learnerCertificateStatus))
