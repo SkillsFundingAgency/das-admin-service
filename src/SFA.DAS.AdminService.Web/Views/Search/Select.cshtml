@@ -213,7 +213,7 @@ else
                                 @Model.RecipientTitle
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.AddressedTo
+                                @Model.AddressedTo.Replace(Environment.NewLine,"<br />")
                             </dd>
                         </div>
                     }
