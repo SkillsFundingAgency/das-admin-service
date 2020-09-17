@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Consts;
 
