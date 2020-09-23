@@ -55,11 +55,22 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                activeApplySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                activeApplySequence.Sections, 
+                backViewModel.BackAction, 
+                backViewModel.BackController, 
+                backViewModel.BackOrganisationId)
+            {
+                Recommendation = new GovernanceRecommendation()
+                {
+                    SelectedRecommendation = application.GovernanceRecommendation?.SelectedRecommendation,
+                    ApprovedInternalComments = application.GovernanceRecommendation?.ApprovedInternalComments
+                }
+            };
 
             return View(nameof(Sequence), sequenceVm);
         }
 
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/{backOrganisationId?}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
@@ -72,7 +83,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                applySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                applySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId)
+            {
+                Recommendation = new GovernanceRecommendation()
+                {
+                    SelectedRecommendation = ModelState.IsValid
+                        ? application.GovernanceRecommendation?.SelectedRecommendation
+                        : ModelState[nameof(SequenceViewModel.Recommendation.SelectedRecommendation)]?.AttemptedValue,
+
+                    ApprovedInternalComments = ModelState.IsValid
+                        ? application.GovernanceRecommendation?.ApprovedInternalComments
+                        : ModelState[nameof(SequenceViewModel.Recommendation.ApprovedInternalComments)]?.AttemptedValue
+                }
+            };
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -228,6 +251,50 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 _logger.LogError($"Feedback Id is null or empty - {feedbackId}");
 
             return RedirectToAction(nameof(Page), new { applicationId, backViewModel.BackAction, backViewModel.BackController, sequenceNo, sectionNo, pageId, backViewModel.BackOrganisationId });
+        }
+
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/AssessmentWithGovernanceRecommendation/{backOrganisationId?}")]
+        public async Task<IActionResult> AssessmentWithGovernanceRecommendation(Guid applicationId, int sequenceNo, AssessmentWithGovernanceRecommendationViewModel viewModel)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(DashboardController.Index), nameof(DashboardController).RemoveController());
+            }
+
+            if (ModelState.IsValid)
+            {
+                viewModel.Recommendation.RecommendedBy = _contextAccessor.HttpContext.User.UserDisplayName();
+                viewModel.Recommendation.RecommendedDateTime = DateTime.UtcNow;
+
+                await _applyApiClient.UpdateGovernanceRecommendation(applicationId, viewModel.Recommendation);
+
+                return RedirectToAction(
+                    nameof(ApplicationController.Assessment),
+                    nameof(ApplicationController).RemoveController(),
+                    new
+                    {
+                        applicationId,
+                        sequenceNo,
+                        viewModel.BackAction,
+                        viewModel.BackController,
+                        viewModel.BackOrganisationId
+                    });
+            }
+
+            return RedirectToAction(
+                nameof(Sequence),
+                nameof(ApplicationController).RemoveController(),
+                new
+                {
+                    applicationId,
+                    viewModel.BackAction,
+                    viewModel.BackController,
+                    sequenceNo,
+                    viewModel.BackOrganisationId
+                });
+
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Assessment/{backOrganisationId?}")]

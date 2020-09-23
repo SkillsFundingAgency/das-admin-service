@@ -19,12 +19,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
         Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest);
+
+        Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationWithdrawalApplications(OrganisationWithdrawalApplicationsRequest organisationApplicationsRequest);
         Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest);
 
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
-        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
+        Task UpdateGovernanceRecommendation(Guid applicationId, GovernanceRecommendation grarecommendationde);
+        
+        
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
+        
         Task StartFinancialReview(Guid applicationId, string reviewer);
+        Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
+
         Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);
         Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
 
@@ -36,12 +43,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
+        public GovernanceRecommendation GovernanceRecommendation { get; set; }
         public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
-        public string CreatedBy { get; set; }
+
         public int? StandardCode { get; set; }
+        public string CreatedBy { get; set; }
     }
 }

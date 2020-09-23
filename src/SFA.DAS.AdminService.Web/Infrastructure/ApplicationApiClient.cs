@@ -108,6 +108,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 $"/Review/OrganisationApplications", organisationApplicationsRequest);
         }
 
+        public async Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationWithdrawalApplications(OrganisationWithdrawalApplicationsRequest organisationApplicationsRequest)
+        {
+            return await Post<OrganisationWithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
+                $"/Review/OrganisationWithdrawalApplications", organisationApplicationsRequest);
+        }
+
         public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
         {
             return await Post<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
@@ -128,6 +134,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
+        }
+        
+        public async Task UpdateGovernanceRecommendation(Guid applicationId, GovernanceRecommendation recommendation)
+        {
+            await Post($"/Review/Applications/{applicationId}/UpdateGovernanceRecommendation", recommendation);
         }
         #endregion
 

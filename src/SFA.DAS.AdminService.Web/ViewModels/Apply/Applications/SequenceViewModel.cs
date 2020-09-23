@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using SFA.DAS.AdminService.Web.Domain.Apply;
+using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;
@@ -34,7 +35,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
+
+            var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWL_SEQUENCE_NO };
+            GovernanceRequired = governanceRequiredForSequences.Contains(SequenceNo);
         }
+
+        public bool GovernanceRequired { get; }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)
         {
@@ -56,6 +62,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
+
+        public GovernanceRecommendation Recommendation { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }

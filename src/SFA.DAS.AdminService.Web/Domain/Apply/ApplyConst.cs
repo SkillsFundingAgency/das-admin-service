@@ -8,5 +8,8 @@
         public const int FINANCIAL_SECTION_NO = 3;
         
         public const int STANDARD_SEQUENCE_NO = 2;
+
+        public const int ORGANISATION_WITHDRAWL_SEQUENCE_NO = 3;
+        public const int STANDARD_WITHDRAWL_SEQUENCE_NO = 4;
     }
 }

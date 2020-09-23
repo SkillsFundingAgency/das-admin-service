@@ -22,6 +22,12 @@
         IPagingState StandardApplication_FeedbackApplications { get; }
         IPagingState StandardApplication_ApprovedApplications { get; }
 
+        bool OrganisationWithdrawalApplication_SessionValid { get; set; }
+        IPagingState OrganisationWithdrawalApplication_NewApplications { get; }
+        IPagingState OrganisationWithdrawalApplication_InProgressApplications { get; }
+        IPagingState OrganisationWithdrawalApplication_FeedbackApplications { get; }
+        IPagingState OrganisationWithdrawalApplication_ApprovedApplications { get; }
+
         bool Register_SessionValid { get; set; }
         IPagingState Register_ApprovedStandards { get; }
     } 
@@ -120,6 +126,50 @@
             get
             {
                 return new PagingState(_sessionService, "StandardApplication_ApprovedApplications");
+            }
+        }
+
+        public bool OrganisationWithdrawalApplication_SessionValid
+        {
+            get
+            {
+                return _sessionService.Get<bool>("OrganisationWithdrawalApplication_SessionValid");
+            }
+            set
+            {
+                _sessionService.Set("OrganisationWithdrawalApplication_SessionValid", value);
+            }
+        }
+
+        public IPagingState OrganisationWithdrawalApplication_NewApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_NewApplications");
+            }
+        }
+
+        public IPagingState OrganisationWithdrawalApplication_InProgressApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_InProgressApplications");
+            }
+        }
+
+        public IPagingState OrganisationWithdrawalApplication_FeedbackApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_FeedbackApplications");
+            }
+        }
+
+        public IPagingState OrganisationWithdrawalApplication_ApprovedApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_ApprovedApplications");
             }
         }
 

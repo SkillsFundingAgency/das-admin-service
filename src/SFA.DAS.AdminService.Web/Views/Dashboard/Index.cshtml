@@ -210,6 +210,35 @@
         @:<div class="govuk-grid-row">
         }
         @{
+            var organisationWithdrawalApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(organisationWithdrawalApplicationsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@organisationWithdrawalApplicationsRoles" id="organisation-withdrawal-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Organisation withdrawal applications
+            </h2>
+            <p class="govuk-body">Review and approve new organisation withdrawal applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="OrganisationWithdrawalApplication" asp-action="Index" asp-fragment="new">New (@Model.OrganisationWithdrawalApplicationsNew)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="OrganisationWithdrawalApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.OrganisationWithdrawalApplicationsInProgress)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="OrganisationWithdrawalApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.OrganisationWithdrawalApplicationsHasFeedback)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="OrganisationWithdrawalApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.OrganisationWithdrawalApplicationsApproved)</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
+        @{
             var standardApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(standardApplicationsRoles)) { sectionsShown++; }
         }

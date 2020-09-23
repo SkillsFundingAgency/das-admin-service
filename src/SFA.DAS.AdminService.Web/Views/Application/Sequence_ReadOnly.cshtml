@@ -1,6 +1,7 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AdminService.Web.Domain.Apply;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SequenceViewModel
 
@@ -70,6 +71,18 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Financial due date</dt>
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Recommendation.SelectedRecommendation) && Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWL_SEQUENCE_NO)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Governance Recommendation</dt>
+                            <dd class="govuk-summary-list__value">@Model.Recommendation.SelectedRecommendation</dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Governance report</dt>
+                            <dd class="govuk-summary-list__value"><a href="somewhere">Download a report</a></dd>
                         </div>
                     }
                 </dl>
