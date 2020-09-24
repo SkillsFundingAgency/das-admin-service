@@ -1,7 +1,7 @@
 @using SFA.DAS.AssessorService.ApplyTypes
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AdminService.Common.Extensions;
-@using SFA.DAS.AdminService.Web.Domain.Apply;
+@using SFA.DAS.AssessorService.Domain.Consts;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SequenceViewModel
 
@@ -10,10 +10,10 @@
     var Fragment = ApplicationReviewHelpers.ApplicationFragment(Model.ReviewStatus);
 }
 
-<a class="govuk-back-link" 
-   asp-action="@Model.BackAction" 
-   asp-controller="@Model.BackController" 
-   asp-route-organisationId="@Model.BackOrganisationId" 
+<a class="govuk-back-link"
+   asp-action="@Model.BackAction"
+   asp-controller="@Model.BackController"
+   asp-route-organisationId="@Model.BackOrganisationId"
    asp-fragment="@Fragment">
     Back
 </a>
@@ -38,7 +38,7 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
@@ -73,7 +73,7 @@
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Recommendation.SelectedRecommendation) && Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWL_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.Recommendation.SelectedRecommendation) && Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Governance Recommendation</dt>
@@ -98,7 +98,9 @@
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
-                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
+                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && 
+                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && 
+                            !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
                         {
                             // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
                             continue;
@@ -118,39 +120,40 @@
                                         @applicationSection.LinkTitle
                                     </a>
                                 </h2>
-                            <span class="govuk-hint">
-                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
-                            </span>
+                                <span class="govuk-hint">
+                                    @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
+                                </span>
 
-                            @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
-                            {
-                                <div class="govuk-tag">
-                                    Feedback added
-                                </div>
-                            }
+                                @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
+                                {
+                                    <div class="govuk-tag">
+                                        Feedback added
+                                    </div>
+                                }
 
-                            @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
-                            @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
-                            {
-                                <div class="govuk-tag">
-                                    Evaluated
-                                </div>
-                            }
+                                @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
+                                @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
+                                {
+                                    <div class="govuk-tag">
+                                        Evaluated
+                                    </div>
+                                }
 
-                            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                         </li>
                     }
                 </ul>
             }
 
-        <div class="form-group">
-            <a class="govuk-link" 
-               asp-action="@Model.BackAction" 
-               asp-controller="@Model.BackController" 
-               asp-route-organisationId="@Model.BackOrganisationId" 
-               asp-fragment="@Fragment">
-            Return to applications</a>
-        </div>
+            <div class="form-group">
+                <a class="govuk-link"
+                   asp-action="@Model.BackAction"
+                   asp-controller="@Model.BackController"
+                   asp-route-organisationId="@Model.BackOrganisationId"
+                   asp-fragment="@Fragment">
+                    Return to applications
+                </a>
+            </div>
         </div>
     </div>
 </main>

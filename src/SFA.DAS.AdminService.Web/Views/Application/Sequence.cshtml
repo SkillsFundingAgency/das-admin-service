@@ -1,4 +1,5 @@
-@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AdminService.Common.Extensions
 
@@ -35,7 +36,7 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
@@ -83,7 +84,9 @@
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
-                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
+                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && 
+                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && 
+                            !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
                         {
                             // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
                             continue;
@@ -134,7 +137,7 @@
 
                 @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
                 {
-                    if (Model.GovernanceRequired)
+                    if (!Model.GovernanceRequired)
                     {
                         <form class="js-disable-on-submit"
                                 asp-controller="Application"
@@ -163,7 +166,7 @@
 
                                 <legend>
                                     <h2 class="govuk-heading-l">
-                                        What’s your recommendation for this withdrawal?
+                                        What's your recommendation for this withdrawal?
                                     </h2>
                                 </legend>
 

@@ -13,9 +13,9 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AssessorService.Domain.Consts;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -353,9 +353,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
            
             var warningMessages = new List<string>();
-            if (sequenceNo == 2 && returnType == "Approve")
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == "Approve")
             {
-                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == 1);
+                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
 
                 // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
                 if (sequenceOne?.NotRequired is true)

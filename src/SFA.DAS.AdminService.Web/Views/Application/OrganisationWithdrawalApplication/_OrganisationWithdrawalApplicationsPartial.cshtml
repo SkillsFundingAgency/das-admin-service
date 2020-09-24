@@ -31,13 +31,13 @@
             </th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                            data-sortColumn="@OrganisationWithdrawalApplicationsSortColumn.FinancialStatus"
+                                            data-sortColumn="@OrganisationWithdrawalApplicationsSortColumn.GovernanceRecommendation"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="OrganisationWithdrawalApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@OrganisationWithdrawalApplicationsSortColumn.FinancialStatus"
+                                            sfa-sort-column="@OrganisationWithdrawalApplicationsSortColumn.GovernanceRecommendation"
                                             sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Financial status</sfa-sortable-column-header>
+                                            sfa-sort-direction="@Model.SortDirection">Governance recommendation</sfa-sortable-column-header>
             </th>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
@@ -81,7 +81,7 @@
                     @application.OrganisationName
                 </a>
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@Model.FinancialStatusColumnValue(application.FinancialStatus)</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@application.GovernanceRecommendation</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
@@ -94,7 +94,7 @@
 </table>
 @if (Model != null)
 {
-    <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="OrganisationWithdrawlApplication" method="get" asp-fragment="@Model.Fragment">
+    <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="OrganisationWithdrawalApplication" method="get" asp-fragment="@Model.Fragment">
         <div class="das-flex-space-around">
             <div>
                 <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ItemsPerPage" asp-items="Model.ItemsPerPageList"></select>

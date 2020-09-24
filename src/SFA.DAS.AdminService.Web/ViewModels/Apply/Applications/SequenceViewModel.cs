@@ -1,6 +1,6 @@
-﻿using SFA.DAS.AdminService.Web.Domain.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;
 using System;
@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
 
-            var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWL_SEQUENCE_NO };
+            var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO };
             GovernanceRequired = governanceRequiredForSequences.Contains(SequenceNo);
         }
 
