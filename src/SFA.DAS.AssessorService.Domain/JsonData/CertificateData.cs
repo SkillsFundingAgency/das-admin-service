@@ -21,13 +21,11 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string ProviderName { get; set; }
         public string Registration { get; set; }
         public DateTime? LearningStartDate { get; set; }
-
         public DateTime? AchievementDate { get; set; }
         public string CourseOption { get; set; }
         public string OverallGrade { get; set; }
         public string Department { get; set; }
         public string FullName { get; set; }
-
         public EpaDetails EpaDetails { get; set; }
     }
 

@@ -1,5 +1,6 @@
 ﻿@model SFA.DAS.AdminService.Web.Controllers.SearchViewModel
 @using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AssessorService.Domain.Consts
 
 @{
     ViewBag.Title = "Search results";
@@ -54,7 +55,7 @@
                                 <td class="govuk-table__cell">@result.Uln</td>
                                 <td class="govuk-table__cell">@result.Standard (@result.StandardCode)</td>
                                 <td class="govuk-table__cell">@result.CertificateReference</td>
-                                <td class="govuk-table__cell">@result.CertificateStatus</td>
+                                <td class="govuk-table__cell">@CertificateStatus.GetDisplayName(result.CertificateStatus)</td>
                                 <td class="govuk-table__cell">@result.LastUpdatedAt?.ToSfaShortDateString()</td>
                             </tr>
                         }
