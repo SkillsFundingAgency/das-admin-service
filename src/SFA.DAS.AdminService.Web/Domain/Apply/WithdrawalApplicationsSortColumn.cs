@@ -1,8 +1,9 @@
 ﻿namespace SFA.DAS.AdminService.Web.Domain.Apply
 {
-    public class OrganisationWithdrawalApplicationsSortColumn
+    public class WithdrawalApplicationsSortColumn
     {
-        public const string OrganisationName = "OrganisationName";
+        public const string Type = "Type";
+        public const string Name = "Name";
         public const string GovernanceRecommendation = "GovernanceRecommendation";
         public const string Status = "Status";
         public const string SubmittedDate = "SubmittedDate";

@@ -16,18 +16,18 @@ using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
-    [CheckSession(nameof(OrganisationWithdrawalApplicationController), nameof(ResetSession), nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid))]
-    public class OrganisationWithdrawalApplicationController : Controller
+    [CheckSession(nameof(WithdrawalApplicationController), nameof(ResetSession), nameof(IControllerSession.WithdrawalApplication_SessionValid))]
+    public class WithdrawalApplicationController : Controller
     {
         private readonly IControllerSession _controllerSession;
         private readonly IApplicationApiClient _applyApiClient;
-        private readonly ILogger<OrganisationWithdrawalApplicationController> _logger;
+        private readonly ILogger<WithdrawalApplicationController> _logger;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultApplicationsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
-        public OrganisationWithdrawalApplicationController(IControllerSession controllerSession, IApplicationApiClient applyApiClient, ILogger<OrganisationWithdrawalApplicationController> logger)
+        public WithdrawalApplicationController(IControllerSession controllerSession, IApplicationApiClient applyApiClient, ILogger<WithdrawalApplicationController> logger)
         {
             _controllerSession = controllerSession;
             _applyApiClient = applyApiClient;
@@ -35,13 +35,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Ignore)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Ignore)]
         public IActionResult ResetSession()
         {
             // reset all the session paging settings
             SetDefaultSession();
             
-            return RedirectToAction(nameof(OrganisationWithdrawalApplications));
+            return RedirectToAction(nameof(WithdrawalApplications));
         }
 
         [HttpGet]
@@ -52,14 +52,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             ResetSortColumn();
             ResetSortDirection();
 
-            return RedirectToAction(nameof(OrganisationWithdrawalApplications));
+            return RedirectToAction(nameof(WithdrawalApplications));
         }
 
         [HttpGet]
-        public async Task<IActionResult> OrganisationWithdrawalApplications()
+        public async Task<IActionResult> WithdrawalApplications()
         {
             var vm = await MapViewModelFromSession();
-            return View(nameof(OrganisationWithdrawalApplications), vm);
+            return View(nameof(WithdrawalApplications), vm);
         }
 
         [HttpGet]
@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageNewApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.New, pageIndex);
@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangeApplicationsPerPageNewApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
             return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.New, itemsPerPage);
@@ -95,7 +95,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortNewApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.New, sortColumn, sortDirection);
@@ -108,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageInProgressApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.InProgress, pageIndex);
@@ -121,7 +121,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangeApplicationsPerPageInProgressApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
             return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.InProgress, itemsPerPage);
@@ -134,7 +134,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortInProgressApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.InProgress, sortColumn, sortDirection);
@@ -147,7 +147,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageFeedbackApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.HasFeedback, pageIndex);
@@ -160,7 +160,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangeApplicationsPerPageFeedbackApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
             return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.HasFeedback, itemsPerPage);
@@ -173,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortFeedbackApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.HasFeedback, sortColumn, sortDirection);
@@ -186,7 +186,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangePageApprovedApplicationsPartial(int pageIndex = DefaultPageIndex)
         {
             return await ChangePageApplicationsPartial(ApplicationReviewStatus.Approved, pageIndex);
@@ -199,7 +199,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> ChangeApplicationsPerPageApprovedApplicationsPartial(int itemsPerPage = DefaultApplicationsPerPage)
         {
             return await ChangeApplicationsPerPageApplicationsPartial(ApplicationReviewStatus.Approved, itemsPerPage);
@@ -212,7 +212,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet]
-        [CheckSession(nameof(IControllerSession.OrganisationWithdrawalApplication_SessionValid), CheckSession.Error)]
+        [CheckSession(nameof(IControllerSession.WithdrawalApplication_SessionValid), CheckSession.Error)]
         public async Task<IActionResult> SortApprovedApplicationsPartial(string sortColumn, string sortDirection)
         {
             return await SortApplicationsPartial(ApplicationReviewStatus.Approved, sortColumn, sortDirection);
@@ -223,13 +223,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             switch (reviewStatus)
             {
                 case ApplicationReviewStatus.New:
-                    return _controllerSession.OrganisationWithdrawalApplication_NewApplications;
+                    return _controllerSession.WithdrawalApplication_NewApplications;
                 case ApplicationReviewStatus.InProgress:
-                    return _controllerSession.OrganisationWithdrawalApplication_InProgressApplications;
+                    return _controllerSession.WithdrawalApplication_InProgressApplications;
                 case ApplicationReviewStatus.HasFeedback:
-                    return _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications;
+                    return _controllerSession.WithdrawalApplication_FeedbackApplications;
                 case ApplicationReviewStatus.Approved:
-                    return _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications;
+                    return _controllerSession.WithdrawalApplication_ApprovedApplications;
             }
 
             return null;
@@ -237,12 +237,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private async Task<ApplicationsDashboardViewModel> MapViewModelFromSession()
         {
-            var viewModel = new ApplicationsDashboardViewModel(nameof(OrganisationWithdrawalApplicationController).RemoveController());
+            var viewModel = new ApplicationsDashboardViewModel(nameof(WithdrawalApplicationController).RemoveController());
 
-            viewModel.NewApplications = await AddApplicationsViewModelValues(viewModel.NewApplications, ApplicationReviewStatus.New, _controllerSession.OrganisationWithdrawalApplication_NewApplications);
-            viewModel.InProgressApplications = await AddApplicationsViewModelValues(viewModel.InProgressApplications, ApplicationReviewStatus.InProgress, _controllerSession.OrganisationWithdrawalApplication_InProgressApplications);
-            viewModel.FeedbackApplications = await AddApplicationsViewModelValues(viewModel.FeedbackApplications, ApplicationReviewStatus.HasFeedback, _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications);
-            viewModel.ApprovedApplications = await AddApplicationsViewModelValues(viewModel.ApprovedApplications, ApplicationReviewStatus.Approved, _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications);
+            viewModel.NewApplications = await AddApplicationsViewModelValues(viewModel.NewApplications, ApplicationReviewStatus.New, _controllerSession.WithdrawalApplication_NewApplications);
+            viewModel.InProgressApplications = await AddApplicationsViewModelValues(viewModel.InProgressApplications, ApplicationReviewStatus.InProgress, _controllerSession.WithdrawalApplication_InProgressApplications);
+            viewModel.FeedbackApplications = await AddApplicationsViewModelValues(viewModel.FeedbackApplications, ApplicationReviewStatus.HasFeedback, _controllerSession.WithdrawalApplication_FeedbackApplications);
+            viewModel.ApprovedApplications = await AddApplicationsViewModelValues(viewModel.ApprovedApplications, ApplicationReviewStatus.Approved, _controllerSession.WithdrawalApplication_ApprovedApplications);
 
             return viewModel;
         }
@@ -253,7 +253,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             pagingState.PageIndex = pageIndex;
 
             var vm = await MapViewModelFromSession();
-            return View(nameof(OrganisationWithdrawalApplications), vm);
+            return View(nameof(WithdrawalApplications), vm);
         }
 
         private async Task<IActionResult> ChangePageApplicationsPartial(string reviewStatus, int pageIndex)
@@ -262,7 +262,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             pagingState.PageIndex = pageIndex;
 
             var viewModel = await AddApplicationsViewModelValues(new ApplicationsViewModel(), reviewStatus, pagingState);
-            return PartialView("_OrganisationApplicationsPartial", viewModel);
+            return PartialView("_WithdrawalApplicationsPartial", viewModel);
         }
 
         private async Task<IActionResult> ChangeApplicationsPerPageApplications(string reviewStatus, int itemsPerPage)
@@ -349,8 +349,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private async Task<PaginatedList<ApplicationSummaryItem>> GetPageApplications(string reviewStatus, IPagingState pagingState)
         {
-            var organisationWithdrawalApplicationsRequest = new OrganisationWithdrawalApplicationsRequest
+            var withdrawalApplicationsRequest = new WithdrawalApplicationsRequest
             (
+                null,
                 reviewStatus,
                 pagingState.SortColumn.ToString(),
                 pagingState.SortDirection == SortOrder.Asc ? 1 : 0,
@@ -359,13 +360,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 DefaultPageSetSize
             );
 
-            var response = await _applyApiClient.GetOrganisationWithdrawalApplications(organisationWithdrawalApplicationsRequest);
+            var response = await _applyApiClient.GetWithdrawalApplications(withdrawalApplicationsRequest);
             return response;
         }
 
         private void SetDefaultSession()
         {
-            _controllerSession.OrganisationWithdrawalApplication_SessionValid = true;
+            _controllerSession.WithdrawalApplication_SessionValid = true;
 
             ResetPageIndex();
             ResetItemsPerPage();
@@ -375,34 +376,34 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private void ResetPageIndex()
         {
-            _controllerSession.OrganisationWithdrawalApplication_NewApplications.PageIndex = DefaultPageIndex;
-            _controllerSession.OrganisationWithdrawalApplication_InProgressApplications.PageIndex = DefaultPageIndex;
-            _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications.PageIndex = DefaultPageIndex;
-            _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.WithdrawalApplication_NewApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.WithdrawalApplication_InProgressApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.WithdrawalApplication_FeedbackApplications.PageIndex = DefaultPageIndex;
+            _controllerSession.WithdrawalApplication_ApprovedApplications.PageIndex = DefaultPageIndex;
         }
 
         private void ResetItemsPerPage()
         {
-            _controllerSession.OrganisationWithdrawalApplication_NewApplications.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.OrganisationWithdrawalApplication_InProgressApplications.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications.ItemsPerPage = DefaultApplicationsPerPage;
-            _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.WithdrawalApplication_NewApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.WithdrawalApplication_InProgressApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.WithdrawalApplication_FeedbackApplications.ItemsPerPage = DefaultApplicationsPerPage;
+            _controllerSession.WithdrawalApplication_ApprovedApplications.ItemsPerPage = DefaultApplicationsPerPage;
         }
 
         private void ResetSortColumn()
         {
-            _controllerSession.OrganisationWithdrawalApplication_NewApplications.SortColumn = OrganisationWithdrawalApplicationsSortColumn.SubmittedDate;
-            _controllerSession.OrganisationWithdrawalApplication_InProgressApplications.SortColumn = OrganisationWithdrawalApplicationsSortColumn.SubmittedDate;
-            _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications.SortColumn = OrganisationWithdrawalApplicationsSortColumn.FeedbackAddedDate;
-            _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications.SortColumn = OrganisationWithdrawalApplicationsSortColumn.ClosedDate;
+            _controllerSession.WithdrawalApplication_NewApplications.SortColumn = WithdrawalApplicationsSortColumn.SubmittedDate;
+            _controllerSession.WithdrawalApplication_InProgressApplications.SortColumn = WithdrawalApplicationsSortColumn.SubmittedDate;
+            _controllerSession.WithdrawalApplication_FeedbackApplications.SortColumn = WithdrawalApplicationsSortColumn.FeedbackAddedDate;
+            _controllerSession.WithdrawalApplication_ApprovedApplications.SortColumn = WithdrawalApplicationsSortColumn.ClosedDate;
         }
 
         private void ResetSortDirection()
         {
-            _controllerSession.OrganisationWithdrawalApplication_NewApplications.SortDirection = SortOrder.Desc;
-            _controllerSession.OrganisationWithdrawalApplication_InProgressApplications.SortDirection = SortOrder.Desc;
-            _controllerSession.OrganisationWithdrawalApplication_FeedbackApplications.SortDirection = SortOrder.Desc;
-            _controllerSession.OrganisationWithdrawalApplication_ApprovedApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.WithdrawalApplication_NewApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.WithdrawalApplication_InProgressApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.WithdrawalApplication_FeedbackApplications.SortDirection = SortOrder.Desc;
+            _controllerSession.WithdrawalApplication_ApprovedApplications.SortDirection = SortOrder.Desc;
         }
     }
 }

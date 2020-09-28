@@ -2,6 +2,7 @@
 @using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 @using SFA.DAS.AdminService.Web.ViewModels.Shared;
 @using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
 
 @model ApplicationsViewModel;
 
@@ -19,35 +20,38 @@
 <table class="govuk-table govuk-table--small">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header govuk-!-width-one-half">
-                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                            data-sortColumn="@OrganisationWithdrawalApplicationsSortColumn.OrganisationName"
-                                            asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationWithdrawalApplication"
-                                            asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@OrganisationWithdrawalApplicationsSortColumn.OrganisationName"
-                                            sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <a class="govuk-link das-no-wrap">Type</a>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+            <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                            data-sortColumn="@OrganisationWithdrawalApplicationsSortColumn.GovernanceRecommendation"
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Name"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationWithdrawalApplication"
+                                            asp-controller="WithdrawalApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@OrganisationWithdrawalApplicationsSortColumn.GovernanceRecommendation"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Name"
                                             sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Governance recommendation</sfa-sortable-column-header>
+                                            sfa-sort-direction="@Model.SortDirection">Name</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter govuk-table__header--numeric">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.GovernanceRecommendation"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="WithdrawalApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.GovernanceRecommendation"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Recommendation</sfa-sortable-column-header>
             </th>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                     <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                                data-sortColumn="@OrganisationWithdrawalApplicationsSortColumn.Status"
+                                                data-sortColumn="@WithdrawalApplicationsSortColumn.Status"
                                                 asp-action="@Model.SortColumnAction"
-                                                asp-controller="OrganisationWithdrawalApplication"
+                                                asp-controller="WithdrawalApplication"
                                                 asp-fragment="@Model.Fragment"
-                                                sfa-sort-column="@OrganisationWithdrawalApplicationsSortColumn.Status"
+                                                sfa-sort-column="@WithdrawalApplicationsSortColumn.Status"
                                                 sfa-table-sort-column="@Model.SortColumn"
                                                 sfa-sort-direction="@Model.SortDirection">Status</sfa-sortable-column-header>
                 </th>
@@ -56,13 +60,13 @@
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@Model.DateSortColumnNameForReviewStatus()"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationWithdrawalApplication"
+                                            asp-controller="WithdrawalApplication"
                                             asp-fragment="@Model.Fragment"
                                             sfa-sort-column="@Model.DateSortColumnNameForReviewStatus()"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">@Model.DateHeaderColumnNameForReviewStatus()</sfa-sortable-column-header>
-            </th>
-        </tr>
+                                        </th>
+                                    </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model?.PaginatedList != null)
@@ -71,14 +75,31 @@
             {
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">
+                @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <text>Organisation</text>
+                }
+                else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <text>Standard</text>
+                }
+            </td>
+            <td class="govuk-table__cell">
                 <a class="govuk-link"
                    asp-action="Sequence"
                    asp-controller="Application"
                    asp-route-applicationId="@application.ApplicationId"
                    asp-route-sequenceNo="@application.SequenceNo"
-                   asp-route-backAction="OrganisationWithdrawalApplications"
-                   asp-route-backController="OrganisationWithdrawalApplication">
-                    @application.OrganisationName
+                   asp-route-backAction="WithdrawalApplications"
+                   asp-route-backController="WithdrawalApplication">
+                    @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        @application.OrganisationName
+                    }
+                    else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        @application.StandardName
+                    }
                 </a>
             </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@application.GovernanceRecommendation</td>
@@ -94,7 +115,7 @@
 </table>
 @if (Model != null)
 {
-    <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="OrganisationWithdrawalApplication" method="get" asp-fragment="@Model.Fragment">
+    <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="WithdrawalApplication" method="get" asp-fragment="@Model.Fragment">
         <div class="das-flex-space-around">
             <div>
                 <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ItemsPerPage" asp-items="Model.ItemsPerPageList"></select>
@@ -105,7 +126,7 @@
                                                 {
                                                     PaginatedList = Model.PaginatedList,
                                                     ChangePageAction = Model.ChangePageAction,
-                                                    ChangePageController = "OrganisationWithdrawalApplication",
+                                                    ChangePageController = "WithdrawalApplication",
                                                     Fragment = Model.Fragment
                                                 });}
             </div>

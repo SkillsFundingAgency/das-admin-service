@@ -19,13 +19,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
         Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest);
-
-        Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationWithdrawalApplications(OrganisationWithdrawalApplicationsRequest organisationApplicationsRequest);
         Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest);
+        Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest organisationApplicationsRequest);
 
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
         Task UpdateGovernanceRecommendation(Guid applicationId, GovernanceRecommendation grarecommendationde);
-        
         
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         

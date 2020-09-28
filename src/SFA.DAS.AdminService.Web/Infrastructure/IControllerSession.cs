@@ -22,11 +22,11 @@
         IPagingState StandardApplication_FeedbackApplications { get; }
         IPagingState StandardApplication_ApprovedApplications { get; }
 
-        bool OrganisationWithdrawalApplication_SessionValid { get; set; }
-        IPagingState OrganisationWithdrawalApplication_NewApplications { get; }
-        IPagingState OrganisationWithdrawalApplication_InProgressApplications { get; }
-        IPagingState OrganisationWithdrawalApplication_FeedbackApplications { get; }
-        IPagingState OrganisationWithdrawalApplication_ApprovedApplications { get; }
+        bool WithdrawalApplication_SessionValid { get; set; }
+        IPagingState WithdrawalApplication_NewApplications { get; }
+        IPagingState WithdrawalApplication_InProgressApplications { get; }
+        IPagingState WithdrawalApplication_FeedbackApplications { get; }
+        IPagingState WithdrawalApplication_ApprovedApplications { get; }
 
         bool Register_SessionValid { get; set; }
         IPagingState Register_ApprovedStandards { get; }
@@ -129,47 +129,47 @@
             }
         }
 
-        public bool OrganisationWithdrawalApplication_SessionValid
+        public bool WithdrawalApplication_SessionValid
         {
             get
             {
-                return _sessionService.Get<bool>("OrganisationWithdrawalApplication_SessionValid");
+                return _sessionService.Get<bool>("WithdrawalApplication_SessionValid");
             }
             set
             {
-                _sessionService.Set("OrganisationWithdrawalApplication_SessionValid", value);
+                _sessionService.Set("WithdrawalApplication_SessionValid", value);
             }
         }
 
-        public IPagingState OrganisationWithdrawalApplication_NewApplications
+        public IPagingState WithdrawalApplication_NewApplications
         {
             get
             {
-                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_NewApplications");
+                return new PagingState(_sessionService, "WithdrawalApplication_NewApplications");
             }
         }
 
-        public IPagingState OrganisationWithdrawalApplication_InProgressApplications
+        public IPagingState WithdrawalApplication_InProgressApplications
         {
             get
             {
-                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_InProgressApplications");
+                return new PagingState(_sessionService, "WithdrawalApplication_InProgressApplications");
             }
         }
 
-        public IPagingState OrganisationWithdrawalApplication_FeedbackApplications
+        public IPagingState WithdrawalApplication_FeedbackApplications
         {
             get
             {
-                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_FeedbackApplications");
+                return new PagingState(_sessionService, "WithdrawalApplication_FeedbackApplications");
             }
         }
 
-        public IPagingState OrganisationWithdrawalApplication_ApprovedApplications
+        public IPagingState WithdrawalApplication_ApprovedApplications
         {
             get
             {
-                return new PagingState(_sessionService, "OrganisationWithdrawalApplication_ApprovedApplications");
+                return new PagingState(_sessionService, "WithdrawalApplication_ApprovedApplications");
             }
         }
 

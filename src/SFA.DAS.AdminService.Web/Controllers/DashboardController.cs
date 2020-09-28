@@ -47,10 +47,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     StandardApplicationsInProgress = short.MinValue,
                     StandardApplicationsHasFeedback = short.MinValue,
                     StandardApplicationsApproved = short.MinValue,
-                    OrganisationWithdrawalApplicationsNew = short.MinValue,
-                    OrganisationWithdrawalApplicationsInProgress = short.MinValue,
-                    OrganisationWithdrawalApplicationsHasFeedback = short.MinValue,
-                    OrganisationWithdrawalApplicationsApproved = short.MinValue,
+                    WithdrawalApplicationsNew = short.MinValue,
+                    WithdrawalApplicationsInProgress = short.MinValue,
+                    WithdrawalApplicationsHasFeedback = short.MinValue,
+                    WithdrawalApplicationsApproved = short.MinValue,
                 };
             }
 
@@ -64,10 +64,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StandardApplicationsInProgress = applicationReviewStatusCounts.StandardApplicationsInProgress,
                 StandardApplicationsHasFeedback = applicationReviewStatusCounts.StandardApplicationsHasFeedback,
                 StandardApplicationsApproved = applicationReviewStatusCounts.StandardApplicationsApproved,
-                OrganisationWithdrawalApplicationsNew = applicationReviewStatusCounts.OrganisationWithdrawalApplicationsNew,
-                OrganisationWithdrawalApplicationsInProgress = applicationReviewStatusCounts.OrganisationWithdrawalApplicationsInProgress,
-                OrganisationWithdrawalApplicationsHasFeedback = applicationReviewStatusCounts.OrganisationWithdrawalApplicationsHasFeedback,
-                OrganisationWithdrawalApplicationsApproved = applicationReviewStatusCounts.OrganisationWithdrawalApplicationsApproved,
+                WithdrawalApplicationsNew = applicationReviewStatusCounts.WithdrawalApplicationsNew,
+                WithdrawalApplicationsInProgress = applicationReviewStatusCounts.WithdrawalApplicationsInProgress,
+                WithdrawalApplicationsHasFeedback = applicationReviewStatusCounts.WithdrawalApplicationsHasFeedback,
+                WithdrawalApplicationsApproved = applicationReviewStatusCounts.WithdrawalApplicationsApproved,
                 RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl,
                 RoatpAssessorBaseUrl = _configuration.RoatpAssessorBaseUrl,
                 RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl
