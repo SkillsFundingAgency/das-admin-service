@@ -31,20 +31,31 @@
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col">Is recurring</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Interval</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Run time</th>
-                            <th class="govuk-table__header govuk-table__header--numeric" scope="col"></th>
+                            <th class="govuk-table__header" scope="col">Interval</th>
+                            <th class="govuk-table__header" scope="col">Run time</th>
+                            <th class="govuk-table__header" scope="col">Status</th>
+                            <th class="govuk-table__header" scope="col"></th>
+                            <th class="govuk-table__header" scope="col"></th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                         @foreach (var result in @Model)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@result.IsRecurring</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">@result.RunTime</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@result.IsRecurring</td>
+                            <td class="govuk-table__cell ">@(result.ScheduleInterval.HasValue ? result.ScheduleInterval.Humanize(LetterCasing.Title) : result.Interval)</td>
+                            <td class="govuk-table__cell ">@result.RunTime</td>
+                            <td class="govuk-table__cell ">@result.Status</td>
+                            <td class="govuk-table__cell"><a class="govuk-link" asp-action="Delete" asp-route-scheduleRunId="@result.Id">Delete</a></td>
+                            @if (result.Status == SFA.DAS.AssessorService.Domain.Entities.ScheduleRunStatus.Failed)
+                            {
+                                <td class="govuk-table__cell"><a class="govuk-link" asp-action="Restart" asp-route-scheduleRunId="@result.Id">Restart</a></td>
+                            }
+                            else
+                            {
+                                <td></td>
+                            }
+                        </tr>
                         }
                     </tbody>
                 </table>

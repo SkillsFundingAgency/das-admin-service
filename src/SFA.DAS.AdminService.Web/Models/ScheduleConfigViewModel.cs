@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Helpers.DataAnnotations;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -26,5 +27,6 @@ namespace SFA.DAS.AdminService.Web.Models
         public int Hour { get; set; }
         [Range(0, 59, ErrorMessage = "Please enter a valid Minute")]
         public int Minute { get; set; }
+        public ScheduleRunStatus Status { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             List<ScheduleConfigViewModel> viewModels = new List<ScheduleConfigViewModel>();
 
-            foreach(var schedule in await _apiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
+            foreach (var schedule in await _apiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
             {
                 ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
                 {
@@ -39,6 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                     IsRecurring = schedule.IsRecurring,
                     ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+                    Status = (ScheduleRunStatus)schedule.Status
                 };
 
                 if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
@@ -66,7 +67,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ScheduleType = (ScheduleJobType)schedule.ScheduleType,
             };
 
-            if(Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
+            if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
             {
                 viewModel.ScheduleInterval = scheduleInterval;
             }
@@ -144,12 +145,34 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Restart(Guid scheduleRunId)
+        {
+            var schedule = await _apiClient.GetScheduleRun(scheduleRunId);
+
+            ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
+            {
+                Id = schedule.Id,
+                RunTime = schedule.RunTime.UtcToTimeZoneTime(),
+                Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
+                IsRecurring = schedule.IsRecurring,
+                ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+            };
+
+            if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
+            {
+                viewModel.ScheduleInterval = scheduleInterval;
+            }
+
+            return View(viewModel);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> RunNow(ScheduleConfigViewModel viewModel)
+        public async Task<IActionResult> Restart(ScheduleConfigViewModel viewModel)
         {
             if (viewModel != null)
             {
-                await _apiClient.RunNowScheduledRun((int)viewModel.ScheduleType);
+                await _apiClient.RestartSchedule(viewModel.Id);
             }
 
             return RedirectToAction("Index");
