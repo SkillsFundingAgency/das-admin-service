@@ -32,20 +32,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             foreach (var schedule in await _apiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
             {
-                ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
-                {
-                    Id = schedule.Id,
-                    RunTime = schedule.RunTime.UtcToTimeZoneTime(),
-                    Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
-                    IsRecurring = schedule.IsRecurring,
-                    ScheduleType = (ScheduleJobType)schedule.ScheduleType,
-                    LastRunStatus = schedule.LastRunStatus
-                };
-
-                if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
-                {
-                    viewModel.ScheduleInterval = scheduleInterval;
-                }
+                ScheduleConfigViewModel viewModel = MapToScheduleConfigViewModel(schedule);
 
                 viewModels.Add(viewModel);
             }
@@ -150,20 +137,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var schedule = await _apiClient.GetScheduleRun(scheduleRunId);
 
-            ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
-            {
-                Id = schedule.Id,
-                RunTime = schedule.RunTime.UtcToTimeZoneTime(),
-                Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
-                IsRecurring = schedule.IsRecurring,
-                ScheduleType = (ScheduleJobType)schedule.ScheduleType,
-                LastRunStatus = schedule.LastRunStatus
-            };
-
-            if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
-            {
-                viewModel.ScheduleInterval = scheduleInterval;
-            }
+            var viewModel = MapToScheduleConfigViewModel(schedule);
 
             return View(viewModel);
         }
@@ -188,6 +162,26 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        private static ScheduleConfigViewModel MapToScheduleConfigViewModel(ScheduleRun schedule)
+        {
+            ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
+            {
+                Id = schedule.Id,
+                RunTime = schedule.RunTime.UtcToTimeZoneTime(),
+                Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
+                IsRecurring = schedule.IsRecurring,
+                ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+                LastRunStatus = schedule.LastRunStatus
+            };
+
+            if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
+            {
+                viewModel.ScheduleInterval = scheduleInterval;
+            }
+
+            return viewModel;
         }
     }
 }
