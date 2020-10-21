@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                     IsRecurring = schedule.IsRecurring,
                     ScheduleType = (ScheduleJobType)schedule.ScheduleType,
-                    Status = (ScheduleRunStatus)schedule.Status
+                    LastRunStatus = schedule.LastRunStatus
                 };
 
                 if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
@@ -157,6 +157,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Interval = schedule.Interval.HasValue ? TimeSpan.FromMinutes(schedule.Interval.Value).Humanize().Titleize() : "-",
                 IsRecurring = schedule.IsRecurring,
                 ScheduleType = (ScheduleJobType)schedule.ScheduleType,
+                LastRunStatus = schedule.LastRunStatus
             };
 
             if (Enum.TryParse<ScheduleInterval>(schedule.Interval.ToString(), out var scheduleInterval) && Enum.IsDefined(typeof(ScheduleInterval), scheduleInterval))
@@ -165,6 +166,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RunNow(ScheduleConfigViewModel viewModel)
+        {
+            if (viewModel != null)
+            {
+                await _apiClient.RunNowScheduledRun((int)viewModel.ScheduleType);
+            }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

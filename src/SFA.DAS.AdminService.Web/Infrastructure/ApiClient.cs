@@ -337,8 +337,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public async Task RestartSchedule(Guid id)
         {
-            var request = new UpdateScheduleRunStatusRequest { ScheduleRunId = id, ScheduleRunStatus = ScheduleRunStatus.WaitingToStart };
-            await Post("api/v1/schedule/updatestatus", request);
+            var request = new UpdateLastRunStatusRequest { ScheduleRunId = id, LastRunStatus = LastRunStatus.Restarting };
+            await Post("api/v1/schedule/updatelaststatus", request);
         }
 
         #region Reports

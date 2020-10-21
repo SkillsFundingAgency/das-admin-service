@@ -27,6 +27,6 @@ namespace SFA.DAS.AdminService.Web.Models
         public int Hour { get; set; }
         [Range(0, 59, ErrorMessage = "Please enter a valid Minute")]
         public int Minute { get; set; }
-        public ScheduleRunStatus Status { get; set; }
+        public LastRunStatus? LastRunStatus { get; set; }
     }
 }
