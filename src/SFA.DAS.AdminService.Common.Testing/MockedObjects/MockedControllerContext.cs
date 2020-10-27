@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Common.Testing.MockedObjects
 {
@@ -13,6 +15,8 @@ namespace SFA.DAS.AdminService.Common.Testing.MockedObjects
             {
                 HttpContext = new DefaultHttpContext() { User = user }
             };
+
+            controllerContext.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());
 
             return controllerContext;
         }
