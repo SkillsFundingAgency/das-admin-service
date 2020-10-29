@@ -133,7 +133,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
-
+                newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+                newvm.ClarificationComments = vm.ClarificationComments;
+                
                 // For now, only replace selected grade with whatever was selected
                 if (vm.FinancialReviewDetails != null)
                 {
