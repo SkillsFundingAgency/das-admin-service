@@ -126,9 +126,9 @@
                     }
                     else
                     {
-                <dt class="govuk-summary-list__key">
-                    Financial health assessed on
-                </dt>
+                        <dt class="govuk-summary-list__key">
+                            Financial health assessed on
+                        </dt>
                     }
                     <dd class="govuk-summary-list__value">
                         @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
@@ -156,13 +156,11 @@
                     }
                     else
                     {
-                        {
-                            <dt class="govuk-summary-list__key">
-                                Comments
-                            </dt>
-                        }
+                        <dt class="govuk-summary-list__key">
+                            Comments
+                        </dt>
                     }
-                        <dd class="govuk-summary-list__value">
+                    <dd class="govuk-summary-list__value">
                             @Model.FinancialReviewDetails.Comments
                         </dd>
                     </div>
