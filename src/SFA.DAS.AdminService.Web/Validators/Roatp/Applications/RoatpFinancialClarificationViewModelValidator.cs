@@ -1,37 +1,30 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Globalization;
+using FluentValidation;
 using FluentValidation.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
-using System;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
-using System.Globalization;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
-    public class RoatpFinancialApplicationViewModelValidator : AbstractValidator<RoatpFinancialApplicationViewModel>
+    public class RoatpFinancialClarificationViewModelValidator : AbstractValidator<RoatpFinancialClarificationViewModel>
     {
-        public RoatpFinancialApplicationViewModelValidator()
+        public RoatpFinancialClarificationViewModelValidator()
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
+                if (string.IsNullOrWhiteSpace(vm.ClarificationResponse))
+                {
+                    context.AddFailure("ClarificationResponse", "Enter clarification response");
+                }
+                else if (HasExceededWordCount(vm.ClarificationResponse))
+                {
+                    context.AddFailure("ClarificationResponse", "Your comments must be 500 words or less");
+                }
+                else if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
                     context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateComments))
-                {
-                    context.AddFailure("InadequateComments", "Enter your comments");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
-                {
-                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
-                {
-                    context.AddFailure("ClarificationComments", "Enter internal comments");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
-                {
-                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
@@ -49,6 +42,10 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                             ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
                             break;
                     }
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
+                {
+                    context.AddFailure("ClarificationResponse", "stuff");
                 }
             });
         }

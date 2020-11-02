@@ -18,6 +18,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -101,11 +102,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
             }
-            else
+            
+            if (application.FinancialReviewStatus == FinancialReviewStatus.ClarificationSent)
             {
-                return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm);
+
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
             }
+
+            return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+            
         }
+
+       
 
         [HttpPost("/Roatp/Financial/{applicationId}")]
         public async Task<IActionResult> GradeApplication(Guid applicationId, RoatpFinancialApplicationViewModel vm)
@@ -146,6 +155,45 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
         }
 
+        [HttpPost("/Roatp/Financial/Clarification/{applicationId}")]
+        public async Task<IActionResult> SubmitClarification(Guid applicationId, RoatpFinancialClarificationViewModel vm)
+        {
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(OpenApplications));
+            }
+
+            if (ModelState.IsValid)
+            {
+                var financialReviewDetails = new FinancialReviewDetails
+                {
+                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                    GradedDateTime = DateTime.UtcNow,
+                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
+                    FinancialDueDate = GetFinancialDueDate(vm),
+                    Comments = GetFinancialReviewComments(vm),
+                    ClarificationComments = vm.ClarificationComments
+                };
+
+                //await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+                return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
+            }
+            else
+            {
+                var newvm = await CreateRoatpFinancialApplicationViewModel(application);
+                newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+                newvm.ClarificationComments = vm.ClarificationComments;
+
+                //// For now, only replace selected grade with whatever was selected
+                //if (vm.FinancialReviewDetails != null)
+                //{
+                //    newvm.FinancialReviewDetails.SelectedGrade = vm.FinancialReviewDetails.SelectedGrade;
+                //}
+                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(newvm);
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
+            }
+        }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
@@ -320,6 +368,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return financialSections;
         }
 
+
+        private RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm)
+        {
+            var viewModel = new RoatpFinancialClarificationViewModel
+            {
+                ClarificationComments = vm.ClarificationComments,
+                ApplicantEmailAddress = vm.ApplicantEmailAddress,
+                FinancialReviewDetails = vm.FinancialReviewDetails,
+                ApplicationId = vm.ApplicationId,
+                ApplicationReference = vm.ApplicationReference,
+                ApplicationRoute = vm.ApplicationRoute,
+                DeclaredInApplication = vm.DeclaredInApplication,
+                Sections = vm.Sections,
+                OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate,
+                GoodFinancialDueDate = vm.GoodFinancialDueDate,
+                SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate
+            };
+
+            return viewModel;
+        }
         private static bool IsRequiredSection(List<RoatpApplySequence> applicationSequences, Section section)
         {
             var appSequence = applicationSequences?.SingleOrDefault(appSeq => appSeq.SequenceNo == section.SequenceNo);
