@@ -18,7 +18,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using OfficeOpenXml.VBA;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
+using SFA.DAS.AssessorService.ApplyTypes;
+using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
+using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -166,13 +170,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
+                var comments = vm.Comments;
+                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+                    comments = vm.InadequateComments;
+
                 var financialReviewDetails = new FinancialReviewDetails
                 {
                     GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    Comments = vm.Comments,
+                    Comments = comments,
                     ClarificationResponse = vm.ClarificationResponse,
                     ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn
                 };
@@ -182,13 +190,18 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                var newvm = await CreateRoatpFinancialApplicationViewModel(application);
-                newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                newvm.Comments = vm.Comments;
-                newvm.FinancialReviewDetails = vm.FinancialReviewDetails;
+                var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
+                clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+                clarificationViewModel.Comments = vm.Comments;
+                clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
+                clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+                clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+                clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+             
+              
 
-                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(newvm);
-                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
+                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel);
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
         }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]

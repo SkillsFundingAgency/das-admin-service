@@ -28,26 +28,30 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 {
                     context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
-                         || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
-                         || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory)
+                else switch (vm.FinancialReviewDetails.SelectedGrade)
                 {
-                    switch (vm.FinancialReviewDetails.SelectedGrade)
-                    {
-                        case FinancialApplicationSelectedGrade.Outstanding:
-                            ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate", context);
-                            break;
-                        case FinancialApplicationSelectedGrade.Good:
-                            ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", context);
-                            break;
-                        case FinancialApplicationSelectedGrade.Satisfactory:
-                            ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
-                            break;
-                    }
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
-                {
-                    context.AddFailure("ClarificationResponse", "stuff");
+                    case FinancialApplicationSelectedGrade.Exempt:
+                        return;
+                    case FinancialApplicationSelectedGrade.Inadequate when string.IsNullOrWhiteSpace(vm.InadequateComments):
+                        context.AddFailure("InadequateComments", "Enter why the application was graded inadequate");
+                        break;
+                    case FinancialApplicationSelectedGrade.Outstanding:
+                    case FinancialApplicationSelectedGrade.Good:
+                    case FinancialApplicationSelectedGrade.Satisfactory:
+                        switch (vm.FinancialReviewDetails.SelectedGrade)
+                        {
+                            case FinancialApplicationSelectedGrade.Outstanding:
+                                ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate", context);
+                                break;
+                            case FinancialApplicationSelectedGrade.Good:
+                                ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", context);
+                                break;
+                            case FinancialApplicationSelectedGrade.Satisfactory:
+                                ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", context);
+                                break;
+                        }
+
+                        break;
                 }
             });
         }
