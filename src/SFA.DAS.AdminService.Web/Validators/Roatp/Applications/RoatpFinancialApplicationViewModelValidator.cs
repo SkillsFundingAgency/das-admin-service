@@ -25,11 +25,11 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 {
                     context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
                 {
                     context.AddFailure("Comments", "Enter internal comments");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.Comments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
                 {
                     context.AddFailure("Comments", "Your comments must be 500 words or less");
                 }

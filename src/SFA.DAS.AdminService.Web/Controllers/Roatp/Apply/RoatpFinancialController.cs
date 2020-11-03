@@ -147,7 +147,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
                 newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                newvm.Comments = vm.Comments;
+                newvm.ClarificationComments = vm.ClarificationComments;
                 
                 // For now, only replace selected grade with whatever was selected
                 if (vm.FinancialReviewDetails != null)
@@ -170,7 +170,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                var comments = vm.Comments;
+                var comments = vm.ClarificationComments;
                 if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
                     comments = vm.InadequateComments;
 
@@ -192,7 +192,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
                 clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                clarificationViewModel.Comments = vm.Comments;
+                clarificationViewModel.ClarificationComments = vm.ClarificationComments;
                 clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
                 clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
                 clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
@@ -383,7 +383,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var viewModel = new RoatpFinancialClarificationViewModel
             {
-                Comments = vm.Comments,
+                ClarificationComments = vm.ClarificationComments,
                 ApplicantEmailAddress = vm.ApplicantEmailAddress,
                 FinancialReviewDetails = vm.FinancialReviewDetails,
                 ApplicationId = vm.ApplicationId,
@@ -440,7 +440,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             switch (vm?.FinancialReviewDetails?.SelectedGrade)
             {
                 case FinancialApplicationSelectedGrade.Clarification:
-                    return vm.Comments;
+                    return vm.ClarificationComments;
                 case FinancialApplicationSelectedGrade.Inadequate:
                     return vm.InadequateComments;
                 default:
