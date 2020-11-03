@@ -35,7 +35,10 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                     case FinancialApplicationSelectedGrade.Inadequate when string.IsNullOrWhiteSpace(vm.InadequateComments):
                         context.AddFailure("InadequateComments", "Enter why the application was graded inadequate");
                         break;
-                    case FinancialApplicationSelectedGrade.Outstanding:
+                        case FinancialApplicationSelectedGrade.Inadequate when HasExceededWordCount(vm.InadequateComments):
+                            context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
+                        break;
+                        case FinancialApplicationSelectedGrade.Outstanding:
                     case FinancialApplicationSelectedGrade.Good:
                     case FinancialApplicationSelectedGrade.Satisfactory:
                         switch (vm.FinancialReviewDetails.SelectedGrade)
