@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
-                ClarificationComments = null,
+                Comments = null,
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Clarification,
@@ -80,7 +80,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
             var validationResponse = _validator.Validate(_viewModel);
 
-            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "ClarificationComments");
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Comments");
             error.Should().NotBeNull();
         }
 
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
-                ClarificationComments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
+                Comments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Clarification,
@@ -98,7 +98,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
             var validationResponse = _validator.Validate(_viewModel);
 
-            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "ClarificationComments");
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Comments");
             error.Should().NotBeNull();
         }
 

@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
 
         public string InadequateComments { get; set; }
-        public string ClarificationComments { get; set; }
+        public string Comments { get; set; }
         
         public string ClarificationResponse { get; set; }
         public string ApplicantEmailAddress { get; set; }
@@ -110,7 +110,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
             else if (FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
             {
-                ClarificationComments = FinancialReviewDetails.Comments;
+                Comments = FinancialReviewDetails.Comments;
             }
         }
 

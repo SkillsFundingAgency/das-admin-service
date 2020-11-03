@@ -165,8 +165,10 @@
             <form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
+                <input type="hidden" name="Comments" value="@Model.Comments"/>
+                <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn"/>
+
                 @*<input type="hidden" name="FinancialReviewDetails.SelectedGrade" value="@Model.FinancialReviewDetails.SelectedGrade" />*@
-                <input type="hidden" name="ClarificationComments" value="@Model.ClarificationComments" />
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-two-thirds">
                         <h2 class="govuk-heading-l">Clarified answer</h2>

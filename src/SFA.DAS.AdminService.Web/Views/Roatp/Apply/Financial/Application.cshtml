@@ -32,7 +32,7 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
                             <li><a sfa-validation-for="InadequateComments"></a></li>
-                            <li><a sfa-validation-for="ClarificationComments"></a></li>
+                            <li><a sfa-validation-for="Comments"></a></li>
                             <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
                             <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
@@ -120,7 +120,7 @@
                     <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
                     <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
-                    <span class="govuk-error-message" asp-validation-for="ClarificationComments"></span>
+                    <span class="govuk-error-message" asp-validation-for="Comments"></span>
 
                     <div id="FinancialReviewDetails.SelectedGrade" class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
@@ -270,11 +270,11 @@
                                 <label class="govuk-label" for="ClarificationComments">Enter internal comments</label>
 
                                 <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="ClarificationComments" sfa-validationerror-class="govuk-input--error"
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="Comments" sfa-validationerror-class="govuk-input--error"
                                               id="ClarificationComments"
-                                              name="ClarificationComments"
+                                              name="Comments"
                                               rows="4"
-                                              aria-describedby="ClarificationComments-info">@Model.ClarificationComments</textarea>
+                                              aria-describedby="Comments-info">@Model.Comments</textarea>
                                     <span id="ClarificationComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                         You can enter up to 500 words
                                     </span>

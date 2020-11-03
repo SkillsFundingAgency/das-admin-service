@@ -143,7 +143,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
                 newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                newvm.ClarificationComments = vm.ClarificationComments;
+                newvm.Comments = vm.Comments;
                 
                 // For now, only replace selected grade with whatever was selected
                 if (vm.FinancialReviewDetails != null)
@@ -172,24 +172,21 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
-                    Comments = GetFinancialReviewComments(vm),
-                    ClarificationComments = vm.ClarificationComments
+                    Comments = vm.Comments,
+                    ClarificationResponse = vm.ClarificationResponse,
+                    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn
                 };
 
-                //await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
             }
             else
             {
                 var newvm = await CreateRoatpFinancialApplicationViewModel(application);
                 newvm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                newvm.ClarificationComments = vm.ClarificationComments;
+                newvm.Comments = vm.Comments;
+                newvm.FinancialReviewDetails = vm.FinancialReviewDetails;
 
-                //// For now, only replace selected grade with whatever was selected
-                //if (vm.FinancialReviewDetails != null)
-                //{
-                //    newvm.FinancialReviewDetails.SelectedGrade = vm.FinancialReviewDetails.SelectedGrade;
-                //}
                 var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(newvm);
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
             }
@@ -373,7 +370,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var viewModel = new RoatpFinancialClarificationViewModel
             {
-                ClarificationComments = vm.ClarificationComments,
+                Comments = vm.Comments,
                 ApplicantEmailAddress = vm.ApplicantEmailAddress,
                 FinancialReviewDetails = vm.FinancialReviewDetails,
                 ApplicationId = vm.ApplicationId,
@@ -430,7 +427,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             switch (vm?.FinancialReviewDetails?.SelectedGrade)
             {
                 case FinancialApplicationSelectedGrade.Clarification:
-                    return vm.ClarificationComments;
+                    return vm.Comments;
                 case FinancialApplicationSelectedGrade.Inadequate:
                     return vm.InadequateComments;
                 default:

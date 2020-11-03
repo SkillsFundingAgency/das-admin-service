@@ -18,11 +18,13 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 {
                     context.AddFailure("ClarificationResponse", "Enter clarification response");
                 }
-                else if (HasExceededWordCount(vm.ClarificationResponse))
+
+                if (HasExceededWordCount(vm.ClarificationResponse))
                 {
                     context.AddFailure("ClarificationResponse", "Your comments must be 500 words or less");
                 }
-                else if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
+                
+                if (vm?.FinancialReviewDetails is null || string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
                 {
                     context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
