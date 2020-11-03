@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
-                Comments = null,
+                ClarificationComments = null,
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Clarification,
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
-                Comments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
+                ClarificationComments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Clarification,
