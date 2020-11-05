@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 _qnaApiClient.Object,
                 MockHttpContextAccessor.Object)
             {
-                ControllerContext = new ControllerContext {HttpContext = new DefaultHttpContext()}
+                ControllerContext = MockedControllerContext.Setup() 
             };
         }
 

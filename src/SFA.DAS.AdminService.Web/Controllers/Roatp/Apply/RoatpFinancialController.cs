@@ -18,9 +18,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using OfficeOpenXml.VBA;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
-using SFA.DAS.AssessorService.ApplyTypes;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
 using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
 
@@ -379,7 +377,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
 
-        private RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm)
+        private static RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm)
         {
             var viewModel = new RoatpFinancialClarificationViewModel
             {
