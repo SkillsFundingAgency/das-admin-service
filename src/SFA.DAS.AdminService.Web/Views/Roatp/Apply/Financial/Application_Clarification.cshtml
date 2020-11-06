@@ -172,13 +172,13 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
+            @*<form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">*@
+                <form class="js-disable-on-submit" method="post" enctype="multipart/form-data" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
                 <input type="hidden" name="Comments" value="@Model.ClarificationComments"/>
                 <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn"/>
-                @*<input type="hidden" name="FinancialReviewDetails.SelectedGrade" value="@Model.FinancialReviewDetails.SelectedGrade" />*@
-
+            
                 <h2 class="govuk-heading-l">Clarified answer</h2>
             
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
