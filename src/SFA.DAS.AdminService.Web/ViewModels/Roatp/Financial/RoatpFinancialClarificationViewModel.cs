@@ -4,6 +4,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial
 {
     public class RoatpFinancialClarificationViewModel : RoatpFinancialApplicationViewModel
     {
-
+        public string Comments { get; set; }
     }
 }

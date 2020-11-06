@@ -168,7 +168,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             if (ModelState.IsValid)
             {
-                var comments = vm.ClarificationComments;
+                var comments = vm.Comments;
                 if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
                     comments = vm.InadequateComments;
 
