@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                     case FinancialApplicationSelectedGrade.Exempt:
                         return;
                     case FinancialApplicationSelectedGrade.Inadequate when string.IsNullOrWhiteSpace(vm.InadequateComments):
-                        context.AddFailure("InadequateComments", "Enter why the application was graded inadequate");
+                        context.AddFailure("InadequateComments", "Enter your comments");
                         break;
                         case FinancialApplicationSelectedGrade.Inadequate when HasExceededWordCount(vm.InadequateComments):
                             context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 return;
             }
 
-            if (parsedDate < DateTime.Today)
+            if (parsedDate <= DateTime.Today)
             {
                 context.AddFailure(propertyName, "Financial due date must be a future date");
             }
