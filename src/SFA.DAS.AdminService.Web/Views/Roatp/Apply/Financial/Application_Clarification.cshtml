@@ -135,14 +135,14 @@
                         Needs clarification
                     </dd>
                 </div>
-                @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.Comments))
+                @if (!string.IsNullOrEmpty(Model.InternalComments))
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                                 Internal comments
                             </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.FinancialReviewDetails.Comments
+                            @Model.InternalComments
                         </dd>
                     </div>
                 }
@@ -175,6 +175,7 @@
             <form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
+                <input type="hidden" name="InternalComments" value ="@Model.InternalComments"/>
                 <input type="hidden" name="Comments" value="@Model.ClarificationComments"/>
                 <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn"/>
 
