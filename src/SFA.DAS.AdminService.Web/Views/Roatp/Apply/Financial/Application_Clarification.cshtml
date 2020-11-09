@@ -231,6 +231,8 @@
                                             </span>
                                         </legend>
 
+                                        <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
+
                                         <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
@@ -266,6 +268,8 @@
                                                 What is the financial due date?
                                             </span>
                                         </legend>
+
+                                        <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
 
                                         <div class="govuk-date-input" id="GoodFinancialDueDate">
                                             <div class="govuk-date-input__item">
@@ -303,6 +307,8 @@
                                             </span>
                                         </legend>
 
+                                        <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
+
                                         <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
@@ -334,6 +340,9 @@
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" for="InadequateComments">Enter your comments</label>
+
+                                        <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
+
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
                                             <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-textarea--error-override"
                                                     id="InadequateComments"
