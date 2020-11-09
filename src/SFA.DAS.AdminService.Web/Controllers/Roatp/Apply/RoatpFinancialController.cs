@@ -18,6 +18,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
 using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
@@ -28,16 +29,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     [FeatureToggle(FeatureToggles.EnableRoatpFinancialReview, "Dashboard", "Index")]
     public class RoatpFinancialController : Controller
     {
-        private readonly IRoatpOrganisationApiClient _apiClient;
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
-
-        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        private readonly IRoatpFinancialClarificationViewModelValidator _clarificationValidator;
+        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpFinancialClarificationViewModelValidator clarificationValidator)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
+            _clarificationValidator = clarificationValidator;
             _qnaApiClient = qnaApiClient;
         }
 
@@ -119,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
        
 
         [HttpPost("/Roatp/Financial/{applicationId}")]
-        public async Task<IActionResult> GradeApplication(Guid applicationId, RoatpFinancialApplicationViewModel vm)
+        public async Task<IActionResult> GradeApplication(Guid applicationId, [FromForm] RoatpFinancialApplicationViewModel vm)
         {
             var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             if (application is null)
@@ -165,10 +165,43 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
+            var isClarificationFilesUpdate = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
+            var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
+
+            var validationResponse = await _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
+
+           
+      
+            if (validationResponse.Errors !=null && validationResponse.Errors.Count>0)
+            {
+               
+
+                var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
+                clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+                clarificationViewModel.ClarificationComments = vm.ClarificationComments;
+                clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
+                clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+                clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+                clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+               
+
+                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel);
+                newClarificationViewModel.ErrorMessages = validationResponse.Errors;
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
+            }
+
+
+          //  var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+
+              
+
+            //MFCMFC what to do?
+            //vm.FilesToUpload = HttpContext.Request.Form.Files;
+           
 
             if (ModelState.IsValid)
             {
-                var comments = vm.ClarificationComments;
+                var comments = vm.Comments;
                 if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
                     comments = vm.InadequateComments;
 
