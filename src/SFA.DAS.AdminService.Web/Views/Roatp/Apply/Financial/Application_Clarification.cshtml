@@ -175,11 +175,10 @@
             <form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
-                <input type="hidden" name="InternalComments" value ="@Model.InternalComments"/>
-                <input type="hidden" name="Comments" value="@Model.ClarificationComments"/>
-                <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn"/>
-
-            
+                <input type="hidden" name="InternalComments" value="@Model.InternalComments" />
+                <input type="hidden" name="Comments" value="@Model.ClarificationComments" />
+                <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
+                <input type="hidden" name="FinancialReviewDetails.GradedBy" value="@Model.FinancialReviewDetails.GradedBy" />
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 
                     <div class="govuk-form-group">
@@ -195,12 +194,12 @@
 
                             <span class="govuk-error-message" asp-validation-for="ClarificationResponse"></span>
                             <textarea class="govuk-textarea js-character-count"
-                                        asp-for="ClarificationResponse"
-                                        sfa-validation-for="ClarificationResponse"
-                                        sfa-validationerror-class="govuk-textarea--error-override"
-                                        rows="4"
-                                        aria-describedby="ClarificationResponse-info"
-                                        maxlength="30000">@Model.ClarificationResponse</textarea>
+                                      asp-for="ClarificationResponse"
+                                      sfa-validation-for="ClarificationResponse"
+                                      sfa-validationerror-class="govuk-textarea--error-override"
+                                      rows="4"
+                                      aria-describedby="ClarificationResponse-info"
+                                      maxlength="30000">@Model.ClarificationResponse</textarea>
                         </div>
                         <span id="ClarificationResponse-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                             You can enter up to 500 words
@@ -336,10 +335,10 @@
                                         <label class="govuk-label" for="InadequateComments">Enter your comments</label>
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
                                             <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-textarea--error-override"
-                                                    id="InadequateComments"
-                                                    name="InadequateComments"
-                                                    rows="4"
-                                                    aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
+                                                      id="InadequateComments"
+                                                      name="InadequateComments"
+                                                      rows="4"
+                                                      aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
                                             <span id="InadequateComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                                 You can enter up to 500 words
                                             </span>
@@ -352,7 +351,7 @@
                                     <label class="govuk-label govuk-radios__label" for="exempt">Exempt</label>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                     </fieldset>
                 </div>
 
