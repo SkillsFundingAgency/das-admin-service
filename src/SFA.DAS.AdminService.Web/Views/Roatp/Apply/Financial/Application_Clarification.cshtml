@@ -7,6 +7,14 @@
     Layout = "_Layout";
 
     var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
+
+
+    var formGroupError = string.Empty;
+    
+    if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
+        {
+            formGroupError = "govuk-form-group--error";
+        }
 }
 
 <div class="govuk-breadcrumbs">
@@ -207,14 +215,7 @@
                 <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
                 <input type="hidden" name="FinancialReviewDetails.GradedBy" value="@Model.FinancialReviewDetails.GradedBy" />
                 <h2 class="govuk-heading-l">Clarified answer</h2>
-            
-                @{
-                    var formGroupError = string.Empty;
-                }
-                @if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
-                {
-                    formGroupError = "govuk-form-group--error";
-                }
+
                 <div class="govuk-form-group @formGroupError">
 
                     <div class="govuk-form-group">
