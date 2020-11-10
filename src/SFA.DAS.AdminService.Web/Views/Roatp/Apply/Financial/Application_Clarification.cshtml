@@ -8,15 +8,25 @@
 
     var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
 
+    var textareaErrorHighlightClass = "govuk-textarea--error-override";
+    var formGroupErrorHighlightClass = "govuk-form-group--error";
+    var textInputErrorHighlightClass = "govuk-input--error";
 
-    var formGroupError = string.Empty;
-    var errorClarificationResponse = string.Empty;
-    var errorMessageClarificationResponse = string.Empty;
-
-    if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
-        {
-            formGroupError = "govuk-form-group--error";
-        }
+    var clarificationResponseFormGroupError = string.Empty;
+    var clarificationResponseTextareaError = string.Empty;
+    var clarificationResponseErrorMessage = string.Empty;
+    var clarificationFileFormGroupError = string.Empty;
+    var clarificationFileErrorMessage = string.Empty;
+    var selectedGradeFormGroupError = string.Empty;
+    var selectedGradeErrorMessage = string.Empty;
+    var outstandingFinancialDueDateErrorMessage = string.Empty;
+    var outstandingFinancialDueDateInputError = string.Empty;
+    var goodFinancialDueDateErrorMessage = string.Empty;
+    var goodFinancialDueDateInputError = string.Empty;
+    var satisfactoryFinancialDueDateErrorMessage = string.Empty;
+    var satisfactoryFinancialDueDateInputError = string.Empty;
+    var inadequateCommentsTextareaError = string.Empty;
+    var inadequateCommentsErrorMessage = string.Empty;
 }
 
 <div class="govuk-breadcrumbs">
@@ -48,20 +58,61 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var error in Model.ErrorMessages)
                             {
-                             @if (error.Field=="ClarificationResponse")
-                             {
-                                 errorClarificationResponse = formGroupError;
-                                 errorMessageClarificationResponse = error.ErrorMessage;
-                             }
+                                var errorField = error.Field;
+
+                                if (error.Field == "ClarificationResponse")
+                                {
+                                    clarificationResponseFormGroupError = formGroupErrorHighlightClass;
+                                    clarificationResponseTextareaError = textareaErrorHighlightClass;
+                                    clarificationResponseErrorMessage = error.ErrorMessage;
+                                }
+
+                                if (error.Field == "ClarificationFile")
+                                {
+                                    clarificationFileFormGroupError = formGroupErrorHighlightClass;
+                                    clarificationFileErrorMessage = error.ErrorMessage;
+                                }
+
+                                
+                                if (error.Field == "FinancialReviewDetails.SelectedGrade")
+                                {
+                                    errorField = "outstanding";
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    selectedGradeErrorMessage = error.ErrorMessage;
+                                }
+
+                                if (error.Field == "OutstandingFinancialDueDate")
+                                {
+                                    errorField = "OutstandingFinancialDueDate.Day";
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    outstandingFinancialDueDateErrorMessage = error.ErrorMessage;
+                                    outstandingFinancialDueDateInputError = textInputErrorHighlightClass;
+                                }
+                                
+                                if (error.Field == "GoodFinancialDueDate")
+                                {
+                                    errorField = "GoodFinancialDueDate.Day";
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    goodFinancialDueDateErrorMessage = error.ErrorMessage;
+                                    goodFinancialDueDateInputError = textInputErrorHighlightClass;
+                                }
+
+                                if (error.Field == "SatisfactoryFinancialDueDate")
+                                {
+                                    errorField = "SatisfactoryFinancialDueDate.Day";
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    satisfactoryFinancialDueDateErrorMessage = error.ErrorMessage;
+                                    satisfactoryFinancialDueDateInputError = textInputErrorHighlightClass;
+                                }
+
+                                if (error.Field == "InadequateComments")
+                                {
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    inadequateCommentsTextareaError = textareaErrorHighlightClass;
+                                    inadequateCommentsErrorMessage = error.ErrorMessage;
+                                }
 
                                 <li>
-                                    @{
-                       var errorField = error.Field;
-                                        if (errorField == "FinancialReviewDetails.SelectedGrade")
-                                        {
-                                            errorField = "outstanding";
-                                        }
-                                    }
                                     <a href="#@errorField">@error.ErrorMessage</a>
                                 </li>
                             }
@@ -198,38 +249,53 @@
 
                 <div class="govuk-form-group">
 
-                    <div class="govuk-form-group @errorClarificationResponse">
+                    <div class="govuk-form-group @clarificationResponseFormGroupError">
                         <h2 class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--l" for="ClarificationResponse">
+                            <label class="govuk-label govuk-label--l" asp-for="ClarificationResponse">
                                 Clarified answer
                             </label>
                         </h2>
-                        <span class="govuk-hint">
+                        <p class="govuk-body">
                             Enter clarification response
-                        </span>
+                        </p>
                         <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-
-                            <span class="govuk-error-message" asp-validation-for="ClarificationResponse"></span>
-                            <textarea class="govuk-textarea js-character-count"
-                                      asp-for="ClarificationResponse"
-                                      sfa-validation-for="ClarificationResponse"
-                                      sfa-validationerror-class="govuk-textarea--error-override"
-                                      rows="4"
-                                      aria-describedby="ClarificationResponse-info"
-                                      maxlength="30000">@Model.ClarificationResponse</textarea>
+                            @if (!string.IsNullOrEmpty(clarificationResponseErrorMessage))
+                            {
+                                <span class="govuk-error-message">@clarificationResponseErrorMessage</span>
+                            }
+                            <textarea 
+                                class="govuk-textarea js-character-count @clarificationResponseTextareaError"
+                                asp-for="ClarificationResponse"
+                                rows="4"
+                                aria-describedby="ClarificationResponse-info"
+                                maxlength="30000">@Model.ClarificationResponse</textarea>
                         </div>
                         <span id="ClarificationResponse-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                             You can enter up to 500 words
                         </span>
                     </div>
-                    <div class="govuk-form-group">
-                        <p>You can upload a maximum of 4 files</p>
-                        <p>Each File must be a PDF and smaller than 5Mb</p>
-                        <partial name="~/Views/Roatp/Apply/Financial/_FileUpload.cshtml" for="@Model"  id="ClarificationFile"/>
+
+                    <div class="govuk-form-group @clarificationFileFormGroupError">
+                        
+
+                        @* <partial name="~/Views/Roatp/Apply/Financial/_FileUpload.cshtml" for="@Model" id="ClarificationFile"/> *@
+
+                        <div class="govuk-form-group" sfa-validation-for="ClarificationFile" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" asp-for="ClarificationFile">
+                                Upload a file (optional)
+                            </label>
+                            <span class="govuk-hint">You can upload a maximum of 4 files.</span>
+                            <span class="govuk-hint">Each file must be a PDF and smaller than 5MB.</span>
+                            @if (!string.IsNullOrEmpty(clarificationFileErrorMessage))
+                            {
+                                <span class="govuk-error-message">@clarificationFileErrorMessage</span>
+                            }
+                            <input class="govuk-file-upload" type="file" asp-for="ClarificationFile" accept=".pdf,application/pdf" />
+                        </div>
                     </div>
                     <button class="govuk-button" type="submit" name="submitClarificationFiles">Upload File</button>
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @selectedGradeFormGroupError">
                         <fieldset class="govuk-fieldset">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                                 <h2 class="govuk-fieldset__heading">
@@ -237,7 +303,10 @@
                                 </h2>
                             </legend>
 
-                            <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.SelectedGrade"></span>
+                            @if (!string.IsNullOrEmpty(selectedGradeErrorMessage))
+                            {
+                                <span class="govuk-error-message">@selectedGradeErrorMessage</span>
+                            }
 
                             <div id="FinancialReviewDetails.SelectedGrade" class="govuk-radios govuk-radios--conditional" data-module="radios">
                                 <div class="govuk-radios__item">
@@ -253,25 +322,28 @@
                                             </span>
                                         </legend>
 
-                                        <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
+                                        @if (!string.IsNullOrEmpty(outstandingFinancialDueDateErrorMessage))
+                                        {
+                                            <span class="govuk-error-message">@outstandingFinancialDueDateErrorMessage</span>
+                                        }
 
                                         <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="OutstandingFinancialDueDate.Day">Day</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="OutstandingFinancialDueDate.Day" id="OutstandingFinancialDueDate.Day" sfa-validation-for="OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError" name="OutstandingFinancialDueDate.Day" id="OutstandingFinancialDueDate.Day" value="@Model.OutstandingFinancialDueDate.Day" type="number" pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="OutstandingFinancialDueDate.Month">Month</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="OutstandingFinancialDueDate.Month" id="OutstandingFinancialDueDate.Month" sfa-validation-for="OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError" name="OutstandingFinancialDueDate.Month" id="OutstandingFinancialDueDate.Month" value="@Model.OutstandingFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="OutstandingFinancialDueDate.Year">Year</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="OutstandingFinancialDueDate.Year" id="OutstandingFinancialDueDate.Year" sfa-validation-for="OutstandingFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @outstandingFinancialDueDateInputError" name="OutstandingFinancialDueDate.Year" id="OutstandingFinancialDueDate.Year" value="@Model.OutstandingFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -291,25 +363,28 @@
                                             </span>
                                         </legend>
 
-                                        <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
+                                        @if (!string.IsNullOrEmpty(goodFinancialDueDateErrorMessage))
+                                        {
+                                            <span class="govuk-error-message">@goodFinancialDueDateErrorMessage</span>
+                                        }
 
                                         <div class="govuk-date-input" id="GoodFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="GoodFinancialDueDate.Day">Day</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="GoodFinancialDueDate.Day" id="GoodFinancialDueDate.Day" sfa-validation-for="GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError" name="GoodFinancialDueDate.Day" id="GoodFinancialDueDate.Day" value="@Model.GoodFinancialDueDate.Day" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="GoodFinancialDueDate.Month">Month</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="GoodFinancialDueDate.Month" id="GoodFinancialDueDate.Month" sfa-validation-for="GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError" name="GoodFinancialDueDate.Month" id="GoodFinancialDueDate.Month" value="@Model.GoodFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="GoodFinancialDueDate.Year">Year</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="GoodFinancialDueDate.Year" id="GoodFinancialDueDate.Year" sfa-validation-for="GoodFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @goodFinancialDueDateInputError" name="GoodFinancialDueDate.Year" id="GoodFinancialDueDate.Year" value="@Model.GoodFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -329,25 +404,28 @@
                                             </span>
                                         </legend>
 
-                                        <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
+                                        @if (!string.IsNullOrEmpty(satisfactoryFinancialDueDateErrorMessage))
+                                        {
+                                            <span class="govuk-error-message">@satisfactoryFinancialDueDateErrorMessage</span>
+                                        }
 
                                         <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Day">Day</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="SatisfactoryFinancialDueDate.Day" id="SatisfactoryFinancialDueDate.Day" sfa-validation-for="SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError" name="SatisfactoryFinancialDueDate.Day" id="SatisfactoryFinancialDueDate.Day" value="@Model.SatisfactoryFinancialDueDate.Day" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Month">Month</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" name="SatisfactoryFinancialDueDate.Month" id="SatisfactoryFinancialDueDate.Month" sfa-validation-for="SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError" name="SatisfactoryFinancialDueDate.Month" id="SatisfactoryFinancialDueDate.Month" value="@Model.SatisfactoryFinancialDueDate.Month" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label" for="SatisfactoryFinancialDueDate.Year">Year</label>
-                                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" name="SatisfactoryFinancialDueDate.Year" id="SatisfactoryFinancialDueDate.Year" sfa-validation-for="SatisfactoryFinancialDueDate" sfa-validationerror-class="govuk-input--error" value="@Model.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @satisfactoryFinancialDueDateInputError" name="SatisfactoryFinancialDueDate.Year" id="SatisfactoryFinancialDueDate.Year" value="@Model.SatisfactoryFinancialDueDate.Year" type="number" pattern="[0-9]*"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -363,10 +441,13 @@
                                     <div class="govuk-form-group">
                                         <label class="govuk-label" for="InadequateComments">Enter your comments</label>
 
-                                        <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
+                                        @if (!string.IsNullOrEmpty(inadequateCommentsErrorMessage))
+                                        {
+                                            <span class="govuk-error-message">@inadequateCommentsErrorMessage</span>
+                                        }
 
                                         <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                            <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-textarea--error-override"
+                                            <textarea class="govuk-textarea js-character-count @inadequateCommentsTextareaError"
                                                       id="InadequateComments"
                                                       name="InadequateComments"
                                                       rows="4"

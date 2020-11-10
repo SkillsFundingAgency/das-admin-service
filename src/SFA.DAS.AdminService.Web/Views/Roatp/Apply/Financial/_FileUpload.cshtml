@@ -1,10 +1,9 @@
 ﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial.RoatpFinancialClarificationViewModel
 
 <div class="govuk-form-group" sfa-validation-for="ClarificationFile" sfa-validationerror-class="govuk-form-group--error">
-
-        <label class="govuk-label" asp-for="ClarificationFile">
-            Upload a file (optional)
-        </label>
-        <span class="govuk-error-message" asp-validation-for="ClarificationFile"></span>
-        <input class="govuk-file-upload" type="file" asp-for="ClarificationFile" accept=".pdf,application/pdf" />
+    <label class="govuk-label" asp-for="ClarificationFile">
+        Upload a file (optional)
+    </label>
+    <span class="govuk-error-message" asp-validation-for="ClarificationFile"></span>
+    <input class="govuk-file-upload" type="file" asp-for="ClarificationFile" accept=".pdf,application/pdf" />
 </div>
