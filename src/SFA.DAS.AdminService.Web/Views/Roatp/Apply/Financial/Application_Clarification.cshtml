@@ -275,9 +275,52 @@
                         </span>
                     </div>
 
-                    <div class="govuk-form-group @clarificationFileFormGroupError">
-                        @* <partial name="~/Views/Roatp/Apply/Financial/_FileUpload.cshtml" for="@Model" id="ClarificationFile"/> *@
 
+                    <table class="govuk-table govuk-!-margin-bottom-8">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">File</th>
+                                <th scope="col" class="govuk-table__header govuk-table__header--numeric"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">first-file.pdf</th>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">second-file.pdf</th>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">third-file.pdf</th>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">fourth-file.pdf</th>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                        Remove
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <div class="govuk-form-group @clarificationFileFormGroupError">
                         <label class="govuk-label" asp-for="ClarificationFile">
                             Upload a file (optional)
                         </label>
