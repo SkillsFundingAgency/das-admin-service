@@ -15,9 +15,16 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime GradedDateTime { get; set; }
 
         public List<FinancialEvidence> FinancialEvidences { get; set; }
+        public List<ClarificationFile> ClarificationFiles { get; set; }
     }
 
     public class FinancialEvidence
+    {
+        public string Filename { get; set; }
+    }
+
+
+    public class ClarificationFile
     {
         public string Filename { get; set; }
     }

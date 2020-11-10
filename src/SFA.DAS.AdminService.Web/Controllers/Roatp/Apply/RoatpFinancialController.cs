@@ -107,7 +107,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             
             if (application.FinancialReviewStatus == FinancialReviewStatus.ClarificationSent)
             {
-                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm);
+                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
 
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
             }
@@ -168,10 +168,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var isClarificationFilesUpdate = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
 
+            if (isClarificationFilesUpdate)
+                vm.FilesToUpload = HttpContext.Request.Form.Files;
+
             var validationResponse = await _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
 
-           
-      
             if (validationResponse.Errors !=null && validationResponse.Errors.Count>0)
             {
                
@@ -183,23 +184,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
                 clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
                 clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
-               
-
-                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel);
+                
+                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel, vm.InternalComments);
                 newClarificationViewModel.ErrorMessages = validationResponse.Errors;
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
 
 
-          //  var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+          
 
-              
-
-            //MFCMFC what to do?
-            //vm.FilesToUpload = HttpContext.Request.Form.Files;
-           
-
-            if (ModelState.IsValid)
+            if (isClarificationOutcome)
             {
                 var comments = vm.Comments;
                 if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
@@ -219,8 +213,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
             }
-            else
+            else // this is a file upload
             {
+                // do the file upload an refresh the page
                 var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
                 clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
                 clarificationViewModel.ClarificationComments = vm.ClarificationComments;
@@ -228,10 +223,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
                 clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
                 clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
-             
-              
+                clarificationViewModel.InadequateComments = vm.InadequateComments;
 
-                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel);
+                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel, vm.InternalComments);
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
         }
@@ -409,12 +403,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return financialSections;
         }
 
-
-        private static RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm)
+        private static RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm, string internalComments)
         {
             var viewModel = new RoatpFinancialClarificationViewModel
             {
                 ClarificationComments = vm.ClarificationComments,
+                InadequateComments =  vm.InadequateComments,
                 ApplicantEmailAddress = vm.ApplicantEmailAddress,
                 FinancialReviewDetails = vm.FinancialReviewDetails,
                 ApplicationId = vm.ApplicationId,
@@ -424,7 +418,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 Sections = vm.Sections,
                 OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate,
                 GoodFinancialDueDate = vm.GoodFinancialDueDate,
-                SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate
+                SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate,
+                InternalComments = internalComments
             };
 
             return viewModel;

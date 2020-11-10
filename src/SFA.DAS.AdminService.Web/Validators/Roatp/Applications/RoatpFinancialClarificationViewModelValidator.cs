@@ -29,80 +29,87 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            if (vm.FilesToUpload != null)
+            if (isClarificationFileUpload)
             {
-                foreach (var file in vm.FilesToUpload)
+                if (vm.FilesToUpload != null)
                 {
-
-                    if (!FileContentIsValidForPdfFile(file))
+                    foreach (var file in vm.FilesToUpload)
                     {
-                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, FileMustBePdf));
 
-                        break;
-                    }
-                    else if (file.Length > MaxFileSizeInBytes)
-                    {
-                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile,
-                            MaxFileSizeExceeded));
-                        break;
-                    }
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(vm.ClarificationResponse))
-            {
-                validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
-                    "Enter clarification response"));
-            }
-
-            if (HasExceededWordCount(vm.ClarificationResponse))
-            {
-                validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
-                    "Your comments must be 500 words or less"));
-            }
-
-            if (vm?.FinancialReviewDetails is null ||
-                string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
-            {
-                validationResponse.Errors.Add(new ValidationErrorDetail("FinancialReviewDetails.SelectedGrade",
-                    "Select the outcome of this financial health assessment"));
-            }
-            else
-                switch (vm.FinancialReviewDetails.SelectedGrade)
-                {
-                    case FinancialApplicationSelectedGrade.Exempt:
-                        return validationResponse;
-                    case FinancialApplicationSelectedGrade.Inadequate
-                        when string.IsNullOrWhiteSpace(vm.InadequateComments):
-                        validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                            "Enter why the application was graded inadequate"));
-                        break;
-                    case FinancialApplicationSelectedGrade.Inadequate
-                        when HasExceededWordCount(vm.InadequateComments):
-                        validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                            "Your comments must be 500 words or less"));
-                        break;
-                    case FinancialApplicationSelectedGrade.Outstanding:
-                    case FinancialApplicationSelectedGrade.Good:
-                    case FinancialApplicationSelectedGrade.Satisfactory:
-                        switch (vm.FinancialReviewDetails.SelectedGrade)
+                        if (!FileContentIsValidForPdfFile(file))
                         {
-                            case FinancialApplicationSelectedGrade.Outstanding:
-                                ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate",
-                                    validationResponse);
-                                break;
-                            case FinancialApplicationSelectedGrade.Good:
-                                ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", validationResponse);
-                                break;
-                            case FinancialApplicationSelectedGrade.Satisfactory:
-                                ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate",
-                                    validationResponse);
-                                break;
-                        }
+                            validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, FileMustBePdf));
 
-                        break;
+                            break;
+                        }
+                        else if (file.Length > MaxFileSizeInBytes)
+                        {
+                            validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile,
+                                MaxFileSizeExceeded));
+                            break;
+                        }
+                    } 
+                    if (vm.FilesToUpload.Count==0)
+                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, "Select a file"));
+                }
+            }
+
+            if (isClarificationOutcome)
+            {
+                if (string.IsNullOrWhiteSpace(vm.ClarificationResponse))
+                {
+                    validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
+                        "Enter clarification response"));
                 }
 
+                if (HasExceededWordCount(vm.ClarificationResponse))
+                {
+                    validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
+                        "Your comments must be 500 words or less"));
+                }
+
+                if (vm?.FinancialReviewDetails is null ||
+                    string.IsNullOrWhiteSpace(vm.FinancialReviewDetails.SelectedGrade))
+                {
+                    validationResponse.Errors.Add(new ValidationErrorDetail("FinancialReviewDetails.SelectedGrade",
+                        "Select the outcome of this financial health assessment"));
+                }
+                else
+                    switch (vm.FinancialReviewDetails.SelectedGrade)
+                    {
+                        case FinancialApplicationSelectedGrade.Exempt:
+                            return validationResponse;
+                        case FinancialApplicationSelectedGrade.Inadequate
+                            when string.IsNullOrWhiteSpace(vm.InadequateComments):
+                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
+                                "Enter why the application was graded inadequate"));
+                            break;
+                        case FinancialApplicationSelectedGrade.Inadequate
+                            when HasExceededWordCount(vm.InadequateComments):
+                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
+                                "Your comments must be 500 words or less"));
+                            break;
+                        case FinancialApplicationSelectedGrade.Outstanding:
+                        case FinancialApplicationSelectedGrade.Good:
+                        case FinancialApplicationSelectedGrade.Satisfactory:
+                            switch (vm.FinancialReviewDetails.SelectedGrade)
+                            {
+                                case FinancialApplicationSelectedGrade.Outstanding:
+                                    ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate",
+                                        validationResponse);
+                                    break;
+                                case FinancialApplicationSelectedGrade.Good:
+                                    ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", validationResponse);
+                                    break;
+                                case FinancialApplicationSelectedGrade.Satisfactory:
+                                    ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate",
+                                        validationResponse);
+                                    break;
+                            }
+
+                            break;
+                    }
+            }
 
             return validationResponse;
         }
@@ -142,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 return;
             }
 
-            if (parsedDate < DateTime.Today)
+            if (parsedDate <= DateTime.Today)
             {
                 validationResponse.Errors.Add(new ValidationErrorDetail(propertyName,
                     "Financial due date must be a future date"));

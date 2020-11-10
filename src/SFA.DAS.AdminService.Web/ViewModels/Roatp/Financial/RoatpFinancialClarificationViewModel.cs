@@ -9,6 +9,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial
     {
         public string Comments { get; set; }
         public IFormFileCollection FilesToUpload { get; set; }
+        public string InternalComments { get; set; }
         public string ClarificationFile { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
     }
