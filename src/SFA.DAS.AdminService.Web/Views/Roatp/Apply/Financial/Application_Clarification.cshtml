@@ -10,7 +10,9 @@
 
 
     var formGroupError = string.Empty;
-    
+    var errorClarificationResponse = string.Empty;
+    var errorMessageClarificationResponse = string.Empty;
+
     if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
         {
             formGroupError = "govuk-form-group--error";
@@ -34,31 +36,6 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @*@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="ClarificationResponse"></a></li>
-
-                            @if (string.IsNullOrEmpty(Model.FinancialReviewDetails.SelectedGrade))
-                            {
-                                <li>
-                                    <a href="#outstanding">@Html.ValidationMessageFor(model => model.FinancialReviewDetails.SelectedGrade)</a>
-                                </li>
-                            }
-                            <li><a sfa-validation-for="InadequateComments"></a></li>
-                            <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
-                            <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
-                            <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
-                        </ul>
-                    </div>
-                </div>
-            }*@
-
 
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
@@ -71,11 +48,15 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var error in Model.ErrorMessages)
                             {
+                             @if (error.Field=="ClarificationResponse")
+                             {
+                                 errorClarificationResponse = formGroupError;
+                                 errorMessageClarificationResponse = error.ErrorMessage;
+                             }
 
-                               
                                 <li>
                                     @{
-                                    var errorField = error.Field;
+                       var errorField = error.Field;
                                         if (errorField == "FinancialReviewDetails.SelectedGrade")
                                         {
                                             errorField = "outstanding";
@@ -214,11 +195,10 @@
                 <input type="hidden" name="Comments" value="@Model.ClarificationComments" />
                 <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
                 <input type="hidden" name="FinancialReviewDetails.GradedBy" value="@Model.FinancialReviewDetails.GradedBy" />
-                <h2 class="govuk-heading-l">Clarified answer</h2>
 
-                <div class="govuk-form-group @formGroupError">
+                <div class="govuk-form-group">
 
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @errorClarificationResponse">
                         <h2 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--l" for="ClarificationResponse">
                                 Clarified answer
