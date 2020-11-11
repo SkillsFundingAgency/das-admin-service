@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
@@ -10,6 +12,9 @@ using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -122,6 +127,46 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
         {
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
+        }
+
+        public async Task<bool> UploadClarificationFile(Guid applicationId, IFormFileCollection clarificationFiles)
+        {
+            var fileName = string.Empty;
+            var content = new MultipartFormDataContent();
+            content.Add(new StringContent("0"), "SequenceNumber");
+            content.Add(new StringContent("0"), "SectionNumber");
+            content.Add(new StringContent("0"), "PageId");
+
+            if (clarificationFiles != null && clarificationFiles.Any())
+            {
+                foreach (var file in clarificationFiles)
+                {
+                    fileName = file.FileName;
+                    var fileContent = new StreamContent(file.OpenReadStream())
+                    {
+                        Headers =
+                        {
+                            ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)
+                        }
+                    };
+                    content.Add(fileContent, file.FileName, file.FileName);
+                }
+
+                try
+                {
+                    var response = await Post($"/Clarification/Applications/{applicationId}/Upload", content);
+
+                    return response == HttpStatusCode.OK;
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError(ex,
+                        $"Error when submitting Clarification File update for Application: {applicationId} | Filename: {fileName}");
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

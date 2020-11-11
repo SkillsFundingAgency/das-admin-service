@@ -215,7 +215,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else // this is a file upload
             {
-                // do the file upload an refresh the page
+                // do the file upload an refresh the page   -----
+
+
+
                 var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
                 clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
                 clarificationViewModel.ClarificationComments = vm.ClarificationComments;
