@@ -391,7 +391,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate,
                 GoodFinancialDueDate = vm.GoodFinancialDueDate,
                 SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate,
-                InternalComments = internalComments
+                InternalComments = internalComments,
+                Ukprn = vm.Ukprn,
+                OrganisationName = vm.OrganisationName,
+                SubmittedDate = vm.SubmittedDate
             };
 
             return viewModel;

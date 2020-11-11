@@ -5,11 +5,6 @@
 @{
     ViewBag.Title = "Financial health assessment overview";
     Layout = "_Layout";
-
-    var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
-
-    //var inClarificationMode = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade);
-
 }
 
 <div class="govuk-breadcrumbs">
@@ -18,8 +13,9 @@
             <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" asp-action="@backAction" asp-controller="RoatpFinancial">RoATP assessments</a>
+            <a class="govuk-breadcrumbs__link" asp-action="ClarificationApplications" asp-controller="RoatpFinancial">RoATP assessments</a>
         </li>
+   
         <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
     </ol>
 </div>
@@ -175,6 +171,7 @@
             <form class="js-disable-on-submit" asp-action="SubmitClarification" asp-controller="RoatpFinancial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
                 <input type="hidden" name="OrgId" value="@Model.OrgId" />
+                <input type="hidden" name="ApplicantEmailAddress" value="@Model.ApplicantEmailAddress" />
                 <input type="hidden" name="InternalComments" value="@Model.InternalComments" />
                 <input type="hidden" name="Comments" value="@Model.ClarificationComments" />
                 <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn" value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
