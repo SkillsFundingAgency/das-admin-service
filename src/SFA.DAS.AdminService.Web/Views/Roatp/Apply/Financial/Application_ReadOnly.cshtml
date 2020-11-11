@@ -9,6 +9,9 @@
     Layout = "_Layout";
 
     var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
+
+    var inClarificationMode = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade);
+
 }
 
 <div class="govuk-breadcrumbs">
@@ -92,7 +95,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-l">Application details</h2>
+            <h2 class="govuk-heading-l">Outcome of financial health assessment</h2>
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -104,13 +107,29 @@
                         Outcome
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.FinancialReviewDetails.SelectedGrade
+                        @if (inClarificationMode)
+                        {
+                            @Html.Raw("Needs clarification")
+                        }
+                        else
+                        {
+                            @Model.FinancialReviewDetails.SelectedGrade
+                        }
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Financial health assessed on
-                    </dt>
+                    @if (inClarificationMode)
+                    {
+                        <dt class="govuk-summary-list__key">
+                            Clarification sent on
+                        </dt>
+                    }
+                    else
+                    {
+                        <dt class="govuk-summary-list__key">
+                            Financial health assessed on
+                        </dt>
+                    }
                     <dd class="govuk-summary-list__value">
                         @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
                         {
@@ -129,10 +148,19 @@
                 @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.Comments))
                 {
                     <div class="govuk-summary-list__row">
+                    @if (inClarificationMode)
+                    {
+                        <dt class="govuk-summary-list__key">
+                            Internal comments
+                        </dt>
+                    }
+                    else
+                    {
                         <dt class="govuk-summary-list__key">
                             Comments
                         </dt>
-                        <dd class="govuk-summary-list__value">
+                    }
+                    <dd class="govuk-summary-list__value">
                             @Model.FinancialReviewDetails.Comments
                         </dd>
                     </div>
