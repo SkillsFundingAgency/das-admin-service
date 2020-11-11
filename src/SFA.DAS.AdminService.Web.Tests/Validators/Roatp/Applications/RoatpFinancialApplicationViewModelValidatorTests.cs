@@ -80,7 +80,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
             var validationResponse = _validator.Validate(_viewModel);
 
-            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Comments");
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "ClarificationComments");
             error.Should().NotBeNull();
         }
 
@@ -98,7 +98,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
             var validationResponse = _validator.Validate(_viewModel);
 
-            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Comments");
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "ClarificationComments");
             error.Should().NotBeNull();
         }
 
