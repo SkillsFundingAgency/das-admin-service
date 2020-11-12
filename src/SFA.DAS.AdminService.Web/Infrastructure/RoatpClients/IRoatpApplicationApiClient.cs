@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<Guid> SnapshotApplication(Guid Id, Guid NewApplicationId, List<RoatpApplySequence> sequences);
 
 
-        Task<bool> UploadClarificationFile(Guid applicationId, IFormFileCollection clarificationFiles);
+        Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles);
 
     }
 }

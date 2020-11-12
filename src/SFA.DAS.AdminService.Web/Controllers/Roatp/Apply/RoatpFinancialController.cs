@@ -167,9 +167,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             var isClarificationFilesUpdate = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
-
+            vm.FinancialReviewDetails.ClarificationFiles = application.FinancialGrade.ClarificationFiles;
+            
             if (isClarificationFilesUpdate)
                 vm.FilesToUpload = HttpContext.Request.Form.Files;
+           
+          
 
             var validationResponse = await _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
 
@@ -189,9 +192,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 newClarificationViewModel.ErrorMessages = validationResponse.Errors;
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
-
-
-          
 
             if (isClarificationOutcome)
             {
@@ -216,13 +216,30 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             else // this is a file upload
             {
                 // do the file upload an refresh the page   -----
+                var financialReviewDetails = vm.FinancialReviewDetails;
 
+                if (vm.FilesToUpload.Count > 0)
+                {
+                    var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
+                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
 
+                    if (fileUploadedSuccessfully)
+                    {
+                        // update the FinancialReviewDetails etc
+                        if (financialReviewDetails.ClarificationFiles == null)
+                            financialReviewDetails.ClarificationFiles = new List<ClarificationFile>();
+                        
+                        financialReviewDetails.ClarificationFiles.Add(new ClarificationFile
+                                {Filename = vm.FilesToUpload[0].FileName});
+
+                        // save this back to record
+                    }
+                }
 
                 var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
                 clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
                 clarificationViewModel.ClarificationComments = vm.ClarificationComments;
-                clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
+                clarificationViewModel.FinancialReviewDetails = financialReviewDetails;
                 clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
                 clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
                 clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;

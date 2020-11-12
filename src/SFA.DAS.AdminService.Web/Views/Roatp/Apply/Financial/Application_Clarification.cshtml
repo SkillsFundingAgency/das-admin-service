@@ -5,8 +5,11 @@
 @{
     ViewBag.Title = "Financial health assessment overview";
     Layout = "_Layout";
+    var maximumClarificationFilesAllowed = 4;
+    bool maximumNumberOfClarificationUploadsReached = Model.FinancialReviewDetails != null && Model.FinancialReviewDetails.ClarificationFiles != null && Model.FinancialReviewDetails.ClarificationFiles.Count >= maximumClarificationFilesAllowed;
 
-    var textareaErrorHighlightClass = "govuk-textarea--error-override";
+              
+        var textareaErrorHighlightClass = "govuk-textarea--error-override";
     var formGroupErrorHighlightClass = "govuk-form-group--error";
     var textInputErrorHighlightClass = "govuk-input--error";
 
@@ -275,51 +278,33 @@
                             You can enter up to 500 words
                         </span>
                     </div>
-
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
+                    @if (Model.FinancialReviewDetails != null && Model.FinancialReviewDetails.ClarificationFiles != null && Model.FinancialReviewDetails.ClarificationFiles.Count > 0)
+                    {
+                        <table class="govuk-table">
+                            <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header">File</th>
                                 <th scope="col" class="govuk-table__header govuk-table__header--numeric"></th>
                             </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">first-file.pdf</th>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">
-                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                        Remove
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">second-file.pdf</th>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">
-                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                        Remove
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">third-file.pdf</th>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">
-                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                        Remove
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">fourth-file.pdf</th>
-                                <td class="govuk-table__cell govuk-table__cell--numeric">
-                                    <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                        Remove
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-
+                            </thead>
+                            <tbody class="govuk-table__body">
+                            @foreach (var file in Model.FinancialReviewDetails.ClarificationFiles)
+                            {
+                                <tr class="govuk-table__row">
+                                    <th scope="row" class="govuk-table__header">@file.Filename</th>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                                        @*<a href="#" class="govuk-link govuk-link--no-visited-state">
+                                            Remove
+                                        </a>*@
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    }
+                    
+                @if (!maximumNumberOfClarificationUploadsReached)
+                {
                     <div class="govuk-form-group @clarificationFileFormGroupError">
                         <label class="govuk-label" asp-for="ClarificationFile">
                             Upload a file (optional)
@@ -330,11 +315,12 @@
                         {
                             <span class="govuk-error-message">@clarificationFileErrorMessage</span>
                         }
-                        <input class="govuk-file-upload" type="file" asp-for="ClarificationFile" accept=".pdf,application/pdf" />
+                        <input class="govuk-file-upload" type="file" asp-for="ClarificationFile" accept=".pdf,application/pdf"/>
                     </div>
                     <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true" name="submitClarificationFiles">
                         Upload File
                     </button>
+                }
 
                     <div class="govuk-form-group @selectedGradeFormGroupError">
                         <fieldset class="govuk-fieldset">
@@ -512,14 +498,7 @@
                 <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true" name="submitClarificationOutcome">
                     Save outcome
                 </button>
-            </form>
-
-            @*
-                <p class="govuk-body">
-                    <a class="govuk-link" asp-action="@backAction" asp-controller="RoatpFinancial">Back to RoATP financial applications</a>
-                </p>
-            *@
-
+                </form>
         </div>
     </div>    
 </main>

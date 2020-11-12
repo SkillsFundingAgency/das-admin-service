@@ -172,7 +172,6 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
             return hasExceeded;
         }
 
-
         private static bool FileContentIsValidForPdfFile(IFormFile file)
         {
             var pdfHeader = new byte[] {0x25, 0x50, 0x44, 0x46};

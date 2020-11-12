@@ -5,18 +5,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
-using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Internal;
-using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
@@ -129,13 +123,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
-        public async Task<bool> UploadClarificationFile(Guid applicationId, IFormFileCollection clarificationFiles)
+        public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
         {
             var fileName = string.Empty;
             var content = new MultipartFormDataContent();
-            content.Add(new StringContent("0"), "SequenceNumber");
-            content.Add(new StringContent("0"), "SectionNumber");
-            content.Add(new StringContent("0"), "PageId");
+            content.Add(new StringContent(userId), "userId");
 
             if (clarificationFiles != null && clarificationFiles.Any())
             {
@@ -154,9 +146,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
                 try
                 {
-                    var response = await Post($"/Clarification/Applications/{applicationId}/Upload", content);
+                    var response = await _client.PostAsync($"/Clarification/Applications/{applicationId}/Upload", content);
 
-                    return response == HttpStatusCode.OK;
+                    return response.StatusCode == HttpStatusCode.OK;
                 }
                 catch (HttpRequestException ex)
                 {
