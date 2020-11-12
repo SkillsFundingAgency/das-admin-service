@@ -18,6 +18,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
+using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
+using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -101,11 +104,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
                 return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
             }
-            else
+            
+            if (application.FinancialReviewStatus == FinancialReviewStatus.ClarificationSent)
             {
-                return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
+
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
             }
+
+            return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+            
         }
+
+       
 
         [HttpPost("/Roatp/Financial/{applicationId}")]
         public async Task<IActionResult> GradeApplication(Guid applicationId, RoatpFinancialApplicationViewModel vm)
@@ -146,6 +157,50 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
         }
 
+        [HttpPost("/Roatp/Financial/Clarification/{applicationId}")]
+        public async Task<IActionResult> SubmitClarification(Guid applicationId, RoatpFinancialClarificationViewModel vm)
+        {
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(OpenApplications));
+            }
+
+            if (ModelState.IsValid)
+            {
+                var comments = vm.Comments;
+                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+                    comments = vm.InadequateComments;
+
+                var financialReviewDetails = new FinancialReviewDetails
+                {
+                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                    GradedDateTime = DateTime.UtcNow,
+                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
+                    FinancialDueDate = GetFinancialDueDate(vm),
+                    Comments = comments,
+                    ClarificationResponse = vm.ClarificationResponse,
+                    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn
+                };
+
+                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+                return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
+            }
+            else
+            {
+                var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
+                clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+                clarificationViewModel.ClarificationComments = vm.ClarificationComments;
+                clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
+                clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+                clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+                clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+                clarificationViewModel.InadequateComments = vm.InadequateComments;
+
+                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel, vm.InternalComments);
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
+            }
+        }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
@@ -320,6 +375,30 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return financialSections;
         }
 
+        private static RoatpFinancialClarificationViewModel ConvertFinancialApplicationToFinancialClarificationViewModel(RoatpFinancialApplicationViewModel vm, string internalComments)
+        {
+            var viewModel = new RoatpFinancialClarificationViewModel
+            {
+                ClarificationComments = vm.ClarificationComments,
+                InadequateComments =  vm.InadequateComments,
+                ApplicantEmailAddress = vm.ApplicantEmailAddress,
+                FinancialReviewDetails = vm.FinancialReviewDetails,
+                ApplicationId = vm.ApplicationId,
+                ApplicationReference = vm.ApplicationReference,
+                ApplicationRoute = vm.ApplicationRoute,
+                DeclaredInApplication = vm.DeclaredInApplication,
+                Sections = vm.Sections,
+                OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate,
+                GoodFinancialDueDate = vm.GoodFinancialDueDate,
+                SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate,
+                InternalComments = internalComments,
+                Ukprn = vm.Ukprn,
+                OrganisationName = vm.OrganisationName,
+                SubmittedDate = vm.SubmittedDate
+            };
+
+            return viewModel;
+        }
         private static bool IsRequiredSection(List<RoatpApplySequence> applicationSequences, Section section)
         {
             var appSequence = applicationSequences?.SingleOrDefault(appSeq => appSeq.SequenceNo == section.SequenceNo);

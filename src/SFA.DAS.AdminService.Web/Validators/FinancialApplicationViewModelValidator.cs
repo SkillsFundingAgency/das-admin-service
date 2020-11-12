@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                 return;
             }
 
-            if (parsedDate < DateTime.Today)
+            if (parsedDate <= DateTime.Today)
             {
                 context.AddFailure(propertyName, "Financial due date must be a future date");
             }
