@@ -213,41 +213,37 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
             }
-            else // this is a file upload
+
+
+            var financialReviewDets = vm.FinancialReviewDetails;
+
+            if (vm.FilesToUpload.Count > 0)
             {
-                // do the file upload an refresh the page   -----
-                var financialReviewDetails = vm.FinancialReviewDetails;
+                var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
+                    _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
 
-                if (vm.FilesToUpload.Count > 0)
+                if (fileUploadedSuccessfully)
                 {
-                    var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
-                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
-
-                    if (fileUploadedSuccessfully)
-                    {
-                        // update the FinancialReviewDetails etc
-                        if (financialReviewDetails.ClarificationFiles == null)
-                            financialReviewDetails.ClarificationFiles = new List<ClarificationFile>();
-                        
-                        financialReviewDetails.ClarificationFiles.Add(new ClarificationFile
-                                {Filename = vm.FilesToUpload[0].FileName});
-
-                        // save this back to record
-                    }
+                    if (financialReviewDets.ClarificationFiles == null)
+                        financialReviewDets.ClarificationFiles = new List<ClarificationFile>();
+                    
+                    financialReviewDets.ClarificationFiles.Add(new ClarificationFile
+                            {Filename = vm.FilesToUpload[0].FileName});
                 }
-
-                var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
-                clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                clarificationViewModel.ClarificationComments = vm.ClarificationComments;
-                clarificationViewModel.FinancialReviewDetails = financialReviewDetails;
-                clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
-                clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
-                clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
-                clarificationViewModel.InadequateComments = vm.InadequateComments;
-
-                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel, vm.InternalComments);
-                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
+
+            var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
+            clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+            clarificationVm.ClarificationComments = vm.ClarificationComments;
+            clarificationVm.FinancialReviewDetails = financialReviewDets;
+            clarificationVm.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+            clarificationVm.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+            clarificationVm.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+            clarificationVm.InadequateComments = vm.InadequateComments;
+
+            var newClarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationVm, vm.InternalComments);
+            return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationVm);
+            
         }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
