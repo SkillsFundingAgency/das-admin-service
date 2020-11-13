@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Claims;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Testing.MockedObjects;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
@@ -34,6 +35,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private string _emailAddress = "Test@test.com";
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         private FinancialReviewDetails _financialReviewDetails;
+        private string _buttonPressToAdd;
        
         [SetUp]
         public void Before_each_test()
@@ -125,63 +127,249 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual("OpenApplications",result.ActionName);
         }
 
-        //MFCMFC
-        //[TestCase(FinancialApplicationSelectedGrade.Outstanding)]
-        //[TestCase(FinancialApplicationSelectedGrade.Satisfactory)]
-        //[TestCase(FinancialApplicationSelectedGrade.Good)]
-        //[TestCase(FinancialApplicationSelectedGrade.Inadequate)]
-        //[TestCase(FinancialApplicationSelectedGrade.Exempt)]
-        //public void SubmitClarification_valid_submission(string grade)
-        //{
-        //    _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-        //        new RoatpApplicationResponse
-        //        {
-        //            ApplicationId = _applicationId,
-        //            ApplyData = new RoatpApplyData
-        //            {
-        //                ApplyDetails = new RoatpApplyDetails
-        //                {
-        //                    OrganisationName = "org name",
-        //                    UKPRN = "12344321",
-        //                    ReferenceNumber = "3443",
-        //                    ProviderRouteName = "main",
-        //                    ApplicationSubmittedOn = DateTime.Today
-        //                },
-        //                Sequences = new List<RoatpApplySequence>
-        //                {
-        //                    new RoatpApplySequence
-        //                    {
-        //                        SequenceNo = 5,
-        //                        NotRequired = true
-        //                    }
-        //                }
-        //            }
-        //        });
-        //    _financialReviewDetails =  new FinancialReviewDetails
-        //    {
-        //        GradedBy = MockHttpContextAccessor.Name,
-        //        GradedDateTime = DateTime.UtcNow,
-        //        SelectedGrade = grade,
-        //        FinancialDueDate = DateTime.Today.AddDays(5),
-        //        Comments = "comments",
-        //        ClarificationResponse = "clarification response",
-        //        ClarificationRequestedOn = DateTime.UtcNow
-        //    };
 
-        //    var vm = new RoatpFinancialClarificationViewModel
-        //    {
-        //        ApplicationId = _applicationId,
-        //        FinancialReviewDetails = _financialReviewDetails,
-        //        OutstandingFinancialDueDate = new FinancialDueDate
-        //        {
-        //            Day = "1", Month = "1", Year = (DateTime.Now.Year + 1).ToString()
-        //        },
-        //        ClarificationResponse = "clarification response",
-        //        ClarificationComments = "clarification comments"
-        //    };
-        //    var result = _controller.SubmitClarification(_applicationId, vm).Result as RedirectToActionResult;
-        //    _applicationApplyApiClient.Verify(x=>x.ReturnFinancialReview(_applicationId,It.IsAny<FinancialReviewDetails>()),Times.Once);
-        //    Assert.AreEqual("Graded", result.ActionName);
-        //}
+        [TestCase(FinancialApplicationSelectedGrade.Outstanding)]
+        [TestCase(FinancialApplicationSelectedGrade.Satisfactory)]
+        [TestCase(FinancialApplicationSelectedGrade.Good)]
+        [TestCase(FinancialApplicationSelectedGrade.Inadequate)]
+        [TestCase(FinancialApplicationSelectedGrade.Exempt)]
+        public void SubmitClarification_valid_submission(string grade)
+        {
+            _clarificationValidator.Setup(x =>
+                    x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(Task.FromResult(new ValidationResponse {}));
+
+            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
+                new RoatpApplicationResponse
+                {
+                    ApplicationId = _applicationId,
+                    ApplyData = new RoatpApplyData
+                    {
+                        ApplyDetails = new RoatpApplyDetails
+                        {
+                            OrganisationName = "org name",
+                            UKPRN = "12344321",
+                            ReferenceNumber = "3443",
+                            ProviderRouteName = "main",
+                            ApplicationSubmittedOn = DateTime.Today
+                        },
+                        Sequences = new List<RoatpApplySequence>
+                        {
+                            new RoatpApplySequence
+                            {
+                                SequenceNo = 5,
+                                NotRequired = true
+                            }
+                        }
+                    },
+                    FinancialGrade = new FinancialReviewDetails()
+                });
+            _financialReviewDetails = new FinancialReviewDetails
+            {
+                GradedBy = MockHttpContextAccessor.Name,
+                GradedDateTime = DateTime.UtcNow,
+                SelectedGrade = grade,
+                FinancialDueDate = DateTime.Today.AddDays(5),
+                Comments = "comments",
+                ClarificationResponse = "clarification response",
+                ClarificationRequestedOn = DateTime.UtcNow
+            };
+
+            var vm = new RoatpFinancialClarificationViewModel
+            {
+                ApplicationId = _applicationId,
+                FinancialReviewDetails = _financialReviewDetails,
+                OutstandingFinancialDueDate = new FinancialDueDate
+                {
+                    Day = "1",
+                    Month = "1",
+                    Year = (DateTime.Now.Year + 1).ToString()
+                },
+                ClarificationResponse = "clarification response",
+                ClarificationComments = "clarification comments",
+                FilesToUpload = null
+            };
+            var result = _controller.SubmitClarification(_applicationId, vm).Result as RedirectToActionResult;
+            _applicationApplyApiClient.Verify(x => x.ReturnFinancialReview(_applicationId, It.IsAny<FinancialReviewDetails>()), Times.Once);
+            Assert.AreEqual("Graded", result.ActionName);
+        }
+
+        [Test]
+        public void When_clarification_file_is_uploaded_and_page_is_refreshed_with_filename_included_in_model()
+        {
+            var buttonPressed = "submitClarificationFiles";
+            _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
+                _applicationApplyApiClient.Object,
+                _qnaApiClient.Object,
+                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+            {
+                ControllerContext = MockedControllerContext.Setup(buttonPressed)
+            };
+
+            _clarificationValidator.Setup(x =>
+                    x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(Task.FromResult(new ValidationResponse { }));
+           
+            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
+                new RoatpApplicationResponse
+                {
+                    ApplicationId = _applicationId,
+                    ApplyData = new RoatpApplyData
+                    {
+                        ApplyDetails = new RoatpApplyDetails
+                        {
+                            OrganisationName = "org name",
+                            UKPRN = "12344321",
+                            ReferenceNumber = "3443",
+                            ProviderRouteName = "main",
+                            ApplicationSubmittedOn = DateTime.Today
+                        },
+                        Sequences = new List<RoatpApplySequence>
+                        {
+                            new RoatpApplySequence
+                            {
+                                SequenceNo = 5,
+                                NotRequired = true
+                            }
+                        }
+                    },
+                    FinancialGrade = new FinancialReviewDetails()
+                });
+
+            _applicationApplyApiClient.Setup(x =>
+                    x.UploadClarificationFile(_applicationId, It.IsAny<string>(), It.IsAny<IFormFileCollection>()))
+                .ReturnsAsync(true);
+
+                
+            _financialReviewDetails = new FinancialReviewDetails
+            {
+                GradedBy = MockHttpContextAccessor.Name,
+                GradedDateTime = DateTime.UtcNow,
+                SelectedGrade = FinancialApplicationSelectedGrade.Good,
+                FinancialDueDate = DateTime.Today.AddDays(5),
+                Comments = "comments",
+                ClarificationResponse = "clarification response",
+                ClarificationRequestedOn = DateTime.UtcNow
+            };
+
+            var vm = new RoatpFinancialClarificationViewModel
+            {
+                ApplicationId = _applicationId,
+                FinancialReviewDetails = _financialReviewDetails,
+                OutstandingFinancialDueDate = new FinancialDueDate
+                {
+                    Day = "1",
+                    Month = "1",
+                    Year = (DateTime.Now.Year + 1).ToString()
+                },
+                ClarificationResponse = "clarification response",
+                ClarificationComments = "clarification comments",
+                FilesToUpload = null
+            };
+            var result = _controller.SubmitClarification(_applicationId, vm).Result as ViewResult;
+
+            Assert.IsTrue(result.ViewName.Contains("Application_Clarification.cshtml"));
+            var resultModel = result.Model as RoatpFinancialClarificationViewModel;
+
+            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "file.pdf");
+        }
+
+
+        [Test]
+        public void when_validation_errors_occur_page_refreshes_with_validation_messages()
+        {
+            var buttonPressed = "submitClarificationFiles";
+            _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
+                _applicationApplyApiClient.Object,
+                _qnaApiClient.Object,
+                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+            {
+                ControllerContext = MockedControllerContext.Setup(buttonPressed)
+            };
+
+            _clarificationValidator.Setup(x =>
+                    x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(Task.FromResult(new ValidationResponse {Errors = new List<ValidationErrorDetail> {new ValidationErrorDetail {ErrorMessage = "error message", Field = "errorField"}}}));
+
+            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
+                new RoatpApplicationResponse
+                {
+                    ApplicationId = _applicationId,
+                    ApplyData = new RoatpApplyData
+                    {
+                        ApplyDetails = new RoatpApplyDetails
+                        {
+                            OrganisationName = "org name",
+                            UKPRN = "12344321",
+                            ReferenceNumber = "3443",
+                            ProviderRouteName = "main",
+                            ApplicationSubmittedOn = DateTime.Today
+                        },
+                        Sequences = new List<RoatpApplySequence>
+                        {
+                            new RoatpApplySequence
+                            {
+                                SequenceNo = 5,
+                                NotRequired = true
+                            }
+                        }
+                    },
+                    FinancialGrade = new FinancialReviewDetails()
+                });
+
+            _applicationApplyApiClient.Setup(x =>
+                    x.UploadClarificationFile(_applicationId, It.IsAny<string>(), It.IsAny<IFormFileCollection>()))
+                .ReturnsAsync(true);
+
+
+            _financialReviewDetails = new FinancialReviewDetails
+            {
+                GradedBy = MockHttpContextAccessor.Name,
+                GradedDateTime = DateTime.UtcNow,
+                SelectedGrade = FinancialApplicationSelectedGrade.Good,
+                FinancialDueDate = DateTime.Today.AddDays(5),
+                Comments = "comments",
+                ClarificationResponse = "clarification response",
+                ClarificationRequestedOn = DateTime.UtcNow
+            };
+
+            var vm = new RoatpFinancialClarificationViewModel
+            {
+                ApplicationId = _applicationId,
+                FinancialReviewDetails = _financialReviewDetails,
+                OutstandingFinancialDueDate = new FinancialDueDate
+                {
+                    Day = "1",
+                    Month = "1",
+                    Year = (DateTime.Now.Year + 1).ToString()
+                },
+                ClarificationResponse = "clarification response",
+                ClarificationComments = "clarification comments",
+                FilesToUpload = null
+            };
+            var result = _controller.SubmitClarification(_applicationId, vm).Result as ViewResult;
+
+            Assert.IsTrue(result.ViewName.Contains("Application_Clarification.cshtml"));
+            var resultModel = result.Model as RoatpFinancialClarificationViewModel;
+            Assert.AreEqual(1,resultModel.ErrorMessages.Count);
+        }
     }
 }
