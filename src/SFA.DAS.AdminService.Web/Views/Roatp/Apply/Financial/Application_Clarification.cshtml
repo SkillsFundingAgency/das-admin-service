@@ -146,8 +146,8 @@
             </div>
 
             @{
-                var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ?
-                    "" : "govuk-!-margin-bottom-9"; 
+                var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ? ""
+                    : "govuk-!-margin-bottom-9";
             }
 
             @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
@@ -297,6 +297,7 @@
                         var pluraliseFiles = Model.FinancialReviewDetails.ClarificationFiles.Count == 1 ? "file" : "files";
 
                         <table class="govuk-table">
+                            <caption class="govuk-visually-hidden">Uploaded files</caption>
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
                                     <th scope="col" class="govuk-table__header">Uploaded @pluraliseFiles</th>
