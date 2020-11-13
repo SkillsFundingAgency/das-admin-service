@@ -10,6 +10,7 @@ using SFA.DAS.AdminService.Common.Testing.MockedObjects;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -27,6 +28,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private Mock<IRoatpOrganisationApiClient> _roatpOrganisationApiClient;
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IRoatpFinancialClarificationViewModelValidator> _clarificationValidator;
         private RoatpFinancialController _controller;
         private readonly Guid _applicationId = Guid.NewGuid();
         private string _emailAddress = "Test@test.com";
@@ -38,6 +40,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             _roatpOrganisationApiClient = new Mock<IRoatpOrganisationApiClient>();
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
+            _clarificationValidator = new Mock<IRoatpFinancialClarificationViewModelValidator>();
             _qnaApiClient = new Mock<IQnaApiClient>();
 
            
@@ -48,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, null) // MFCMFC
+                MockHttpContextAccessor.Object, _clarificationValidator.Object)
             {
                 ControllerContext = MockedControllerContext.Setup() 
             };
