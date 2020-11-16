@@ -166,10 +166,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
             vm.FinancialReviewDetails.ClarificationFiles = application.FinancialGrade.ClarificationFiles;
             
-            if (isClarificationFilesUpdate)
-                vm.FilesToUpload = HttpContext.Request.Form.Files;
             
-            var validationResponse = await _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
+            vm.FilesToUpload = HttpContext.Request.Form.Files;
+            
+            var validationResponse = _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
 
             if (validationResponse.Errors !=null && validationResponse.Errors.Count>0)
             {

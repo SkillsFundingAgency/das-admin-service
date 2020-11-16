@@ -6,7 +6,6 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Internal;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 
@@ -15,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
     public class RoatpFinancialClarificationViewModelValidatorTests
     {
         private RoatpFinancialClarificationViewModelValidator _validator = new RoatpFinancialClarificationViewModelValidator();
-        private const int _maxWordCount = 500;
+        private const int MaxWordCount = 500;
 
         [Test]
         public void Validator_rejects_missing_SelectedGrade()
@@ -28,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel,false,true).GetAwaiter().GetResult(); 
+            var validationResponse = _validator.Validate(_viewModel,false,true); 
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "FinancialReviewDetails.SelectedGrade");
             error.Should().NotBeNull();
@@ -46,7 +45,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse =  _validator.Validate(_viewModel, false,true).GetAwaiter().GetResult();
+            var validationResponse =  _validator.Validate(_viewModel, false,true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "InadequateComments");
             error.Should().NotBeNull();
@@ -57,14 +56,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var _viewModel = new RoatpFinancialClarificationViewModel
             {
-                InadequateComments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
+                InadequateComments = string.Join(" ", Enumerable.Repeat("a", MaxWordCount + 1)),
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Inadequate,
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel,false,true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel,false,true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "InadequateComments");
             error.Should().NotBeNull();
@@ -82,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "OutstandingFinancialDueDate");
             error.Should().NotBeNull();
@@ -105,7 +104,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "OutstandingFinancialDueDate");
             error.Should().NotBeNull();
@@ -128,7 +127,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "OutstandingFinancialDueDate");
             error.Should().NotBeNull();
@@ -151,7 +150,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "OutstandingFinancialDueDate");
             error.Should().NotBeNull();
@@ -169,7 +168,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "GoodFinancialDueDate");
             error.Should().NotBeNull();
@@ -192,7 +191,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "GoodFinancialDueDate");
             error.Should().NotBeNull();
@@ -215,7 +214,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "GoodFinancialDueDate");
             error.Should().NotBeNull();
@@ -238,7 +237,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "GoodFinancialDueDate");
             error.Should().NotBeNull();
@@ -257,7 +256,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "SatisfactoryFinancialDueDate");
             error.Should().NotBeNull();
@@ -280,7 +279,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "SatisfactoryFinancialDueDate");
             error.Should().NotBeNull();
@@ -303,7 +302,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "SatisfactoryFinancialDueDate");
             error.Should().NotBeNull();
@@ -326,7 +325,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 }
             };
 
-            var validationResponse = _validator.Validate(_viewModel, false, true).GetAwaiter().GetResult();
+            var validationResponse = _validator.Validate(_viewModel, false, true);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.Field == "SatisfactoryFinancialDueDate");
             error.Should().NotBeNull();
@@ -335,7 +334,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
 
         [Test]
-        public async Task When_FilesToUpload_has_file_that_exceeds_maximum_filesize_then_an_error_is_returned()
+        public void When_FilesToUpload_has_file_that_exceeds_maximum_filesize_then_an_error_is_returned()
         {
             const int currentMaxFileSizeInBytes = 5 * 1024 * 1024;
 
@@ -357,7 +356,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 GenerateClarificationFile("ClarificationFile.pdf", true, currentMaxFileSizeInBytes + 1)
             };
 
-            var response = _validator.Validate(_viewModel, true, false).GetAwaiter().GetResult();
+            var response = _validator.Validate(_viewModel, true, false);
 
             Assert.IsFalse(response.IsValid);
             Assert.AreEqual("The selected file must be smaller than 5MB", response.Errors.First().ErrorMessage);
@@ -367,7 +366,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
 
         [Test]
-        public async Task When_FilesToUpload_has_file_that_is_not_a_pdf_then_an_error_is_returned()
+        public void When_FilesToUpload_has_file_that_is_not_a_pdf_then_an_error_is_returned()
         {
             var _viewModel = new RoatpFinancialClarificationViewModel
             {
@@ -387,7 +386,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 GenerateClarificationFile("ClarificationFile.txt", false, 10)
             };
 
-            var response = _validator.Validate(_viewModel, true, false).GetAwaiter().GetResult();
+            var response = _validator.Validate(_viewModel, true, false);
 
             Assert.IsFalse(response.IsValid);
             Assert.AreEqual("The selected file must be a PDF", response.Errors.First().ErrorMessage);
@@ -396,7 +395,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 
 
         [Test]
-        public async Task When_FilesToUpload_has_no_file()
+        public void When_FilesToUpload_has_no_file()
         {
             var _viewModel = new RoatpFinancialClarificationViewModel
             {
@@ -413,7 +412,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             };
             _viewModel.FilesToUpload = new FormFileCollection();
 
-            var response = _validator.Validate(_viewModel, true, false).GetAwaiter().GetResult();
+            var response = _validator.Validate(_viewModel, true, false);
 
             Assert.IsFalse(response.IsValid);
             Assert.AreEqual("Select a file", response.Errors.First().ErrorMessage);

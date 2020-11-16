@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,8 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private string _emailAddress = "Test@test.com";
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         private FinancialReviewDetails _financialReviewDetails;
-        private string _buttonPressToAdd;
-       
+
         [SetUp]
         public void Before_each_test()
         {
@@ -137,7 +135,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             _clarificationValidator.Setup(x =>
                     x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(new ValidationResponse {}));
+                .Returns(new ValidationResponse {});
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
                 new RoatpApplicationResponse
@@ -217,7 +215,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             _clarificationValidator.Setup(x =>
                     x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(new ValidationResponse { }));
+                .Returns(new ValidationResponse { });
            
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
                 new RoatpApplicationResponse
@@ -307,7 +305,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             _clarificationValidator.Setup(x =>
                     x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns(Task.FromResult(new ValidationResponse {Errors = new List<ValidationErrorDetail> {new ValidationErrorDetail {ErrorMessage = "error message", Field = "errorField"}}}));
+                .Returns(new ValidationResponse {Errors = new List<ValidationErrorDetail> {new ValidationErrorDetail {ErrorMessage = "error message", Field = "errorField"}}});
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
                 new RoatpApplicationResponse

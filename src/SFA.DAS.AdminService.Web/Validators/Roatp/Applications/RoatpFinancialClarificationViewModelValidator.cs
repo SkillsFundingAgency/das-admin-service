@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Validators;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
@@ -21,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         private const string ClarificationFile = "ClarificationFile";
         private const string ClarificationResponse = "ClarificationResponse";
 
-        public async Task<ValidationResponse> Validate(RoatpFinancialClarificationViewModel vm,
+        public ValidationResponse Validate(RoatpFinancialClarificationViewModel vm,
             bool isClarificationFileUpload, bool isClarificationOutcome)
         {
             var validationResponse = new ValidationResponse
@@ -29,29 +26,26 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            if (isClarificationFileUpload)
+            if (isClarificationFileUpload && vm.FilesToUpload != null)
             {
-                if (vm.FilesToUpload != null)
+                foreach (var file in vm.FilesToUpload)
                 {
-                    foreach (var file in vm.FilesToUpload)
+
+                    if (!FileContentIsValidForPdfFile(file))
                     {
+                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, FileMustBePdf));
 
-                        if (!FileContentIsValidForPdfFile(file))
-                        {
-                            validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, FileMustBePdf));
-
-                            break;
-                        }
-                        else if (file.Length > MaxFileSizeInBytes)
-                        {
-                            validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile,
-                                MaxFileSizeExceeded));
-                            break;
-                        }
-                    } 
-                    if (vm.FilesToUpload.Count==0)
-                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, "Select a file"));
-                }
+                        break;
+                    }
+                    else if (file.Length > MaxFileSizeInBytes)
+                    {
+                        validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile,
+                            MaxFileSizeExceeded));
+                        break;
+                    }
+                } 
+                if (vm.FilesToUpload.Count==0)
+                    validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationFile, "Select a file"));
             }
 
             if (isClarificationOutcome)
