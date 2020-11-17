@@ -233,7 +233,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     FinancialDueDate = GetFinancialDueDate(vm),
                     Comments = comments,
                     ClarificationResponse = vm.ClarificationResponse,
-                    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn
+                    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn,
+                    ClarificationFiles = vm.FinancialReviewDetails.ClarificationFiles
                 };
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);

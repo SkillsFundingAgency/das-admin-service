@@ -89,7 +89,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service.json')]",
+                    "uri": "[concat(variables('deploymentUrlBase'), 'app-service-v2.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -112,49 +112,53 @@
                         "value": "[parameters('appServiceAllowedIPs')]"
                     },
                     "appServiceAppSettings": {
-                        "value": [
-                            {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                            },
-                            {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "LoggingRedisConnectionString",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                            },
-                            {
-                                "name": "LoggingRedisKey",
-                                "value": "[parameters('loggingRedisKey')]"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                            },
-                            {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                                "value": "/health"
-                            },
-                            {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                                "value": "200"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "ConfigurationStorageConnectionString",
+                                    "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                    "name": "ASPNETCORE_ENVIRONMENT",
+                                    "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "LoggingRedisConnectionString",
+                                    "value": "[parameters('loggingRedisConnectionString')]"
+                                },
+                                {
+                                    "name": "LoggingRedisKey",
+                                    "value": "[parameters('loggingRedisKey')]"
+                                },
+                                {
+                                    "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                    "value": "[reference('app-insights').outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                    "name": "EnvironmentName",
+                                    "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                    "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
+                                    "value": "/health"
+                                },
+                                {
+                                    "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
+                                    "value": "200"
+                                }
+                            ]
+                        }
                     },
                     "appServiceConnectionStrings": {
-                        "value": [
-                            {
-                                "name": "Redis",
-                                "connectionString": "[parameters('loggingRedisConnectionString')]",
-                                "type": "Custom"
-                            }
-                        ]
+                        "value": {
+                            "array": [
+                                {
+                                    "name": "Redis",
+                                    "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                    "type": "Custom"
+                                }
+                            ]
+                        }
                     },
                     "customHostName": {
                         "value": "[parameters('customHostName')]"
