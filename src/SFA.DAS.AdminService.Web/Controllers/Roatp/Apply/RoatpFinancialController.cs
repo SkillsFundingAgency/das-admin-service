@@ -240,6 +240,75 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
         }
 
+
+
+        [HttpGet("/Roatp/Financial/Clarification/{applicationId}/Remove/{filename}")]
+        public async Task<IActionResult>RemoveClarificationFile(Guid applicationId, string filename)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(OpenApplications));
+            }
+
+            var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
+                _contextAccessor.HttpContext.User.UserId(), filename);
+
+
+            //return await ViewApplication(applicationId);
+
+            return RedirectToAction(nameof(ViewApplication), new { applicationId });
+            //if (isClarificationFilesUpdate)
+            //{
+            //    var financialReviewDets = vm.FinancialReviewDetails;
+
+            //    if (vm.FilesToUpload != null && vm.FilesToUpload.Count > 0)
+            //    {
+            //        var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
+            //            _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
+
+            //        if (fileUploadedSuccessfully)
+            //        {
+            //            if (financialReviewDets.ClarificationFiles == null)
+            //                financialReviewDets.ClarificationFiles = new List<ClarificationFile>();
+
+            //            financialReviewDets.ClarificationFiles.Add(new ClarificationFile
+            //            { Filename = vm.FilesToUpload[0].FileName });
+            //        }
+            //    }
+
+            //    var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
+            //    clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+            //    clarificationVm.ClarificationComments = vm.ClarificationComments;
+            //    clarificationVm.FinancialReviewDetails = financialReviewDets;
+            //    clarificationVm.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+            //    clarificationVm.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+            //    clarificationVm.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+            //    clarificationVm.InadequateComments = vm.InadequateComments;
+
+            //    var newClarificationVm =
+            //        ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationVm, vm.InternalComments);
+            //    return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationVm);
+            //}
+
+            //var comments = vm.Comments;
+            //if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+            //    comments = vm.InadequateComments;
+
+            //var financialReviewDetails = new FinancialReviewDetails
+            //{
+            //    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+            //    GradedDateTime = DateTime.UtcNow,
+            //    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
+            //    FinancialDueDate = GetFinancialDueDate(vm),
+            //    Comments = comments,
+            //    ClarificationResponse = vm.ClarificationResponse,
+            //    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn
+            //};
+
+            //await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+            return RedirectToAction(nameof(Graded), new { applicationId });
+        }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
