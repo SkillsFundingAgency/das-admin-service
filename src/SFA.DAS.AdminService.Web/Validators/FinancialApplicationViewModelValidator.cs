@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                 
                 if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.Grade.InadequateMoreInformation))
                 {
-                    context.AddFailure("Grade.InadequateMoreInformation", "Enter why the application was graded inadequate");
+                    context.AddFailure("Grade.InadequateMoreInformation", "Enter your comments");
                 }
                 else if (vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding 
                          || vm.Grade.SelectedGrade == FinancialApplicationSelectedGrade.Good 
