@@ -369,5 +369,30 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var resultModel = result.Model as RoatpFinancialClarificationViewModel;
             Assert.AreEqual(1,resultModel.ErrorMessages.Count);
         }
+
+
+        [Test]
+        public void RemoveClarification_redirects_when_no_application()
+        {
+            _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync((RoatpApplicationResponse)null);
+
+            var result = _controller.RemoveClarificationFile(_applicationId, string.Empty).Result as RedirectToActionResult;
+            Assert.AreEqual("OpenApplications", result.ActionName);
+        }
+
+        [Test]
+        public void RemoveClarification_redirects_when_file_endpoint_is_called_and_completed()
+        {
+            var filename = "test.pdf";
+            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
+                new RoatpApplicationResponse
+                {
+                    ApplicationId = _applicationId
+                });
+
+            var result = _controller.RemoveClarificationFile(_applicationId, filename).Result as RedirectToActionResult;
+            _applicationApplyApiClient.Verify(x => x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), filename));
+            Assert.AreEqual("ViewApplication", result.ActionName);
+        }
     }
 }

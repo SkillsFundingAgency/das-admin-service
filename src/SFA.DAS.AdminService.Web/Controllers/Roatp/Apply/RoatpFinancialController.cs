@@ -241,6 +241,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
         }
 
+
+
+        [HttpGet("/Roatp/Financial/Clarification/{applicationId}/Remove/{filename}")]
+        public async Task<IActionResult>RemoveClarificationFile(Guid applicationId, string filename)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            if (application is null)
+            {
+                return RedirectToAction(nameof(OpenApplications));
+            }
+
+            var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
+                _contextAccessor.HttpContext.User.UserId(), filename);
+
+            return RedirectToAction(nameof(ViewApplication), new { applicationId });
+
+        }
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
