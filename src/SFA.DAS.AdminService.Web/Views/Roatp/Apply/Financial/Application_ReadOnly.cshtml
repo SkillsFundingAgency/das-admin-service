@@ -112,34 +112,27 @@
 
                     {
                         var numberOfFiles = 0;
+                        var pluraliseFiles = "";
                         {
                             if (Model.FinancialReviewDetails.ClarificationFiles != null && Model.FinancialReviewDetails.ClarificationFiles.Count > 0)
                             {
                                 numberOfFiles = Model.FinancialReviewDetails.ClarificationFiles.Count;
-
+                                pluraliseFiles = numberOfFiles == 1 ? "file" : "files";
                             }
                         }
                         <div class="govuk-summary-list__row">
-                            @if (numberOfFiles == 1)
-                            {
-                                <dt class="govuk-summary-list__key">
-                                    Uploaded file
-                                </dt>
-                            }
-                            else
-                            {
-                                <dt class="govuk-summary-list__key">
-                                    Uploaded files
-                                </dt>
-                            }
+                            <dt class="govuk-summary-list__key">
+                                Uploaded @pluraliseFiles
+                            </dt>
+
                             <dd class="govuk-summary-list__value">
                             @if (numberOfFiles == 0)
                             {
-                                @Html.Raw("N/A")
+                                <text>N/A</text>
                             }
                             else
                             {
-                                <ul>
+                                <ul class="govuk-list">
                                     @foreach (var file in Model.FinancialReviewDetails?.ClarificationFiles)
                                     {
                                         <li><a class="govuk-link govuk-link--no-visited-state" asp-action="DownloadClarificationFile" asp-controller="RoatpFinancial" asp-route-ApplicationId="@Model.ApplicationId" asp-route-Filename="@file.Filename">@file.Filename</a></li>
