@@ -123,6 +123,22 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
+        public async Task<bool> RemoveClarificationFile(Guid applicationId, string userId, string fileName)
+        {
+            try
+            {
+                var response = await Post($"/Clarification/Applications/{applicationId}/Remove", new {fileName, userId});
+
+                return response == HttpStatusCode.OK;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex,
+                    $"Error when submitting Clarification File removal for Application: {applicationId} | Filename: {fileName}");
+                return false;
+            }
+        }
+
         public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
         {
             var fileName = string.Empty;
