@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -393,6 +395,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = _controller.RemoveClarificationFile(_applicationId, filename).Result as RedirectToActionResult;
             _applicationApplyApiClient.Verify(x => x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), filename));
             Assert.AreEqual("ViewApplication", result.ActionName);
+        }
+
+
+
+        [Test]
+        public void DownloadClarification_downloads_file()
+        {
+            var filename = "test.pdf";
+            HttpContent content = new StringContent("4");
+            var response = new HttpResponseMessage {StatusCode = HttpStatusCode.OK, Content = content};
+
+            _applicationApplyApiClient.Setup(x => x.DownloadClarificationFile(_applicationId, filename)).ReturnsAsync(response);
+
+            var result = _controller.DownloadClarificationFile(_applicationId, filename).Result as FileStreamResult;
+            Assert.AreEqual(filename,result.FileDownloadName);
         }
     }
 }
