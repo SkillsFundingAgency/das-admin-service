@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
@@ -138,6 +139,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                 return false;
             }
         }
+
+        public async Task<HttpResponseMessage> DownloadClarificationFile(Guid applicationId, string filename)
+        {
+            var response = await _client.GetAsync($"/Clarification/Applications/{applicationId}/Download/{filename}");
+
+            return response;
+        }
+
+      
 
         public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
         {

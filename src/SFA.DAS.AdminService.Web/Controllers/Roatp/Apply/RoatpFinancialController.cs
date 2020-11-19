@@ -258,6 +258,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return RedirectToAction(nameof(ViewApplication), new { applicationId });
 
         }
+
+        [HttpGet("/Roatp/Financial/Clarification/{applicationId}/Download/{filename}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, string filename)
+        {
+            var response = await _applyApiClient.DownloadClarificationFile(applicationId, filename);
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
+        }
+
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
