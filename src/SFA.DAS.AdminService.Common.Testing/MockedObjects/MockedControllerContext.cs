@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Common.Testing.MockedObjects
                 var file = new FormFile(new MemoryStream(), 0, 0, clarificationFileName, clarificationFileName);
                 var formFileCollection = new FormFileCollection { file };
                 var dictionary = new Dictionary<string, StringValues>();
-                dictionary.Add(buttonToAdd, buttonToAdd);
+                dictionary.Add(buttonToAdd, clarificationFileName);
                 controllerContext.HttpContext.Request.Form = new FormCollection(dictionary, formFileCollection);
             }
             else

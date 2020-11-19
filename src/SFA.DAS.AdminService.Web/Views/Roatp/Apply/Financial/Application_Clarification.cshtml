@@ -310,8 +310,21 @@
                                     <tr class="govuk-table__row">
                                         <th scope="row" class="govuk-table__header">@file.Filename</th>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                                            <a class="govuk-link govuk-link--no-visited-state" asp-action="RemoveClarificationFile" asp-controller="RoatpFinancial" asp-route-ApplicationId="@Model.ApplicationId" asp-route-Filename="@file.Filename">Remove</a>
-                                        </td>
+                                            @*<a class="govuk-link govuk-link--no-visited-state" asp-action="RemoveClarificationFile" asp-controller="RoatpFinancial" asp-route-ApplicationId="@Model.ApplicationId" asp-route-Filename="@file.Filename">Remove</a>*@
+                 
+                                            <button class="govuk-button govuk-button--secondary" data-module="govuk-button"
+                                                    data-prevent-double-click="true" name="removeClarificationFile" value="@file.Filename">
+                                                Remove
+                                            </button>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                            </td>
                                     </tr>
                                 }
                             </tbody>
