@@ -199,8 +199,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 if (vm.FilesToUpload != null && vm.FilesToUpload.Count > 0)
                 {
-                    var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
-                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
+                    var fileToUpload = vm.FilesToUpload[0].FileName;
+                    if (!FileAlreadyInClarifications(financialReviewDets.ClarificationFiles, fileToUpload))
+                    {
+                        var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
+                            _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
+                    
 
                     if (fileUploadedSuccessfully)
                     {
@@ -208,9 +212,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                             financialReviewDets.ClarificationFiles = new List<ClarificationFile>();
 
                         financialReviewDets.ClarificationFiles.Add(new ClarificationFile
-                            {Filename = vm.FilesToUpload[0].FileName});
+                            {Filename = fileToUpload});
                     }
                 }
+            }
 
                 var clarificationVm = await RebuildApplicationViewModel(vm, application, financialReviewDets);
 
@@ -268,6 +273,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                 await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
                 return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
+        }
+
+        private static bool FileAlreadyInClarifications(List<ClarificationFile> clarificationFiles, string fileToUpload)
+        {
+            return clarificationFiles != null && clarificationFiles.Count > 0 &&
+                   clarificationFiles.Any(file => file.Filename == fileToUpload);
         }
 
         private async Task<RoatpFinancialApplicationViewModel> RebuildApplicationViewModel(RoatpFinancialClarificationViewModel vm,
