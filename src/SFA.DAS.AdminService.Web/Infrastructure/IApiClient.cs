@@ -66,5 +66,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
+        Task RestartSchedule(Guid id);
     }
 }
