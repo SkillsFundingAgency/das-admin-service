@@ -57,7 +57,8 @@
                                     <th class="govuk-table__header" scope="col">UKPRN</th>
                                     <th class="govuk-table__header" scope="col">Provider route</th>
                                     <th class="govuk-table__header" scope="col">Submitted date</th>
-                                    <th class="govuk-table__header" scope="col">Clarification date</th>
+                                    <th class="govuk-table__header" scope="col">Clarification sent by</th>
+                                    <th class="govuk-table__header" scope="col">Clarification sent on</th>
                                 </tr>
                             </thead>
                             <tbody class="govuk-table__body">
@@ -75,6 +76,9 @@
                                     </td>
                                     <td class="govuk-table__cell" data-label="Submitted date">
                                         @item.SubmittedDate.ToSfaShortDateString()
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Clarification sent by">
+                                        @item.FinancialReviewDetails.GradedBy
                                     </td>
                                     <td class="govuk-table__cell" data-label="Clarification date">
                                         @item.FeedbackAddedDate.ToSfaShortDateString()
