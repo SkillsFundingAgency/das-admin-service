@@ -436,8 +436,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
-            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowTrainItsApprentices
-                                                                                                      && page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowDescribeYourOrganisation).ToList();
+            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowDescribeYourOrganisation).ToList();
 
             return organisationTypeSection;
         }
