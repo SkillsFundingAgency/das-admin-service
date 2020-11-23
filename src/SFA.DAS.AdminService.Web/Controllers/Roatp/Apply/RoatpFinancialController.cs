@@ -18,6 +18,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
@@ -108,7 +109,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             if (application.FinancialReviewStatus == FinancialReviewStatus.ClarificationSent)
             {
                 var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
-
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
             }
 
@@ -157,6 +157,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         [HttpPost("/Roatp/Financial/Clarification/{applicationId}")]
         public async Task<IActionResult> SubmitClarification(Guid applicationId, RoatpFinancialClarificationViewModel vm)
         {
+            var removeClarificationFileName = string.Empty;
             var application = await _applyApiClient.GetApplication(vm.ApplicationId);
             if (application is null)
             {
@@ -164,100 +165,68 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             var isClarificationFilesUpdate = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
+            if (!isClarificationFilesUpdate && !isClarificationOutcome &&
+                HttpContext.Request.Form["removeClarificationFile"].Count == 1)
+                removeClarificationFileName = HttpContext.Request.Form["removeClarificationFile"].ToString();
+
             vm.FinancialReviewDetails.ClarificationFiles = application.FinancialGrade.ClarificationFiles;
-            
-            
             vm.FilesToUpload = HttpContext.Request.Form.Files;
             
             var validationResponse = _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
 
             if (validationResponse.Errors !=null && validationResponse.Errors.Count>0)
             {
-               
-
-                var clarificationViewModel = await CreateRoatpFinancialApplicationViewModel(application);
-                clarificationViewModel.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                clarificationViewModel.ClarificationComments = vm.ClarificationComments;
-                clarificationViewModel.FinancialReviewDetails = vm.FinancialReviewDetails;
-                clarificationViewModel.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
-                clarificationViewModel.GoodFinancialDueDate = vm.GoodFinancialDueDate;
-                clarificationViewModel.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
-                
-                var newClarificationViewModel = ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationViewModel, vm.InternalComments);
-                newClarificationViewModel.ErrorMessages = validationResponse.Errors;
+                var newClarificationViewModel = await ProcessErrorMessagesAndRebuildModel(vm, application, validationResponse);
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
 
             if (isClarificationFilesUpdate)
             {
-                var financialReviewDets = vm.FinancialReviewDetails;
-
-                if (vm.FilesToUpload != null && vm.FilesToUpload.Count > 0)
-                {
-                    var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
-                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
-
-                    if (fileUploadedSuccessfully)
-                    {
-                        if (financialReviewDets.ClarificationFiles == null)
-                            financialReviewDets.ClarificationFiles = new List<ClarificationFile>();
-
-                        financialReviewDets.ClarificationFiles.Add(new ClarificationFile
-                            {Filename = vm.FilesToUpload[0].FileName});
-                    }
-                }
-
-                var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
-                clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
-                clarificationVm.ClarificationComments = vm.ClarificationComments;
-                clarificationVm.FinancialReviewDetails = financialReviewDets;
-                clarificationVm.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
-                clarificationVm.GoodFinancialDueDate = vm.GoodFinancialDueDate;
-                clarificationVm.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
-                clarificationVm.InadequateComments = vm.InadequateComments;
-
-                var newClarificationVm =
-                    ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationVm, vm.InternalComments);
+                var newClarificationVm = await ProcessUploadedFilesAndRebuildViewModel(applicationId, vm, application);
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationVm);
             }
 
-            var comments = vm.Comments;
-                if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
-                    comments = vm.InadequateComments;
 
-                var financialReviewDetails = new FinancialReviewDetails
-                {
-                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
-                    GradedDateTime = DateTime.UtcNow,
-                    SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
-                    FinancialDueDate = GetFinancialDueDate(vm),
-                    Comments = comments,
-                    ClarificationResponse = vm.ClarificationResponse,
-                    ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn,
-                    ClarificationFiles = vm.FinancialReviewDetails.ClarificationFiles
-                };
-
-                await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
-                return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
-        }
-
-
-
-        [HttpGet("/Roatp/Financial/Clarification/{applicationId}/Remove/{filename}")]
-        public async Task<IActionResult>RemoveClarificationFile(Guid applicationId, string filename)
-        {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            if (application is null)
+            if (!string.IsNullOrEmpty(removeClarificationFileName))
             {
-                return RedirectToAction(nameof(OpenApplications));
+                var newClarificationVm = await RemoveUploadedFileAndRebuildViewModel(applicationId, vm, removeClarificationFileName, application);
+                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationVm);
             }
 
-            var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
-                _contextAccessor.HttpContext.User.UserId(), filename);
+            var financialReviewDetails = RebuildFinancialReviewDetailsForSubmission(vm);
 
-            return RedirectToAction(nameof(ViewApplication), new { applicationId });
-
+            await _applyApiClient.ReturnFinancialReview(vm.ApplicationId, financialReviewDetails);
+            return RedirectToAction(nameof(Graded), new { vm.ApplicationId });
         }
+
+        private FinancialReviewDetails RebuildFinancialReviewDetailsForSubmission(RoatpFinancialClarificationViewModel vm)
+        {
+            var comments = vm.Comments;
+            if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
+                comments = vm.InadequateComments;
+
+            var financialReviewDetails = new FinancialReviewDetails
+            {
+                GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                GradedDateTime = DateTime.UtcNow,
+                SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
+                FinancialDueDate = GetFinancialDueDate(vm),
+                Comments = comments,
+                ClarificationResponse = vm.ClarificationResponse,
+                ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn,
+                ClarificationFiles = vm.FinancialReviewDetails.ClarificationFiles
+            };
+            return financialReviewDetails;
+        }
+
+        [HttpGet("/Roatp/Financial/Clarification/{applicationId}/Download/{filename}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, string filename)
+        {
+            var response = await _applyApiClient.DownloadClarificationFile(applicationId, filename);
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
+        }
+
         [HttpGet("/Roatp/Financial/Download/Application/{applicationId}/Section/{sectionId}")]
         public async Task<IActionResult> DownloadFiles(Guid applicationId, Guid sectionId)
         {
@@ -319,6 +288,98 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
+        private async Task<RoatpFinancialClarificationViewModel> RemoveUploadedFileAndRebuildViewModel(Guid applicationId, RoatpFinancialClarificationViewModel vm,
+         string removeClarificationFileName, RoatpApplicationResponse application)
+        {
+            var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
+                _contextAccessor.HttpContext.User.UserId(), removeClarificationFileName);
+
+
+            var financialReviewDets = vm.FinancialReviewDetails;
+            if (fileRemoved)
+            {
+                var clarificationFiles = financialReviewDets.ClarificationFiles;
+                var newClarificationFiles = new List<ClarificationFile>();
+                if (clarificationFiles != null)
+                {
+                    foreach (var file in clarificationFiles)
+                    {
+                        if (file.Filename != removeClarificationFileName)
+                            newClarificationFiles.Add(file);
+                    }
+
+                    financialReviewDets.ClarificationFiles = newClarificationFiles;
+                }
+            }
+
+            var applicationVm = await RebuildApplicationViewModel(vm, application, financialReviewDets);
+
+            var newClarificationVm =
+                ConvertFinancialApplicationToFinancialClarificationViewModel(applicationVm, vm.InternalComments);
+            return newClarificationVm;
+        }
+
+        private async Task<RoatpFinancialClarificationViewModel> ProcessErrorMessagesAndRebuildModel(RoatpFinancialClarificationViewModel vm,
+            RoatpApplicationResponse application, ValidationResponse validationResponse)
+        {
+            var applicationViewModel = await RebuildApplicationViewModel(vm, application, vm.FinancialReviewDetails);
+            var newClarificationViewModel =
+                ConvertFinancialApplicationToFinancialClarificationViewModel(applicationViewModel, vm.InternalComments);
+            newClarificationViewModel.ErrorMessages = validationResponse.Errors;
+            return newClarificationViewModel;
+        }
+
+        private async Task<RoatpFinancialClarificationViewModel> ProcessUploadedFilesAndRebuildViewModel(Guid applicationId, RoatpFinancialClarificationViewModel vm,
+            RoatpApplicationResponse application)
+        {
+            var financialReviewDets = vm.FinancialReviewDetails;
+
+            if (vm.FilesToUpload != null && vm.FilesToUpload.Count > 0)
+            {
+                var fileToUpload = vm.FilesToUpload[0].FileName;
+                if (!FileAlreadyInClarifications(financialReviewDets.ClarificationFiles, fileToUpload))
+                {
+                    var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
+                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
+
+
+                    if (fileUploadedSuccessfully)
+                    {
+                        if (financialReviewDets.ClarificationFiles == null)
+                            financialReviewDets.ClarificationFiles = new List<ClarificationFile>();
+
+                        financialReviewDets.ClarificationFiles.Add(new ClarificationFile
+                        { Filename = fileToUpload });
+                    }
+                }
+            }
+
+            var clarificationVm = await RebuildApplicationViewModel(vm, application, financialReviewDets);
+
+            var newClarificationVm =
+                ConvertFinancialApplicationToFinancialClarificationViewModel(clarificationVm, vm.InternalComments);
+            return newClarificationVm;
+        }
+
+        private static bool FileAlreadyInClarifications(List<ClarificationFile> clarificationFiles, string fileToUpload)
+        {
+            return clarificationFiles != null && clarificationFiles.Count > 0 &&
+                   clarificationFiles.Any(file => file.Filename == fileToUpload);
+        }
+
+        private async Task<RoatpFinancialApplicationViewModel> RebuildApplicationViewModel(RoatpFinancialClarificationViewModel vm,
+            RoatpApplicationResponse application, FinancialReviewDetails financialReviewDets)
+        {
+            var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
+            clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
+            clarificationVm.ClarificationComments = vm.ClarificationComments;
+            clarificationVm.FinancialReviewDetails = financialReviewDets;
+            clarificationVm.OutstandingFinancialDueDate = vm.OutstandingFinancialDueDate;
+            clarificationVm.GoodFinancialDueDate = vm.GoodFinancialDueDate;
+            clarificationVm.SatisfactoryFinancialDueDate = vm.SatisfactoryFinancialDueDate;
+            clarificationVm.InadequateComments = vm.InadequateComments;
+            return clarificationVm;
+        }
         private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)
         {
             if (applicationFromAssessor is null)

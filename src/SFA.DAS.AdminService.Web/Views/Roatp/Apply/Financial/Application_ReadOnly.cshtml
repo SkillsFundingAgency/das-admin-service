@@ -1,6 +1,5 @@
-@using Microsoft.EntityFrameworkCore.Internal
-@using SFA.DAS.AssessorService.ApplyTypes.Roatp
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
+@using SFA.DAS.AdminService.Common.Extensions
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
 
@@ -9,9 +8,7 @@
     Layout = "_Layout";
 
     var backAction = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade) ? "ClarificationApplications" : "ClosedApplications";
-
-    var inClarificationMode = FinancialApplicationSelectedGrade.Clarification.Equals(Model.FinancialReviewDetails.SelectedGrade);
-
+    var wasClarificationDone = !string.IsNullOrEmpty(Model.FinancialReviewDetails?.ClarificationResponse);
 }
 
 <div class="govuk-breadcrumbs">
@@ -102,69 +99,91 @@
         <div class="govuk-grid-column-full">    
 
             <dl class="govuk-summary-list govuk-summary-list--overview govuk-!-margin-bottom-8">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Outcome
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (inClarificationMode)
-                        {
-                            @Html.Raw("Needs clarification")
-                        }
-                        else
-                        {
-                            @Model.FinancialReviewDetails.SelectedGrade
-                        }
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    @if (inClarificationMode)
-                    {
+                @if (wasClarificationDone)
+                {
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Clarification sent on
+                            Clarification response
                         </dt>
-                    }
-                    else
+                        <dd class="govuk-summary-list__value">
+                            @Model.FinancialReviewDetails.ClarificationResponse
+
+                        </dd>
+                    </div>
+
                     {
+                        var numberOfFiles = 0;
+                        var pluraliseFiles = "files";
+                        {
+                            if (Model.FinancialReviewDetails.ClarificationFiles != null)
+                            {
+                                numberOfFiles = Model.FinancialReviewDetails.ClarificationFiles.Count;
+                                pluraliseFiles = numberOfFiles == 1 ? "file" : "files";
+                            }
+                        }
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Uploaded @pluraliseFiles
+                            </dt>
+
+                            <dd class="govuk-summary-list__value">
+                            @if (numberOfFiles == 0)
+                            {
+                                <text>N/A</text>
+                            }
+                            else
+                            {
+                                <ul class="govuk-list">
+                                    @foreach (var file in Model.FinancialReviewDetails?.ClarificationFiles)
+                                    {
+                                        <li><a class="govuk-link govuk-link--no-visited-state" asp-action="DownloadClarificationFile" asp-controller="RoatpFinancial" asp-route-ApplicationId="@Model.ApplicationId" asp-route-Filename="@file.Filename">@file.Filename</a></li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                    }
+                }
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Outcome
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.FinancialReviewDetails.SelectedGrade
+
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Financial health assessed on
                         </dt>
-                    }
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
-                        {
-                            @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToLongDateString())
-                        }
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Financial health assessed by
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.FinancialReviewDetails.GradedBy
-                    </dd>
-                </div>
-                @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.Comments))
-                {
-                    <div class="govuk-summary-list__row">
-                    @if (inClarificationMode)
-                    {
-                        <dt class="govuk-summary-list__key">
-                            Internal comments
-                        </dt>
-                    }
-                    else
-                    {
-                        <dt class="govuk-summary-list__key">
-                            Comments
-                        </dt>
-                    }
-                    <dd class="govuk-summary-list__value">
-                            @Model.FinancialReviewDetails.Comments
+                        <dd class="govuk-summary-list__value">
+                            @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
+                            {
+                                @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToSfaShortDateString())
+                            }
                         </dd>
                     </div>
-                }
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Financial health assessed by
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.FinancialReviewDetails.GradedBy
+                        </dd>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.Comments))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Comments
+                            </dt>
+
+                            <dd class="govuk-summary-list__value">
+                                @Model.FinancialReviewDetails.Comments
+                            </dd>
+                        </div>
+                    }
+                
             </dl>
 
             <p class="govuk-body">

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -282,6 +284,96 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
 
+
+        [Test]
+        public void When_clarification_file_is_removed_and_page_is_refreshed_with_filename_removed_from_model()
+        {
+            var buttonPressed = "removeClarificationFile";
+            _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+            _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
+                _applicationApplyApiClient.Object,
+                _qnaApiClient.Object,
+                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+            {
+                ControllerContext = MockedControllerContext.Setup(buttonPressed)
+            };
+
+            _clarificationValidator.Setup(x =>
+                    x.Validate(It.IsAny<RoatpFinancialClarificationViewModel>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(new ValidationResponse { });
+            var fileToBeRemoved = "file.pdf";
+            _financialReviewDetails = new FinancialReviewDetails
+            {
+                GradedBy = MockHttpContextAccessor.Name,
+                GradedDateTime = DateTime.UtcNow,
+                SelectedGrade = FinancialApplicationSelectedGrade.Good,
+                FinancialDueDate = DateTime.Today.AddDays(5),
+                Comments = "comments",
+                ClarificationResponse = "clarification response",
+                ClarificationRequestedOn = DateTime.UtcNow,
+                ClarificationFiles = new List<ClarificationFile> { new ClarificationFile { Filename = fileToBeRemoved }, new ClarificationFile { Filename = "second.pdf" } }
+            };
+
+            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
+                new RoatpApplicationResponse
+                {
+                    ApplicationId = _applicationId,
+                    ApplyData = new RoatpApplyData
+                    {
+                        ApplyDetails = new RoatpApplyDetails
+                        {
+                            OrganisationName = "org name",
+                            UKPRN = "12344321",
+                            ReferenceNumber = "3443",
+                            ProviderRouteName = "main",
+                            ApplicationSubmittedOn = DateTime.Today
+                        },
+                        Sequences = new List<RoatpApplySequence>
+                        {
+                            new RoatpApplySequence
+                            {
+                                SequenceNo = 5,
+                                NotRequired = true
+                            }
+                        }
+                    },
+                    FinancialGrade = _financialReviewDetails
+                });
+   
+            _applicationApplyApiClient.Setup(x =>
+                    x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), fileToBeRemoved))
+                .ReturnsAsync(true);
+
+            var vm = new RoatpFinancialClarificationViewModel
+            {
+                ApplicationId = _applicationId,
+                FinancialReviewDetails = _financialReviewDetails,
+                OutstandingFinancialDueDate = new FinancialDueDate
+                {
+                    Day = "1",
+                    Month = "1",
+                    Year = (DateTime.Now.Year + 1).ToString()
+                },
+                ClarificationResponse = "clarification response",
+                ClarificationComments = "clarification comments",
+                FilesToUpload = null
+            };
+            var result = _controller.SubmitClarification(_applicationId, vm).Result as ViewResult;
+
+            Assert.IsTrue(result.ViewName.Contains("Application_Clarification.cshtml"));
+            var resultModel = result.Model as RoatpFinancialClarificationViewModel;
+
+            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles.Count == 1);
+            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "second.pdf");
+        }
         [Test]
         public void when_validation_errors_occur_page_refreshes_with_validation_messages()
         {
@@ -370,29 +462,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual(1,resultModel.ErrorMessages.Count);
         }
 
-
         [Test]
-        public void RemoveClarification_redirects_when_no_application()
-        {
-            _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync((RoatpApplicationResponse)null);
-
-            var result = _controller.RemoveClarificationFile(_applicationId, string.Empty).Result as RedirectToActionResult;
-            Assert.AreEqual("OpenApplications", result.ActionName);
-        }
-
-        [Test]
-        public void RemoveClarification_redirects_when_file_endpoint_is_called_and_completed()
+        public void DownloadClarification_downloads_file()
         {
             var filename = "test.pdf";
-            _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-                new RoatpApplicationResponse
-                {
-                    ApplicationId = _applicationId
-                });
+            HttpContent content = new StringContent("4");
+            var response = new HttpResponseMessage {StatusCode = HttpStatusCode.OK, Content = content};
 
-            var result = _controller.RemoveClarificationFile(_applicationId, filename).Result as RedirectToActionResult;
-            _applicationApplyApiClient.Verify(x => x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), filename));
-            Assert.AreEqual("ViewApplication", result.ActionName);
+            _applicationApplyApiClient.Setup(x => x.DownloadClarificationFile(_applicationId, filename)).ReturnsAsync(response);
+
+            var result = _controller.DownloadClarificationFile(_applicationId, filename).Result as FileStreamResult;
+            Assert.AreEqual(filename,result.FileDownloadName);
         }
     }
 }
