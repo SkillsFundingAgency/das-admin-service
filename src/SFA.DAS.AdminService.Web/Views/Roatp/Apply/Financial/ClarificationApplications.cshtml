@@ -78,7 +78,7 @@
                                         @item.SubmittedDate.ToSfaShortDateString()
                                     </td>
                                     <td class="govuk-table__cell" data-label="Clarification sent by">
-                                        @item.FinancialReviewDetails.GradedBy
+                                        @item.FinancialReviewDetails?.GradedBy
                                     </td>
                                     <td class="govuk-table__cell" data-label="Clarification date">
                                         @item.FeedbackAddedDate.ToSfaShortDateString()
