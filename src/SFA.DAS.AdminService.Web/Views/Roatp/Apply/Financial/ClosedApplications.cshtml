@@ -78,7 +78,7 @@
                                             @item.ClosedDate.ToSfaShortDateString()
                                         </td>
                                         <td class="govuk-table__cell" data-label="Outcome made by">
-                                            @item.FinancialReviewDetails.GradedBy
+                                            @item.FinancialReviewDetails?.GradedBy
                                         </td>
                                         <td class="govuk-table__cell" data-label="Outcome">
                                             @item.FinancialReviewDetails?.SelectedGrade
