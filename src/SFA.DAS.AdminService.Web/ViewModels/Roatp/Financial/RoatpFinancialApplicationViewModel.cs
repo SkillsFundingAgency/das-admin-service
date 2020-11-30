@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
     public class RoatpFinancialApplicationViewModel : OrganisationDetailsViewModel
     {
-        public List<Section> Sections { get; }
+        public List<Section> Sections { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
 
@@ -25,6 +25,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public string InadequateComments { get; set; }
         public string ClarificationComments { get; set; }
         
+        public string ClarificationResponse { get; set; }
         public string ApplicantEmailAddress { get; set; }
 
         public RoatpFinancialApplicationViewModel() { }

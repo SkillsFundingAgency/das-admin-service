@@ -335,6 +335,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<OrganisationStandard>($"/api/ao/assessment-organisations/organisation-standard/{organisationStandardId}");
         }
 
+        public async Task RestartSchedule(Guid id)
+        {
+            var request = new UpdateLastRunStatusRequest { ScheduleRunId = id, LastRunStatus = LastRunStatus.Restarting };
+            await Post("api/v1/schedule/updatelaststatus", request);
+        }
+
         #region Reports
         public async Task<IEnumerable<StaffReport>> GetReportList()
         {
