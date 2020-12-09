@@ -1,0 +1,40 @@
+﻿@using Humanizer
+@model ScheduleConfigViewModel
+@{
+    ViewBag.Title = "Restart Schedule";
+    Layout = "_Layout";
+}
+
+<a asp-action="Index" class="govuk-back-link">Go back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Confirm restart</h1>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Is recurring</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Interval</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Last Run time</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">Last Run Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@Model.IsRecurring</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@(Model.ScheduleInterval.HasValue ? Model.ScheduleInterval.Humanize(LetterCasing.Title) : Model.Interval)</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@Model.RunTime</td>
+                            <td class="govuk-table__cell govuk-table__cell--numeric">@Model.LastRunStatus</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <form method="post">
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.ScheduleType)
+                    <button class="govuk-button">Confirm</button>
+                </form>
+        </div>
+    </div>
+</main>

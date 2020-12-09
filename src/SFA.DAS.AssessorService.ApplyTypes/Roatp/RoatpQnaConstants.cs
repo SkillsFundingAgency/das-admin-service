@@ -46,11 +46,8 @@
                     public static string TradingForSupporting = "60";
                     public static string OrganisationTypeMainSupporting = "140";
                     public static string OrganisationTypeEmployer = "150";
-                    public static string PublicBodyTypeMainSupporting = "170";
-                    public static string PublicBodyTypeEmployer = "171";
-                    public static string EducationalInstituteTypeMainSupporting = "160";
-                    public static string EducationalInstituteTypeEmployer = "161";
-                    public static string HowTrainItsApprentices = "220";
+                    public static string EducationalInstituteType = "160";
+                    public static string PublicBodyType = "170";
                     public static string HowDescribeYourOrganisation = "230";
                 }
 
@@ -58,10 +55,8 @@
                 {
                     public static string OrganisationTypeMainSupporting = "YO-140";
                     public static string OrganisationTypeEmployer = "YO-150";
-                    public static string PublicBodyTypeMainSupporting = "YO-170";
-                    public static string PublicBodyTypeEmployer = "YO-171";
-                    public static string EducationalInstituteTypeMainSupporting = "YO-160";
-                    public static string EducationalInstituteTypeEmployer = "YO-161";
+                    public static string EducationalInstituteType = "YO-160";
+                    public static string PublicBodyType = "YO-170";
                 }
             }
 

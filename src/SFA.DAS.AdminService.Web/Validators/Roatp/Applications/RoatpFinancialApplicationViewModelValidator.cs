@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using System;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Globalization;
@@ -28,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
                 {
-                    context.AddFailure("ClarificationComments", "Enter your clarification comments");
+                    context.AddFailure("ClarificationComments", "Enter internal comments");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
                 {

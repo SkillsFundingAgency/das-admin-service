@@ -45,6 +45,7 @@ stages:
         scannerMode: 'MSBuild'
         projectName: "$(Build.DefinitionName)"
         projectKey: "$(sonarCloudProjectKey)"
+        extraProperties: sonar.exclusions=**/SFA.DAS.AdminService.Web/wwwroot/javascripts/lib/**/*,**/SFA.DAS.AdminService.Web/wwwroot/lib/**/*
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore'
@@ -110,7 +111,7 @@ stages:
   displayName: 'Publish Nuget Package'
   pool:
     name: "DAS - Continuous Deployment"
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual'))
   jobs:
   - job: 'CleanArtifacts'
     displayName: Clean artifacts directory

@@ -57,6 +57,7 @@
                                     <th class="govuk-table__header" scope="col">UKPRN</th>
                                     <th class="govuk-table__header" scope="col">Provider route</th>
                                     <th class="govuk-table__header" scope="col">Outcome date</th>
+                                    <th class="govuk-table__header" scope="col">Outcome made by</th>
                                     <th class="govuk-table__header" scope="col">Outcome</th>
                                 </tr>
                             </thead>
@@ -75,6 +76,9 @@
                                         </td>
                                         <td class="govuk-table__cell" data-label="Outcome date">
                                             @item.ClosedDate.ToSfaShortDateString()
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Outcome made by">
+                                            @item.FinancialReviewDetails?.GradedBy
                                         </td>
                                         <td class="govuk-table__cell" data-label="Outcome">
                                             @item.FinancialReviewDetails?.SelectedGrade
