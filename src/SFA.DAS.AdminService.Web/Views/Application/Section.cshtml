@@ -1,5 +1,6 @@
-@using SFA.DAS.QnA.Api.Types.Page
-@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.QnA.Api.Types.Page;
+@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AdminService.Web.Helpers;
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
 
@@ -48,7 +49,7 @@
 
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-                @if (Model.SequenceNo == 1 && Model.SectionNo == 1)
+                @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && Model.SectionNo == ApplyConst.ORGANISATION_DETAILS_SECTION_NO)
                 {
                     <dl class="govuk-summary-list">
                         @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
@@ -107,7 +108,7 @@
             </div>
         </div>
 
-        @if (Model.SequenceNo == 1 && Model.SectionNo == 3)
+        @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && Model.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO)
         {
             // NOTE: The FHA Section has a read only view. See ON-1277
             var financialApplication = Model.Grade;
@@ -202,6 +203,7 @@
                                                 </div>
                                             </details>
                                         }
+                                        
                                         if (question != null && question.Input.Type == "FileUpload")
                                         {
                                             <p class="govuk-body">

@@ -22,6 +22,12 @@
         IPagingState StandardApplication_FeedbackApplications { get; }
         IPagingState StandardApplication_ApprovedApplications { get; }
 
+        bool WithdrawalApplication_SessionValid { get; set; }
+        IPagingState WithdrawalApplication_NewApplications { get; }
+        IPagingState WithdrawalApplication_InProgressApplications { get; }
+        IPagingState WithdrawalApplication_FeedbackApplications { get; }
+        IPagingState WithdrawalApplication_ApprovedApplications { get; }
+
         bool Register_SessionValid { get; set; }
         IPagingState Register_ApprovedStandards { get; }
     } 
@@ -120,6 +126,50 @@
             get
             {
                 return new PagingState(_sessionService, "StandardApplication_ApprovedApplications");
+            }
+        }
+
+        public bool WithdrawalApplication_SessionValid
+        {
+            get
+            {
+                return _sessionService.Get<bool>("WithdrawalApplication_SessionValid");
+            }
+            set
+            {
+                _sessionService.Set("WithdrawalApplication_SessionValid", value);
+            }
+        }
+
+        public IPagingState WithdrawalApplication_NewApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "WithdrawalApplication_NewApplications");
+            }
+        }
+
+        public IPagingState WithdrawalApplication_InProgressApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "WithdrawalApplication_InProgressApplications");
+            }
+        }
+
+        public IPagingState WithdrawalApplication_FeedbackApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "WithdrawalApplication_FeedbackApplications");
+            }
+        }
+
+        public IPagingState WithdrawalApplication_ApprovedApplications
+        {
+            get
+            {
+                return new PagingState(_sessionService, "WithdrawalApplication_ApprovedApplications");
             }
         }
 
