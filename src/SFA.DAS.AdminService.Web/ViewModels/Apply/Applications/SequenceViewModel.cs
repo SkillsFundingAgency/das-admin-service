@@ -36,6 +36,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
 
+            ContactName = application.ContactName;
+            ContactEmail = application.ContactEmail;
+
             var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO };
             GovernanceRequired = governanceRequiredForSequences.Contains(SequenceNo);
         }
@@ -76,5 +79,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public List<ApplySection> ApplySections { get; }
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
+
+        public bool IsWithdrawal => SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO ||
+                                    SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+
+        public string ContactName { get; }
+        public string ContactEmail { get; }
     }
 }
