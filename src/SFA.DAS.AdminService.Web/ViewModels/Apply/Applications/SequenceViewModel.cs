@@ -6,6 +6,7 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
@@ -29,6 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ProviderName = organisation.OrganisationData.ProviderName;
             Ukprn = organisation.EndPointAssessorUkprn;
             CompanyNumber = organisation.OrganisationData.CompanyNumber;
+            OrganisationName = organisation.EndPointAssessorName;
 
             ApplySections = GetRequiredApplySections(applySections);
             Sections = GetRequiredSections(applySections, sections);
@@ -73,6 +75,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string ProviderName { get; set; }
         public int? Ukprn { get; set; }
         public string CompanyNumber { get; set; }
+        public string OrganisationName { get; }
 
         public string Status { get; set; }
         public List<Section> Sections { get; }

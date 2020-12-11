@@ -36,11 +36,11 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.LegalName) && Model.IsWithdrawal)
+                    @if (!string.IsNullOrWhiteSpace(Model.OrganisationName) && Model.IsWithdrawal)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Organisation name</dt>
-                            <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
                         </div>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
