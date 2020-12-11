@@ -50,11 +50,11 @@
                             <dd class="govuk-summary-list__value">@Model.Standard</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Details</dt>
-                            <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                            <dd class="govuk-summary-list__value">@Model.StandardWithReference</dd>
                         </div>
                     }
                     @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
@@ -102,7 +102,7 @@
                             <dd class="govuk-summary-list__value">
                                 @Model.ContactName
                                 <br />
-                                <a href="mailto:@Model.ContactEmail" class="govuk-link">@Model.ContactEmail</a>
+                                @Model.ContactEmail
                             </dd>
                         </div>
                     }

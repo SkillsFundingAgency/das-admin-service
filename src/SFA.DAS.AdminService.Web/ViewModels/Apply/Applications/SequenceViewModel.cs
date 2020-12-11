@@ -20,6 +20,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
             StandardName = application.ApplyData.Apply.StandardName;
             StandardCode = application.ApplyData.Apply.StandardCode;
+            StandardReference = application.ApplyData.Apply.StandardReference;
             ReviewStatus = application.ReviewStatus;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
@@ -61,8 +62,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string ApplicationReference { get; set; }
         public string StandardName { get; set; }
+        public string StandardReference { get; set; }
         public int? StandardCode { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
+        public string StandardWithReference => $"{StandardName} ({StandardReference})";
         public string ReviewStatus { get; set; }
 
         public string FinancialReviewStatus { get; set; }
