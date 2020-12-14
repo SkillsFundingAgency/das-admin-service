@@ -30,12 +30,12 @@
                     </h2>
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
+                            <li><a href="#outstanding" sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
                             <li><a sfa-validation-for="InadequateComments"></a></li>
                             <li><a sfa-validation-for="ClarificationComments"></a></li>
-                            <li><a sfa-validation-for="OutstandingFinancialDueDate"></a></li>
-                            <li><a sfa-validation-for="GoodFinancialDueDate"></a></li>
-                            <li><a sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
+                            <li><a href="#OutstandingFinancialDueDate.Day" sfa-validation-for="OutstandingFinancialDueDate"></a></li>
+                            <li><a href="#GoodFinancialDueDate.Day" sfa-validation-for="GoodFinancialDueDate"></a></li>
+                            <li><a href="#SatisfactoryFinancialDueDate.Day" sfa-validation-for="SatisfactoryFinancialDueDate"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -55,7 +55,9 @@
                 <h2 class="govuk-heading-l">@Html.Raw(section.LinkTitle)</h2>
             </div>
 
-            @{ var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ? "" : "govuk-!-margin-bottom-9"; }
+            @{
+                var isUploadCss = section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type == "FileUpload") ? "" : "govuk-!-margin-bottom-9";
+            }
 
             @if (section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
             {
@@ -116,11 +118,6 @@
                     </legend>
 
                     <span class="govuk-error-message" asp-validation-for="FinancialReviewDetails.SelectedGrade"></span>
-                    <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
-                    <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
-                    <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
-                    <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
-                    <span class="govuk-error-message" asp-validation-for="ClarificationComments"></span>
 
                     <div id="FinancialReviewDetails.SelectedGrade" class="govuk-radios govuk-radios--conditional" data-module="radios">
                         <div class="govuk-radios__item">
@@ -135,6 +132,8 @@
                                         What is the financial due date?
                                     </span>
                                 </legend>
+
+                                <span class="govuk-error-message" asp-validation-for="OutstandingFinancialDueDate"></span>
 
                                 <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                     <div class="govuk-date-input__item">
@@ -172,6 +171,8 @@
                                     </span>
                                 </legend>
 
+                                <span class="govuk-error-message" asp-validation-for="GoodFinancialDueDate"></span>
+
                                 <div class="govuk-date-input" id="GoodFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
@@ -208,6 +209,8 @@
                                     </span>
                                 </legend>
 
+                                <span class="govuk-error-message" asp-validation-for="SatisfactoryFinancialDueDate"></span>
+
                                 <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                     <div class="govuk-date-input__item">
                                         <div class="govuk-form-group">
@@ -239,12 +242,11 @@
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="InadequateComments">Enter your comments</label>
+
+                                <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
+
                                 <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-input--error"
-                                              id="InadequateComments"
-                                              name="InadequateComments"
-                                              rows="4"
-                                              aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-textarea--error-override" id="InadequateComments" name="InadequateComments" rows="4" aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
                                     <span id="InadequateComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                         You can enter up to 500 words
                                     </span>
@@ -269,12 +271,10 @@
                                 </p>
                                 <label class="govuk-label" for="ClarificationComments">Enter internal comments</label>
 
+                                <span class="govuk-error-message" asp-validation-for="ClarificationComments"></span>
+
                                 <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="ClarificationComments" sfa-validationerror-class="govuk-input--error"
-                                              id="ClarificationComments"
-                                              name="ClarificationComments"
-                                              rows="4"
-                                              aria-describedby="Comments-info">@Model.ClarificationComments</textarea>
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="ClarificationComments" sfa-validationerror-class="govuk-textarea--error-override" id="ClarificationComments" name="ClarificationComments" rows="4" aria-describedby="Comments-info">@Model.ClarificationComments</textarea>
                                     <span id="ClarificationComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                         You can enter up to 500 words
                                     </span>
