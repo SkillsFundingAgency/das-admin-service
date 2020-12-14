@@ -17,227 +17,279 @@
         </div>
     </div>
 
-    <!-- RoATP PMO -->
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpFinancialReview" id="roatp-financial-review">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                RoATP financial applications
+    @{
+        var roleTagHelper = new RoleTagHelper(HttpContextAccessor, (IAuthorizationService)HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAuthorizationService)));
+        var sectionsShown = 0;
+    }
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-7">
+
+        <!-- RoATP gateway assessor -->
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayAssessorTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview" id="roatp-gateway-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                RoATP gateway applications
             </h2>
-            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">New, in progress, clarification, withdraw, remove and the outcome of RoATP gateway applications.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="RoatpFinancial" asp-action="OpenApplications">
-                        Assess applications and view outcomes
+                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpGatewayBaseUrl">
+                        Go to RoATP gateway applications
                     </a>
                 </li>
             </ul>
         </div>
-    </div>
-    <!-- /RoATP PMO -->
+        <!-- /RoATP gateway assessor -->
 
-    <!-- RoATP assessor -->
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpFinancialAssessorTeam)) { sectionsShown++; }
+        }
+        <!-- RoATP PMO -->
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpFinancialReview" id="roatp-financial-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                RoATP financial applications
+            </h2>
+            <p class="govuk-body govuk-!-margin-bottom-2">Current, clarification and the outcome of RoATP financial applications.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
+                <li>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="RoatpFinancial" asp-action="OpenApplications">
+                        Go to RoATP financial applications
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- /RoATP PMO -->
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
+        <!-- RoATP assessor -->
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpAssessorTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview" id="roatp-assessor-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP assessor applications
             </h2>
-            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">New, in progress, moderation, clarification and the outcome of RoATP assessor applications.</p>
+            @* <p class="govuk-body govuk-!-margin-bottom-2">Assess new applications, view current applications and send clarifications.</p> *@
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" href="@Model.RoatpAssessorBaseUrl">
+                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpAssessorBaseUrl">
                         Go to RoATP assessor applications
                     </a>
                 </li>
             </ul>
         </div>
-    </div>
-    <!-- /RoATP assessor -->
+        <!-- /RoATP assessor -->
 
-    <!-- RoATP oversight -->
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpOversightReview" id="roatp-application-oversight">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
+        <!-- RoATP oversight -->
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpApplicationOversightTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpOversightReview" id="roatp-application-outcomes">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP application outcomes
             </h2>
-            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Decide upon the overall outcome of RoATP applications.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" href="@Model.RoatpOversightBaseUrl">
+                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpOversightBaseUrl">
                         Go to RoATP application outcomes
                     </a>
                 </li>
             </ul>
         </div>
-    </div>
-    <!-- /RoATP oversight -->
+        <!-- /RoATP oversight -->
 
-    <!-- RoATP gateway assessor -->
-    <div class="govuk-grid-row" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview" id="roatp-gateway-review">
-        <div class="govuk-grid-column-one-half">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                RoATP gateway applications
-            </h2>
-            <p class="govuk-body">Assess new applications, view current applications and send clarifications.</p>
-            <ul class="govuk-list">
-                <li>
-                    <a class="govuk-link" href="@Model.RoatpGatewayBaseUrl">
-                        Go to RoATP gateway applications
-                    </a>
-                </li>
-            </ul>
-            </p>
-        </div>
-    </div>
-    <!-- /RoATP gateway assessor -->
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
 
-    <!-- /RoATP gateway -->
-    <div class="govuk-grid-row" sfa-show-for-roles="@Roles.RoatpGatewayTeam" id="register-of-apprenticeship-training-providers">
-        <div class="govuk-grid-column-one-half">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam" id="register-of-apprenticeship-training-providers">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Manage the RoATP
             </h2>
-            <ul class="govuk-list">
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="RoatpHome" asp-action="Index">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="RoatpHome" asp-action="Index">
                         Search for an apprenticeship training provider
                     </a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
                         Add a new apprenticeship training provider
                     </a>
                 </li>
 
             </ul>
         </div>
-        <div class="govuk-grid-column-one-half">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
-                Reporting
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
+        @{
+            if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                RoATP reporting
             </h2>
-            <ul class="govuk-list">
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="DownloadRoatp" asp-action="Download">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="DownloadRoatp" asp-action="Download">
                         Download list of apprenticeship training providers
                     </a>
                 </li>
             </ul>
         </div>
-    </div>
-    <!-- /RoATP gateway -->
 
-    @{
-        var roleTagHelper = new RoleTagHelper(HttpContextAccessor, (IAuthorizationService)HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAuthorizationService)));
-        var sectionsShown = 0;
-    }
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
 
-    <div class="govuk-grid-row">
         @{
             var assessmentOutcomesAndCertificationsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(assessmentOutcomesAndCertificationsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@assessmentOutcomesAndCertificationsRoles" id="assessment-outcomes-and-certifications">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Assessment outcomes and certifications
             </h2>
-            <p class="govuk-body">Request certificates reprints, check assessment outcomes and status of certficates.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Request certificates reprints, check assessment outcomes and status of certficates.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="Search">Search</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Search">Search</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+    
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+    
         @{
             var privatelyFundedCertficateApprovalsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(privatelyFundedCertficateApprovalsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@privatelyFundedCertficateApprovalsRoles" id="privately-funded-certficate-approvals">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Privately funded certficate approvals
             </h2>
-            <p class="govuk-body">A table of privately funded certificates with options to approve, send for approval or reject.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">A table of privately funded certificates with options to approve, send for approval or reject.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="New">New</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="New">New</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent for approval</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent for approval</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="CertificateApprovals" asp-action="Rejected">Rejected</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="Rejected">Rejected</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var organisationApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(organisationApplicationsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@organisationApplicationsRoles" id="organisation-applications">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Organisation applications
             </h2>
-            <p class="govuk-body">Review and approve new organisation applications, check on progress, send and receive feedback.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Review and approve new organisation applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="new">New (@Model.OrganisationApplicationsNew)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="new">New (@Model.OrganisationApplicationsNew)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.OrganisationApplicationsInProgress)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.OrganisationApplicationsInProgress)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.OrganisationApplicationsHasFeedback)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.OrganisationApplicationsHasFeedback)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.OrganisationApplicationsApproved)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.OrganisationApplicationsApproved)</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var standardApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(standardApplicationsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@standardApplicationsRoles" id="standard-applications">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Standard applications
             </h2>
-            <p class="govuk-body">Review and approve new Standard applications, check on progress, send and receive feedback.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Review and approve new Standard applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="StandardApplication" asp-action="Index" asp-fragment="new">New (@Model.StandardApplicationsNew)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="new">New (@Model.StandardApplicationsNew)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="StandardApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.StandardApplicationsInProgress)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.StandardApplicationsInProgress)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="StandardApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.StandardApplicationsHasFeedback)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.StandardApplicationsHasFeedback)</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="StandardApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.StandardApplicationsApproved)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.StandardApplicationsApproved)</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var withdrawalApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(withdrawalApplicationsRoles)) { sectionsShown++; }
@@ -272,130 +324,135 @@
             if (roleTagHelper.ShowForRoles(financialHealthAssessmentRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@financialHealthAssessmentRoles" id="financial-health-assessment">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Financial health assessment
             </h2>
-            <p class="govuk-body">Review financial health of an organisation.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Review financial health of an organisation.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="Financial" asp-action="OpenApplications">New</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Financial" asp-action="OpenApplications">New</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="Financial" asp-action="RejectedApplications">Rejected</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Financial" asp-action="RejectedApplications">Rejected</a>
                 </li>
                 <li>
-                    <a class="govuk-link" asp-controller="Financial" asp-action="ClosedApplications">Closed</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Financial" asp-action="ClosedApplications">Closed</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var registeredEPAOsRoles = string.Join(",", Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.RegisterViewOnlyTeam);
             if (roleTagHelper.ShowForRoles(registeredEPAOsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@registeredEPAOsRoles" id="registered-epaos">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Registered EPAOs
             </h2>
-            <p class="govuk-body">Search, view and edit organisations that are currently live on the Register.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Search, view and edit organisations that are currently live on the Register.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="Register">Search</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Register">Search organisations</a>
                 </li>
                 <li sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">
-                    <a class="govuk-link" asp-controller="Register" asp-action="AddOrganisation">Add</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Register" asp-action="AddOrganisation">Add an organisation</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var printScheduleConfigurationRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(printScheduleConfigurationRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@printScheduleConfigurationRoles" id="print-schedule-configurations">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Print schedule configuration
             </h2>
-            <p class="govuk-body">Create, delete and view existing print schedules.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Create, delete and view existing print schedules.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="ScheduleConfig">View</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="ScheduleConfig">View</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var reportsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam, Roles.AssessmentDeliveryTeam, Roles.EpaoReportsOnlyTeam);
             if (roleTagHelper.ShowForRoles(reportsRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@reportsRoles" id="reports">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Reports
             </h2>
-            <p class="govuk-body">On demand reporting</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">On demand reporting</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="Reports">Reports</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="Reports">Reports</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var certificateBatchSearchRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(certificateBatchSearchRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@certificateBatchSearchRoles" id="certificate-batch-search">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Certificate batch search
             </h2>
-            <p class="govuk-body">View current batches and search for certificates by batch number.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">View current batches and search for certificates by batch number.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="BatchSearch">Batch search</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="BatchSearch">Batch search</a>
                 </li>
             </ul>
         </div>
-        @if (sectionsShown % 2 == 0)
-        {
-        @:</div>
-        @:<div class="govuk-grid-row">
-        }
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
         @{
             var recordAGradeAPIRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(recordAGradeAPIRoles)) { sectionsShown++; }
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@recordAGradeAPIRoles" id="record-a-grade-api">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 Record a grade API
             </h2>
-            <p class="govuk-body">Manage user's access and generate API keys.</p>
-            <ul class="govuk-list">
+            <p class="govuk-body govuk-!-margin-bottom-2">Manage user's access and generate API keys.</p>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
                 <li>
-                    <a class="govuk-link" asp-controller="ExternalApi">Users</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="ExternalApi">Users</a>
                 </li>
             </ul>
         </div>
     </div>
 
 </main>
-
-
-
-
-
