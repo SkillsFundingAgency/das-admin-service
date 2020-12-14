@@ -6,6 +6,7 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
@@ -33,7 +34,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
 
-        public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection, string backAction, string backController, string backOrganisationId)
+        public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection, 
+            Dictionary<string, object> applicationData, string backAction, string backController, string backOrganisationId)
             : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
@@ -71,7 +73,44 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                         }
                     }
                 }
+
+                foreach(var question in pg.Questions)
+                {
+                    question.Label = ReplaceApplicationDataPropertyPlaceholders(question.Label, applicationData);
+                    question.Hint = ReplaceApplicationDataPropertyPlaceholders(question.Hint, applicationData);
+                    question.QuestionBodyText = ReplaceApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
+                    question.ShortLabel = ReplaceApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
+                }
             }
+        }
+
+        private string ReplaceApplicationDataPropertyPlaceholders(string input, Dictionary<string, object> applicationData)
+        {
+            string formattedText = input;
+
+            Func<Match, string> evaluator = (match) =>
+            {
+                var propertyName = match.Groups[2].Value;
+                var alignment = match.Groups[3].Value;
+                var formatString = match.Groups[4].Value;
+
+                return applicationData.TryGetValue(propertyName, out object value)
+                    ? string.Format("{0" + alignment + formatString + "}", value)
+                    : string.Empty;
+            };
+
+            try
+            {
+                formattedText = Regex.Replace(
+                    formattedText,
+                    "{{((\\w+)(,[0-9]*)?)(:[\\w\\s.:/]*)?}}",
+                    new MatchEvaluator(evaluator),
+                    RegexOptions.IgnorePatternWhitespace,
+                    TimeSpan.FromSeconds(.25));
+            }
+            catch (RegexMatchTimeoutException) { }
+
+            return formattedText;
         }
 
         public string DisplayAnswerValue(QnA.Api.Types.Page.Answer answer, QnA.Api.Types.Page.Question question)
