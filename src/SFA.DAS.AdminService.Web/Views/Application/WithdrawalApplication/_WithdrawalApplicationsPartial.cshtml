@@ -32,11 +32,11 @@
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Type"
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Details"
                                             asp-action="@Model.SortColumnAction"
                                             asp-controller="WithdrawalApplication"
                                             asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Type"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Details"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Details</sfa-sortable-column-header>
             </th>
@@ -90,7 +90,7 @@
                         }
                         else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                         {
-                            @($"{application.StandardName} (ST{application.StandardCode})")
+                            @($"{application.StandardName} ({application.StandardReference})")
                         }
                     </td>
 
