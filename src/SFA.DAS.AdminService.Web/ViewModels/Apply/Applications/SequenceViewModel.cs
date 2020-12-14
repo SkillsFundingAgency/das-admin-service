@@ -35,12 +35,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             
             SequenceNo = sequence.SequenceNo;
             Status = sequence.Status;
-
-            var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO };
-            GovernanceRequired = governanceRequiredForSequences.Contains(SequenceNo);
         }
-
-        public bool GovernanceRequired { get; }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)
         {
