@@ -135,11 +135,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
         }
-        
-        public async Task UpdateGovernanceRecommendation(Guid applicationId, GovernanceRecommendation recommendation)
-        {
-            await Post($"/Review/Applications/{applicationId}/UpdateGovernanceRecommendation", recommendation);
-        }
         #endregion
 
         #region Financial

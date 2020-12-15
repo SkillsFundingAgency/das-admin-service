@@ -58,8 +58,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
 
-        public GovernanceRecommendation Recommendation { get; set; }
-
         public string LegalName { get; set; }
         public string TradingName { get; set; }
         public string ProviderName { get; set; }
