@@ -5,6 +5,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
     public class RoatpFinancialSummaryDownloadItem : RoatpFinancialSummaryItem
     {
         public FinancialData FinancialData { get; set; }
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
     }
 
     public class FinancialData
