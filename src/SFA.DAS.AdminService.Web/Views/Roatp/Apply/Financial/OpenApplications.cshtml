@@ -26,6 +26,13 @@
             </h1>
         </div>
     </div>
+    
+    @if(Model.Applications.TotalRecordCount > 0)
+    {
+        <p class="govuk-body">
+            <a href="@Url.Action("DownloadOpenApplications", "RoatpFinancial")" class="govuk-link govuk-link--no-visited-state">Download all current applications</a> (CSV)
+        </p>
+    }
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -58,6 +65,7 @@
                                     <th class="govuk-table__header" scope="col">Provider route</th>
                                     <th class="govuk-table__header" scope="col">Declared in application</th>
                                     <th class="govuk-table__header" scope="col">Submitted date</th>
+                                    <th class="govuk-table__header" scope="col">Gateway pass date</th>
                                     <th class="govuk-table__header govuk-table__header--numeric" scope="col">Application status</th>
                                 </tr>
                             </thead>

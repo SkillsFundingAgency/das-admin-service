@@ -18,7 +18,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.Models.Roatp;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
@@ -34,11 +37,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IRoatpFinancialClarificationViewModelValidator _clarificationValidator;
-        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpFinancialClarificationViewModelValidator clarificationValidator)
+        private readonly ICsvExportService _csvExportService;
+
+        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpFinancialClarificationViewModelValidator clarificationValidator, ICsvExportService csvExportService)
         {
             _applyApiClient = applyApiClient;
             _contextAccessor = contextAccessor;
             _clarificationValidator = clarificationValidator;
+            _csvExportService = csvExportService;
             _qnaApiClient = qnaApiClient;
         }
 
@@ -54,6 +60,21 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
 
             return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
+        }
+
+
+        [HttpGet("/Roatp/Financial/Current/Download")]
+        public async Task<IActionResult> DownloadOpenApplications(int page = 1)
+        {
+            var applications = await _applyApiClient.GetOpenFinancialApplicationsForDownload();
+
+            var exportModel = Mapper.Map<List<RoatpFinancialSummaryExportViewModel>>(applications);
+
+            var bytearray = _csvExportService
+                    .WriteCsvToByteArray<RoatpFinancialSummaryExportViewModel, RoatpFinancialSummaryExportCsvMap>(exportModel);
+
+            return File(bytearray, "text/csv", "current_applications_xxx.csv"); //todo: filename current_applications_011220.csv
+
         }
 
         [HttpGet("/Roatp/Financial/Clarification")]

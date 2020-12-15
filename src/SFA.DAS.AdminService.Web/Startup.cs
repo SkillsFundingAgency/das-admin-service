@@ -233,6 +233,8 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ITokenService>(),
                 x.GetService<ILogger<StandardServiceClient>>()));
 
+            services.AddTransient<ICsvExportService, CsvExportService>();
+
             Common.DependencyInjection.ConfigureDependencyInjection(services);
             services.AddTransient<IFeatureToggles>(x => { 
                 var config = x.GetService<IWebConfiguration>(); 

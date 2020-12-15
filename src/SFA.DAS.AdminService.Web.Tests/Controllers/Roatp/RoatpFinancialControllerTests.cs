@@ -12,6 +12,7 @@ using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
@@ -53,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup() 
             };
@@ -210,7 +211,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };
@@ -301,7 +302,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };
@@ -390,7 +391,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object)
+                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };
