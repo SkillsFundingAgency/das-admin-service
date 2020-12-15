@@ -19,13 +19,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
         [OneTimeSetUp]
         public void Arrange()
         {
-            MappingStartup.AddMappings();
-            
             certificateApprovalsController =
                 new CertificateApprovalsController(MockLogger.Object,
                     MockHttpContextAccessor.Object,
                     MockApiClient                  
                     );
+
+            MappingStartup.AddMappings();
+        }
+
+        [OneTimeTearDown]
+        public void GlobalTearDown()
+        {
+            AutoMapper.Mapper.Reset();
         }
 
         [Test]

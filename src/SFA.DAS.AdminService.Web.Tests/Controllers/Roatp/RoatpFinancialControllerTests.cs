@@ -11,7 +11,6 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Testing.MockedObjects;
 using SFA.DAS.AdminService.Common.Validation;
-using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
@@ -28,7 +27,6 @@ using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
-
     [TestFixture]
     public class RoatpFinancialControllerTests
     {
@@ -42,6 +40,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private string _emailAddress = "Test@test.com";
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         private FinancialReviewDetails _financialReviewDetails;
+
+        
 
         [SetUp]
         public void Before_each_test()
@@ -484,8 +484,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [Test]
         public async Task DownloadOpenApplications_downloads_file()
         {
-            AutoMapper.Mapper.Initialize(expression => expression.AddProfile(new RoatpFinancialSummaryExportViewModelProfile()));
-
             var apiResponse = new List<RoatpFinancialSummaryDownloadItem>();
 
             _applicationApplyApiClient.Setup(x => x.GetOpenFinancialApplicationsForDownload())
