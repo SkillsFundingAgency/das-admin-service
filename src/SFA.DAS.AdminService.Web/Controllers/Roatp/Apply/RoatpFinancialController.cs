@@ -73,8 +73,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var bytearray = _csvExportService
                     .WriteCsvToByteArray<RoatpFinancialSummaryExportViewModel, RoatpFinancialSummaryExportCsvMap>(exportModel);
 
-            return File(bytearray, "text/csv", "current_applications_xxx.csv"); //todo: filename current_applications_011220.csv
+            var fileName = $"current_applications_{DateTime.UtcNow:ddMMyy}.csv";
 
+            return File(bytearray, "text/csv", fileName);
         }
 
         [HttpGet("/Roatp/Financial/Clarification")]

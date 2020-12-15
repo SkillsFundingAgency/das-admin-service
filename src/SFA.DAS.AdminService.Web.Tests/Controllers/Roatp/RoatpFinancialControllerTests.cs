@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +11,11 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Testing.MockedObjects;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
@@ -32,6 +36,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IRoatpFinancialClarificationViewModelValidator> _clarificationValidator;
+        private Mock<ICsvExportService> _csvExportService;
         private RoatpFinancialController _controller;
         private readonly Guid _applicationId = Guid.NewGuid();
         private string _emailAddress = "Test@test.com";
@@ -45,8 +50,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
             _clarificationValidator = new Mock<IRoatpFinancialClarificationViewModelValidator>();
             _qnaApiClient = new Mock<IQnaApiClient>();
+            _csvExportService = new Mock<ICsvExportService>();
 
-           
 
             _financialReviewDetails = new FinancialReviewDetails();
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
@@ -54,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
+                MockHttpContextAccessor.Object, _clarificationValidator.Object, _csvExportService.Object)
             {
                 ControllerContext = MockedControllerContext.Setup() 
             };
@@ -474,6 +479,28 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var result = _controller.DownloadClarificationFile(_applicationId, filename).Result as FileStreamResult;
             Assert.AreEqual(filename,result.FileDownloadName);
+        }
+
+        [Test]
+        public async Task DownloadOpenApplications_downloads_file()
+        {
+            AutoMapper.Mapper.Initialize(expression => expression.AddProfile(new RoatpFinancialSummaryExportViewModelProfile()));
+
+            var apiResponse = new List<RoatpFinancialSummaryDownloadItem>();
+
+            _applicationApplyApiClient.Setup(x => x.GetOpenFinancialApplicationsForDownload())
+                .ReturnsAsync(() => apiResponse);
+
+            var expectedFileContents = Encoding.ASCII.GetBytes("THIS IS A TEST");
+
+            _csvExportService.Setup(x =>
+                    x.WriteCsvToByteArray<RoatpFinancialSummaryExportViewModel, RoatpFinancialSummaryExportCsvMap>(new List<RoatpFinancialSummaryExportViewModel>()))
+                .Returns(expectedFileContents);
+
+            var result = await _controller.DownloadOpenApplications() as FileContentResult;
+
+            Assert.AreEqual(expectedFileContents, result.FileContents);
+            Assert.AreEqual($"current_applications_{DateTime.UtcNow:ddMMyy}.csv", result.FileDownloadName);
         }
     }
 }
