@@ -2,7 +2,7 @@
 {
     public class WithdrawalApplicationsSortColumn
     {
-        public const string Type = "Type";
+        public const string Details = "Details";
         public const string Name = "Name";
         public const string GovernanceRecommendation = "GovernanceRecommendation";
         public const string Status = "Status";
