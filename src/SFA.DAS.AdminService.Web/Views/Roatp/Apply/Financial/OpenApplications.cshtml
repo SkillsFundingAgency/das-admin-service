@@ -88,6 +88,9 @@
                                     <td class="govuk-table__cell" data-label="Submitted date">
                                         @item.SubmittedDate.ToSfaShortDateString()
                                     </td>
+                                    <td class="govuk-table__cell" data-label="Submitted date">
+                                        @item.GatewayOutcomeDateTime.ToSfaShortDateString()
+                                    </td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Application status">
                                         @{
                                             switch (item.FinancialReviewStatus)

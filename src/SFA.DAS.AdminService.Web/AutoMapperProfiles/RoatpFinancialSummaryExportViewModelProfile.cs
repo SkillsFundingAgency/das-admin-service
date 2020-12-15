@@ -20,11 +20,9 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.Route, opt => opt.MapFrom(source => source.ApplicationRoute))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.OrganisationName))
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
-
                 .ForMember(dest => dest.SubmissionDate, opt => opt.MapFrom(source => source.SubmittedDate))
-                
-                //todo: gateway pass date
-                
+                .ForMember(dest => dest.GatewayCompletionDate, opt => opt.MapFrom(source => source.GatewayOutcomeDateTime))
+            
                 //.ForMember(dest => dest.CharityNo, opt => opt.MapFrom(source => source))
 
 
