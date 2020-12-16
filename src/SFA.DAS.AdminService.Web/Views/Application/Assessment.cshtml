@@ -69,21 +69,18 @@
                         @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)
                         {
                             <p class="govuk-body">You are about to send back the first stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
+                            <p class="govuk-body">Before returning your assessment back to the applicant, review the comments that you added.</p>
                         }
                         else if (Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                         {
                             <p class="govuk-body">You are about to send back the second stage of this application. This means that the applicant will have to action any comments and resubmit.</p>
+                            <p class="govuk-body">Before returning your assessment back to the applicant, review the comments that you added.</p>
                         }
-                        else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                        else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                         {
-                            <p class="govuk-body">You are about to send back this organisation withdrawal application. This means that the applicant will have to action any comments and resubmit.</p>
+                            <p class="govuk-body">You're about to ask for more information on this withdrawal notification. This means the applicant will have to clarify and resubmit their withdrawal.</p>
+                            <p class="govuk-body">Only ask for more information if you're happy with your comments.</p>
                         }
-                        else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                        {
-                            <p class="govuk-body">You are about to send back this standard withdrawal application. This means that the applicant will have to action any comments and resubmit.</p>
-                        }
-
-                        <p class="govuk-body">Before returning your assessment back to the applicant, review the comments that you added.</p>
 
                         @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                         {
@@ -115,7 +112,7 @@
                         }
 
                         <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
-                        <button class="govuk-button" type="submit">Return application</button>
+                        <button class="govuk-button" type="submit">Ask for more information</button>
                     }
                 </form>
             </div>
