@@ -41,12 +41,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             ContactName = application.ContactName;
             ContactEmail = application.ContactEmail;
-
-            var governanceRequiredForSequences = new int[] { ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO, ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO };
-            GovernanceRequired = governanceRequiredForSequences.Contains(SequenceNo);
         }
-
-        public bool GovernanceRequired { get; }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)
         {
@@ -70,8 +65,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string FinancialReviewStatus { get; set; }
         public DateTime? FinancialDueDate { get; set; }
-
-        public GovernanceRecommendation Recommendation { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }

@@ -23,8 +23,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest organisationApplicationsRequest);
 
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
-        Task UpdateGovernanceRecommendation(Guid applicationId, GovernanceRecommendation grarecommendationde);
-        
+
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         
         Task StartFinancialReview(Guid applicationId, string reviewer);
@@ -41,7 +40,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
-        public GovernanceRecommendation GovernanceRecommendation { get; set; }
         public FinancialGrade financialGrade { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }

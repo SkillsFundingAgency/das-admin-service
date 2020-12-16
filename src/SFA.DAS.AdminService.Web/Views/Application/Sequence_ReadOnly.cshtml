@@ -96,19 +96,7 @@
                             <dt class="govuk-summary-list__key">Financial due date</dt>
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
                         </div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.Recommendation.SelectedRecommendation) && Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Governance Recommendation</dt>
-                            <dd class="govuk-summary-list__value">@Model.Recommendation.SelectedRecommendation</dd>
-                        </div>
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Governance report</dt>
-                            <dd class="govuk-summary-list__value"><a href="somewhere">Download a report</a></dd>
-                        </div>
-                    }
+                    }          
                     @if (Model.IsWithdrawal)
                     {
                         <div class="govuk-summary-list__row">
