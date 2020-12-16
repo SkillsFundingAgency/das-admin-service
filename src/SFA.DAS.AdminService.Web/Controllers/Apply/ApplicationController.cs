@@ -102,13 +102,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
-            var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
-            {             
+            {
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
                 {
                     await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, _contextAccessor.HttpContext.User.UserDisplayName());
@@ -146,8 +147,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
                 
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
+                var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
-                var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
                 return View(nameof(Section), sectionVm);
             }

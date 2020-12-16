@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -6,6 +7,7 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
@@ -33,7 +35,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         
         public Dictionary<string, AddressViewModel> Addresses = new Dictionary<string, AddressViewModel>();
 
-        public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection, string backAction, string backController, string backOrganisationId)
+        public SectionViewModel(ApplicationResponse application, Organisation organisation, Section section, ApplySection applySection, 
+            Dictionary<string, object> applicationData, string backAction, string backController, string backOrganisationId)
             : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
@@ -70,6 +73,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                             Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value));
                         }
                     }
+                }
+
+                foreach(var question in pg.Questions)
+                {
+                    question.Label = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Label, applicationData);
+                    question.Hint = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Hint, applicationData);
+                    question.QuestionBodyText = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
+                    question.ShortLabel = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
                 }
             }
         }
