@@ -21,9 +21,6 @@
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <a class="govuk-link das-no-wrap">Type</a>
-            </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@WithdrawalApplicationsSortColumn.Name"
                                             asp-action="@Model.SortColumnAction"
@@ -31,7 +28,17 @@
                                             asp-fragment="@Model.Fragment"
                                             sfa-sort-column="@WithdrawalApplicationsSortColumn.Name"
                                             sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Name</sfa-sortable-column-header>
+                                            sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Details"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="WithdrawalApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Details"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Details</sfa-sortable-column-header>
             </th>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
@@ -55,40 +62,40 @@
                                             sfa-sort-column="@Model.DateSortColumnNameForReviewStatus()"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">@Model.DateHeaderColumnNameForReviewStatus()</sfa-sortable-column-header>
-                                        </th>
-                                    </tr>
+            </th>
+        </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model?.PaginatedList != null)
         {
             @foreach (var application in Model.PaginatedList.Items)
             {
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell">
-                @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-                {
-                    <text>Organisation</text>
-                }
-                else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                {
-                    <text>Standard</text>
-                }
-            </td>
-            <td class="govuk-table__cell">
-                <a class="govuk-link"
-                   asp-action="Sequence"
-                   asp-controller="Application"
-                   asp-route-applicationId="@application.ApplicationId"
-                   asp-route-sequenceNo="@application.SequenceNo"
-                   asp-route-backAction="WithdrawalApplications"
-                   asp-route-backController="WithdrawalApplication">
-                    @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link"
+                           asp-action="Sequence"
+                           asp-controller="Application"
+                           asp-route-applicationId="@application.ApplicationId"
+                           asp-route-sequenceNo="@application.SequenceNo"
+                           asp-route-backAction="WithdrawalApplications"
+                           asp-route-backController="WithdrawalApplication">
+                            @application.OrganisationName
+                        </a>
+                    </td>
+                    <td class="govuk-table__cell">
+                        @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                        {
+                            <text>Withdrawal from register</text>
+                        }
+                        else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                        {
+                            @($"{application.StandardName} ({application.StandardReference})")
+                        }
+                    </td>
+
+                    @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
                     {
-                        @application.OrganisationName
-                    }
-                    else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        @application.StandardName
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
                     }
                 </a>
             </td>

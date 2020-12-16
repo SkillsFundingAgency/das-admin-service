@@ -48,5 +48,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public int? StandardCode { get; set; }
         public string CreatedBy { get; set; }
+        public string ContactName { get; set; }
+        public string ContactEmail { get; set; }
     }
 }
