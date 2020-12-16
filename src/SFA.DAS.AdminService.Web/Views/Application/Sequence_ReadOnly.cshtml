@@ -38,6 +38,13 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
+                    @if (!string.IsNullOrWhiteSpace(Model.OrganisationName) && Model.IsWithdrawal)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Organisation name</dt>
+                            <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
+                        </div>
+                    }
                     @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
@@ -45,19 +52,36 @@
                             <dd class="govuk-summary-list__value">@Model.Standard</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            <dt class="govuk-summary-list__key">Details</dt>
+                            <dd class="govuk-summary-list__value">@Model.StandardWithReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trading name</dt>
-                            <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
+                            <dt class="govuk-summary-list__key">Details</dt>
+                            <dd class="govuk-summary-list__value">Withdrawal from register</dd>
                         </div>
+                    }
+                    @if (!Model.IsWithdrawal)
+                    {
+                        @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Registered name</dt>
+                                <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Trading name</dt>
+                                <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
+                            </div>
+                        }
                     }
                     @if (Model.Ukprn.HasValue)
                     {
@@ -71,6 +95,17 @@
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Financial due date</dt>
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
+                        </div>
+                    }          
+                    @if (Model.IsWithdrawal)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contact details</dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ContactName
+                                <br />
+                                @Model.ContactEmail
+                            </dd>
                         </div>
                     }
                 </dl>
