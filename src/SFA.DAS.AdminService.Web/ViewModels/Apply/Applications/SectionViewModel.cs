@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -76,41 +77,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
                 foreach(var question in pg.Questions)
                 {
-                    question.Label = ReplaceApplicationDataPropertyPlaceholders(question.Label, applicationData);
-                    question.Hint = ReplaceApplicationDataPropertyPlaceholders(question.Hint, applicationData);
-                    question.QuestionBodyText = ReplaceApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
-                    question.ShortLabel = ReplaceApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
+                    question.Label = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Label, applicationData);
+                    question.Hint = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.Hint, applicationData);
+                    question.QuestionBodyText = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.QuestionBodyText, applicationData);
+                    question.ShortLabel = ApplicationDataFormatHelper.FormatApplicationDataPropertyPlaceholders(question.ShortLabel, applicationData);
                 }
             }
-        }
-
-        private string ReplaceApplicationDataPropertyPlaceholders(string input, Dictionary<string, object> applicationData)
-        {
-            string formattedText = input;
-
-            Func<Match, string> evaluator = (match) =>
-            {
-                var propertyName = match.Groups[2].Value;
-                var alignment = match.Groups[3].Value;
-                var formatString = match.Groups[4].Value;
-
-                return applicationData.TryGetValue(propertyName, out object value)
-                    ? string.Format("{0" + alignment + formatString + "}", value)
-                    : string.Empty;
-            };
-
-            try
-            {
-                formattedText = Regex.Replace(
-                    formattedText,
-                    "{{((\\w+)(,[0-9]*)?)(:[\\w\\s.:/]*)?}}",
-                    new MatchEvaluator(evaluator),
-                    RegexOptions.IgnorePatternWhitespace,
-                    TimeSpan.FromSeconds(.25));
-            }
-            catch (RegexMatchTimeoutException) { }
-
-            return formattedText;
         }
 
         public string DisplayAnswerValue(QnA.Api.Types.Page.Answer answer, QnA.Api.Types.Page.Question question)

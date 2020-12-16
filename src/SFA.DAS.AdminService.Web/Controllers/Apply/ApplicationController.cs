@@ -120,7 +120,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
-            var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
             var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
@@ -165,7 +165,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
                 
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
-                var applicationData = await _qnaApiClient.GetApplicationData(application.ApplicationId);
+                var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
                 var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
