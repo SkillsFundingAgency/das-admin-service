@@ -272,14 +272,14 @@
                         Delivery Area Notes
                     </label>
                     <span class="govuk-error-message" asp-validation-for="DeliveryAreasComments"></span>
-                    <textarea class="govuk-input" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="govuk-input--error" asp-for="DeliveryAreasComments" rows="2"></textarea>
+                    <textarea class="govuk-textarea" maxlength="500" name="DeliveryAreasComments" id="DeliveryAreasComments" sfa-validationerror-class="govuk-textarea--error-override" asp-for="DeliveryAreasComments" rows="2"></textarea>
                 </div>
                 <div class="govuk-form-group" sfa-validation-for="Comments" sfa-validationerror-class="govuk-form-group--error">
                     <label class="govuk-label" for="Comments">
                         Comments
                     </label>
                     <span class="govuk-error-message" asp-validation-for="Comments"></span>
-                    <textarea class="govuk-textarea" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="govuk-textarea--error" asp-for="Comments" rows="5"></textarea>
+                    <textarea class="govuk-textarea" maxlength="500" name="Comments" id="Comments" sfa-validationerror-class="govuk-textarea--error-override" asp-for="Comments" rows="5"></textarea>
                 </div>
 
                 <button class="govuk-button govuk-!-margin-right-1" type="submit">Save</button>

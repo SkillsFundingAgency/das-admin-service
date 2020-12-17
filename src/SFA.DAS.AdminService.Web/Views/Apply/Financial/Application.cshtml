@@ -97,42 +97,42 @@
 
     @if (Model.Section.QnAData.Pages.SelectMany(p => p.Questions).Any(q => q.Input.Type != "FileUpload"))
     {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <table class="govuk-table govuk-table--s">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">
-                            Questions
-                        </th>
-                        <th class="govuk-table__header" scope="col">
-                            Answers
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var pg in Model.Section.QnAData.Pages)
-                    {
-                        foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <table class="govuk-table govuk-table--s">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">
+                                Questions
+                            </th>
+                            <th class="govuk-table__header" scope="col">
+                                Answers
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var pg in Model.Section.QnAData.Pages)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@question.Label</td>
-                                <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
-                            </tr>
+                            foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@question.Label</td>
+                                    <td class="govuk-table__cell">@pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.ToString()</td>
+                                </tr>
+                            }
                         }
-                    }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
     }
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form class="js-disable-on-submit" asp-action="Grade" asp-controller="Financial">
                 <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                <input type="hidden" name="Id" value="@Model.Id"/>
-                <input type="hidden" name="OrgId" value="@Model.OrgId"/>
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="OrgId" value="@Model.OrgId" />
 
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 
@@ -302,7 +302,7 @@
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
                                 <label class="govuk-label" for="Grade.InadequateMoreInformation">Why is the application inadequate?</label>
-                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" id="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="govuk-input--error"></textarea>
+                                <textarea class="govuk-textarea" rows="4" name="Grade.InadequateMoreInformation" id="Grade.InadequateMoreInformation" sfa-validation-for="Grade.InadequateMoreInformation" sfa-validationerror-class="govuk-textarea--error-override"></textarea>
                             </div>
                         </div>
 
