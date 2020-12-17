@@ -190,12 +190,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Evaluated(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
-            if (application?.financialGrade is null)
+            if (application?.FinancialGrade is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            return View("~/Views/Apply/Financial/Graded.cshtml", application.financialGrade);
+            return View("~/Views/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
         private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(ApplicationResponse applicationFromAssessor, FinancialGrade grade)
@@ -206,7 +206,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
             else if (grade is null)
             {
-                grade = applicationFromAssessor.financialGrade;
+                grade = applicationFromAssessor.FinancialGrade;
             }
 
             var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);

@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         {
             ApplicationId = application.Id;
             ApplicationReference = application.ApplyData.Apply.ReferenceNumber;
-            Grade = application.financialGrade;
+            Grade = application.FinancialGrade;
 
             LegalName = organisation.OrganisationData.LegalName;
             TradingName = organisation.OrganisationData.TradingName;
