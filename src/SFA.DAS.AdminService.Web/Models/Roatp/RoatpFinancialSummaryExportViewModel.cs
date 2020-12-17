@@ -13,14 +13,14 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
         public string Ukprn { get; set; }
         public string CompanyNo { get; set; }
         public string CharityNo { get; set; }
-        public long TurnOver { get; set; }
-        public long Depreciation { get; set; }
-        public long ProfitLoss { get; set; }
-        public long Dividends { get; set; }
-        public long IntangibleAssets { get; set; }
-        public long Assets { get; set; }
-        public long Liabilities { get; set; }
-        public long ShareholderFunds { get; set; }
-        public long Borrowings { get; set; }
+        public long? TurnOver { get; set; }
+        public long? Depreciation { get; set; }
+        public long? ProfitLoss { get; set; }
+        public long? Dividends { get; set; }
+        public long? IntangibleAssets { get; set; }
+        public long? Assets { get; set; }
+        public long? Liabilities { get; set; }
+        public long? ShareholderFunds { get; set; }
+        public long? Borrowings { get; set; }
     }
 }
