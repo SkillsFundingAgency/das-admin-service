@@ -39,13 +39,14 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
+        public string ApplicationType { get; set; }
         public Guid OrganisationId { get; set; }
-        public FinancialGrade financialGrade { get; set; }
+        public string EndPointAssessorName { get; set; }
+        public FinancialGrade FinancialGrade { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
-
         public int? StandardCode { get; set; }
         public string CreatedBy { get; set; }
         public string ContactName { get; set; }

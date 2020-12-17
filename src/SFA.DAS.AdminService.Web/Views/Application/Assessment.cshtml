@@ -1,4 +1,5 @@
 @using SFA.DAS.AssessorService.Domain.Consts;
+@using SFA.DAS.AdminService.Web.Domain.Apply; 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationSequenceAssessmentViewModel;
 
 @{
@@ -61,7 +62,7 @@
                             <p class="govuk-body">By approving this withdrawal notification, you confirm that you're happy with the information provided and you do not need feedback from the applicant.</p>
                         }
 
-                        <input type="hidden" asp-for="ReturnType" value="Approve" />
+                        <input type="hidden" asp-for="ReturnType" value="@ReturnTypes.Approve" />
                         <button class="govuk-button" type="submit">Approve application</button>
                     }
                     else
@@ -111,7 +112,7 @@
                             }
                         }
 
-                        <input type="hidden" asp-for="ReturnType" value="ReturnWithFeedback" />
+                        <input type="hidden" asp-for="ReturnType" value="@ReturnTypes.ReturnWithFeedback" />
                         <button class="govuk-button" type="submit">Ask for more information</button>
                     }
                 </form>

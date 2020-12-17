@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
     public class ApplicationReturnedViewModel : BackViewModel
     {
-        public Guid ApplicationId { get; }
         public int SequenceNo { get; }
-
+        public string StandardDescription { get; }
+        public string ReturnType { get; }
         public List<string> WarningMessages { get; set; }
 
-        public ApplicationReturnedViewModel(Guid applicationId, int sequenceNo, List<string> warningMessages)
-            : this(applicationId, sequenceNo, warningMessages, string.Empty, string.Empty, string.Empty)
+        public ApplicationReturnedViewModel(int sequenceNo, string standardDescription, string returnType, List<string> warningMessages)
+            : this(sequenceNo, standardDescription, returnType, warningMessages, string.Empty, string.Empty, string.Empty)
         {
         }
 
-        public ApplicationReturnedViewModel(Guid applicationId, int sequenceNo, List<string> warningMessages, string backAction, string backController, string backOrganisationId)
+        public ApplicationReturnedViewModel(int sequenceNo, string standardDescription, string returnType, List<string> warningMessages, string backAction, string backController, string backOrganisationId)
             : base (backAction, backController, backOrganisationId)
         {
-            ApplicationId = applicationId;
             SequenceNo = sequenceNo;
+            StandardDescription = standardDescription;
+            ReturnType = returnType;
             WarningMessages = warningMessages;
         }
     }

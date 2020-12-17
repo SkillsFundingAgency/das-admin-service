@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ReviewStatus = application.ReviewStatus;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
-            FinancialDueDate = application.financialGrade?.FinancialDueDate;
+            FinancialDueDate = application.FinancialGrade?.FinancialDueDate;
 
             LegalName = organisation.OrganisationData.LegalName;
             TradingName = organisation.OrganisationData.TradingName;
