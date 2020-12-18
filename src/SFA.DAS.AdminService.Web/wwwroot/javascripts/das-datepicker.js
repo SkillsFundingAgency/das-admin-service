@@ -1,15 +1,25 @@
 (function () {
-  var flatpickrOptions = {
+  var flatpickrFromOptions = {
     allowInput: true,
     maxDate: "today",
     wrap: true,
     disableMobile: "true",
+    onChange: function (selectedDates, dateStr) {
+      toFlatpickr.set("minDate", dateStr);
+    }
+  };
+
+  var flatpickrToOptions = {
+    allowInput: true,
+    maxDate: "today",
+    wrap: true,
+    disableMobile: "true"
     // altInput: true,
     // altFormat: "j F Y", // GDS date format: 30 June 2020
   };
 
-  var fromFlatpickr = flatpickr(".js-flatpickr-from", flatpickrOptions);
-  var toFlatpickr = flatpickr(".js-flatpickr-to", flatpickrOptions);
+  var fromFlatpickr = flatpickr(".js-flatpickr-from", flatpickrFromOptions);
+  var toFlatpickr = flatpickr(".js-flatpickr-to", flatpickrToOptions);
 
   document
     .querySelector(".js-flatpickr-from-input")
