@@ -27,18 +27,6 @@
   var fromFlatpickr = flatpickr(".js-flatpickr-from", flatpickrFromOptions);
   var toFlatpickr = flatpickr(".js-flatpickr-to", flatpickrToOptions);
 
-  document
-    .querySelector(".js-flatpickr-from-input")
-    .addEventListener("blur", function () {
-      fromFlatpickr.setDate(this.value, true);
-    });
-
-  document
-    .querySelector(".js-flatpickr-to-input")
-    .addEventListener("blur", function () {
-      toFlatpickr.setDate(this.value, true);
-    });
-
   var removeSelectedClassFromNodeList = function (nodeListSelector) {
     var nodeList = document.querySelectorAll("." + nodeListSelector);
     for (var i = 0; i < nodeList.length; i++) {
