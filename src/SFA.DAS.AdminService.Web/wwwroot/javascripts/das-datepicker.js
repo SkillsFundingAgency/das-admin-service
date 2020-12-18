@@ -4,16 +4,22 @@
     maxDate: "today",
     wrap: true,
     disableMobile: "true",
+    locale: {
+      firstDayOfWeek: 1
+    },
     onChange: function (selectedDates, dateStr) {
       toFlatpickr.set("minDate", dateStr);
-    }
+    },
   };
 
   var flatpickrToOptions = {
     allowInput: true,
     maxDate: "today",
     wrap: true,
-    disableMobile: "true"
+    disableMobile: "true",
+    locale: {
+      firstDayOfWeek: 1
+    }
     // altInput: true,
     // altFormat: "j F Y", // GDS date format: 30 June 2020
   };
