@@ -12,11 +12,5 @@
     {
       return View("~/Views/Roatp/Index.cshtml");
     }
-
-    [Route("application-download")]
-    public IActionResult ApplicationDownload()
-    {
-      return View("~/Views/Roatp/ApplicationDownload.cshtml");
-    }
   }
 }
