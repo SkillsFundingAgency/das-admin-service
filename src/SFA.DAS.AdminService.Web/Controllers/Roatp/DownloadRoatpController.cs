@@ -65,5 +65,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                     $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
             }
         }
+
+        [Route("application-download")]
+        public IActionResult ApplicationDownload()
+        {
+            return View("~/Views/Roatp/ApplicationDownload.cshtml");
+        }
     }
 }
