@@ -68,7 +68,7 @@
       </ul>
 
       @* <form id="reportDownloadForm" data-module="das-clear-form-errors" novalidate method="get" action="/download"> *@
-      <form method="post" enctype="multipart/form-data" id="reportDownloadForm" data-module="das-clear-form-errors" novalidate method="get" asp-controller="RoatpHome" asp-action="ApplicationDownload">
+      <form method="post" enctype="multipart/form-data" id="reportDownloadForm" data-module="das-clear-form-errors" novalidate method="get" asp-controller="DownloadRoatp" asp-action="ApplicationDownloadCsv">
       
         @* <div class="govuk-form-group @Html.AddClassIfPropertyInError(x => x.FromDate, "govuk-form-group--error ") @Html.AddClassIfPropertyInError(x => x.ToDate, "govuk-form-group--error ")"> *@
         <div class="govuk-form-group">
@@ -86,7 +86,7 @@
                 <span id="FromDate-hint" class="govuk-hint js-hidden">For example, 2020-05-15</span>
                 <div class="flatpickr--input-group js-flatpickr-from">
                   @* <input asp-for="FromDate" class="govuk-input flatpickr-input js-flatpickr-from-input @Html.AddClassIfPropertyInError(x => x.FromDate, "govuk-input--error ")" type="text" placeholder="From:" autocomplete="off" aria-describedby="FromDate-hint" data-input> *@
-                  <input id="FromDate" class="govuk-input flatpickr-input js-flatpickr-from-input" type="text" placeholder="From:" autocomplete="off" aria-describedby="FromDate-hint" data-input>
+                  <input id="FromDate" name="FromDate" class="govuk-input flatpickr-input js-flatpickr-from-input" type="text" placeholder="From:" autocomplete="off" aria-describedby="FromDate-hint" data-input>
                   <a class="flatpickr__input-button" title="toggle" data-toggle>
                     <svg version="1.1" viewBox="0 0 512 512" width="24" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <path d="m492 352c11.046 0 20-8.954 20-20v-212c0-44.112-35.888-80-80-80h-26v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-91v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-90v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-25c-44.112 0-80 35.888-80 80v312c0 44.112 35.888 80 80 80h352c44.112 0 80-35.888 80-80 0-11.046-8.954-20-20-20s-20 8.954-20 20c0 22.056-17.944 40-40 40h-352c-22.056 0-40-17.944-40-40v-312c0-22.056 17.944-40 40-40h25v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h90v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h91v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h26c22.056 0 40 17.944 40 40v212c0 11.046 8.954 20 20 20z" />
@@ -112,7 +112,7 @@
                 <span id="ToDate-hint" class="govuk-hint js-hidden">For example, 2020-06-25</span>
                 <div class="flatpickr--input-group js-flatpickr-to">
                   @* <input asp-for="ToDate" class="govuk-input flatpickr-input js-flatpickr-to-input @Html.AddClassIfPropertyInError(x => x.ToDate, "govuk-input--error ")" type="text" placeholder="To:" autocomplete="off" aria-describedby="ToDate-hint" data-input> *@
-                  <input id="ToDate" class="govuk-input flatpickr-input js-flatpickr-to-input" type="text" placeholder="To:" autocomplete="off" aria-describedby="ToDate-hint" data-input>
+                  <input id="ToDate" name="ToDate" class="govuk-input flatpickr-input js-flatpickr-to-input" type="text" placeholder="To:" autocomplete="off" aria-describedby="ToDate-hint" data-input>
                   <a class="flatpickr__input-button" title="toggle" data-toggle>
                     <svg version="1.1" viewBox="0 0 512 512" width="24" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <path d="m492 352c11.046 0 20-8.954 20-20v-212c0-44.112-35.888-80-80-80h-26v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-91v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-90v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-25c-44.112 0-80 35.888-80 80v312c0 44.112 35.888 80 80 80h352c44.112 0 80-35.888 80-80 0-11.046-8.954-20-20-20s-20 8.954-20 20c0 22.056-17.944 40-40 40h-352c-22.056 0-40-17.944-40-40v-312c0-22.056 17.944-40 40-40h25v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h90v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h91v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h26c22.056 0 40 17.944 40 40v212c0 11.046 8.954 20 20 20z" />
