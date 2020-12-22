@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="2.8.391" />
+    <PackageReference Include="CsvHelper" Version="18.0.0" />
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
     <PackageReference Include="FluentValidation" Version="8.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
