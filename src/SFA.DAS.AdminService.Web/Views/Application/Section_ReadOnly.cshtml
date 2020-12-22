@@ -142,93 +142,97 @@
                     <dl class="govuk-summary-list">
                         @foreach (var pg in Model.Section.QnAData.Pages.Where(p => p.Active))
                         {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
-                                        @pg.LinkTitle
-                                    </h3>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">
+                                    @pg.LinkTitle
+                                </h3>
 
-                                    @if (pg.HasNewFeedback)
+                                @if (pg.HasNewFeedback)
+                                {
+                                    <div class="govuk-tag">
+                                        Feedback added
+                                    </div>
+                                }
+                                @if (pg.HasFeedback && pg.AllFeedbackIsCompleted)
+                                {
+                                    <div class="govuk-tag">
+                                        Answer updated
+                                    </div>
+                                }
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var answerPage in pg.PageOfAnswers)
+                                {
+                                    foreach (var answer in answerPage.Answers)
                                     {
-                                        <div class="govuk-tag">
-                                            Feedback added
-                                        </div>
-                                    }
-                                    @* TODO: This no longer exists *@
-                                    @if (pg.HasFeedback && pg.AllFeedbackIsCompleted)
-                                    {
-                                        <div class="govuk-tag">
-                                            Answer updated
-                                        </div>
-                                    }
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @foreach (var answerPage in pg.PageOfAnswers)
-                                    {
-                                        foreach (var answer in answerPage.Answers)
+                                        var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
+                                        if (question != null)
                                         {
-                                            var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
-                                            if (question != null)
-                                            {
-                                                <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(question.Label)</h3>
-                                            }
+                                            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(question.Label)</h3>
+                                        }
 
-                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                            {
-                                                <details class="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            View question details
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        @Html.Raw(question.QuestionBodyText)
-                                                    </div>
-                                                </details>
-                                            }
-                                            else if (question != null && question.Input.Type == "FileUpload")
+                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                        {
+                                            <details class="govuk-details">
+                                                <summary class="govuk-details__summary">
+                                                    <span class="govuk-details__summary-text">
+                                                        View question details
+                                                    </span>
+                                                </summary>
+                                                <div class="govuk-details__text">
+                                                    @Html.Raw(question.QuestionBodyText)
+                                                </div>
+                                            </details>
+                                        }
+                                        if (question != null && question.Input.Type == "FileUpload")
+                                        {
+                                            <p class="govuk-body">
+                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                                                new
+                                                                {
+                                                                    Id = Model.ApplicationId,
+                                                                    sequenceNo = Model.SequenceNo,
+                                                                    sectionNo = Model.SectionNo,
+                                                                    pageId = pg.PageId,
+                                                                    questionId = answer.QuestionId,
+                                                                    filename = answer.Value
+                                                                })">
+                                                    @answer.Value
+                                                </a>
+                                            </p>
+                                        }
+                                        else if (question != null && question.Input.Type == "Address")
+                                        {
+                                            var address = Model.Addresses[question.QuestionId];
+                                            if (address != null)
                                             {
                                                 <p class="govuk-body">
-                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
-                                                                  new
-                                                            {
-                                                                Id = Model.ApplicationId,
-                                                                sequenceNo = Model.SequenceNo,
-                                                                sectionNo = Model.SectionNo,
-                                                                pageId = pg.PageId,
-                                                                questionId = answer.QuestionId,
-                                                                filename = answer.Value
-                                                            })">
-                                                        @answer.Value
-                                                    </a>
+                                                    @address.CommaSeperatedAddress()
                                                 </p>
                                             }
-                                            else if (question != null && question.Input.Type == "Address")
+                                        }
+                                        else
+                                        {
+                                            if (@answer.Value != ",,")
                                             {
-                                                var address = Model.Addresses[question.QuestionId];
-                                                if (address != null)
-                                                {
-                                                    <p class="govuk-body">
-                                                        @address.CommaSeperatedAddress()
-                                                    </p>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <p class="govuk-body">@answer.Value</p>
+                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
                                             }
                                         }
                                     }
-                                </dd>
-
-                                @if (pg.HasFeedback)
-                                {
-                                    <dd class="govuk-summary-list__actions">
-                                        <p class="govuk-body">
-                                            <a class="govuk-link" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@pg.PageId">View feedback</a>
-                                        </p>
-                                    </dd>
                                 }
+                            </dd>
+
+                            @if (pg.HasFeedback)
+                            {
+                                <dd class="govuk-summary-list__actions">
+                                    <p class="govuk-body">
+                                        <a class="govuk-link" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceNo="@Model.SequenceNo" asp-route-sectionNo="@Model.SectionNo" asp-route-pageId="@pg.PageId">
+                                            View feedback
+                                        </a>
+                                    </p>
+                                </dd>
+                            }
                             </div>
                         }
                     </dl>
