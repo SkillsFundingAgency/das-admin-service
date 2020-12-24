@@ -17,6 +17,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
+        public DateTime GatewayOutcomeDateTime { get; set; }
 
         public string ApplicationRouteShortText
         {
