@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
             RuleFor(x => x.FromDate).NotEmpty().WithMessage("No 'from' date selected")
                 .DependentRules(() =>
                 {
-                    RuleFor(x => x.FromDate).LessThanOrEqualTo(x => x.ToDate)
+                    RuleFor(x => x.ToDate).GreaterThanOrEqualTo(x => x.FromDate)
                         .When(x => x.FromDate.HasValue && x.ToDate.HasValue)
                         .WithMessage("Date must be on or after the from date");
                 });
