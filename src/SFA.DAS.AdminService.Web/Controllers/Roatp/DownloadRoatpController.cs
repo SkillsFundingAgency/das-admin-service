@@ -1,5 +1,9 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+﻿using System.Collections.Generic;
+using AutoMapper;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.Models.Roatp;
+using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
@@ -21,6 +25,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         private IRoatpApiClient _apiClient;
         private IDataTableHelper _dataTableHelper;
         private ILogger<DownloadRoatpController> _logger;
+        private ICsvExportService _csvExportService;
+        private readonly IRoatpApplicationApiClient _applyApiClient;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
@@ -29,11 +35,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         private const string FatWorksheetName = "RoATP";
 
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
-            ILogger<DownloadRoatpController> logger)
+            ILogger<DownloadRoatpController> logger, ICsvExportService csvExportService, IRoatpApplicationApiClient applyApiClient)
         {
             _apiClient = apiClient;
             _dataTableHelper = dataTableHelper;
             _logger = logger;
+            _csvExportService = csvExportService;
+            _applyApiClient = applyApiClient;
         }
 
         [Route("download-register")]
@@ -75,14 +83,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         }
 
         [Route("application-download/download")]
-        public IActionResult ApplicationDownloadCsv(ApplicationDownloadViewModel viewModel)
+        public async Task<IActionResult> ApplicationDownloadCsv(ApplicationDownloadViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/ApplicationDownload.cshtml");
             }
 
-            return View("~/Views/Roatp/ApplicationDownload.cshtml");
+            var applications = await _applyApiClient.GetApplicationOversightDetailsForDownload();
+
+            var exportModel = Mapper.Map<List<RoatpOversightOutcomeExportViewModel>>(applications);
+
+            var bytearray = _csvExportService
+                .WriteCsvToByteArray<RoatpOversightOutcomeExportViewModel, RoatpOversightOutcomeExportCsvMap>(exportModel);
+
+            var fileName = $"current_applications_{DateTime.UtcNow:ddMMyy}.csv";
+
+            return File(bytearray, "text/csv", fileName);
         }
     }
 }

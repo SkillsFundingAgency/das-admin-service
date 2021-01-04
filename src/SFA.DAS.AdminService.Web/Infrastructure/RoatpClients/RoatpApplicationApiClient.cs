@@ -152,6 +152,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return response;
         }
 
+        public async Task<List<RoatpApplicationOversightDownloadItem>> GetApplicationOversightDetailsForDownload()
+        {
+            return await Get<List<RoatpApplicationOversightDownloadItem>>($"Oversights/Completed"); //todo: create a new endpoint
+        }
+
         public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
         {
             var fileName = string.Empty;
