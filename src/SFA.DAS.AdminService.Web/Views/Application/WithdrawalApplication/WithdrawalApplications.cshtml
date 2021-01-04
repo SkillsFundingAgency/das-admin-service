@@ -21,22 +21,22 @@
             <div class="govuk-tabs" data-module="tabs">
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                        <a class="govuk-tabs__tab" href="#new">
+                        <a class="govuk-tabs__tab" href="#new" data-count="@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0)">
                             New (@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#in-progress">
+                        <a class="govuk-tabs__tab" href="#in-progress" data-count="@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0)">
                             In progress (@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#feedback">
+                        <a class="govuk-tabs__tab" href="#feedback" data-count="@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0)">
                             Feedback (@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#approved">
+                        <a class="govuk-tabs__tab" href="#approved" data-count="@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0)">
                             Approved (@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0))
                         </a>
                     </li>
