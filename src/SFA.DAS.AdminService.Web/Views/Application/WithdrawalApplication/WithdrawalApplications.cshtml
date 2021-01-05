@@ -7,6 +7,11 @@
 @{
     ViewBag.Title = "Withdrawal applications";
     Layout = "_Layout";
+
+    var NewApplicationsCount = Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var InProgressApplicationsCount = Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var FeedbackApplicationsCount = Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var ApprovedApplicationsCount = Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0;
 }
 
 <a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
@@ -21,23 +26,23 @@
             <div class="govuk-tabs" data-module="tabs">
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                        <a class="govuk-tabs__tab" href="#new" data-count="@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0)">
-                            New (@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#new" data-count="@NewApplicationsCount">
+                            New (@NewApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#in-progress" data-count="@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0)">
-                            In progress (@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#in-progress" data-count="@InProgressApplicationsCount">
+                            In progress (@InProgressApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#feedback" data-count="@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0)">
-                            Feedback (@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#feedback" data-count="@FeedbackApplicationsCount">
+                            Feedback (@FeedbackApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#approved" data-count="@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0)">
-                            Approved (@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#approved" data-count="@ApprovedApplicationsCount">
+                            Approved (@ApprovedApplicationsCount)
                         </a>
                     </li>
                 </ul>
