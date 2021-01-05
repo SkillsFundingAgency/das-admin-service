@@ -7,7 +7,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
     {
         public ApplicationDownloadRequestValidator()
         {
-            RuleFor(x => x.FromDate).NotEmpty().WithMessage("No 'from' date selected")
+            RuleFor(x => x.FromDate).NotEmpty().WithMessage("Select a from date")
                 .DependentRules(() =>
                 {
                     RuleFor(x => x.ToDate).GreaterThanOrEqualTo(x => x.FromDate)
@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp
                         .WithMessage("Date must be on or after the from date");
                 });
 
-            RuleFor(x => x.ToDate).NotEmpty().WithMessage("No 'to' date selected");
+            RuleFor(x => x.ToDate).NotEmpty().WithMessage("Select a to date");
         }
     }
 }
