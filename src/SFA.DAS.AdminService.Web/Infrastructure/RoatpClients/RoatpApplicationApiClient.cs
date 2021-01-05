@@ -72,6 +72,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications");
         }
 
+        public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
+        {
+            return await Get<List<RoatpFinancialSummaryDownloadItem>>($"/Financial/OpenApplicationsForDownload");
+        }
+
         public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
         {
             return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");

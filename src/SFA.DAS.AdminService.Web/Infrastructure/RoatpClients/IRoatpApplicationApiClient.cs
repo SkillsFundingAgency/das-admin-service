@@ -22,6 +22,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
 
         Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
 
