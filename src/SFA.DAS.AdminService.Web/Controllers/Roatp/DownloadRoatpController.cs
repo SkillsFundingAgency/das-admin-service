@@ -1,4 +1,6 @@
 ﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
@@ -64,6 +66,23 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return File(package.GetAsByteArray(), "application/excel",
                     $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
             }
+        }
+
+        [Route("application-download")]
+        public IActionResult ApplicationDownload()
+        {
+            return View("~/Views/Roatp/ApplicationDownload.cshtml");
+        }
+
+        [Route("application-download/download")]
+        public IActionResult ApplicationDownloadCsv(ApplicationDownloadViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/ApplicationDownload.cshtml");
+            }
+
+            return View("~/Views/Roatp/ApplicationDownload.cshtml");
         }
     }
 }
