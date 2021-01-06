@@ -90,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/ApplicationDownload.cshtml");
             }
 
-            var applications = await _applyApiClient.GetApplicationOversightDetailsForDownload();
+            var applications = await _applyApiClient.GetApplicationOversightDetailsForDownload(viewModel.FromDate.Value, viewModel.ToDate.Value);
 
             var exportModel = Mapper.Map<List<RoatpOversightOutcomeExportViewModel>>(applications);
 

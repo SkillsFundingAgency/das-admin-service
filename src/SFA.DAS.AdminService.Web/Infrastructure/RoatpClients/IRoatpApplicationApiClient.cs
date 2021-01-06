@@ -47,6 +47,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles);
         Task<bool> RemoveClarificationFile(Guid applicationId, string userId, string filename);
         Task<HttpResponseMessage> DownloadClarificationFile(Guid applicationId, string filename);
-        Task<List<RoatpApplicationOversightDownloadItem>> GetApplicationOversightDetailsForDownload();
+        Task<List<RoatpApplicationOversightDownloadItem>> GetApplicationOversightDetailsForDownload(DateTime dateFrom, DateTime dateTo);
     }
 }
