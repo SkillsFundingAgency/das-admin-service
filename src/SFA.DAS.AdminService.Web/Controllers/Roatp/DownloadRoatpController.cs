@@ -97,7 +97,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             var bytearray = _csvExportService
                 .WriteCsvToByteArray<RoatpOversightOutcomeExportViewModel, RoatpOversightOutcomeExportCsvMap>(exportModel);
 
-            var fileName = $"current_applications_{DateTime.UtcNow:ddMMyy}.csv";
+            var fileName = $"outcomes_{viewModel.FromDate:ddMMyy}_to_{viewModel.ToDate.Value:ddMMyy}.csv";
 
             return File(bytearray, "text/csv", fileName);
         }
