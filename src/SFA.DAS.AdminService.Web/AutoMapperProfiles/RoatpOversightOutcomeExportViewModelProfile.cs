@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
@@ -17,17 +16,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.OrganisationName, opt => opt.MapFrom(source => source.OrganisationName))
                 .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister)))
                 .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => source.ProviderRouteNameOnRegister))
-                .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
-                ;
-
-            //AutoMap(CultureInfo.InvariantCulture);
-            //Map(x => x.Id).Ignore();
-            //Map(x => x.ApplicationId).Ignore();
-            //Map(x => x.Ukprn).Name("UKPRN");
-            //Map(x => x.ApplicationSubmittedDate).Name("Application submitted date");
-            //Map(x => x.ApplicationReferenceNumber).Name("Application reference Id");
-            //Map(x => x.OrganisationName).Name("Legal name");
-
+                .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType));
         }
     }
 }
