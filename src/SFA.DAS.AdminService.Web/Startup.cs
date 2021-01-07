@@ -36,6 +36,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp;
 using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
+using SFA.DAS.AdminService.Web.ModelBinders;
 
 namespace SFA.DAS.AdminService.Web
 {
@@ -95,6 +96,7 @@ namespace SFA.DAS.AdminService.Web
                     options.Filters.Add<CheckSessionFilter>();
                     options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                    options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
                 })
                  .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
