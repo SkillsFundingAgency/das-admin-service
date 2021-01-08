@@ -3,24 +3,28 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
-    public class Apply
+    public class RoatpApply
     {
-        public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
+
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
+
         public RoatpApplyData ApplyData { get; set; }
         public FinancialReviewDetails FinancialGrade { get; set; }
-        public string Status { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime? DeletedAt { get; set; }
         public string DeletedBy { get; set; }
+
+        public string Comments { get; set; }
+        public string ExternalComments { get; set; }
     }
 
     public class FinancialReviewDetails
@@ -57,24 +61,11 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public const string Exempt = "Exempt";
     }
 
-    public class RoatpApplicationResponse
-    {
-        public Guid Id { get; set; }
-        public Guid ApplicationId { get; set; }
-        public Guid OrganisationId { get; set; }
-        public string ApplicationStatus { get; set; }
-        public string AssessorReviewStatus { get; set; }
-        public string GatewayReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
-        public RoatpApplyData ApplyData { get; set; }
-        public FinancialReviewDetails FinancialGrade { get; set; }
-        public string CreatedBy { get; set; }
-    }
-
     public class RoatpApplyData
     {
         public List<RoatpApplySequence> Sequences { get; set; }
         public RoatpApplyDetails ApplyDetails { get; set; }
+        public RoatpApplyGatewayDetails GatewayReviewDetails { get; set; }
     }
 
     public class RoatpApplyDetails
@@ -87,6 +78,18 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+        public DateTime? ApplicationWithdrawnOn { get; set; }
+        public string ApplicationWithdrawnBy { get; set; }
+        public DateTime? ApplicationRemovedOn { get; set; }
+        public string ApplicationRemovedBy { get; set; }
+    }
+
+    public class RoatpApplyGatewayDetails
+    {
+        public DateTime? SourcesCheckedOn { get; set; }
+        public string Comments { get; set; }
+        public DateTime? OutcomeDateTime { get; set; }
+        public string GatewaySubcontractorDeclarationClarificationUpload { get; set; }
     }
 
     public class RoatpApplySequence

@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
+        public RoatpFinancialApplicationViewModel(RoatpApply application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
         {
             ApplicationId = application.ApplicationId;
             OrgId = application.OrganisationId;

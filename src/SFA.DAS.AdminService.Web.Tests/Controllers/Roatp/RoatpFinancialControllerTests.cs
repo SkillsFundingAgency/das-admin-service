@@ -81,7 +81,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         public void ViewApplication_creates_correct_view_model_with_email()
         {
             _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(
-                new RoatpApplicationResponse {ApplicationId = _applicationId,
+                new RoatpApply
+                {
+                    ApplicationId = _applicationId,
                     ApplyData = new RoatpApplyData {ApplyDetails =  new RoatpApplyDetails
                 {
                     OrganisationName = "org name",
@@ -127,7 +129,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [Test]
         public void SubmitClarification_redirects_when_no_application()
         {
-            _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync((RoatpApplicationResponse)null);
+            _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync((RoatpApply)null);
 
             var result = _controller.SubmitClarification(_applicationId, new RoatpFinancialClarificationViewModel()).Result as RedirectToActionResult;
             Assert.AreEqual("OpenApplications",result.ActionName);
@@ -146,7 +148,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 .Returns(new ValidationResponse {});
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-                new RoatpApplicationResponse
+                new RoatpApply
                 {
                     ApplicationId = _applicationId,
                     ApplyData = new RoatpApplyData
@@ -226,7 +228,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 .Returns(new ValidationResponse { });
            
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-                new RoatpApplicationResponse
+                new RoatpApply
                 {
                     ApplicationId = _applicationId,
                     ApplyData = new RoatpApplyData
@@ -329,7 +331,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             };
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-                new RoatpApplicationResponse
+                new RoatpApply
                 {
                     ApplicationId = _applicationId,
                     ApplyData = new RoatpApplyData
@@ -406,7 +408,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 .Returns(new ValidationResponse {Errors = new List<ValidationErrorDetail> {new ValidationErrorDetail {ErrorMessage = "error message", Field = "errorField"}}});
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
-                new RoatpApplicationResponse
+                new RoatpApply
                 {
                     ApplicationId = _applicationId,
                     ApplyData = new RoatpApplyData

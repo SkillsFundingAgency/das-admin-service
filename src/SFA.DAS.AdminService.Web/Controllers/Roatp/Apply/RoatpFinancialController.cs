@@ -117,8 +117,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var vm = await CreateRoatpFinancialApplicationViewModel(application);
 
-            var contact = await _applyApiClient.GetContactForApplication(applicationId);
-            vm.ApplicantEmailAddress = contact.Email;
+            var contact = await _applyApiClient.GetContactForApplication(application.ApplicationId);
+            vm.ApplicantEmailAddress = contact?.Email;
 
             var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
 
@@ -311,7 +311,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         private async Task<RoatpFinancialClarificationViewModel> RemoveUploadedFileAndRebuildViewModel(Guid applicationId, RoatpFinancialClarificationViewModel vm,
-         string removeClarificationFileName, RoatpApplicationResponse application)
+         string removeClarificationFileName, RoatpApply application)
         {
             var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
                 _contextAccessor.HttpContext.User.UserId(), removeClarificationFileName);
@@ -342,7 +342,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         private async Task<RoatpFinancialClarificationViewModel> ProcessErrorMessagesAndRebuildModel(RoatpFinancialClarificationViewModel vm,
-            RoatpApplicationResponse application, ValidationResponse validationResponse)
+            RoatpApply application, ValidationResponse validationResponse)
         {
             var applicationViewModel = await RebuildApplicationViewModel(vm, application, vm.FinancialReviewDetails);
             var newClarificationViewModel =
@@ -352,7 +352,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         private async Task<RoatpFinancialClarificationViewModel> ProcessUploadedFilesAndRebuildViewModel(Guid applicationId, RoatpFinancialClarificationViewModel vm,
-            RoatpApplicationResponse application)
+            RoatpApply application)
         {
             var financialReviewDets = vm.FinancialReviewDetails;
 
@@ -390,7 +390,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         private async Task<RoatpFinancialApplicationViewModel> RebuildApplicationViewModel(RoatpFinancialClarificationViewModel vm,
-            RoatpApplicationResponse application, FinancialReviewDetails financialReviewDets)
+            RoatpApply application, FinancialReviewDetails financialReviewDets)
         {
             var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
             clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
@@ -402,7 +402,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             clarificationVm.InadequateComments = vm.InadequateComments;
             return clarificationVm;
         }
-        private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApplicationResponse applicationFromAssessor)
+        private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApply applicationFromAssessor)
         {
             if (applicationFromAssessor is null)
             {
@@ -463,7 +463,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return organisationTypeSection;
         }
 
-        private async Task<List<Section>> GetFinancialSections(RoatpApplicationResponse applicationFromAssessor)
+        private async Task<List<Section>> GetFinancialSections(RoatpApply applicationFromAssessor)
         {
             const string CompanyFhaSectionTitle = "Organisation's financial health";
             const string ParentCompanyFhaSectionTitle = "UK ultimate parent company's financial health";
