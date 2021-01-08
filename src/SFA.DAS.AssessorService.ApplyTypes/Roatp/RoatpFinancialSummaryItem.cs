@@ -1,5 +1,4 @@
-﻿
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
+﻿using System;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
@@ -7,6 +6,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
     {
         public string DeclaredInApplication { get; set; }
 
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+        public DateTime GatewayOutcomeDate { get; set; }
+
+        public string SelectedGrade { get; set; }
     }
 }

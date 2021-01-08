@@ -1,3 +1,4 @@
+@using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 @using SFA.DAS.AdminService.Common.Extensions;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
@@ -64,26 +65,36 @@
                             <tbody class="govuk-table__body">
                                 @foreach (var item in Model.Applications.Items)
                                 {
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__cell" data-label="Organisation name">
-                                            <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
-                                        </td>
-                                        <td class="govuk-table__cell" data-label="UKPRN">
-                                            @item.Ukprn
-                                        </td>
-                                        <td class="govuk-table__cell" data-label="Provider route">
-                                            @item.ApplicationRouteShortText
-                                        </td>
-                                        <td class="govuk-table__cell" data-label="Outcome date">
-                                            @item.ClosedDate.ToSfaShortDateString()
-                                        </td>
-                                        <td class="govuk-table__cell" data-label="Outcome made by">
-                                            @item.FinancialReviewDetails?.GradedBy
-                                        </td>
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" data-label="Organisation name">
+                                        <a class="govuk-link" asp-action="ViewApplication" asp-controller="RoatpFinancial" asp-route-applicationId="@item.ApplicationId">@item.OrganisationName</a>
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="UKPRN">
+                                        @item.Ukprn
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Provider route">
+                                        @item.ApplicationRouteShortText
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Outcome date">
+                                        @item.OutcomeMadeDate.ToSfaShortDateString()
+                                    </td>
+                                    <td class="govuk-table__cell" data-label="Outcome made by">
+                                        @item.OutcomeMadeBy
+                                    </td>
+                                    @if (item.ApplicationStatus == ApplicationStatus.Withdrawn
+                                        || item.ApplicationStatus == ApplicationStatus.Removed)
+                                    {
                                         <td class="govuk-table__cell" data-label="Outcome">
-                                            @item.FinancialReviewDetails?.SelectedGrade
+                                            @item.ApplicationStatus
                                         </td>
-                                    </tr>
+                                    }
+                                    else
+                                    {
+                                        <td class="govuk-table__cell" data-label="Outcome">
+                                            @item.SelectedGrade
+                                        </td>
+                                    }
+                                </tr>
                                 }
                             </tbody>
                         </table>
