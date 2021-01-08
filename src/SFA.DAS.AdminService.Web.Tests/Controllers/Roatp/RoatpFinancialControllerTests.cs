@@ -78,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [Test]
-        public void ViewApplication_creates_correct_view_model_with_email()
+        public async Task ViewApplication_creates_correct_view_model_with_email()
         {
             _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(
                 new RoatpApply
@@ -116,13 +116,55 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                     RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation))
                 .ReturnsAsync(new Section {ApplicationId = _applicationId, QnAData = new QnAData()});
 
-            var result = _controller.ViewApplication(_applicationId).GetAwaiter().GetResult();
+            var result = await _controller.ViewApplication(_applicationId);
             result.Should().BeAssignableTo<ViewResult>();
 
             var viewResult = result as ViewResult;
             var viewModel = viewResult.Model as RoatpFinancialApplicationViewModel;
 
             viewModel.ApplicantEmailAddress.Should().Be(_emailAddress);
+        }
+
+        [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.New, "Application.cshtml")]
+        [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.InProgress, "Application.cshtml")]
+        [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.ClarificationSent, "Application_Clarification.cshtml")]
+        [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.Pass, "Application_ReadOnly.cshtml")]
+        [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.Fail, "Application_ReadOnly.cshtml")]
+        [TestCase(ApplicationStatus.Withdrawn, null, "Application_Closed.cshtml")]
+        [TestCase(ApplicationStatus.Removed, null, "Application_Closed.cshtml")]
+        public async Task ViewApplication_shows_expected_view_based_on_status(string applicationStatus, string financialReviewStatus, string expectedView)
+        {
+            _applicationApplyApiClient.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(
+                new RoatpApply
+                {
+                    ApplicationId = _applicationId,
+                    ApplicationStatus = applicationStatus,
+                    FinancialReviewStatus = financialReviewStatus,
+                    ApplyData = new RoatpApplyData { ApplyDetails = new RoatpApplyDetails(), Sequences = new List<RoatpApplySequence>() }
+                });
+
+            _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
+
+            _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, RoatpQnaConstants.QnaQuestionTags.HasParentCompany))
+                .ReturnsAsync("No");
+
+            _applicationApplyApiClient.Setup(x => x.GetContactForApplication(_applicationId))
+                .ReturnsAsync(new AssessorService.Domain.Entities.Contact { Email = _emailAddress });
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation))
+                .ReturnsAsync(new Section { ApplicationId = _applicationId, QnAData = new QnAData() });
+
+            var result = await _controller.ViewApplication(_applicationId);
+            var viewResult = result as ViewResult;
+
+            Assert.IsTrue(viewResult.ViewName.EndsWith(expectedView));
         }
 
 

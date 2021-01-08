@@ -120,21 +120,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var contact = await _applyApiClient.GetContactForApplication(application.ApplicationId);
             vm.ApplicantEmailAddress = contact?.Email;
 
-            var activeFinancialReviewStatuses = new List<string> { FinancialReviewStatus.New, FinancialReviewStatus.InProgress };
-
-            if (activeFinancialReviewStatuses.Contains(application.FinancialReviewStatus))
+            if (vm.ApplicationStatus == ApplicationStatus.Removed
+                    || vm.ApplicationStatus == ApplicationStatus.Withdrawn)
             {
-                await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-                return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
+                return View("~/Views/Roatp/Apply/Financial/Application_Closed.cshtml", vm);
             }
-            
-            if (application.FinancialReviewStatus == FinancialReviewStatus.ClarificationSent)
+            else
             {
-                var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
-                return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
+                switch (application.FinancialReviewStatus)
+                {
+                    case FinancialReviewStatus.New:
+                    case FinancialReviewStatus.InProgress:
+                        await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                        return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
+                    case FinancialReviewStatus.ClarificationSent:
+                        var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
+                        return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", clarificationVm);
+                    case FinancialReviewStatus.Pass:
+                    case FinancialReviewStatus.Fail:
+                    default:
+                        return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
+                }
             }
-
-            return View("~/Views/Roatp/Apply/Financial/Application_ReadOnly.cshtml", vm);
         }
 
         [HttpPost("/Roatp/Financial/{applicationId}")]
@@ -402,19 +409,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             clarificationVm.InadequateComments = vm.InadequateComments;
             return clarificationVm;
         }
-        private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApply applicationFromAssessor)
+        private async Task<RoatpFinancialApplicationViewModel> CreateRoatpFinancialApplicationViewModel(RoatpApply application)
         {
-            if (applicationFromAssessor is null)
+            if (application is null)
             {
                 return new RoatpFinancialApplicationViewModel();
             }
 
-            var parentCompanySection = await GetParentCompanySection(applicationFromAssessor.ApplicationId);
-            var activelyTradingSection = await GetActivelyTradingSection(applicationFromAssessor.ApplicationId);
-            var organisationTypeSection = await GetOrganisationTypeSection(applicationFromAssessor.ApplicationId);
-            var financialSections = await GetFinancialSections(applicationFromAssessor);
+            var parentCompanySection = await GetParentCompanySection(application.ApplicationId);
+            var activelyTradingSection = await GetActivelyTradingSection(application.ApplicationId);
+            var organisationTypeSection = await GetOrganisationTypeSection(application.ApplicationId);
+            var financialSections = await GetFinancialSections(application);
 
-            return new RoatpFinancialApplicationViewModel(applicationFromAssessor, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
+            return new RoatpFinancialApplicationViewModel(application, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
         }
 
         private async Task<Section> GetParentCompanySection(Guid applicationId)
