@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
@@ -14,24 +13,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
     public interface IRoatpApplicationApiClient
     {
-        Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<RoatpApplicationResponse> GetApplication(Guid Id);
-        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
+
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
-
         Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
 
-        Task ReturnApplication(Guid applicationId, string returnType, string returnedBy);
         Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
-        Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback);
-        Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId);
 
         Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
 

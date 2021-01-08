@@ -11,8 +11,9 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime? SubmittedDate { get; set; }
-        public DateTime? FeedbackAddedDate { get; set; }
-        public DateTime? ClosedDate { get; set; }
+        public DateTime? ClarificationRequestedDate { get; set; }
+        public DateTime? OutcomeMadeDate { get; set; }
+        public string OutcomeMadeBy { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
@@ -23,7 +24,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(ApplicationRoute))
+                if (string.IsNullOrWhiteSpace(ApplicationRoute))
                 {
                     return string.Empty;
                 }
