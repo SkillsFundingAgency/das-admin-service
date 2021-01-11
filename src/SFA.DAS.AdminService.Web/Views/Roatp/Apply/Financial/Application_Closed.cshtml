@@ -48,8 +48,7 @@
                         Outcome
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.ApplicationStatus
-
+                        <strong class="govuk-tag govuk-tag--inactive das-no-wrap">@Model.ApplicationStatus</strong>
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -68,17 +67,17 @@
                         @Model.ApplicationClosedBy
                     </dd>
                 </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Internal Comments
+                    </dt>
+
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApplicationComments
+                    </dd>
+                </div>
                 @if (Model.ApplicationStatus == ApplicationStatus.Removed)
                 {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Internal Comments
-                        </dt>
-
-                        <dd class="govuk-summary-list__value">
-                            @Model.ApplicationComments
-                        </dd>
-                    </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             External Comments
@@ -86,18 +85,6 @@
 
                         <dd class="govuk-summary-list__value">
                             @Model.ApplicationExternalComments
-                        </dd>
-                    </div>
-                }
-                else
-                {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Comments
-                        </dt>
-
-                        <dd class="govuk-summary-list__value">
-                            @Model.ApplicationComments
                         </dd>
                     </div>
                 }
