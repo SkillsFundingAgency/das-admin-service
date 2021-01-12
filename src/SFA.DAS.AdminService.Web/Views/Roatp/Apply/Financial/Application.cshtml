@@ -256,12 +256,12 @@
                             <div class="govuk-form-group">
                                 <label class="govuk-label" asp-for="InadequateExternalComments">Add your external comments</label>
 
-                                <span class="govuk-hint">These comments will be seen by the applicant</span>
+                                <span class="govuk-hint" id="InadequateExternalComments-hint">These comments will be seen by the applicant</span>
 
                                 <span class="govuk-error-message" asp-validation-for="InadequateExternalComments"></span>
 
                                 <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateExternalComments" sfa-validationerror-class="govuk-textarea--error-override" id="InadequateExternalComments" name="InadequateExternalComments" rows="4" aria-describedby="InadequateExternalComments-info">@Model.InadequateExternalComments</textarea>
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateExternalComments" sfa-validationerror-class="govuk-textarea--error-override" id="InadequateExternalComments" name="InadequateExternalComments" rows="4" aria-describedby="InadequateExternalComments-info InadequateExternalComments-hint">@Model.InadequateExternalComments</textarea>
                                     <span id="InadequateExternalComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                         You can enter up to 500 words
                                     </span>
