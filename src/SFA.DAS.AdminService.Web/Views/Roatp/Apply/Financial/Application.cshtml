@@ -32,6 +32,7 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a href="#outstanding" sfa-validation-for="FinancialReviewDetails.SelectedGrade"></a></li>
                             <li><a sfa-validation-for="InadequateComments"></a></li>
+                            <li><a sfa-validation-for="InadequateExternalComments"></a></li>
                             <li><a sfa-validation-for="ClarificationComments"></a></li>
                             <li><a href="#OutstandingFinancialDueDate.Day" sfa-validation-for="OutstandingFinancialDueDate"></a></li>
                             <li><a href="#GoodFinancialDueDate.Day" sfa-validation-for="GoodFinancialDueDate"></a></li>
@@ -241,13 +242,27 @@
 
                         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                             <div class="govuk-form-group">
-                                <label class="govuk-label" for="InadequateComments">Enter your comments</label>
+                                <label class="govuk-label" asp-for="InadequateComments">Add your internal comments</label>
 
                                 <span class="govuk-error-message" asp-validation-for="InadequateComments"></span>
 
                                 <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
                                     <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateComments" sfa-validationerror-class="govuk-textarea--error-override" id="InadequateComments" name="InadequateComments" rows="4" aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
                                     <span id="InadequateComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                        You can enter up to 500 words
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" asp-for="InadequateExternalComments">Add your external comments</label>
+
+                                <span class="govuk-hint">These comments will be seen by the applicant</span>
+
+                                <span class="govuk-error-message" asp-validation-for="InadequateExternalComments"></span>
+
+                                <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                    <textarea class="govuk-textarea js-character-count" sfa-validation-for="InadequateExternalComments" sfa-validationerror-class="govuk-textarea--error-override" id="InadequateExternalComments" name="InadequateExternalComments" rows="4" aria-describedby="InadequateExternalComments-info">@Model.InadequateExternalComments</textarea>
+                                    <span id="InadequateExternalComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                         You can enter up to 500 words
                                     </span>
                                 </div>

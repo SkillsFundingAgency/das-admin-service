@@ -10,7 +10,7 @@
         Model.FinancialReviewDetails.ClarificationFiles != null && Model.FinancialReviewDetails.ClarificationFiles.Count >=
     maximumClarificationFilesAllowed;
 
-
+    // TODO: TECH DEBT - Moving to taghelpers will eliminate all of this. See Application.cshtml
     var textareaErrorHighlightClass = "govuk-textarea--error-override";
     var formGroupErrorHighlightClass = "govuk-form-group--error";
     var textInputErrorHighlightClass = "govuk-input--error";
@@ -30,7 +30,8 @@
     var satisfactoryFinancialDueDateInputError = string.Empty;
     var inadequateCommentsTextareaError = string.Empty;
     var inadequateCommentsErrorMessage = string.Empty;
-
+    var inadequateExternalCommentsTextareaError = string.Empty;
+    var inadequateExternalCommentsErrorMessage = string.Empty;
 }
 
 <div class="govuk-breadcrumbs">
@@ -73,50 +74,49 @@
                                     clarificationResponseTextareaError = textareaErrorHighlightClass;
                                     clarificationResponseErrorMessage = error.ErrorMessage;
                                 }
-
-                                if (error.Field == "ClarificationFile")
+                                else if (error.Field == "ClarificationFile")
                                 {
                                     clarificationFileFormGroupError = formGroupErrorHighlightClass;
                                     clarificationFileErrorMessage = error.ErrorMessage;
                                 }
-
-
-                                if (error.Field == "FinancialReviewDetails.SelectedGrade")
+                                else if (error.Field == "FinancialReviewDetails.SelectedGrade")
                                 {
                                     errorField = "outstanding";
                                     selectedGradeFormGroupError = formGroupErrorHighlightClass;
                                     selectedGradeErrorMessage = error.ErrorMessage;
                                 }
-
-                                if (error.Field == "OutstandingFinancialDueDate")
+                                else if (error.Field == "OutstandingFinancialDueDate")
                                 {
                                     errorField = "OutstandingFinancialDueDate.Day";
                                     selectedGradeFormGroupError = formGroupErrorHighlightClass;
                                     outstandingFinancialDueDateErrorMessage = error.ErrorMessage;
                                     outstandingFinancialDueDateInputError = textInputErrorHighlightClass;
                                 }
-
-                                if (error.Field == "GoodFinancialDueDate")
+                                else if (error.Field == "GoodFinancialDueDate")
                                 {
                                     errorField = "GoodFinancialDueDate.Day";
                                     selectedGradeFormGroupError = formGroupErrorHighlightClass;
                                     goodFinancialDueDateErrorMessage = error.ErrorMessage;
                                     goodFinancialDueDateInputError = textInputErrorHighlightClass;
                                 }
-
-                                if (error.Field == "SatisfactoryFinancialDueDate")
+                                else if (error.Field == "SatisfactoryFinancialDueDate")
                                 {
                                     errorField = "SatisfactoryFinancialDueDate.Day";
                                     selectedGradeFormGroupError = formGroupErrorHighlightClass;
                                     satisfactoryFinancialDueDateErrorMessage = error.ErrorMessage;
                                     satisfactoryFinancialDueDateInputError = textInputErrorHighlightClass;
                                 }
-
-                                if (error.Field == "InadequateComments")
+                                else if (error.Field == "InadequateComments")
                                 {
                                     selectedGradeFormGroupError = formGroupErrorHighlightClass;
                                     inadequateCommentsTextareaError = textareaErrorHighlightClass;
                                     inadequateCommentsErrorMessage = error.ErrorMessage;
+                                }
+                                else if (error.Field == "InadequateExternalComments")
+                                {
+                                    selectedGradeFormGroupError = formGroupErrorHighlightClass;
+                                    inadequateExternalCommentsTextareaError = textareaErrorHighlightClass;
+                                    inadequateExternalCommentsErrorMessage = error.ErrorMessage;
                                 }
 
                                 <li>
@@ -563,24 +563,39 @@
                                     <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
                                 </div>
 
-                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                                    id="inadequate-conditional">
+                                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="inadequate-conditional">
                                     <div class="govuk-form-group">
-                                        <label class="govuk-label" for="InadequateComments">Enter your comments</label>
+                                        <label class="govuk-label" for="InadequateComments">Add your internal comments</label>
 
                                         @if (!string.IsNullOrEmpty(inadequateCommentsErrorMessage))
                                         {
                                             <span class="govuk-error-message">@inadequateCommentsErrorMessage</span>
                                         }
 
-                                        <div class="govuk-character-count" data-module="character-count"
-                                            data-maxwords="500">
-                                            <textarea
-                                                class="govuk-textarea js-character-count @inadequateCommentsTextareaError"
-                                                id="InadequateComments" name="InadequateComments" rows="4"
-                                                aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
-                                            <span id="InadequateComments-info"
-                                                class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                            <textarea class="govuk-textarea js-character-count @inadequateCommentsTextareaError"
+                                                      id="InadequateComments" name="InadequateComments" rows="4"
+                                                      aria-describedby="InadequateComments-info">@Model.InadequateComments</textarea>
+                                            <span id="InadequateComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                                You can enter up to 500 words
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="govuk-form-group">
+                                        <label class="govuk-label" for="InadequateExternalComments">Add your external comments</label>
+
+                                        <span class="govuk-hint">These comments will be seen by the applicant</span>
+
+                                        @if (!string.IsNullOrEmpty(inadequateExternalCommentsErrorMessage))
+                                        {
+                                            <span class="govuk-error-message">@inadequateExternalCommentsErrorMessage</span>
+                                        }
+
+                                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                                            <textarea class="govuk-textarea js-character-count @inadequateExternalCommentsTextareaError"
+                                                      id="InadequateExternalComments" name="InadequateExternalComments" rows="4"
+                                                      aria-describedby="InadequateExternalComments-info">@Model.InadequateExternalComments</textarea>
+                                            <span id="InadequateExternalComments-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                                 You can enter up to 500 words
                                             </span>
                                         </div>

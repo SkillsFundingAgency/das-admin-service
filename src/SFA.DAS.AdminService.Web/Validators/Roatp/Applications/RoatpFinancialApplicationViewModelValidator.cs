@@ -19,11 +19,19 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateComments))
                 {
-                    context.AddFailure("InadequateComments", "Enter your comments");
+                    context.AddFailure("InadequateComments", "Enter internal comments");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
                 {
-                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
+                    context.AddFailure("InadequateComments", "Your internal comments must be 500 words or less");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateExternalComments))
+                {
+                    context.AddFailure("InadequateExternalComments", "Enter external comments");
+                }
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateExternalComments))
+                {
+                    context.AddFailure("InadequateExternalComments", "Your external comments must be 500 words or less");
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
                 {

@@ -177,6 +177,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 SelectedGrade = grade,
                 FinancialDueDate = DateTime.Today.AddDays(5),
                 Comments = "comments",
+                ExternalComments = grade == FinancialApplicationSelectedGrade.Inadequate ? "external comments" : null,
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };

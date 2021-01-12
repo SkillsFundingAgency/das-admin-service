@@ -76,12 +76,22 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                         case FinancialApplicationSelectedGrade.Inadequate
                             when string.IsNullOrWhiteSpace(vm.InadequateComments):
                             validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                                "Enter your comments"));
+                                "Enter internal comments"));
                             break;
                         case FinancialApplicationSelectedGrade.Inadequate
                             when HasExceededWordCount(vm.InadequateComments):
                             validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                                "Your comments must be 500 words or less"));
+                                "Your internal comments must be 500 words or less"));
+                            break;
+                        case FinancialApplicationSelectedGrade.Inadequate
+                            when string.IsNullOrWhiteSpace(vm.InadequateExternalComments):
+                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateExternalComments",
+                                "Enter external comments"));
+                            break;
+                        case FinancialApplicationSelectedGrade.Inadequate
+                            when HasExceededWordCount(vm.InadequateExternalComments):
+                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateExternalComments",
+                                "Your external comments must be 500 words or less"));
                             break;
                         case FinancialApplicationSelectedGrade.Outstanding:
                         case FinancialApplicationSelectedGrade.Good:
