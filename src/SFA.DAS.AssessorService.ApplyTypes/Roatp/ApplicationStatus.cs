@@ -11,5 +11,7 @@
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
         public const string Cancelled = "Cancelled";
+        public const string Withdrawn = "Withdrawn";
+        public const string Removed = "Removed";
     }
 }

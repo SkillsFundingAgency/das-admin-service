@@ -22,29 +22,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
-        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
-        {
-            
-        }
-
-        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
-        {
-            
-        }
-
-        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool sectionCompleted, string reviewer)
-        {
-            await Post($"/Application/{applicationId}/AssessorEvaluateSection", new { applicationId, sequenceId, sectionId, sectionCompleted, reviewer });
-        }
-
         public async Task<RoatpApplicationResponse> GetApplication(Guid applicationId)
         {
             return await Get<RoatpApplicationResponse>($"/Application/{applicationId}");
-        }
-
-        public async Task<List<RoatpApplicationSummaryItem>> GetClosedApplications()
-        {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Closed");
         }
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications()
@@ -52,19 +32,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications");            
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
-        {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/FeedbackAdded");
-        }
-
         public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications()
         {
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications");
-        }
-
-        public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
-        {
-            return await Get<List<RoatpApplicationSummaryItem>>($"/Applications/Open");
         }
 
         public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
@@ -80,11 +50,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
         {
             return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
-        }
-
-        public async Task ReturnApplication(Guid applicationId, string returnType, string returnedBy)
-        {
-            
         }
 
         public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails)
