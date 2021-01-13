@@ -1,0 +1,130 @@
+﻿@using SFA.DAS.AdminService.Web.Domain.Apply;
+@using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
+@using SFA.DAS.AdminService.Web.ViewModels.Shared;
+@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
+
+@model ApplicationsViewModel;
+
+<h2 class="govuk-heading-m">@Model.Title</h2>
+
+<p class="govuk-body">
+    Showing
+    @if (Model.PaginatedList.TotalRecordCount > 0)
+    {
+        @Model.PaginatedList.FirstVisibleItem<text> - </text>@Model.PaginatedList.LastVisibleItem<text> of </text>
+    }
+    @Model.PaginatedList.TotalRecordCount<text> applications</text>
+</p>
+
+<table class="govuk-table govuk-table--small">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Name"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="WithdrawalApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Name"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-two-thirds">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@WithdrawalApplicationsSortColumn.Details"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="WithdrawalApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@WithdrawalApplicationsSortColumn.Details"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Details</sfa-sortable-column-header>
+            </th>
+
+            @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
+            {
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+                    <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                                data-sortColumn="@WithdrawalApplicationsSortColumn.Status"
+                                                asp-action="@Model.SortColumnAction"
+                                                asp-controller="WithdrawalApplication"
+                                                asp-fragment="@Model.Fragment"
+                                                sfa-sort-column="@WithdrawalApplicationsSortColumn.Status"
+                                                sfa-table-sort-column="@Model.SortColumn"
+                                                sfa-sort-direction="@Model.SortDirection">Status</sfa-sortable-column-header>
+                </th>
+            }
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@Model.DateSortColumnNameForReviewStatus()"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="WithdrawalApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@Model.DateSortColumnNameForReviewStatus()"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">@Model.DateHeaderColumnNameForReviewStatus()</sfa-sortable-column-header>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="govuk-table__body">
+                                    @if (Model?.PaginatedList != null)
+                                    {
+                                        @foreach (var application in Model.PaginatedList.Items)
+                                        {
+                                            <tr class="govuk-table__row">
+                                                <td class="govuk-table__cell">
+                                                    <a class="govuk-link"
+                                                       asp-action="Sequence"
+                                                       asp-controller="Application"
+                                                       asp-route-applicationId="@application.ApplicationId"
+                                                       asp-route-sequenceNo="@application.SequenceNo"
+                                                       asp-route-backAction="WithdrawalApplications"
+                                                       asp-route-backController="WithdrawalApplication">
+                                                        @application.OrganisationName
+                                                    </a>
+                                                </td>
+                                                <td class="govuk-table__cell">
+                                                    @if (application.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                                                    {
+                                                        <text>Withdrawal from register</text>
+                                                    }
+                                                    else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                                                    {
+                                                        @($"{application.StandardName} ({application.StandardReference})")
+                                                    }
+                                                </td>
+
+                                                @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
+                                                {
+                                                    <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
+                                                }
+
+                                                <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap">@application.DateValueForReviewStatus()</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            @if (Model != null)
+                            {
+                                <form asp-action="@Model.ChangeItemsPerPageAction" asp-controller="WithdrawalApplication" method="get" asp-fragment="@Model.Fragment">
+                                    <div class="das-flex-space-around">
+                                        <div>
+                                            <select class=@(Model.Fragment + "-per-page govuk-select govuk-!-margin-right-2") asp-for="ItemsPerPage" asp-items="Model.ItemsPerPageList"></select>
+                                            <label for="ApplicationsPerPage">Applications per page</label>
+                                        </div>
+                                        <div class="das-pagination-links">
+                                            @{await Html.RenderPartialAsync("_PaginationLinksPartial", new PaginationLinksViewModel
+                                                {
+                                                    PaginatedList = Model.PaginatedList,
+                                                    ChangePageAction = Model.ChangePageAction,
+                                                    ChangePageController = "WithdrawalApplication",
+                                                    Fragment = Model.Fragment
+                                                });}
+                                        </div>
+                                    </div>
+                                    <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0 govuk-!-margin-top-3 js-hidden" type="submit">
+                                        Update table
+                                    </button>
+                                </form>
+                            }
