@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             if(fhaSection != null && !fhaSection.QnAData.Pages.Any(p => p.HasNewFeedback))
             {
-                HasInadequateFhaButNoFeedbackGiven = application.financialGrade?.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate;
+                HasInadequateFhaButNoFeedbackGiven = application.FinancialGrade?.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate;
             }
         }
     }

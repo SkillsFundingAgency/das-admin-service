@@ -247,7 +247,7 @@
                     <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="new">New (@Model.OrganisationApplicationsNew)</a>
                 </li>
                 <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.OrganisationApplicationsInProgress)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="in-progress">In progress (@Model.OrganisationApplicationsInProgress)</a>
                 </li>
                 <li>
                     <a class="govuk-link govuk-link--no-visited-state" asp-controller="OrganisationApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.OrganisationApplicationsHasFeedback)</a>
@@ -278,7 +278,7 @@
                     <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="new">New (@Model.StandardApplicationsNew)</a>
                 </li>
                 <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="in-progress">In Progress (@Model.StandardApplicationsInProgress)</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="in-progress">In progress (@Model.StandardApplicationsInProgress)</a>
                 </li>
                 <li>
                     <a class="govuk-link govuk-link--no-visited-state" asp-controller="StandardApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.StandardApplicationsHasFeedback)</a>
@@ -295,6 +295,35 @@
     @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
 }
 
+        @{
+            var withdrawalApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
+            if (roleTagHelper.ShowForRoles(withdrawalApplicationsRoles)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@withdrawalApplicationsRoles" id="organisation-withdrawal-applications">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-1">
+                Withdrawal applications
+            </h2>
+            <p class="govuk-body">Review and approve withdrawal applications, check on progress, send and receive feedback.</p>
+            <ul class="govuk-list">
+                <li>
+                    <a class="govuk-link" asp-controller="WithdrawalApplication" asp-action="Index" asp-fragment="new">New (@Model.WithdrawalApplicationsNew)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="WithdrawalApplication" asp-action="Index" asp-fragment="in-progress">In progress (@Model.WithdrawalApplicationsInProgress)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="WithdrawalApplication" asp-action="Index" asp-fragment="feedback">Feedback (@Model.WithdrawalApplicationsHasFeedback)</a>
+                </li>
+                <li>
+                    <a class="govuk-link" asp-controller="WithdrawalApplication" asp-action="Index" asp-fragment="approved">Approved (@Model.WithdrawalApplicationsApproved)</a>
+                </li>
+            </ul>
+        </div>
+        @if (sectionsShown % 2 == 0)
+        {
+        @:</div>
+        @:<div class="govuk-grid-row">
+        }
         @{
             var financialHealthAssessmentRoles = string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam);
             if (roleTagHelper.ShowForRoles(financialHealthAssessmentRoles)) { sectionsShown++; }

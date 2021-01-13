@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Services
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
 
             var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
 
@@ -133,7 +133,7 @@ namespace SFA.DAS.AdminService.Web.Services
         public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationData(application?.ApplicationId ?? Guid.Empty);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
 
             var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
             var organisationContacts = await _apiApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);

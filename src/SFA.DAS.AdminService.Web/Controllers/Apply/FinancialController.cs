@@ -7,6 +7,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Collections.Generic;
@@ -21,9 +22,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
-        private const int FINANCIAL_SEQUENCE_NO = 1;
-        private const int FINANCIAL_SECTION_NO = 3;
-
         private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -108,7 +106,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
         {
             // NOTE: Using the QnA applicationId is somewhat dubious! We're using the Assessor applicationId nearly everywhere else.
-            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
             var organisation = await _apiClient.GetOrganisation(orgId);
 
             if (financialSection != null && organisation != null)
@@ -164,8 +162,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (ModelState.IsValid)
             {
-                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO);
-                var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO);
+                var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
 
                 var grade = new FinancialGrade
                 {
@@ -192,12 +190,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Evaluated(Guid Id)
         {
             var application = await _applyApiClient.GetApplication(Id);
-            if (application?.financialGrade is null)
+            if (application?.FinancialGrade is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            return View("~/Views/Apply/Financial/Graded.cshtml", application.financialGrade);
+            return View("~/Views/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
         private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(ApplicationResponse applicationFromAssessor, FinancialGrade grade)
@@ -208,10 +206,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
             else if (grade is null)
             {
-                grade = applicationFromAssessor.financialGrade;
+                grade = applicationFromAssessor.FinancialGrade;
             }
 
-            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, FINANCIAL_SEQUENCE_NO, FINANCIAL_SECTION_NO);
+            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
 
             var orgId = applicationFromAssessor.OrganisationId;
             var organisation = await _apiClient.GetOrganisation(orgId);

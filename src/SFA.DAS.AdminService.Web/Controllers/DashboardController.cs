@@ -47,6 +47,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     StandardApplicationsInProgress = short.MinValue,
                     StandardApplicationsHasFeedback = short.MinValue,
                     StandardApplicationsApproved = short.MinValue,
+                    WithdrawalApplicationsNew = short.MinValue,
+                    WithdrawalApplicationsInProgress = short.MinValue,
+                    WithdrawalApplicationsHasFeedback = short.MinValue,
+                    WithdrawalApplicationsApproved = short.MinValue,
                 };
             }
 
@@ -60,6 +64,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StandardApplicationsInProgress = applicationReviewStatusCounts.StandardApplicationsInProgress,
                 StandardApplicationsHasFeedback = applicationReviewStatusCounts.StandardApplicationsHasFeedback,
                 StandardApplicationsApproved = applicationReviewStatusCounts.StandardApplicationsApproved,
+                WithdrawalApplicationsNew = applicationReviewStatusCounts.WithdrawalApplicationsNew,
+                WithdrawalApplicationsInProgress = applicationReviewStatusCounts.WithdrawalApplicationsInProgress,
+                WithdrawalApplicationsHasFeedback = applicationReviewStatusCounts.WithdrawalApplicationsHasFeedback,
+                WithdrawalApplicationsApproved = applicationReviewStatusCounts.WithdrawalApplicationsApproved,
                 RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl,
                 RoatpAssessorBaseUrl = _configuration.RoatpAssessorBaseUrl,
                 RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl
