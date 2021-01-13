@@ -188,16 +188,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
-            var isClarificationFilesUpdate = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
+            var isClarificationFilesUpload = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
-            if (!isClarificationFilesUpdate && !isClarificationOutcome &&
+            if (!isClarificationFilesUpload && !isClarificationOutcome &&
                 HttpContext.Request.Form["removeClarificationFile"].Count == 1)
                 removeClarificationFileName = HttpContext.Request.Form["removeClarificationFile"].ToString();
 
             vm.FinancialReviewDetails.ClarificationFiles = application.FinancialGrade.ClarificationFiles;
             vm.FilesToUpload = HttpContext.Request.Form.Files;
             
-            var validationResponse = _clarificationValidator.Validate(vm, isClarificationFilesUpdate, isClarificationOutcome);
+            var validationResponse = _clarificationValidator.Validate(vm, isClarificationFilesUpload, isClarificationOutcome);
 
             if (validationResponse.Errors !=null && validationResponse.Errors.Count>0)
             {
@@ -205,7 +205,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationViewModel);
             }
 
-            if (isClarificationFilesUpdate)
+            if (isClarificationFilesUpload)
             {
                 var newClarificationVm = await ProcessUploadedFilesAndRebuildViewModel(applicationId, vm, application);
                 return View("~/Views/Roatp/Apply/Financial/Application_Clarification.cshtml", newClarificationVm);
