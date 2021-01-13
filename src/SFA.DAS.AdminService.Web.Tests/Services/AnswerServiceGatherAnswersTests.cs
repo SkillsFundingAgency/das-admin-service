@@ -142,7 +142,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             };
 
             _mockApplicationApiClient.Setup(x => x.GetApplication(application.Id)).ReturnsAsync(application);
-            _mockQnaApiClient.Setup(x => x.GetApplicationData(application.ApplicationId)).ReturnsAsync(applicationData);
+            _mockQnaApiClient.Setup(x => x.GetApplicationDataDictionary(application.ApplicationId)).ReturnsAsync(applicationData);
             _mockApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
             _mockApiClient.Setup(x => x.GetOrganisationContacts(applicationOrganisation.Id)).ReturnsAsync(new List<Contact> { applicationContact });
 
@@ -276,7 +276,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             var applicationContact = new Contact { Id = commandTestSetup.CreatedBy, SignInId = Guid.Empty, FamilyName = "", GivenNames = "", Email = "" };
 
             _mockApplicationApiClient.Setup(x => x.GetApplication(application.Id)).ReturnsAsync(application);
-            _mockQnaApiClient.Setup(x => x.GetApplicationData(application.ApplicationId)).ReturnsAsync(applicationData);
+            _mockQnaApiClient.Setup(x => x.GetApplicationDataDictionary(application.ApplicationId)).ReturnsAsync(applicationData);
             _mockApiClient.Setup(x => x.GetOrganisation(application.OrganisationId)).ReturnsAsync(applicationOrganisation);
             _mockApiClient.Setup(x => x.GetOrganisationContacts(application.OrganisationId)).ReturnsAsync(new List<Contact> { applicationContact });
 

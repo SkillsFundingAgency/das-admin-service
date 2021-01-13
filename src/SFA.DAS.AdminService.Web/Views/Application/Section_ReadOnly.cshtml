@@ -1,4 +1,4 @@
-@using SFA.DAS.QnA.Api.Types.Page
+@using SFA.DAS.AssessorService.Domain.Consts;
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SectionViewModel
 
 @{
@@ -32,7 +32,7 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-                @if (Model.SequenceNo == 1 && Model.SectionNo == 1)
+                @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && Model.SectionNo == ApplyConst.ORGANISATION_DETAILS_SECTION_NO)
                 {
                     <dl class="govuk-summary-list">
                         @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        @if (Model.SequenceNo == 1 && Model.SectionNo == 3)
+        @if (Model.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && Model.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO)
         {
             // NOTE: The FHA Section has a read only view. See ON-1277
             var financialApplication = Model.Grade;
@@ -172,56 +172,57 @@
                                             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">@Html.Raw(question.Label)</h3>
                                         }
 
-                                        if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
-                                        {
-                                            <details class="govuk-details">
-                                                <summary class="govuk-details__summary">
-                                                    <span class="govuk-details__summary-text">
-                                                        View question details
-                                                    </span>
-                                                </summary>
-                                                <div class="govuk-details__text">
-                                                    @Html.Raw(question.QuestionBodyText)
-                                                </div>
-                                            </details>
-                                        }
-                                        if (question != null && question.Input.Type == "FileUpload")
-                                        {
-                                            <p class="govuk-body">
-                                                <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
-                                                                new
-                                                                {
-                                                                    Id = Model.ApplicationId,
-                                                                    sequenceNo = Model.SequenceNo,
-                                                                    sectionNo = Model.SectionNo,
-                                                                    pageId = pg.PageId,
-                                                                    questionId = answer.QuestionId,
-                                                                    filename = answer.Value
-                                                                })">
-                                                    @answer.Value
-                                                </a>
-                                            </p>
-                                        }
-                                        else if (question != null && question.Input.Type == "Address")
-                                        {
-                                            var address = Model.Addresses[question.QuestionId];
-                                            if (address != null)
+                                            if (question != null && !string.IsNullOrWhiteSpace(question.QuestionBodyText))
+                                            {
+                                                <details class="govuk-details">
+                                                    <summary class="govuk-details__summary">
+                                                        <span class="govuk-details__summary-text">
+                                                            View question details
+                                                        </span>
+                                                    </summary>
+                                                    <div class="govuk-details__text">
+                                                        @Html.Raw(question.QuestionBodyText)
+                                                    </div>
+                                                </details>
+                                            }
+
+                                            if (question != null && question.Input.Type == "FileUpload")
                                             {
                                                 <p class="govuk-body">
-                                                    @address.CommaSeperatedAddress()
+                                                    <a class="govuk-link" href="@Url.Action("DownloadFile", "Application",
+                                                                  new
+                                                            {
+                                                                Id = Model.ApplicationId,
+                                                                sequenceNo = Model.SequenceNo,
+                                                                sectionNo = Model.SectionNo,
+                                                                pageId = pg.PageId,
+                                                                questionId = answer.QuestionId,
+                                                                filename = answer.Value
+                                                            })">
+                                                        @answer.Value
+                                                    </a>
                                                 </p>
                                             }
-                                        }
-                                        else
-                                        {
-                                            if (@answer.Value != ",,")
+                                            else if (question != null && question.Input.Type == "Address")
                                             {
-                                                <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                                var address = Model.Addresses[question.QuestionId];
+                                                if (address != null)
+                                                {
+                                                    <p class="govuk-body">
+                                                        @address.CommaSeperatedAddress()
+                                                    </p>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (@answer.Value != ",,")
+                                                {
+                                                    <p class="govuk-body">@Model.DisplayAnswerValue(answer, question)</p>
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            </dd>
+                                </dd>
 
                             @if (pg.HasFeedback)
                             {
