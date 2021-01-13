@@ -19,5 +19,6 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public string AssessorOutcome { get; set; }
         public string FHCOutcome { get; set; }
         public string OverallOutcome { get; set; }
+        public string CompanyNo { get; set; }
     }
 }
