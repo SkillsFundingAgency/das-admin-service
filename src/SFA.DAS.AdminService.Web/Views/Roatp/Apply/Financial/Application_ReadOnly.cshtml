@@ -143,9 +143,19 @@
                         </div>
                     }
                 }
-                    <div class="govuk-summary-list__row">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Outcome
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span class="@Model.FinancialReviewDetails.OutcomeCssClass">
+                            @Model.FinancialReviewDetails.Outcome
+                        </span>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Outcome
+                            Grade awarded
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.FinancialReviewDetails.SelectedGrade
@@ -183,7 +193,7 @@
                             </dd>
                         </div>
                     }
-                    @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.ExternalComments))
+                    @if (@Model.FinancialReviewDetails.Outcome == "Failed")
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -195,7 +205,6 @@
                             </dd>
                         </div>
                     }
-                
             </dl>
 
             <p class="govuk-body">

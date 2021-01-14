@@ -36,6 +36,22 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public DateTime? ClarificationRequestedOn { get; set; }
 
         public string ClarificationResponse { get; set; }
+
+        public string Outcome =>
+            SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Good ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Exempt
+                ? "Passed"
+                : "Failed";
+
+        public string OutcomeCssClass =>
+            SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Good ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ||
+            SelectedGrade == FinancialApplicationSelectedGrade.Exempt
+                ? "govuk-tag govuk-tag--pass"
+                : "govuk-tag govuk-tag--fail";
     }
 
     public class FinancialEvidence
