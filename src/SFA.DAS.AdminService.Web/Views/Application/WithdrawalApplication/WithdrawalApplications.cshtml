@@ -5,15 +5,20 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationsDashboardViewModel
 
 @{
-    ViewBag.Title = "Organisation applications";
+    ViewBag.Title = "Withdrawal applications";
     Layout = "_Layout";
+
+    var NewApplicationsCount = Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var InProgressApplicationsCount = Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var FeedbackApplicationsCount = Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0;
+    var ApprovedApplicationsCount = Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0;
 }
 
 <a asp-action="Index" asp-controller="Dashboard" class="govuk-back-link">Return to dashboard</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
-    <h1 class="govuk-heading-xl">Organisation applications</h1>
+    <h1 class="govuk-heading-xl">Withdrawal applications</h1>
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -21,44 +26,44 @@
             <div class="govuk-tabs" data-module="tabs">
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                        <a class="govuk-tabs__tab" href="#new">
-                            New (@(Model.NewApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#new" data-count="@NewApplicationsCount">
+                            New (@NewApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#in-progress">
-                            In progress (@(Model.InProgressApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#in-progress" data-count="@InProgressApplicationsCount">
+                            In progress (@InProgressApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#feedback">
-                            Feedback (@(Model.FeedbackApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#feedback" data-count="@FeedbackApplicationsCount">
+                            Feedback (@FeedbackApplicationsCount)
                         </a>
                     </li>
                     <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#approved">
-                            Approved (@(Model.ApprovedApplications?.PaginatedList?.TotalRecordCount ?? 0))
+                        <a class="govuk-tabs__tab" href="#approved" data-count="@ApprovedApplicationsCount">
+                            Approved (@ApprovedApplicationsCount)
                         </a>
                     </li>
                 </ul>
                 <section class="govuk-tabs__panel" id="new">
                     <div id="new-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.NewApplications);}
+                        @{await Html.RenderPartialAsync("_WithdrawalApplicationsPartial", @Model.NewApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="in-progress">
                     <div id="in-progress-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.InProgressApplications);}
+                        @{await Html.RenderPartialAsync("_WithdrawalApplicationsPartial", @Model.InProgressApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="feedback">
                     <div id="feedback-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.FeedbackApplications);}
+                        @{await Html.RenderPartialAsync("_WithdrawalApplicationsPartial", @Model.FeedbackApplications);}
                     </div>
                 </section>
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="approved">
                     <div id="approved-organisation-applications">
-                        @{await Html.RenderPartialAsync("_OrganisationApplicationsPartial", @Model.ApprovedApplications);}
+                        @{await Html.RenderPartialAsync("_WithdrawalApplicationsPartial", @Model.ApprovedApplications);}
                     </div>
                 </section>
             </div>

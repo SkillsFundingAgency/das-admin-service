@@ -1,9 +1,15 @@
-@using SFA.DAS.AdminService.Web.Helpers;
-
+@using SFA.DAS.AssessorService.Domain.Consts;
+@using SFA.DAS.AdminService.Web.Domain.Apply;
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.ApplicationReturnedViewModel
 
 @{
-    ViewBag.Title = Model.WarningMessages.Any() ? "Issue during approval" : "Feedback sent";
+    ViewBag.Title = Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO
+        ? Model.ReturnType == ReturnTypes.ReturnWithFeedback
+            ? "You've asked for more information"
+            : "You've approved this withdrawal notification"
+        : Model.WarningMessages.Any()
+            ? "Issue during approval"
+            : "Feedback sent";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -34,19 +40,85 @@
             else
             {
                 <p class="govuk-body">
-                    An email has been sent to the applicant.
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        if (Model.ReturnType == ReturnTypes.ReturnWithFeedback)
+                        {
+                            <text>We've sent an email to the applicant.</text>
+                        }
+                        else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                        {
+                            <text>You've approved this organisation to withdraw from the register of end-point assessment organisations.</text>
+                        }
+                        else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                        {
+                            <text>You've approved this organisation to withdraw from assessing @Model.StandardDescription.</text>
+                        }
+                    }
+                    else
+                    {
+                        <text>An email has been sent to the applicant.</text>
+                    }
                 </p>
             }
 
-            <h2 class="govuk-heading-m">What do you want to do next?</h2>
+            <h2 class="govuk-heading-m">
+                @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <text>What happens next</text>
+                }
+                else
+                {
+                    <text>What do you want to do next?</text>
+                }
+            </h2>
+            @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                if (Model.ReturnType == ReturnTypes.ReturnWithFeedback)
+                {
+                    <p class="govuk-body">The applicant will clarify and resubmit their withdrawal. Once they resubmit, you'll need to review their updated answers.</p>
+                    <p class="govuk-body">We'll show the resubmitted withdrawal in the 'Feedback' tab with the status 'Feedback received'.</p>
+                }
+                else
+                {
+                    <p class="govuk-body">You'll need to:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        <li>manually remove this organisation from the register of end-point assessment organisations</li>
+                    }
+                    else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        <li>manually remove this organisation from assessing @Model.StandardDescription</li>
+                    }
+                        <li>send an email to the applicant confirming this approval</li>
+                    </ul>
+                }
+            }
 
             <p class="govuk-body">
-                <a class="govuk-link" asp-action="@Model.BackAction" asp-controller="@Model.BackController", asp-route-organisationId="@Model.BackOrganisationId">Return to applications</a>
+                @{
+                    string fragment = Model.ReturnType == ReturnTypes.Approve
+                        ? "approved"
+                        : "feedback";
+                }
+                <a class="govuk-link" asp-action="@Model.BackAction" asp-controller="@Model.BackController" asp-fragment="@fragment" asp-route-organisationId="@Model.BackOrganisationId">
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    {
+                        <text>Return to withdrawal applications</text>
+                    }
+                    else
+                    {
+                        <text>Return to applications</text>
+                    }
+                </a>
             </p>
-            <p class="govuk-body">
-                <a class="govuk-link" target="_blank" href="https://www.surveymonkey.co.uk/r/P8YBH9J">What did you think of this service?</a> (takes 30 seconds)
-            </p>
-
+            @if (Model.ReturnType == ReturnTypes.ReturnWithFeedback || (Model.SequenceNo != ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO && Model.SequenceNo != ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO))
+            {
+                <p class="govuk-body">
+                    <a class="govuk-link" target="_blank" href="https://www.surveymonkey.co.uk/r/P8YBH9J">What do you think of this service?</a> (takes 30 seconds)
+                </p>
+            }
         </div>
     </div>
 </main>
