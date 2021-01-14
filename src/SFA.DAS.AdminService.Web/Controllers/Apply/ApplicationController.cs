@@ -13,9 +13,10 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AssessorService.Domain.Consts;
+using SFA.DAS.AdminService.Web.Domain.Apply;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -55,11 +56,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                activeApplySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                activeApplySequence.Sections,
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId);
 
             return View(nameof(Sequence), sequenceVm);
         }
 
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/{backOrganisationId?}")]
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
@@ -72,7 +77,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
-                applySequence.Sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                applySequence.Sections, backViewModel.BackAction, backViewModel.BackController,
+                backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -97,13 +103,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
             var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
-            var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
             if (activeApplicationStatuses.Contains(application.ApplicationStatus) && activeSequenceStatuses.Contains(applySequence?.Status))
-            {             
+            {
                 if (applySection.Status != ApplicationSectionStatus.Evaluated)
                 {
                     await _applyApiClient.StartApplicationSectionReview(applicationId, sequence.SequenceNo, section.SectionNo, _contextAccessor.HttpContext.User.UserDisplayName());
@@ -141,8 +148,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
                 
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
+                var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
-                var sectionVm = new SectionViewModel(application, organisation, section, applySection, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                var sectionVm = new SectionViewModel(application, organisation, section, applySection, applicationData, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
                 return View(nameof(Section), sectionVm);
             }
@@ -286,37 +294,37 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
            
             var warningMessages = new List<string>();
-            if (sequenceNo == 2 && returnType == "Approve")
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
             {
-                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == 1);
+                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
 
                 // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
                 if (sequenceOne?.NotRequired is true)
                 {
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One is NOT REQUIRED - Injecting Standard");
-                    var response = await AddOrganisationStandardIntoRegister(applicationId);
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One is NOT REQUIRED - Injecting Standard");
+                    var response = await AddOrganisationStandardIntoRegister(application.Id);
                     if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                 }
                 // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
                 else
                 {
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Sequence One IS REQUIRED.");
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One IS REQUIRED.");
                     var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
 
                     //    'Inject' the Organisation and associated contacts if not RoEPAO approved
                     if (!organisation.OrganisationData.RoEPAOApproved)
                     {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Organisation");
-                        var response = await AddOrganisationAndContactIntoRegister(applicationId);
-                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);    
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Organisation");
+                        var response = await AddOrganisationAndContactIntoRegister(application.Id);
+                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
 
                     //    'Inject' the Standard which was applied for by the organisation
                     if (!warningMessages.Any())
                     {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {applicationId} - Injecting Standard.");
-                        var response = await AddOrganisationStandardIntoRegister(applicationId);
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Standard.");
+                        var response = await AddOrganisationStandardIntoRegister(application.Id);
                         if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
                 }
@@ -324,10 +332,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (!warningMessages.Any())
             {
-                await _applyApiClient.ReturnApplicationSequence(applicationId, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
+                await _applyApiClient.ReturnApplicationSequence(application.Id, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
             }
 
-            var returnedViewModel = new ApplicationReturnedViewModel(applicationId, sequenceNo, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
+            var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            
             return View("Returned", returnedViewModel);
         }
 

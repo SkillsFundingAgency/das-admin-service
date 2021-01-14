@@ -1,4 +1,5 @@
-@using SFA.DAS.AssessorService.ApplyTypes
+@using SFA.DAS.AssessorService.ApplyTypes;
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AdminService.Common.Extensions
 
@@ -35,26 +36,50 @@
                             <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == 2)
+                    @if (!string.IsNullOrWhiteSpace(Model.OrganisationName) && Model.IsWithdrawal)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Organisation name</dt>
+                            <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
                             <dd class="govuk-summary-list__value">@Model.Standard</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Registered name</dt>
-                            <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            <dt class="govuk-summary-list__key">Details</dt>
+                            <dd class="govuk-summary-list__value">@Model.StandardWithReference</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Trading name</dt>
-                            <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
+                            <dt class="govuk-summary-list__key">Details</dt>
+                            <dd class="govuk-summary-list__value">Withdrawal from register</dd>
                         </div>
+                    }
+                    @if (!Model.IsWithdrawal)
+                    {
+                        @if (!string.IsNullOrWhiteSpace(Model.LegalName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Registered name</dt>
+                                <dd class="govuk-summary-list__value">@Model.LegalName</dd>
+                            </div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">Trading name</dt>
+                                <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
+                            </div>
+                        }
                     }
                     @if (Model.Ukprn.HasValue)
                     {
@@ -70,6 +95,17 @@
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
                         </div>
                     }
+                    @if (Model.IsWithdrawal)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Contact details</dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ContactName
+                                <br />
+                                @Model.ContactEmail
+                            </dd>
+                        </div>
+                    }
                 </dl>
 
                 @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
@@ -83,7 +119,9 @@
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
-                        if (applicationSection.SequenceNo == 1 && applicationSection.SectionNo == 3 && !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded ||  Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
+                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && 
+                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && 
+                            !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
                         {
                             // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
                             continue;
@@ -134,11 +172,10 @@
 
                 @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
                 {
-                    <form 
-                          class="js-disable-on-submit" 
-                          asp-controller="Application" 
-                          asp-action="Assessment" 
-                          asp-route-applicationId="@Model.ApplicationId" 
+                    <form class="js-disable-on-submit"
+                          asp-controller="Application"
+                          asp-action="Assessment"
+                          asp-route-applicationId="@Model.ApplicationId"
                           asp-route-sequenceNo="@Model.SequenceNo"
                           asp-route-backAction="@Model.BackAction"
                           asp-route-backController="@Model.BackController"
@@ -148,13 +185,13 @@
                     </form>
                 }
             }
-
+            
             <p class="govuk-body">
-                <a class="govuk-link" 
-                   asp-action="@Model.BackAction" 
-                   asp-controller="@Model.BackController" 
-                   asp-route-organisationId="@Model.BackOrganisationId" 
-                   asp-fragment="@Fragment">Return to applications</a>
+                <a class="govuk-link"
+                   asp-action="@Model.BackAction"
+                   asp-controller="@Model.BackController"
+                   asp-route-organisationId="@Model.BackOrganisationId"
+                   asp-fragment="@Fragment">Return to @(Model.IsWithdrawal ? "withdrawal " : "")applications</a>
             </p>
         </div>`
     </div>
