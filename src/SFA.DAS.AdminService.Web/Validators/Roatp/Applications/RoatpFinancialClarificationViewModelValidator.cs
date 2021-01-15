@@ -19,14 +19,14 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
         private const string ClarificationResponse = "ClarificationResponse";
 
         public ValidationResponse Validate(RoatpFinancialClarificationViewModel vm,
-            bool isClarificationFileUpload, bool isClarificationOutcome)
+            bool isClarificationFilesUpload, bool isClarificationOutcome)
         {
             var validationResponse = new ValidationResponse
             {
                 Errors = new List<ValidationErrorDetail>()
             };
 
-            if (isClarificationFileUpload && vm.FilesToUpload != null)
+            if (isClarificationFilesUpload && vm.FilesToUpload != null)
             {
                 foreach (var file in vm.FilesToUpload)
                 {
@@ -55,8 +55,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                     validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
                         "Enter clarification response"));
                 }
-
-                if (HasExceededWordCount(vm.ClarificationResponse))
+                else if (HasExceededWordCount(vm.ClarificationResponse))
                 {
                     validationResponse.Errors.Add(new ValidationErrorDetail(ClarificationResponse,
                         "Your comments must be 500 words or less"));
@@ -72,16 +71,25 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                     switch (vm.FinancialReviewDetails.SelectedGrade)
                     {
                         case FinancialApplicationSelectedGrade.Exempt:
-                            return validationResponse;
-                        case FinancialApplicationSelectedGrade.Inadequate
-                            when string.IsNullOrWhiteSpace(vm.InadequateComments):
-                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                                "Enter your comments"));
                             break;
-                        case FinancialApplicationSelectedGrade.Inadequate
-                            when HasExceededWordCount(vm.InadequateComments):
-                            validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments",
-                                "Your comments must be 500 words or less"));
+                        case FinancialApplicationSelectedGrade.Inadequate:
+                            if (string.IsNullOrWhiteSpace(vm.InadequateComments))
+                            {
+                                validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments", "Enter internal comments"));
+                            }
+                            else if (HasExceededWordCount(vm.InadequateComments))
+                            {
+                                validationResponse.Errors.Add(new ValidationErrorDetail("InadequateComments", "Your internal comments must be 500 words or less"));
+                            }
+
+                            if(string.IsNullOrWhiteSpace(vm.InadequateExternalComments))
+                            {
+                                validationResponse.Errors.Add(new ValidationErrorDetail("InadequateExternalComments", "Enter external comments"));
+                            }
+                            else if(HasExceededWordCount(vm.InadequateExternalComments))
+                            {
+                                validationResponse.Errors.Add(new ValidationErrorDetail("InadequateExternalComments", "Your external comments must be 500 words or less"));
+                            }
                             break;
                         case FinancialApplicationSelectedGrade.Outstanding:
                         case FinancialApplicationSelectedGrade.Good:
@@ -89,18 +97,15 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                             switch (vm.FinancialReviewDetails.SelectedGrade)
                             {
                                 case FinancialApplicationSelectedGrade.Outstanding:
-                                    ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate",
-                                        validationResponse);
+                                    ProcessDate(vm.OutstandingFinancialDueDate, "OutstandingFinancialDueDate", validationResponse);
                                     break;
                                 case FinancialApplicationSelectedGrade.Good:
                                     ProcessDate(vm.GoodFinancialDueDate, "GoodFinancialDueDate", validationResponse);
                                     break;
                                 case FinancialApplicationSelectedGrade.Satisfactory:
-                                    ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate",
-                                        validationResponse);
+                                    ProcessDate(vm.SatisfactoryFinancialDueDate, "SatisfactoryFinancialDueDate", validationResponse);
                                     break;
                             }
-
                             break;
                     }
             }

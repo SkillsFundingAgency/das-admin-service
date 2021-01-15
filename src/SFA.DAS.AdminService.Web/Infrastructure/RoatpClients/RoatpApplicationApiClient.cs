@@ -115,6 +115,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return response;
         }
 
+        public async Task<List<RoatpApplicationOversightDownloadItem>> GetApplicationOversightDetailsForDownload(DateTime dateFrom, DateTime dateTo)
+        {
+            return await Get<List<RoatpApplicationOversightDownloadItem>>($"Oversights/Download?dateFrom={dateFrom:yyyy-MM-dd}&dateTo={dateTo:yyyy-MM-dd}");
+        }
+
         public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
         {
             var fileName = string.Empty;

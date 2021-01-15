@@ -26,6 +26,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
 
         public string InadequateComments { get; set; }
+        public string InadequateExternalComments { get; set; }
         public string ClarificationComments { get; set; }
         
         public string ClarificationResponse { get; set; }
@@ -135,6 +136,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             if(FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
             {
                 InadequateComments = FinancialReviewDetails.Comments;
+                InadequateExternalComments = FinancialReviewDetails.ExternalComments;
             }
             else if (FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
             {

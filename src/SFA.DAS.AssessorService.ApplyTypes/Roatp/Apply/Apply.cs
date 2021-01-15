@@ -34,6 +34,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string GradedBy { get; set; }
         public DateTime? GradedDateTime { get; set; }
         public string Comments { get; set; }
+        public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
