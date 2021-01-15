@@ -17,21 +17,37 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
                 {
                     context.AddFailure("FinancialReviewDetails.SelectedGrade", "Select the outcome of this financial health assessment");
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && string.IsNullOrWhiteSpace(vm.InadequateComments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate)
                 {
-                    context.AddFailure("InadequateComments", "Enter your comments");
+                    if (string.IsNullOrWhiteSpace(vm.InadequateComments))
+                    {
+                        context.AddFailure("InadequateComments", "Enter internal comments");
+                    }
+                    else if(HasExceededWordCount(vm.InadequateComments))
+                    {
+                        context.AddFailure("InadequateComments", "Your internal comments must be 500 words or less");
+                    }
+
+                    if(string.IsNullOrWhiteSpace(vm.InadequateExternalComments))
+                    {
+                        context.AddFailure("InadequateExternalComments", "Enter external comments");
+                    }
+                    else if(HasExceededWordCount(vm.InadequateExternalComments))
+                    {
+                        context.AddFailure("InadequateExternalComments", "Your external comments must be 500 words or less");
+                    }
                 }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate && HasExceededWordCount(vm.InadequateComments))
+                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
                 {
-                    context.AddFailure("InadequateComments", "Your comments must be 500 words or less");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && string.IsNullOrWhiteSpace(vm.ClarificationComments))
-                {
-                    context.AddFailure("ClarificationComments", "Enter internal comments");
-                }
-                else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification && HasExceededWordCount(vm.ClarificationComments))
-                {
-                    context.AddFailure("ClarificationComments", "Your comments must be 500 words or less");
+                    if (string.IsNullOrWhiteSpace(vm.ClarificationComments))
+                    {
+                        context.AddFailure("ClarificationComments", "Enter internal comments");
+                    }
+                    else if(HasExceededWordCount(vm.ClarificationComments))
+                    {
+                        context.AddFailure("ClarificationComments", "Your comments must be 500 words or less");
+                    }
+
                 }
                 else if (vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding
                          || vm.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good
