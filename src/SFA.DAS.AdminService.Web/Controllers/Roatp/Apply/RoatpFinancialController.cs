@@ -406,7 +406,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         private async Task<RoatpFinancialApplicationViewModel> RebuildApplicationViewModel(RoatpFinancialClarificationViewModel vm,
-            RoatpApply application, FinancialReviewDetails financialReviewDets)
+            RoatpApply application, FinancialReviewDetails financialReviewDetails)
         {
             var clarificationVm = await CreateRoatpFinancialApplicationViewModel(application);
             clarificationVm.ApplicantEmailAddress = vm.ApplicantEmailAddress;
