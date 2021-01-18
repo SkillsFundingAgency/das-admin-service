@@ -85,13 +85,17 @@
                     <ul class="govuk-list govuk-list--bullet">
                     @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                     {
-                        <li>manually remove this organisation from the register of end-point assessment organisations</li>
+                        <li>We will send an email to the applicant confirming this approval.</li>
+
+                        <li>You'll need to manually remove this organisation from the register of end-point assessment organisations.</li>
                     }
                     else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
-                        <li>manually remove this organisation from assessing @Model.StandardDescription</li>
+                        <li>We will send an email to the applicant confirming this approval.</li>
+                        
+                        <li>You'll need to manually remove this organisation from assessing @Model.StandardDescription.</li>
                     }
-                        <li>send an email to the applicant confirming this approval</li>
+                        
                     </ul>
                 }
             }
