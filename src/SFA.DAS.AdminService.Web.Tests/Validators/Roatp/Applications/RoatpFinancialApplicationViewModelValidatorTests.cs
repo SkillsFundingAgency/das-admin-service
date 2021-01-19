@@ -36,6 +36,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
                 InadequateComments = null,
+                InadequateExternalComments = "external comments",
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Inadequate,
@@ -54,6 +55,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var _viewModel = new RoatpFinancialApplicationViewModel
             {
                 InadequateComments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
+                InadequateExternalComments = "external comments",
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
                     SelectedGrade = FinancialApplicationSelectedGrade.Inadequate,
@@ -63,6 +65,44 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var validationResponse = _validator.Validate(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "InadequateComments");
+            error.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Validator_rejects_missing_InadequateExternalComments_when_graded_Inadequate()
+        {
+            var _viewModel = new RoatpFinancialApplicationViewModel
+            {
+                InadequateComments = "comments",
+                InadequateExternalComments = null,
+                FinancialReviewDetails = new FinancialReviewDetails
+                {
+                    SelectedGrade = FinancialApplicationSelectedGrade.Inadequate,
+                }
+            };
+
+            var validationResponse = _validator.Validate(_viewModel);
+
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "InadequateExternalComments");
+            error.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Validator_rejects_InadequateExternalComments_above_maxwordcount_when_graded_Inadequate()
+        {
+            var _viewModel = new RoatpFinancialApplicationViewModel
+            {
+                InadequateComments = "comments",
+                InadequateExternalComments = string.Join(" ", Enumerable.Repeat("a", _maxWordCount + 1)),
+                FinancialReviewDetails = new FinancialReviewDetails
+                {
+                    SelectedGrade = FinancialApplicationSelectedGrade.Inadequate,
+                }
+            };
+
+            var validationResponse = _validator.Validate(_viewModel);
+
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "InadequateExternalComments");
             error.Should().NotBeNull();
         }
 

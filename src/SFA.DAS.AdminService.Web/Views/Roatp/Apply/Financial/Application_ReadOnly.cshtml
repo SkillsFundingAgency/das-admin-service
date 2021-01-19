@@ -175,11 +175,23 @@
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Comments
+                                Internal comments
                             </dt>
 
                             <dd class="govuk-summary-list__value">
                                 @Model.FinancialReviewDetails.Comments
+                            </dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.FinancialReviewDetails.ExternalComments))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                External comments
+                            </dt>
+
+                            <dd class="govuk-summary-list__value">
+                                @Model.FinancialReviewDetails.ExternalComments
                             </dd>
                         </div>
                     }

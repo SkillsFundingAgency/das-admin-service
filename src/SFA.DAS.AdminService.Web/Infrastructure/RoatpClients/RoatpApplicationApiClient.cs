@@ -6,12 +6,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
@@ -22,9 +20,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
-        public async Task<RoatpApplicationResponse> GetApplication(Guid applicationId)
+        public async Task<RoatpApply> GetApplication(Guid applicationId)
         {
-            return await Get<RoatpApplicationResponse>($"/Application/{applicationId}");
+            return await Get<RoatpApply>($"/Application/{applicationId}");
         }
 
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications()
@@ -115,6 +113,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             var response = await _client.GetAsync($"/Clarification/Applications/{applicationId}/Download/{filename}");
 
             return response;
+        }
+
+        public async Task<List<RoatpApplicationOversightDownloadItem>> GetApplicationOversightDetailsForDownload(DateTime dateFrom, DateTime dateTo)
+        {
+            return await Get<List<RoatpApplicationOversightDownloadItem>>($"Oversights/Download?dateFrom={dateFrom:yyyy-MM-dd}&dateTo={dateTo:yyyy-MM-dd}");
         }
 
         public async Task<bool> UploadClarificationFile(Guid applicationId, string userId, IFormFileCollection clarificationFiles)
