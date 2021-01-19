@@ -11,8 +11,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
     public class RoatpFinancialApplicationViewModel : OrganisationDetailsViewModel
     {
         public List<Section> Sections { get; set; }
+
         public Guid ApplicationId { get; set; }
         public Guid OrgId { get; set; }
+
+        public string ApplicationStatus { get; }
 
         public string DeclaredInApplication { get; set; }
 
@@ -29,23 +32,48 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public string ClarificationResponse { get; set; }
         public string ApplicantEmailAddress { get; set; }
 
+        public DateTime? ApplicationClosedOn { get; }
+        public string ApplicationClosedBy { get; }
+        public string ApplicationComments { get; }
+        public string ApplicationExternalComments { get; }
+
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(RoatpApplicationResponse application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
+        public RoatpFinancialApplicationViewModel(RoatpApply application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
         {
             ApplicationId = application.ApplicationId;
             OrgId = application.OrganisationId;
 
+            ApplicationStatus = application.ApplicationStatus;
+
             Sections = SetupSections(parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
             SetupGradeAndFinancialDueDate(application.FinancialGrade);
 
-            OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
-            Ukprn = application.ApplyData.ApplyDetails.UKPRN;
-            ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
-            ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
-            SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+            if (application.ApplyData?.ApplyDetails != null)
+            {
+                ApplicationReference = application.ApplyData.ApplyDetails.ReferenceNumber;
+                ApplicationRoute = application.ApplyData.ApplyDetails.ProviderRouteName;
+                Ukprn = application.ApplyData.ApplyDetails.UKPRN;
+                OrganisationName = application.ApplyData.ApplyDetails.OrganisationName;
+                SubmittedDate = application.ApplyData.ApplyDetails.ApplicationSubmittedOn;
+
+                if (application.ApplicationStatus == AssessorService.ApplyTypes.Roatp.ApplicationStatus.Withdrawn)
+                {
+                    ApplicationClosedOn = application.ApplyData.ApplyDetails.ApplicationWithdrawnOn;
+                    ApplicationClosedBy = application.ApplyData.ApplyDetails.ApplicationWithdrawnBy;
+                }
+                else if (application.ApplicationStatus == AssessorService.ApplyTypes.Roatp.ApplicationStatus.Removed)
+                {
+                    ApplicationClosedOn = application.ApplyData.ApplyDetails.ApplicationRemovedOn;
+                    ApplicationClosedBy = application.ApplyData.ApplyDetails.ApplicationRemovedBy;
+                }
+            }
+
+            ApplicationComments = application.Comments;
+            ApplicationExternalComments = application.ExternalComments;
 
             SetupDeclaredInApplication(application.ApplyData);
+
         }
 
         private List<Section> SetupSections(Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
