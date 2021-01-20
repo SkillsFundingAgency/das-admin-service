@@ -335,17 +335,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 await _applyApiClient.ReturnApplicationSequence(application.Id, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
             }
 
-
-            if (sequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)   // ORGANISATION_WITHDRAWAL_SEQUENCE_NO = 3;
-            {
-
-            }
-
-            if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO) // STANDARD_WITHDRAWAL_SEQUENCE_NO = 4;
-            {
-
-            }
-
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
             var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
             
