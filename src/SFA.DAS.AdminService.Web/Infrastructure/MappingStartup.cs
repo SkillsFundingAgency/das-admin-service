@@ -2,6 +2,7 @@
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AdminService.Web.AutoMapperProfiles;
+using SFA.DAS.AdminService.Web.Models.Roatp;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -18,6 +19,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
                 cfg.AddProfile<RegisterViewAndEditUserViewModelProfile>();
                 cfg.AddProfile<RoatpFinancialSummaryExportViewModelProfile>();
+                cfg.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
             });
         }
     }

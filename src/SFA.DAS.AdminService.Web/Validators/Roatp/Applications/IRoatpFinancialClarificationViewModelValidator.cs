@@ -5,6 +5,6 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
     public interface IRoatpFinancialClarificationViewModelValidator
     {
-        ValidationResponse Validate(RoatpFinancialClarificationViewModel vm, bool isClarificationFilesUpdate, bool isClarificationOutcome);
+        ValidationResponse Validate(RoatpFinancialClarificationViewModel vm, bool isClarificationFilesUpload, bool isClarificationOutcome);
     }
 }
