@@ -215,7 +215,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
 
-        public List<Submission> InitSubmissions { get; set; } = new List<Submission>();
+        public List<Submission> InitSubmissions { get; private set; } = new List<Submission>();
+
+        public void AddInitSubmission(Submission submission)
+        {
+            if (InitSubmissions == null)
+                InitSubmissions = new List<Submission>();
+
+            InitSubmissions.Add(submission);
+        }
 
         [JsonIgnore]
         public Submission LatestInitSubmission => InitSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
@@ -225,7 +233,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
 
-        public List<Submission> StandardSubmissions { get; set; } = new List<Submission>();
+        public List<Submission> StandardSubmissions { get; private set; } = new List<Submission>();
+
+        public void AddStandardSubmission(Submission submission)
+        {
+            if (StandardSubmissions == null)
+                StandardSubmissions = new List<Submission>();
+
+            StandardSubmissions.Add(submission);
+        }
 
         [JsonIgnore]
         public Submission LatestStandardSubmission => StandardSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
@@ -235,7 +251,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
 
-        public List<Submission> OrganisationWithdrawalSubmissions { get; set; } = new List<Submission>();
+        public List<Submission> OrganisationWithdrawalSubmissions { get; private set; } = new List<Submission>();
+
+        public void AddOrganisationWithdrawalSubmission(Submission submission)
+        {
+            if (OrganisationWithdrawalSubmissions == null)
+                OrganisationWithdrawalSubmissions = new List<Submission>();
+
+            OrganisationWithdrawalSubmissions.Add(submission);
+        }
 
         [JsonIgnore]
         public Submission LatestOrganisationWithdrawalSubmission => OrganisationWithdrawalSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
@@ -245,7 +269,15 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public DateTime? OrganisationWithdrawalSubmissionFeedbackAddedDate { get; set; }
         public DateTime? OrganisationWithdrawalSubmissionClosedDate { get; set; }
 
-        public List<Submission> StandardWithdrawalSubmissions { get; set; } = new List<Submission>();
+        public List<Submission> StandardWithdrawalSubmissions { get; private set; } = new List<Submission>();
+
+        public void AddStandardWithdrawalSubmission(Submission submission)
+        {
+            if (StandardWithdrawalSubmissions == null)
+                StandardWithdrawalSubmissions = new List<Submission>();
+
+            StandardWithdrawalSubmissions.Add(submission);
+        }
 
         [JsonIgnore]
         public Submission LatestStandardWithdrawalSubmission => StandardWithdrawalSubmissions?.OrderByDescending(o => o.SubmittedAt).FirstOrDefault();
