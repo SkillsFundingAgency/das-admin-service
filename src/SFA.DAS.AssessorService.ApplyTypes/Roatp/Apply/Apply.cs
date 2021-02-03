@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
@@ -40,6 +41,12 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public DateTime? ClarificationRequestedOn { get; set; }
 
         public string ClarificationResponse { get; set; }
+
+        public string Outcome => FinancialApplicationSelectedGrade.PassingGrades.Contains(SelectedGrade)
+                ? FinancialApplicationOutcome.Passed
+                : FinancialApplicationOutcome.Failed;
+
+        public string OutcomeCssClass => Outcome == FinancialApplicationOutcome.Passed ? "govuk-tag govuk-tag--pass": "govuk-tag govuk-tag--fail";
     }
 
     public class FinancialEvidence
@@ -60,6 +67,20 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public const string Clarification = "Clarification";
         public const string Inadequate = "Inadequate";
         public const string Exempt = "Exempt";
+
+        public static IReadOnlyList<string> PassingGrades { get; } = new List<string>
+        {
+            ApplyTypes.FinancialApplicationSelectedGrade.Outstanding,
+            ApplyTypes.FinancialApplicationSelectedGrade.Good,
+            ApplyTypes.FinancialApplicationSelectedGrade.Satisfactory,
+            ApplyTypes.FinancialApplicationSelectedGrade.Exempt
+        };
+    }
+
+    public static class FinancialApplicationOutcome
+    {
+        public const string Passed = "Passed";
+        public const string Failed = "Failed";
     }
 
     public class RoatpApplyData
