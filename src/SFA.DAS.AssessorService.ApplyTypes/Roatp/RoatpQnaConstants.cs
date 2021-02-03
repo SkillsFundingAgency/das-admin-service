@@ -43,7 +43,10 @@
                     public static string ParentCompanyDetails = "21";
                     public static string TradingForMain = "50";
                     public static string TradingForEmployer = "51";
+                    public static string RailFranchiseForMain = "55";
+                    public static string RailFranchiseForEmployer = "56";
                     public static string TradingForSupporting = "60";
+                    public static string RailFranchiseForSupporting = "65";
                     public static string OrganisationTypeMainSupporting = "140";
                     public static string OrganisationTypeEmployer = "150";
                     public static string EducationalInstituteType = "160";
