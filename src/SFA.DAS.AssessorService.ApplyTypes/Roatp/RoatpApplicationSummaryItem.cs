@@ -11,14 +11,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime? SubmittedDate { get; set; }
-        public DateTime? ClarificationRequestedDate { get; set; }
-        public DateTime? OutcomeMadeDate { get; set; }
-        public string OutcomeMadeBy { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
-        public DateTime GatewayOutcomeDateTime { get; set; }
+
+        public DateTime? ClarificationRequestedDate { get; set; }
+        public DateTime? OutcomeMadeDate { get; set; }
+        public string OutcomeMadeBy { get; set; }
 
         public string ApplicationRouteShortText
         {
