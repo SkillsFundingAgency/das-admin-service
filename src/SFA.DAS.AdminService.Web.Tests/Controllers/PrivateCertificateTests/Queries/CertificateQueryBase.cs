@@ -13,7 +13,6 @@ using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Tests.MockedObjects;
@@ -26,7 +25,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
         protected Mock<ILogger<CertificateAmendController>> MockLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient MockApiClient;
-        protected IAssessmentOrgsApiClient MockAssessmentOrgsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
         protected Mock<IStandardServiceClient> MockStandardServiceClient;
@@ -79,9 +77,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
 
             MockStandardServiceClient.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(standards.AsEnumerable()));
 
-
-
-            MockAssessmentOrgsApiClient = MockedAssessmentOrgsApiClient.Setup(mockedApiClientLogger);
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
