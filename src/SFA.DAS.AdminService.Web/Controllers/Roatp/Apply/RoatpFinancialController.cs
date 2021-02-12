@@ -464,7 +464,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             activelyTradingSection.Title = ActivelyTradingSectionTitle;
             activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForMain
                                                                                                     || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForEmployer
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForSupporting).ToList();
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForSupporting
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForMain
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForEmployer
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForSupporting
+                                                                                                ).ToList();
 
             return activelyTradingSection;
         }
