@@ -17,7 +17,6 @@ using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
 using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Settings;
@@ -32,7 +31,6 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Infrastructure.Apply;
-using SFA.DAS.AdminService.Web.Validators.Roatp;
 using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
@@ -212,9 +210,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            services.AddTransient<IAssessmentOrgsApiClient>(x =>
-                new AssessmentOrgsApiClient(ApplicationConfiguration.AssessmentOrgsApiClientBaseUrl));
-
+            
             services.AddTransient<IIfaStandardsApiClient>(x =>
                 new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
 

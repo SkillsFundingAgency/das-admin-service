@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Linq;
 using FluentValidation;
-using Microsoft.Extensions.Localization;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AssessorService.ExternalApis;
-using SFA.DAS.AssessorService.ExternalApis.AssessmentOrgs;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
     public class CertificateUkprnViewModelValidator : AbstractValidator<CertificateUkprnViewModel>
     {
-        private readonly IAssessmentOrgsApiClient _apiClient;
+        private readonly IRoatpApiClient _apiClient;
 
         public CertificateUkprnViewModelValidator(
-            IAssessmentOrgsApiClient apiClient)
+            IRoatpApiClient apiClient)
         {
             _apiClient = apiClient;
             RuleFor(vm => vm.Ukprn).NotEmpty()
@@ -38,7 +38,11 @@ namespace SFA.DAS.AdminService.Web.Validators
             try
             {
                 var providerUkprn = Convert.ToInt32(ukprn);
-               _apiClient.GetProvider(providerUkprn).GetAwaiter().GetResult();
+                var result = _apiClient.Search(providerUkprn.ToString()).GetAwaiter().GetResult().SearchResults.FirstOrDefault();
+                if (result == null)
+                {
+                    return false;
+                }
             }
             catch (EntityNotFoundException e)
             {

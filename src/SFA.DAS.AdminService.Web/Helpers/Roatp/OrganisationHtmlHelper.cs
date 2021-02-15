@@ -1,5 +1,4 @@
-﻿using SFA.DAS.Apprenticeships.Api.Types.AssessmentOrgs;
-
+﻿
 namespace SFA.DAS.AdminService.Web.Helpers.Roatp
 {
     using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
