@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web
             WebHost.CreateDefaultBuilder(args)
                 .UseApplicationInsights()
                 .UseStartup<Startup>()
-                .UseUrls("https://localhost:44347")
+                .UseUrls("https://localhost:44348")
                 .UseNLog();
     }
 }
