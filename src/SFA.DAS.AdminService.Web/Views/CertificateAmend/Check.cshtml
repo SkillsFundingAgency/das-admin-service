@@ -160,14 +160,14 @@ else
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Achievement date
+                        @(Model.SelectedGrade == CertificateGrade.Fail ? "Fail date" : "Achievement date" )
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.AchievementDate?.ToSfaShortDateString()
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                            Change<span class="govuk-visually-hidden"> achievement date</span>
+                            Change<span class="govuk-visually-hidden"> @(Model.SelectedGrade == CertificateGrade.Fail ? "fail date" : "achievement date" )</span>
                         </a>
                     </dd>
                 </div>
@@ -189,75 +189,78 @@ else
                     </div>
                 }
             </dl>
+            
+            @if (Model.SelectedGrade != CertificateGrade.Fail)
+            {
+                <h2 class="govuk-heading-m">
+                    We'll send the certificate to:
+                </h2>
 
-            <h2 class="govuk-heading-m">
-                We'll send the certificate to:
-            </h2>
-
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Name
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Name
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
-                            Change<span class="govuk-visually-hidden"> recipient name</span>
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Department
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Dept
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                            Change<span class="govuk-visually-hidden"> department</span>
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Organisation
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Employer
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId=@Model.Id asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                            Change<span class="govuk-visually-hidden"> organisation</span>
-                        </a>
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Address
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.AddressLine1<br />
-                        @if (@Model.AddressLine2 != null)
-                        {
-                            @Model.AddressLine2<br />
-                        }
-                        @if (@Model.AddressLine3 != null)
-                        {
-                            @Model.AddressLine3<br />
-                        }
-                        @Model.City<br />
-                        @Model.Postcode
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                            Change<span class="govuk-visually-hidden"> address</span>
-                        </a>
-                    </dd>
-                </div>
-            </dl>
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Name
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
+                                Change<span class="govuk-visually-hidden"> recipient name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Department
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Dept
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> department</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Employer
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId=@Model.Id asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> organisation</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.AddressLine1<br />
+                            @if (@Model.AddressLine2 != null)
+                            {
+                                @Model.AddressLine2<br />
+                            }
+                            @if (@Model.AddressLine3 != null)
+                            {
+                                @Model.AddressLine3<br />
+                            }
+                            @Model.City<br />
+                            @Model.Postcode
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> address</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            }
 
             @if(Model.CanRequestDuplicate)
             {
