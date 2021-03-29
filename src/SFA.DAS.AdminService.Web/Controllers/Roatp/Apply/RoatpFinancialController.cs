@@ -293,7 +293,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
                                     if (downloadedFile.IsSuccessStatusCode)
                                     {
-                                        var zipEntry = zipArchive.CreateEntry(fileDownloadName);
+                                        var destinationFilePath = Path.Combine(uploadPage.PageId, Path.GetFileName(fileDownloadName));
+                                        var zipEntry = zipArchive.CreateEntry(destinationFilePath);
                                         using (var entryStream = zipEntry.Open())
                                         {
                                             var fileStream = await downloadedFile.Content.ReadAsStreamAsync();
