@@ -26,6 +26,8 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
             Map(x => x.Liabilities).Name("Total current liabilities");
             Map(x => x.ShareholderFunds).Name("Shareholder funds/Net assets");
             Map(x => x.Borrowings).Name("Total borrowings");
+            Map(x => x.AccountingReferenceDate).Name("Accounting reference date").TypeConverterOption.Format("yyyy-MM-dd");
+            Map(x => x.AccountingPeriod).Name("Accounting period");
         }
     }
 }
