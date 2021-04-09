@@ -1,5 +1,7 @@
-@using SFA.DAS.AssessorService.ApplyTypes.Roatp
+@using System.Globalization;
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
+@using SFA.DAS.AdminService.Common.Extensions
+
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialApplicationViewModel
 @{
     ViewBag.Title = "Financial health assessment overview";
@@ -75,14 +77,42 @@
                             {
                                 foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
                                 {
+                                    var answer = pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value;
+
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                                            @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                            @switch (question.Input.Type)
                                             {
-                                                <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                                case "CheckboxList":
+                                                case "ComplexCheckboxList":
+                                                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                                        @foreach (var selectedAnswer in answer.Split(','))
+                                                        {
+                                                            <li>@selectedAnswer</li>
+                                                        }
+                                                    </ul>
+                                                    break;
+                                                case "Date":
+                                                    var dateParts = (string.IsNullOrWhiteSpace(answer) ? new string[] { } : answer.Split(","));
+                                                    if (dateParts.Length >= 3)
+                                                    {
+                                                        DateTime.TryParseExact($"{dateParts[0]}/{dateParts[1]}/{dateParts[2]}", "d/M/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                                                        <text>@parsedDate.ToSfaShortDateString()</text>
+                                                    }
+                                                    break;
+                                                default:
+                                                    @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                                    {
+                                                        <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                                    }
+                                                    @Html.Raw(answer)
+                                                    @if (!string.IsNullOrWhiteSpace(question.Input.InputSuffix))
+                                                    {
+                                                        <span>@Html.Raw(question.Input.InputSuffix)</span>
+                                                    }
+                                                    break;
                                             }
-                                            @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value)
                                         </td>
                                     </tr>
                                 }
