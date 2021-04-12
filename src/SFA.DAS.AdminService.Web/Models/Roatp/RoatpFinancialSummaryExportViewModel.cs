@@ -22,5 +22,7 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
         public long? Liabilities { get; set; }
         public long? ShareholderFunds { get; set; }
         public long? Borrowings { get; set; }
+        public DateTime? AccountingReferenceDate { get; set; }
+        public byte? AccountingPeriod { get; set; }
     }
 }

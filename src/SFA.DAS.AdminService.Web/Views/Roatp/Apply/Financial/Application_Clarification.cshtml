@@ -1,4 +1,6 @@
+@using System.Globalization;
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
+@using SFA.DAS.AdminService.Common.Extensions
 
 @model SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial.RoatpFinancialClarificationViewModel
 
@@ -41,7 +43,7 @@
         </li>
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" asp-action="ClarificationApplications"
-                asp-controller="RoatpFinancial">RoATP assessments</a>
+               asp-controller="RoatpFinancial">RoATP assessments</a>
         </li>
 
         <li class="govuk-breadcrumbs__list-item" aria-current="page">Financial health evaluation</li>
@@ -58,7 +60,7 @@
             {
 
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-                    data-module="govuk-error-summary">
+                     data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -157,8 +159,9 @@
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="col">Application question</th>
-                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">Applicant's
-                                    answer</th>
+                                <th class="govuk-table__header govuk-table__header--numeric das-no-wrap" scope="col">
+                                    Applicant's answer
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
@@ -166,15 +169,42 @@
                             {
                                 foreach (var question in pg.Questions.Where(q => q.Input.Type != "FileUpload"))
                                 {
+                                    var answer = pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == question.QuestionId)?.Value;
+
                                     <tr class="govuk-table__row">
                                         <td class="govuk-table__cell">@Html.Raw(question.Label)</td>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                                            @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                            @switch (question.Input.Type)
                                             {
-                                                <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                                case "CheckboxList":
+                                                case "ComplexCheckboxList":
+                                                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                                        @foreach (var selectedAnswer in answer.Split(','))
+                                                        {
+                                                            <li>@selectedAnswer</li>
+                                                        }
+                                                    </ul>
+                                                    break;
+                                                case "Date":
+                                                    var dateParts = (string.IsNullOrWhiteSpace(answer) ? new string[] { } : answer.Split(","));
+                                                    @if (dateParts.Length >= 3)
+                                                    {
+                                                        DateTime.TryParseExact($"{dateParts[0]}/{dateParts[1]}/{dateParts[2]}", "d/M/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
+                                                        <text>@parsedDate.ToSfaShortDateString()</text>
+                                                    }
+                                                    break;
+                                                default:
+                                                    @if (!string.IsNullOrWhiteSpace(question.Input.InputPrefix))
+                                                    {
+                                                        <span>@Html.Raw(question.Input.InputPrefix)</span>
+                                                    }
+                                                    @Html.Raw(answer)
+                                                    @if (!string.IsNullOrWhiteSpace(question.Input.InputSuffix))
+                                                    {
+                                                        <span>@Html.Raw(question.Input.InputSuffix)</span>
+                                                    }
+                                                    break;
                                             }
-                                            @Html.Raw(pg.PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId
-                                           == question.QuestionId)?.Value)
                                         </td>
                                     </tr>
                                 }
@@ -189,8 +219,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     <p class="govuk-body govuk-!-margin-bottom-9">
                         <a class="govuk-link"
-                            href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo,
-                                                                                                                                                            section.SectionNo)</a>
+                           href="@Url.Action("DownloadFiles", "RoatpFinancial", new { applicationId = section.ApplicationId, sectionId = section.Id })">@Model.GetDownloadFilesLinkText(section.SequenceNo, section.SectionNo)
+                        </a>
                     </p>
                 </div>
             }
@@ -236,63 +266,63 @@
                         {
                             @Html.Raw(Model.FinancialReviewDetails.ClarificationRequestedOn.Value.ToLongDateString())
                         }
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Financial health assessed by
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.FinancialReviewDetails.GradedBy
-                        </dd>
-                    </div>
-                </dl>
-            </div>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Financial health assessed by
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FinancialReviewDetails.GradedBy
+                    </dd>
+                </div>
+            </dl>
         </div>
+    </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-                <form class="js-disable-on-submit" method="post" enctype="multipart/form-data"
-                    asp-action="SubmitClarification" asp-controller="RoatpFinancial">
-                    <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" name="OrgId" value="@Model.OrgId" />
-                    <input type="hidden" name="ApplicantEmailAddress" value="@Model.ApplicantEmailAddress" />
-                    <input type="hidden" name="InternalComments" value="@Model.InternalComments" />
-                    <input type="hidden" name="Comments" value="@Model.ClarificationComments" />
-                    <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn"
-                        value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
-                    <input type="hidden" name="FinancialReviewDetails.GradedBy"
-                        value="@Model.FinancialReviewDetails.GradedBy" />
+            <form class="js-disable-on-submit" method="post" enctype="multipart/form-data"
+                  asp-action="SubmitClarification" asp-controller="RoatpFinancial">
+                <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
+                <input type="hidden" name="OrgId" value="@Model.OrgId" />
+                <input type="hidden" name="ApplicantEmailAddress" value="@Model.ApplicantEmailAddress" />
+                <input type="hidden" name="InternalComments" value="@Model.InternalComments" />
+                <input type="hidden" name="Comments" value="@Model.ClarificationComments" />
+                <input type="hidden" name="FinancialReviewDetails.ClarificationRequestedOn"
+                       value="@Model.FinancialReviewDetails.ClarificationRequestedOn" />
+                <input type="hidden" name="FinancialReviewDetails.GradedBy"
+                       value="@Model.FinancialReviewDetails.GradedBy" />
 
-                    <div class="govuk-form-group">
+                <div class="govuk-form-group">
 
-                        <div class="govuk-form-group @clarificationResponseFormGroupError">
-                            <h2 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--l" asp-for="ClarificationResponse">
-                                    Clarified answer
-                                </label>
-                            </h2>
-                            <p class="govuk-body">
-                                Enter clarification response
-                            </p>
-                            <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
-                                @if (!string.IsNullOrEmpty(clarificationResponseErrorMessage))
+                    <div class="govuk-form-group @clarificationResponseFormGroupError">
+                        <h2 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--l" asp-for="ClarificationResponse">
+                                Clarified answer
+                            </label>
+                        </h2>
+                        <p class="govuk-body">
+                            Enter clarification response
+                        </p>
+                        <div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+                            @if (!string.IsNullOrEmpty(clarificationResponseErrorMessage))
                             {
                                 <span class="govuk-error-message">@clarificationResponseErrorMessage</span>
                             }
                             <textarea class="govuk-textarea js-character-count @clarificationResponseTextareaError"
-                                asp-for="ClarificationResponse" rows="4" aria-describedby="ClarificationResponse-info"
-                                maxlength="30000">@Model.ClarificationResponse</textarea>
+                                      asp-for="ClarificationResponse" rows="4" aria-describedby="ClarificationResponse-info"
+                                      maxlength="30000">@Model.ClarificationResponse</textarea>
                         </div>
                         <span id="ClarificationResponse-info" class="govuk-hint govuk-character-count__message"
-                            aria-live="polite">
+                              aria-live="polite">
                             You can enter up to 500 words
                         </span>
                     </div>
 
                     @if (Model.FinancialReviewDetails != null && Model.FinancialReviewDetails.ClarificationFiles != null
-                        && Model.FinancialReviewDetails.ClarificationFiles.Count > 0)
+                     && Model.FinancialReviewDetails.ClarificationFiles.Count > 0)
                     {
                         var pluraliseFiles = Model.FinancialReviewDetails.ClarificationFiles.Count == 1 ? "file" : "files";
 
@@ -311,8 +341,8 @@
                                         <th scope="row" class="govuk-table__header">@file.Filename</th>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">
                                             <button class="das-button--inline-link" data-module="govuk-button"
-                                                data-prevent-double-click="true" name="removeClarificationFile"
-                                                value="@file.Filename">
+                                                    data-prevent-double-click="true" name="removeClarificationFile"
+                                                    value="@file.Filename">
                                                 Remove
                                             </button>
                                         </td>
@@ -335,10 +365,10 @@
                                 <span class="govuk-error-message">@clarificationFileErrorMessage</span>
                             }
                             <input class="govuk-file-upload" type="file" asp-for="ClarificationFile"
-                                accept=".pdf,application/pdf" />
+                                   accept=".pdf,application/pdf" />
                         </div>
                         <button class="govuk-button govuk-button--secondary" data-module="govuk-button"
-                            data-prevent-double-click="true" name="submitClarificationFiles">
+                                data-prevent-double-click="true" name="submitClarificationFiles">
                             Upload File
                         </button>
                     }
@@ -357,19 +387,18 @@
                             }
 
                             <div id="FinancialReviewDetails.SelectedGrade"
-                                class="govuk-radios govuk-radios--conditional" data-module="radios">
+                                 class="govuk-radios govuk-radios--conditional" data-module="radios">
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="outstanding"
-                                        data-aria-controls="outstanding-conditional" type="radio"
-                                        name="FinancialReviewDetails.SelectedGrade"
-                                        value="@(FinancialApplicationSelectedGrade.Outstanding)"
-                                        @(Model.FinancialReviewDetails.SelectedGrade ==
-                                            FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
+                                           data-aria-controls="outstanding-conditional" type="radio"
+                                           name="FinancialReviewDetails.SelectedGrade"
+                                           value="@(FinancialApplicationSelectedGrade.Outstanding)"
+                                           @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Outstanding ? "checked" : "")>
                                     <label class="govuk-label govuk-radios__label" for="outstanding">Outstanding</label>
                                 </div>
 
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                                    id="outstanding-conditional">
+                                     id="outstanding-conditional">
                                     <div class="govuk-form-group">
                                         <legend>
                                             <span class="govuk-label" for="OutstandingFinancialDueDate">
@@ -379,45 +408,41 @@
 
                                         @if (!string.IsNullOrEmpty(outstandingFinancialDueDateErrorMessage))
                                         {
-                                            <span
-                                                class="govuk-error-message">@outstandingFinancialDueDateErrorMessage</span>
+                                            <span class="govuk-error-message">@outstandingFinancialDueDateErrorMessage</span>
                                         }
 
                                         <div class="govuk-date-input" id="OutstandingFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="OutstandingFinancialDueDate.Day">Day</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError"
-                                                        name="OutstandingFinancialDueDate.Day"
-                                                        id="OutstandingFinancialDueDate.Day"
-                                                        value="@Model.OutstandingFinancialDueDate.Day" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="OutstandingFinancialDueDate.Day">Day</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError"
+                                                           name="OutstandingFinancialDueDate.Day"
+                                                           id="OutstandingFinancialDueDate.Day"
+                                                           value="@Model.OutstandingFinancialDueDate.Day" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="OutstandingFinancialDueDate.Month">Month</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError"
-                                                        name="OutstandingFinancialDueDate.Month"
-                                                        id="OutstandingFinancialDueDate.Month"
-                                                        value="@Model.OutstandingFinancialDueDate.Month" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="OutstandingFinancialDueDate.Month">Month</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @outstandingFinancialDueDateInputError"
+                                                           name="OutstandingFinancialDueDate.Month"
+                                                           id="OutstandingFinancialDueDate.Month"
+                                                           value="@Model.OutstandingFinancialDueDate.Month" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="OutstandingFinancialDueDate.Year">Year</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @outstandingFinancialDueDateInputError"
-                                                        name="OutstandingFinancialDueDate.Year"
-                                                        id="OutstandingFinancialDueDate.Year"
-                                                        value="@Model.OutstandingFinancialDueDate.Year" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="OutstandingFinancialDueDate.Year">Year</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @outstandingFinancialDueDateInputError"
+                                                           name="OutstandingFinancialDueDate.Year"
+                                                           id="OutstandingFinancialDueDate.Year"
+                                                           value="@Model.OutstandingFinancialDueDate.Year" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                         </div>
@@ -426,15 +451,14 @@
 
                                 <div class="govuk-radios__item" data-target="good-more-info">
                                     <input class="govuk-radios__input" id="good" data-aria-controls="good-conditional"
-                                        type="radio" name="FinancialReviewDetails.SelectedGrade"
-                                        value="@(FinancialApplicationSelectedGrade.Good)"
-                                        @(Model.FinancialReviewDetails.SelectedGrade ==
-                                            FinancialApplicationSelectedGrade.Good ? "checked" : "")>
+                                           type="radio" name="FinancialReviewDetails.SelectedGrade"
+                                           value="@(FinancialApplicationSelectedGrade.Good)"
+                                           @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Good ? "checked" : "")>
                                     <label class="govuk-label govuk-radios__label" for="good">Good</label>
                                 </div>
 
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                                    id="good-conditional">
+                                     id="good-conditional">
                                     <div class="govuk-form-group">
                                         <legend>
                                             <span class="govuk-label" for="GoodFinancialDueDate">
@@ -451,35 +475,32 @@
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="GoodFinancialDueDate.Day">Day</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError"
-                                                        name="GoodFinancialDueDate.Day" id="GoodFinancialDueDate.Day"
-                                                        value="@Model.GoodFinancialDueDate.Day" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="GoodFinancialDueDate.Day">Day</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError"
+                                                           name="GoodFinancialDueDate.Day" id="GoodFinancialDueDate.Day"
+                                                           value="@Model.GoodFinancialDueDate.Day" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="GoodFinancialDueDate.Month">Month</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError"
-                                                        name="GoodFinancialDueDate.Month"
-                                                        id="GoodFinancialDueDate.Month"
-                                                        value="@Model.GoodFinancialDueDate.Month" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="GoodFinancialDueDate.Month">Month</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @goodFinancialDueDateInputError"
+                                                           name="GoodFinancialDueDate.Month"
+                                                           id="GoodFinancialDueDate.Month"
+                                                           value="@Model.GoodFinancialDueDate.Month" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="GoodFinancialDueDate.Year">Year</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @goodFinancialDueDateInputError"
-                                                        name="GoodFinancialDueDate.Year" id="GoodFinancialDueDate.Year"
-                                                        value="@Model.GoodFinancialDueDate.Year" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="GoodFinancialDueDate.Year">Year</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @goodFinancialDueDateInputError"
+                                                           name="GoodFinancialDueDate.Year" id="GoodFinancialDueDate.Year"
+                                                           value="@Model.GoodFinancialDueDate.Year" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                         </div>
@@ -488,17 +509,16 @@
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="satisfactory"
-                                        data-aria-controls="satisfactory-conditional" type="radio"
-                                        name="FinancialReviewDetails.SelectedGrade"
-                                        value="@(FinancialApplicationSelectedGrade.Satisfactory)"
-                                        @(Model.FinancialReviewDetails.SelectedGrade ==
-                                            FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
+                                           data-aria-controls="satisfactory-conditional" type="radio"
+                                           name="FinancialReviewDetails.SelectedGrade"
+                                           value="@(FinancialApplicationSelectedGrade.Satisfactory)"
+                                           @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Satisfactory ? "checked" : "") />
                                     <label class="govuk-label govuk-radios__label"
-                                        for="satisfactory">Satisfactory</label>
+                                           for="satisfactory">Satisfactory</label>
                                 </div>
 
                                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
-                                    id="satisfactory-conditional">
+                                     id="satisfactory-conditional">
                                     <div class="govuk-form-group">
                                         <legend>
                                             <span class="govuk-label" for="SatisfactoryFinancialDueDate">
@@ -508,45 +528,41 @@
 
                                         @if (!string.IsNullOrEmpty(satisfactoryFinancialDueDateErrorMessage))
                                         {
-                                            <span
-                                                class="govuk-error-message">@satisfactoryFinancialDueDateErrorMessage</span>
+                                            <span class="govuk-error-message">@satisfactoryFinancialDueDateErrorMessage</span>
                                         }
 
                                         <div class="govuk-date-input" id="SatisfactoryFinancialDueDate">
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="SatisfactoryFinancialDueDate.Day">Day</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError"
-                                                        name="SatisfactoryFinancialDueDate.Day"
-                                                        id="SatisfactoryFinancialDueDate.Day"
-                                                        value="@Model.SatisfactoryFinancialDueDate.Day" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="SatisfactoryFinancialDueDate.Day">Day</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError"
+                                                           name="SatisfactoryFinancialDueDate.Day"
+                                                           id="SatisfactoryFinancialDueDate.Day"
+                                                           value="@Model.SatisfactoryFinancialDueDate.Day" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="SatisfactoryFinancialDueDate.Month">Month</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError"
-                                                        name="SatisfactoryFinancialDueDate.Month"
-                                                        id="SatisfactoryFinancialDueDate.Month"
-                                                        value="@Model.SatisfactoryFinancialDueDate.Month" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="SatisfactoryFinancialDueDate.Month">Month</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @satisfactoryFinancialDueDateInputError"
+                                                           name="SatisfactoryFinancialDueDate.Month"
+                                                           id="SatisfactoryFinancialDueDate.Month"
+                                                           value="@Model.SatisfactoryFinancialDueDate.Month" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                             <div class="govuk-date-input__item">
                                                 <div class="govuk-form-group">
                                                     <label class="govuk-label govuk-date-input__label"
-                                                        for="SatisfactoryFinancialDueDate.Year">Year</label>
-                                                    <input
-                                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @satisfactoryFinancialDueDateInputError"
-                                                        name="SatisfactoryFinancialDueDate.Year"
-                                                        id="SatisfactoryFinancialDueDate.Year"
-                                                        value="@Model.SatisfactoryFinancialDueDate.Year" type="number"
-                                                        pattern="[0-9]*" />
+                                                           for="SatisfactoryFinancialDueDate.Year">Year</label>
+                                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @satisfactoryFinancialDueDateInputError"
+                                                           name="SatisfactoryFinancialDueDate.Year"
+                                                           id="SatisfactoryFinancialDueDate.Year"
+                                                           value="@Model.SatisfactoryFinancialDueDate.Year" type="number"
+                                                           pattern="[0-9]*" />
                                                 </div>
                                             </div>
                                         </div>
@@ -555,11 +571,10 @@
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="inadequate"
-                                        data-aria-controls="inadequate-conditional" type="radio"
-                                        name="FinancialReviewDetails.SelectedGrade"
-                                        value="@(FinancialApplicationSelectedGrade.Inadequate)"
-                                        @(Model.FinancialReviewDetails.SelectedGrade ==
-                                            FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
+                                           data-aria-controls="inadequate-conditional" type="radio"
+                                           name="FinancialReviewDetails.SelectedGrade"
+                                           value="@(FinancialApplicationSelectedGrade.Inadequate)"
+                                           @(Model.FinancialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate ? "checked" : "") />
                                     <label class="govuk-label govuk-radios__label" for="inadequate">Inadequate</label>
                                 </div>
 
@@ -604,8 +619,8 @@
 
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="exempt" type="radio"
-                                        name="FinancialReviewDetails.SelectedGrade"
-                                        value="@(FinancialApplicationSelectedGrade.Exempt)">
+                                           name="FinancialReviewDetails.SelectedGrade"
+                                           value="@(FinancialApplicationSelectedGrade.Exempt)">
                                     <label class="govuk-label govuk-radios__label" for="exempt">Exempt from financial health</label>
                                 </div>
                             </div>
@@ -614,7 +629,7 @@
                 </div>
 
                 <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true"
-                    name="submitClarificationOutcome">
+                        name="submitClarificationOutcome">
                     Save outcome
                 </button>
             </form>
