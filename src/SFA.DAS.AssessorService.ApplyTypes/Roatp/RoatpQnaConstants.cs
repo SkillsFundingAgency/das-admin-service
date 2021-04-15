@@ -41,25 +41,18 @@
                 {
                     public static string ParentCompanyCheck = "20";
                     public static string ParentCompanyDetails = "21";
+                    public static string IcoNumber= "30";
+                    public static string Website = "40";
                     public static string TradingForMain = "50";
                     public static string TradingForEmployer = "51";
-                    public static string RailFranchiseForMain = "55";
-                    public static string RailFranchiseForEmployer = "56";
                     public static string TradingForSupporting = "60";
-                    public static string RailFranchiseForSupporting = "65";
                     public static string OrganisationTypeMainSupporting = "140";
                     public static string OrganisationTypeEmployer = "150";
                     public static string EducationalInstituteType = "160";
                     public static string PublicBodyType = "170";
-                    public static string HowDescribeYourOrganisation = "230";
-                }
-
-                public static class QuestionIds
-                {
-                    public static string OrganisationTypeMainSupporting = "YO-140";
-                    public static string OrganisationTypeEmployer = "YO-150";
-                    public static string EducationalInstituteType = "YO-160";
-                    public static string PublicBodyType = "YO-170";
+                    public static string SchoolType = "180";
+                    public static string OrganisationRegisteredESFA = "200";
+                    public static string OrganisationFundedESFA = "210";
                 }
             }
 
