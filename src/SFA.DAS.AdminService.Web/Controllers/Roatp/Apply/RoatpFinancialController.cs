@@ -460,15 +460,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             const string ActivelyTradingSectionTitle = "Actively trading";
 
-            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
+            Section activelyTradingSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             activelyTradingSection.LinkTitle = ActivelyTradingSectionTitle;
             activelyTradingSection.Title = ActivelyTradingSectionTitle;
             activelyTradingSection.QnAData.Pages = activelyTradingSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForMain
                                                                                                     || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForEmployer
                                                                                                     || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.TradingForSupporting
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForMain
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForEmployer
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.RailFranchiseForSupporting
                                                                                                 ).ToList();
 
             return activelyTradingSection;
@@ -481,7 +478,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             Section organisationTypeSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.DescribeYourOrganisation);
             organisationTypeSection.LinkTitle = OrganisationTypeSectionTitle;
             organisationTypeSection.Title = OrganisationTypeSectionTitle;
-            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId != RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.HowDescribeYourOrganisation).ToList();
+            organisationTypeSection.QnAData.Pages = organisationTypeSection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeMainSupporting
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationTypeEmployer
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.EducationalInstituteType
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.PublicBodyType
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.SchoolType
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationRegisteredESFA
+                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.OrganisationFundedESFA
+                                                                                                ).ToList();
 
             return organisationTypeSection;
         }
