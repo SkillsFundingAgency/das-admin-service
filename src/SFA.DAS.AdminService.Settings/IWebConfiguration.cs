@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AdminService.Common.Settings;
+﻿using Microsoft.Extensions.Configuration;
+using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Settings
 {
@@ -27,6 +28,6 @@ namespace SFA.DAS.AdminService.Settings
         ClientApiAuthentication QnaApiAuthentication { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }
-
+        RedisCacheSettings RedisCacheSettings { get; }
     }
 }

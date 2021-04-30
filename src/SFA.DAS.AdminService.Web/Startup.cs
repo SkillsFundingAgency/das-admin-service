@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Web.ModelBinders;
+using SFA.DAS.AdminService.Web.Extensions;
 
 namespace SFA.DAS.AdminService.Web
 {
@@ -63,20 +64,22 @@ namespace SFA.DAS.AdminService.Web
             });
 
             ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
-            
-            services.AddHttpClient<ApiClient>("ApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
+
+            services
+                .AddHttpClient<ApiClient>("ApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
 
-            services.AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
-            {
-                config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
+            services
+                .AddHttpClient<ApplicationApiClient>("ApplicationApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Set lifetime to five minutes
                 .AddPolicyHandler(GetRetryPolicy());
 
@@ -89,14 +92,15 @@ namespace SFA.DAS.AdminService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddMvc(options =>
+            services
+                .AddMvc(options =>
                 {
                     options.Filters.Add<CheckSessionFilter>();
                     options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
                 })
-                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
+                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
                 {
@@ -109,24 +113,18 @@ namespace SFA.DAS.AdminService.Web
                     o.ViewLocationFormats.Add("/Views/Application/{0}" + RazorViewEngine.ViewExtension);
                 });
 
-            services.AddSession(opt => 
+            services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
             });
 
-            if (!_env.IsDevelopment())
-            {
-                services.AddDistributedRedisCache(options =>
-                {
-                    options.Configuration = ApplicationConfiguration.SessionRedisConnectionString;
-                });
-            }
+            services.AddDistributedCache(ApplicationConfiguration.RedisCacheSettings, _env);
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             MappingStartup.AddMappings();
-   
-            ConfigureDependencyInjection(services);           
+
+            ConfigureDependencyInjection(services);
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
@@ -150,7 +148,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<IOrganisationsApiClient>(x =>
                     new OrganisationsApiClient(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
-                        x.GetService<ITokenService>(), 
+                        x.GetService<ITokenService>(),
                         x.GetService<ILogger<OrganisationsApiClient>>()));
 
             services.AddTransient<IApiClient>(x => new ApiClient(
@@ -210,7 +208,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
-            
+
             services.AddTransient<IIfaStandardsApiClient>(x =>
                 new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
 
@@ -234,9 +232,10 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<ICsvExportService, CsvExportService>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
-            services.AddTransient<IFeatureToggles>(x => { 
-                var config = x.GetService<IWebConfiguration>(); 
-                return config.FeatureToggles; 
+            services.AddTransient<IFeatureToggles>(x =>
+            {
+                var config = x.GetService<IWebConfiguration>();
+                return config.FeatureToggles;
             });
         }
 
@@ -255,7 +254,7 @@ namespace SFA.DAS.AdminService.Web
                 options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
             }).AddCookie();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {

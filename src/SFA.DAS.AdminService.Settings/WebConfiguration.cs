@@ -26,5 +26,6 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
 
         [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
+        [JsonRequired] public RedisCacheSettings RedisCacheSettings { get; set; }
     }
 }
