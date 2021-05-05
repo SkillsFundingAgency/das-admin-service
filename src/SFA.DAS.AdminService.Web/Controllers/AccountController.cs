@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Domain;
+using System.Linq;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -31,7 +33,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if(!HttpContext.User.HasValidRole())
             {
-                _logger.LogInformation($"PostSignIn - User '{HttpContext.User.Identity.Name}' does not have a valid role");
+                var userName = HttpContext.User.Identity.Name ?? HttpContext.User.FindFirstValue(ClaimTypes.Upn);
+                var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == Domain.Roles.RoleClaimType).Select(c => c.Value);
+                _logger.LogInformation($"PostSignIn - User '{userName}' does not have a valid role. They have the following roles: '{string.Join(",", roles)}'");
+
                 foreach (var cookie in Request.Cookies.Keys)
                 {
                     Response.Cookies.Delete(cookie);
@@ -73,6 +78,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public IActionResult AccessDenied()
         {
+            if (HttpContext.User != null)
+            {
+                var userName = HttpContext.User.Identity.Name ?? HttpContext.User.FindFirstValue(ClaimTypes.Upn);
+                var roles = HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == Domain.Roles.RoleClaimType).Select(c => c.Value);
+
+                _logger.LogError($"AccessDenied - User '{userName}' does not have a valid role. They have the following roles: '{string.Join(",", roles)}'");
+            }
+
             return View();
         }
     }
