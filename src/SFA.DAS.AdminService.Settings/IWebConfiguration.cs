@@ -11,8 +11,6 @@ namespace SFA.DAS.AdminService.Settings
 
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
-
-        string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
