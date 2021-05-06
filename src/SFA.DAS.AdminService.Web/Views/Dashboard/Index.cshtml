@@ -28,7 +28,7 @@
         @{
             if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayAssessorTeam)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpGatewayReview" id="roatp-gateway-applications">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" id="roatp-gateway-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP gateway applications
             </h2>
@@ -53,7 +53,7 @@
             if (roleTagHelper.ShowForRoles(Roles.RoatpFinancialAssessorTeam)) { sectionsShown++; }
         }
         <!-- RoATP PMO -->
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpFinancialReview" id="roatp-financial-applications">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" id="roatp-financial-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP financial applications
             </h2>
@@ -78,7 +78,7 @@
         @{
             if (roleTagHelper.ShowForRoles(Roles.RoatpAssessorTeam)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpAssessorTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpAssessorReview" id="roatp-assessor-applications">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpAssessorTeam" id="roatp-assessor-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP assessor applications
             </h2>
@@ -104,7 +104,7 @@
         @{
             if (roleTagHelper.ShowForRoles(Roles.RoatpApplicationOversightTeam)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" sfa-feature-toggle="@FeatureToggles.EnableRoatpOversightReview" id="roatp-application-outcomes">
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" id="roatp-application-outcomes">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 RoATP application outcomes
             </h2>
