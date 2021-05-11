@@ -13,7 +13,6 @@ namespace SFA.DAS.AdminService.Settings
 
         [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
 
-        [JsonRequired] public string SessionRedisConnectionString { get; set; }
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
@@ -26,5 +25,6 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public ClientApiAuthentication QnaApiAuthentication { get; set; }
 
         [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
+        [JsonRequired] public RedisCacheSettings RedisCacheSettings { get; set; }
     }
 }

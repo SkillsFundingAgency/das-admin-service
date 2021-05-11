@@ -1,4 +1,5 @@
-﻿using SFA.DAS.AdminService.Common.Settings;
+﻿using Microsoft.Extensions.Configuration;
+using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Settings
 {
@@ -10,8 +11,6 @@ namespace SFA.DAS.AdminService.Settings
 
         string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
-
-        string SessionRedisConnectionString { get; set; }
         AuthSettings StaffAuthentication { get; set; }
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
 
@@ -27,6 +26,6 @@ namespace SFA.DAS.AdminService.Settings
         ClientApiAuthentication QnaApiAuthentication { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }
-
+        RedisCacheSettings RedisCacheSettings { get; }
     }
 }
