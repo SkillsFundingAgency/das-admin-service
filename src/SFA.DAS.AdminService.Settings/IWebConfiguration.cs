@@ -9,7 +9,6 @@ namespace SFA.DAS.AdminService.Settings
         ClientApiAuthentication EpaoApiAuthentication { get; set; }
 
 
-        string AssessmentOrgsApiClientBaseUrl { get; set; }
         string IfaApiClientBaseUrl { get; set; }
         AuthSettings StaffAuthentication { get; set; }
         ClientApiAuthentication ApplyApiAuthentication { get; set; }
