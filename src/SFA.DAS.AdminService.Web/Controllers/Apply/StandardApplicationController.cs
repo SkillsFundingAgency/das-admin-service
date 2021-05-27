@@ -362,7 +362,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 pagingState.PageIndex,
                 DefaultPageSetSize
             );
-
+            // with versions
             var response = await _applyApiClient.GetStandardApplications(standardApplicationsRequest);
             return response;
         }
