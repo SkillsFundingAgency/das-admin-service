@@ -32,6 +32,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public string SearchString { get; set; }
         public int Page { get; set; }
 
+        public bool StandardHasMultipleVersions { get; set; }
+
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);

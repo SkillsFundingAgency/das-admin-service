@@ -32,6 +32,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
             certificateCheckViewModel.SearchString = searchString;
             certificateCheckViewModel.FromApproval = fromApproval;
 
+            var standards = await ApiClient.GetStandardVersions(certificateCheckViewModel.StandardCode);
+            certificateCheckViewModel.StandardHasMultipleVersions = standards.Count > 1;
+
             var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
             TempData["HideOption"] = !options.Any();
 

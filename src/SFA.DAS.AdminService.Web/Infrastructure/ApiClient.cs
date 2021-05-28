@@ -319,6 +319,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
 
+        public async Task<List<StandardVersion>> GetStandardVersions(int larsCode)
+        {
+            return await Get<List<StandardVersion>>($"/api/v1/standard-version/standards/versions/{larsCode}");
+        }
+
         public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
         {
             await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
