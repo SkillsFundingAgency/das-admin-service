@@ -1,0 +1,19 @@
+﻿<script>
+var epaoVersionFormElement = $('.apprentice-option-form');
+var epaoVersionValidationRulesObject = {
+  rules: {
+    SelectedVersion: {
+      required: true
+    },
+    ReasonForChange: {
+      required: true
+    }
+  },
+  messages: {
+    SelectedVersion: 'Select the version',
+    ReasonForChange: 'Enter a reason'
+  }
+};
+
+    GOVUK.epaoValidate(epaoVersionFormElement, epaoVersionValidationRulesObject);
+</script>
