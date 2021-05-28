@@ -17,10 +17,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             StandardCode = cert.StandardCode;
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            data.Version = SelectedVersion;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certData.Version = SelectedVersion;
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }
     }
