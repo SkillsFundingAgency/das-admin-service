@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public int? StandardCode { get; set; }
         public string StandardReference { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
+        public string Versions { get; set; }
         public DateTime? SubmittedDate { get; set; }
         public DateTime? FeedbackAddedDate { get; set; }
         public DateTime? ClosedDate { get; set; }

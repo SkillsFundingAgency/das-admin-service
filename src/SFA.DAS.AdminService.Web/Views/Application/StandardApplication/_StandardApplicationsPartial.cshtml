@@ -102,23 +102,28 @@
                 </a>
             </td>
             <td class="govuk-table__cell govuk-table__cell">@application.StandardReference</td>
-            <td class="govuk-table__cell govuk-table__cell">@application.StandardName</td>
+            @{
+                var standardAndVersion = application.StandardName;
+                if(!string.IsNullOrWhiteSpace(application.Versions))
+                {
+                    standardAndVersion = $"{standardAndVersion}<br>Version {application.Versions}";
+                }
+            }
+            <td class="govuk-table__cell govuk-table__cell">@Html.Raw(standardAndVersion)</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
             }
             @{
-                var govukTagColor = string.Empty;
-                if(application.ApplicationType.Trim().ToLower().Equals("full"))
-                {
-                    govukTagColor = "govuk-tag--blue";
-                }
-                else if (application.ApplicationType.Trim().ToLower().Equals("short"))
+                var govukTagColor = "govuk-tag--blue";
+                var applicationType = "FULL";
+                if (!string.IsNullOrWhiteSpace(application.ApplicationType) && application.ApplicationType.Trim().ToLower().Equals("version"))
                 {
                     govukTagColor = "govuk-tag--purple";
+                    applicationType = "SHORT";
                 }
             }
-            <td class="govuk-table__cell govuk-table__cell das-no-wrap "><strong class="govuk-tag @govukTagColor"> @application.ApplicationType </strong></td>
+            <td class="govuk-table__cell govuk-table__cell das-no-wrap "><strong class="govuk-tag @govukTagColor"> @applicationType </strong></td>
 
             <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap">@application.DateValueForReviewStatus()</td>
         </tr>
