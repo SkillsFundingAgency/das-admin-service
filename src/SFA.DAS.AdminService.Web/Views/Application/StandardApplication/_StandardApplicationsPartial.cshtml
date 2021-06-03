@@ -107,7 +107,19 @@
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
             }
-            <td class="govuk-table__cell govuk-table__cell das-no-wrap">type value</td>
+            @{
+                var govukTagColor = string.Empty;
+                if(application.ApplicationType.Trim().ToLower().Equals("full"))
+                {
+                    govukTagColor = "govuk-tag--blue";
+                }
+                else if (application.ApplicationType.Trim().ToLower().Equals("short"))
+                {
+                    govukTagColor = "govuk-tag--purple";
+                }
+            }
+            <td class="govuk-table__cell govuk-table__cell das-no-wrap "><strong class="govuk-tag @govukTagColor"> @application.ApplicationType </strong></td>
+
             <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap">@application.DateValueForReviewStatus()</td>
         </tr>
             }
