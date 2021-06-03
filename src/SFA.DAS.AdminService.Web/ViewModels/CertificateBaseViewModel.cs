@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -36,7 +34,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public bool IsPrivatelyFunded { get; set; }
         public bool BackToCheckPage { get; set; }
         public string ReasonForChange { get; set; }
-
-        public List<StandardVersion> Standards { get; set; }
     }
 }
