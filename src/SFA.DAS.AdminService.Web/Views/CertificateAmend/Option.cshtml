@@ -61,26 +61,22 @@ else
                             The option will appear on the certificate.
                         </span>
                         <div class="govuk-form-group">
+                           
+                            <div class="govuk-radios">
 
-                            <fieldset class="govuk-fieldset">
+                                @foreach (var option in Model.Options)
+                                {
+                                    var selected = option.OptionName == Model.Option;
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" id="choose-option-@option.Id" name="SelectedOption" type="radio" value="@option.OptionName" checked="@selected">
+                                        <label class="govuk-label govuk-radios__label" for="choose-option-@option.Id">
+                                            @option.OptionName
+                                        </label>
+                                    </div>
+                                }
 
-                                <div class="govuk-radios">
-
-                                    @foreach (var option in Model.Options)
-                                    {
-                                        var selected = option.OptionName == Model.Option;
-                                        <div class="govuk-radios__item">
-                                            <input class="govuk-radios__input" id="choose-option-@option.Id" name="SelectedOption" type="radio" value="@option.OptionName" checked="@selected">
-                                            <label class="govuk-label govuk-radios__label" for="choose-option-@option.Id">
-                                                @option.OptionName
-                                            </label>
-                                        </div>
-                                    }
-
-                                </div>
-
-                            </fieldset>
-
+                            </div>
+                           
                         </div>
 
                     </fieldset>
