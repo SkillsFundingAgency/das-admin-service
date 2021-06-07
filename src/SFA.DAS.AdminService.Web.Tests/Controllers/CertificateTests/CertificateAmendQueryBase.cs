@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
@@ -66,6 +67,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
+            var options = SetupOptions();
+            mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode=1")
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
             var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);
             return apiClient;
         }
@@ -89,6 +94,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             certificate.Organisation = organisation;       
 
             return certificate;
+        }
+
+        private List<Option> SetupOptions()
+        {
+            List<Option> options = new List<Option>()
+            {
+                new Option()
+                {
+                    Id = Guid.NewGuid(),
+                    OptionName = "CourseOption1",
+                    StdCode = 1,
+                }
+            };
+            return options;
         }
     }
 }
