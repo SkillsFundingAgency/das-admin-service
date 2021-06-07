@@ -23,20 +23,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
-        private readonly ILogger<ApiClient> _logger;
         private readonly ITokenService _tokenService;
 
-        public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(HttpClient client, ITokenService tokenService)
         {
             _client = client;
-            _logger = logger;
             _tokenService = tokenService;
         }
 
-        public ApiClient(string baseUri, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(string baseUri, ITokenService tokenService)
         {
             _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _logger = logger;
             _tokenService = tokenService;
         }
 

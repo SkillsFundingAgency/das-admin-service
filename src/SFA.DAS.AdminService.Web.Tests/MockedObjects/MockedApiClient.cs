@@ -94,7 +94,7 @@ namespace SFA.DAS.AdminService.Web.Tests.MockedObjects
                 .When(System.Net.Http.HttpMethod.Put, "http://localhost:59022/api/v1/certificates/update")
                 .Respond(System.Net.HttpStatusCode.OK, "application/json", "{'status' : 'OK'}");
 
-            var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);
+            var apiClient = new ApiClient(client, tokenServiceMock.Object);
 
             return apiClient;
         }

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -59,8 +58,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     });
             }
 
-            if (vm.Status == CertificateStatus.Draft &
-                vm.PrivatelyFundedStatus == CertificateStatus.Rejected & vm.FromApproval)
+            if (vm.Status == CertificateStatus.Draft &&
+                vm.PrivatelyFundedStatus == CertificateStatus.Rejected && vm.FromApproval)
             {
                 var certificate = await ApiClient.GetCertificate(vm.Id);
                 var approvalResults = new ApprovalResult[1];
