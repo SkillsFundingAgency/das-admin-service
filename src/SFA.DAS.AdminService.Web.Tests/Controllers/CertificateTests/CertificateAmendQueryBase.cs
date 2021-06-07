@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode=1")
                 .Respond("application/json", JsonConvert.SerializeObject(options));
 
-            var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);
+            var apiClient = new ApiClient(client, tokenServiceMock.Object);
             return apiClient;
         }
 

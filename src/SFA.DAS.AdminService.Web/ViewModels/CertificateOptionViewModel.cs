@@ -1,9 +1,7 @@
 using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.ViewModels
 {
@@ -22,10 +20,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             StandardCode = cert.StandardCode;
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             data.CourseOption = SelectedOption;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
         }

@@ -64,14 +64,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             Postcode = CertificateData.ContactPostCode;         
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }
 
-        public bool CanReturnToApprovals => IsPrivatelyFunded & PrivatelyFundedStatus == CertificateStatus.Rejected & FromApproval;
+        public bool CanReturnToApprovals => IsPrivatelyFunded && PrivatelyFundedStatus == CertificateStatus.Rejected && FromApproval;
 
         public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
     }

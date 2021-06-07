@@ -73,7 +73,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             mockHttp.When($"/api/v1/staffsearch/batch?batchNumber=1&page=1")
                .Respond("application/json", JsonConvert.SerializeObject(_staffBatchSearchResponse));
 
-            var apiClient = new ApiClient(client, Mock.Of<ILogger<ApiClient>>(), Mock.Of<ITokenService>());
+            var apiClient = new ApiClient(client, Mock.Of<ITokenService>());
             return apiClient;
         }
 
