@@ -35,8 +35,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
-            var viewModel = new T();           
-
+            var viewModel = new T();            
             var certificate = await ApiClient.GetCertificate(id);
             var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);
             certificate.Organisation = organisation;
@@ -70,6 +69,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 vm.GivenNames = certData.LearnerGivenNames;
                 Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
+            }
+
+            // If we are changing the version then blank out the option.
+            if(action == "Version" && vm is CertificateVersionViewModel)
+            {
+                var cvvm = vm as CertificateVersionViewModel;
+                if(cvvm.SelectedVersion != certData.Version)
+                {
+                    certData.CourseOption = null;
+                }
             }
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);

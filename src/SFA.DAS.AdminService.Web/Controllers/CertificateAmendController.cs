@@ -37,6 +37,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
             TempData["HideOption"] = false;
+            TempData["ShowOptionsChangeLink"] = (options.Count > 1);
 
             return viewModel;
         }

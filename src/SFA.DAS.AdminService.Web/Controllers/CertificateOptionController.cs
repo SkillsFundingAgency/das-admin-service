@@ -23,7 +23,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var viewModel =  await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
             if (viewModel is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
+            {
                 certificateOptionViewModel.FromApproval = fromApproval;
+                certificateOptionViewModel.Options = await ApiClient.GetOptions(certificateOptionViewModel.StandardCode);
+                certificateOptionViewModel.SelectedOption = certificateOptionViewModel.Option;
+            }
 
             return viewModel;
         }
