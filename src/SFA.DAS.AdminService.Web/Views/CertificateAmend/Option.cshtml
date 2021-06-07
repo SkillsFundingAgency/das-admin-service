@@ -21,6 +21,7 @@ else
             <form type="post" asp-controller="CertificateOption" asp-method="Option" class="apprentice-option-form">
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(c => c.FromApproval)
+                @Html.HiddenFor(c => c.Options)
 
                 <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -59,37 +60,29 @@ else
                         <span id="options-conditional-hint" class="govuk-hint">
                             The option will appear on the certificate.
                         </span>
-                        <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
-                            <div class="error-message-container" sfa-validation-for="HasAdditionalLearningOption">
-                            </div>
-                            <div class="govuk-radios govuk-radios--conditional" data-module="radios">
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_yes-conditional" type="radio" value="True" aria-controls="conditional-options_yes-conditional"/>
-                                    <label class="govuk-label govuk-radios__label" for="options_yes-conditional">
-                                        Yes
-                                    </label>
+                        <div class="govuk-form-group">
+
+                            <fieldset class="govuk-fieldset">
+
+                                <div class="govuk-radios">
+
+                                    @foreach (var option in Model.Options)
+                                    {
+                                        var selected = option.OptionName == Model.Option;
+                                        <div class="govuk-radios__item">
+                                            <input class="govuk-radios__input" id="choose-option-@option.Id" name="SelectedOption" type="radio" value="@option.OptionName" checked="@selected">
+                                            <label class="govuk-label govuk-radios__label" for="choose-option-@option.Id">
+                                                @option.OptionName
+                                            </label>
+                                        </div>
+                                    }
+
                                 </div>
-                                <div class="govuk-radios__conditional @(Model.HasAdditionalLearningOption ? string.Empty : "govuk-radios__conditional--hidden")"
-                                     id="conditional-options_yes-conditional">                                    
-                                    <div class="govuk-form-group">
-                                        @if (!ViewData.ModelState.IsValid)
-                                        {
-                                            <span class="govuk-error-message" asp-validation-for="Option"></span>
-                                        }
-                                    <label class="govuk-label" asp-for="Option">
-                                        What was the option?
-                                    </label>
-                                        <input class="govuk-input" sfa-validation-for="Option" sfa-validationerror-class="govuk-input--error" asp-for="Option" type="text" />
-                                    </div>
-                                </div>
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="HasAdditionalLearningOption" id="options_no-conditional" type="radio" value="False" />
-                                    <label class="govuk-label govuk-radios__label" for="options_no-conditional">
-                                        No
-                                    </label>
-                                </div>
-                            </div>
+
+                            </fieldset>
+
                         </div>
+
                     </fieldset>
                 </div>
 
