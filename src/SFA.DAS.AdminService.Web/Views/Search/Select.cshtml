@@ -151,7 +151,7 @@ else
                             Option
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (@Model.Learner.Option != null)
+                            @if (!string.IsNullOrWhiteSpace(Model.Learner.Option))
                             {
                                 @Model.Learner.Option
                             }
