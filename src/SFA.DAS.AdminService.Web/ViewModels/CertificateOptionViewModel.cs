@@ -22,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            data.CourseOption = SelectedOption;
+            certData.CourseOption = SelectedOption;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
 
             return certificate;
