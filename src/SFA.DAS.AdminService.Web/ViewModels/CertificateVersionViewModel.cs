@@ -8,19 +8,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 {
     public class CertificateVersionViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
-        public List<StandardVersion> Standards { get; set; }
-        public string SelectedVersion { get; set; }
-        public int StandardCode { get; set; }
-
+        public IEnumerable<StandardVersion> Standards { get; set; }
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
-            StandardCode = cert.StandardCode;
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
-            certData.Version = SelectedVersion;
+            certificate.StandardUId = StandardUId;
+            certData.Version = Version;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
             return certificate;
         }

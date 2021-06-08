@@ -13,10 +13,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public int? Ukprn { get; set; }
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
-        public int StandardCode { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime? LearnerStartDate { get; set; }
-        
+
         public string FirstName { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
@@ -48,7 +47,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             Level = CertificateData.StandardLevel;
             Option = CertificateData.CourseOption;
             SelectedGrade = CertificateData.OverallGrade;
-            StandardCode = cert.StandardCode;
             AchievementDate = CertificateData.AchievementDate;
             LearnerStartDate = CertificateData.LearningStartDate;
 
@@ -61,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             AddressLine2 = CertificateData.ContactAddLine2;
             AddressLine3 = CertificateData.ContactAddLine3;
             City = CertificateData.ContactAddLine4;
-            Postcode = CertificateData.ContactPostCode;         
+            Postcode = CertificateData.ContactPostCode;
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)

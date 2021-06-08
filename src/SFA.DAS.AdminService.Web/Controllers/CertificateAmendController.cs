@@ -8,6 +8,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -32,11 +33,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
             certificateCheckViewModel.FromApproval = fromApproval;
 
             var standards = await ApiClient.GetStandardVersions(certificateCheckViewModel.StandardCode);
-            certificateCheckViewModel.StandardHasMultipleVersions = standards.Count > 1;
+            certificateCheckViewModel.StandardHasMultipleVersions = standards.Count() > 1;
 
-            var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
+            var options = await ApiClient.GetStandardOptions(certificateCheckViewModel.GetStandardId());
             TempData["HideOption"] = false;
-            TempData["ShowOptionsChangeLink"] = (options.Count > 1);
+            TempData["ShowOptionsChangeLink"] = options != null && options.HasMoreThanOneOption();
 
             return viewModel;
         }
