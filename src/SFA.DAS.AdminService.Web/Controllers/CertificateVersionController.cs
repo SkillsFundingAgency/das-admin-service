@@ -33,6 +33,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpPost(Name = "Version")]
         public async Task<IActionResult> Version(CertificateVersionViewModel vm)
         {
+            // After selecting version, retrieve individual standard for version number
+            vm.Version = (await ApiClient.GetStandardVersion(vm.StandardUId))?.Version;
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Version.cshtml",
                 nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.Version);

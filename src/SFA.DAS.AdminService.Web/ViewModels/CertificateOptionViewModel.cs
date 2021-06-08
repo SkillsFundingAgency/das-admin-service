@@ -10,14 +10,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public bool HasAdditionalLearningOption { get; set; }
         public string Option { get; set; }
         public string SelectedOption { get; set; }
-        public List<Option> Options { get; set; }
-        public int StandardCode { get; set; }
+        public IEnumerable<string> Options { get; set; }
         public void FromCertificate(Certificate cert)
         {
             BaseFromCertificate(cert);
             Option = CertificateData.CourseOption;
             HasAdditionalLearningOption = !string.IsNullOrWhiteSpace(Option);
-            StandardCode = cert.StandardCode;
         }
 
         public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)

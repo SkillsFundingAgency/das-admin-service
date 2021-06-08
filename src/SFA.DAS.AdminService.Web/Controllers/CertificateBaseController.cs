@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             if(action == "Version" && vm is CertificateVersionViewModel)
             {
                 var cvvm = vm as CertificateVersionViewModel;
-                if(cvvm.SelectedVersion != certData.Version)
+                if(cvvm.StandardUId != certificate.StandardUId)
                 {
                     certData.CourseOption = null;
                 }

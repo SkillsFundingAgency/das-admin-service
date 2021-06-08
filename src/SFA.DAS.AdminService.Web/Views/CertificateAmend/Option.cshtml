@@ -66,11 +66,11 @@ else
 
                                 @foreach (var option in Model.Options)
                                 {
-                                    var selected = option.OptionName == Model.Option;
+                                    var selected = option == Model.Option;
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="choose-option-@option.Id" name="SelectedOption" type="radio" value="@option.OptionName" checked="@selected">
-                                        <label class="govuk-label govuk-radios__label" for="choose-option-@option.Id">
-                                            @option.OptionName
+                                        <input class="govuk-radios__input" id="choose-option-@option" name="SelectedOption" type="radio" value="@option" checked="@selected">
+                                        <label class="govuk-label govuk-radios__label" for="choose-option-@option">
+                                            @option
                                         </label>
                                     </div>
                                 }
