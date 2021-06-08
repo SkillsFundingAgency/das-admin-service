@@ -12,7 +12,5 @@ namespace SFA.DAS.AssessorService.Domain.DTOs
             public List<EpaOrganisationStandard> OrganisationStandards { get; set; }
             public List<EpaOrganisationStandardDeliveryArea> OrganisationStandardDeliveryAreas { get; set; }
             public List<OrganisationContact> Contacts { get; set; }
-
-            public List<Option> Options { get; set; }
         }
 }

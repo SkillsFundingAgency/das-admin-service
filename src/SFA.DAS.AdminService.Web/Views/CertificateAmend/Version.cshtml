@@ -21,10 +21,7 @@ else
             <form type="post" asp-method="Version" class="apprentice-version-form" action="" method="post" novalidate="novalidate">
 
                 @Html.HiddenFor(c => c.Id)
-                @Html.HiddenFor(c => c.Standards)
-
-
-
+                
                 <div class="govuk-form-group">
                     <fieldset class="govuk-fieldset" aria-describedby="options-conditional-hint">
                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
@@ -44,8 +41,8 @@ else
                                     @foreach (var standardVersion in Model.Standards)
                                     {
                                         <div class="govuk-radios__item">
-                                            @{ var selected = standardVersion.Version == Model.Version; }
-                                            <input class="govuk-radios__input" id="chooseversion-@standardVersion.StandardUId" name="SelectedVersion" type="radio" value="@standardVersion.Version" checked="@selected">
+                                            @{ var selected = standardVersion.StandardUId == Model.StandardUId; }
+                                            <input class="govuk-radios__input" id="chooseversion-@standardVersion.StandardUId" name="StandardUId" type="radio" value="@standardVersion.StandardUId" checked="@selected">
                                             <label class="govuk-label govuk-radios__label" for="chooseversion-@standardVersion.StandardUId">
                                                 Version @standardVersion.Version
                                             </label>

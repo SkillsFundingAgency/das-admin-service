@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Tests.MockedObjects
         {
             var tokenServiceMock = new Mock<ITokenService>();
 
-            var options = Builder<Option>.CreateListOfSize(10)
+            var options = Builder<StandardOptions>.CreateNew()
                 .Build();
 
             var certificateResponses = Builder<CertificateResponse>.CreateListOfSize(10)
@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.Tests.MockedObjects
                 .Respond("application/json", JsonConvert.SerializeObject(paginatedResponseSentForApproval));
 
 
-            mockHttp.When($"http://localhost:59022/api/v1/certificates/options/?stdCode={93}")
+            mockHttp.When($"http://localhost:59022/api/v1/standard-versions/standard-options/93")
                 .Respond("application/json", JsonConvert.SerializeObject(options));
 
             
