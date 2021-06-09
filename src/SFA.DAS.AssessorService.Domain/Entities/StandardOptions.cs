@@ -11,6 +11,7 @@ namespace SFA.DAS.AssessorService.Domain.Entities
         public string Version { get; set; }
         public IEnumerable<string> CourseOption { get; set; }
 
-        public bool HasMoreThanOneOption() => CourseOption != null && CourseOption.Count() > 1;
+        public bool HasOptions() => CourseOption != null && CourseOption.Any();
+        public bool HasMoreThanOneOption() => HasOptions() && CourseOption.Count() > 1;
     }
 }
