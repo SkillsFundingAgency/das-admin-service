@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+﻿using SFA.DAS.AssessorService.Domain.Entities.AssessmentOrganisations;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AssessorService.Domain.DTOs
 {
-        public class AssessmentOrganisationsSpreadsheetDto
+    public class AssessmentOrganisationsSpreadsheetDto
         {
             public List<DeliveryArea> DeliveryAreas { get; set; }
             public List<TypeOfOrganisation> OrganisationTypes { get; set; }
