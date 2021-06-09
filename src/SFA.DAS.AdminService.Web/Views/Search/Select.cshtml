@@ -142,7 +142,14 @@ else
                             Version
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.Version
+                            @if (!string.IsNullOrWhiteSpace(Model.Learner.Version))
+                            {
+                                @Model.Learner.Version
+                            }
+                            else
+                            {
+                                <text>None</text>
+                            }
                         </dd>
                     </div>
 
