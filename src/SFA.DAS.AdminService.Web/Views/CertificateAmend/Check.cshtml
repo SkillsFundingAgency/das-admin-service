@@ -127,7 +127,14 @@ else
                         Version
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.Version
+                        @if (!string.IsNullOrWhiteSpace(Model.Version))
+                        {
+                            @Model.Version
+                        }
+                        else
+                        {
+                            <text>None</text>
+                        }
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         @if (Model.StandardHasMultipleVersions)
