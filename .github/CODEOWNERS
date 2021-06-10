@@ -1,4 +1,4 @@
 # CODEOWNERS file for das-admin-service.
 # The following users will be automatically added as Reviewers to all PRs.
 
-* @MarkFCain @martin-lush @alandburns @gdbarnes @ChrisJWoodcock @david-b-read @cofaulco @chrisfoster76
+* @MarkFCain @martin-lush @alandburns @ChrisJWoodcock @david-b-read @cofaulco @chrisfoster76 @codewolf86
