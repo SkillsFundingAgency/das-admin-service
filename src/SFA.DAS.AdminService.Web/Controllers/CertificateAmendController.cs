@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -24,49 +24,47 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Check(Guid certificateId, string searchString, int page, bool fromApproval)
         {
-            var viewModel = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
-            var viewResult = (viewModel as ViewResult);
-            var certificateCheckViewModel = viewResult.Model as CertificateCheckViewModel;
-
-            certificateCheckViewModel.Page = page;
-            certificateCheckViewModel.SearchString = searchString;
-            certificateCheckViewModel.FromApproval = fromApproval;
-
-            var options = await ApiClient.GetOptions(certificateCheckViewModel.StandardCode);
-            TempData["HideOption"] = !options.Any();
-
-            return viewModel;
+            var (actionResult,_) = await GetCheckViewModel(certificateId, searchString, page, fromApproval);
+            return actionResult;
         }
-
 
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            if(vm.CanRequestDuplicate)
+            var (actionResult, model) = await GetCheckViewModel(vm.Id, vm.SearchString, vm.Page, vm.FromApproval);
+            var options = await ApiClient.GetStandardOptions(vm.GetStandardId());
+            if (options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option))
             {
-                return RedirectToAction("Index", "DuplicateRequest",
+                ModelState.AddModelError("Option", "Add an option");
+                return actionResult;
+            }
+
+            if (vm.CanRequestDuplicate)
+            {
+                return RedirectToAction("ConfirmReprint", "DuplicateRequest",
                     new
                     {
-                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        certificateId = vm.Id,
+                        redirectToCheck = vm.RedirectToCheck,
                         Uln = vm.Uln,
-                        StdCode = vm.StandardCode,                     
+                        StdCode = vm.StandardCode,
                         Page = vm.Page,
                         SearchString = vm.SearchString
                     });
             }
 
-            if (vm.Status == CertificateStatus.Draft &
-                vm.PrivatelyFundedStatus == CertificateStatus.Rejected & vm.FromApproval)
+            if (vm.Status == CertificateStatus.Draft &&
+                vm.PrivatelyFundedStatus == CertificateStatus.Rejected && vm.FromApproval)
             {
                 var certificate = await ApiClient.GetCertificate(vm.Id);
                 var approvalResults = new ApprovalResult[1];
-                approvalResults[0]= new ApprovalResult
+                approvalResults[0] = new ApprovalResult
                 {
                     IsApproved = CertificateStatus.Submitted,
                     CertificateReference = certificate.CertificateReference,
                     PrivatelyFundedStatus = CertificateStatus.Approved
                 };
-                
+
                 await ApiClient.ApproveCertificates(new CertificatePostApprovalViewModel
                 {
                     UserName = ContextAccessor.HttpContext.User
@@ -80,13 +78,33 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("Index", "Comment",
                     new
                     {
-                        certificateId = vm.Id, redirectToCheck = vm.RedirectToCheck,
+                        certificateId = vm.Id,
+                        redirectToCheck = vm.RedirectToCheck,
                         Uln = vm.Uln,
                         StdCode = vm.StandardCode,
-                        Page = vm.Page,                       
+                        Page = vm.Page,
                         SearchString = vm.SearchString
                     });
             }
+        }
+
+        private async Task<(IActionResult, CertificateCheckViewModel)> GetCheckViewModel(Guid certificateId, string searchString, int page, bool fromApproval)
+        {
+            var actionResult = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
+            var viewResult = (actionResult as ViewResult);
+            var certificateCheckViewModel = viewResult.Model as CertificateCheckViewModel;
+
+            certificateCheckViewModel.Page = page;
+            certificateCheckViewModel.SearchString = searchString;
+            certificateCheckViewModel.FromApproval = fromApproval;
+
+            var standards = await ApiClient.GetStandardVersions(certificateCheckViewModel.StandardCode);
+            certificateCheckViewModel.StandardHasMultipleVersions = standards.Count() > 1;
+
+            var options = await ApiClient.GetStandardOptions(certificateCheckViewModel.GetStandardId());
+            TempData["ShowOptionsChangeLink"] = options != null && options.HasMoreThanOneOption();
+
+            return (actionResult, certificateCheckViewModel);
         }
     }
 }

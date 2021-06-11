@@ -11,11 +11,12 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
     public class CertificateAmendQueryBase
-    {        
+    {
         protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
         protected ApiClient ApiClient;
@@ -25,14 +26,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
         public CertificateAmendQueryBase()
         {
-           MockedLogger = new Mock<ILogger<CertificateAmendController>>();
-           var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
+            MockedLogger = new Mock<ILogger<CertificateAmendController>>();
+            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
 
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
             ApiClient = SetupApiClient(mockedApiClientLogger);
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
-        }        
+        }
 
         private static Mock<IHttpContextAccessor> SetupMockedHttpContextAccessor()
         {
@@ -43,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             }));
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
-            var context = new DefaultHttpContext {User = user};
+            var context = new DefaultHttpContext { User = user };
 
             mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
             return mockHttpContextAccessor;
@@ -66,7 +67,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            var apiClient = new ApiClient(client, apiClientLoggerMock.Object, tokenServiceMock.Object);
+            var options = SetupOptions();
+            mockHttp.When($"http://localhost:59022/api/v1/standard-version/standard-options/StandardUId1")
+                .Respond("application/json", JsonConvert.SerializeObject(options));
+
+            var apiClient = new ApiClient(client, tokenServiceMock.Object);
             return apiClient;
         }
 
@@ -77,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
                     .CreateNew<CertificateData>()
                     .With(x => x.AchievementDate = DateTime.Now)
-                    .Build()))                
+                    .Build()))
                 .Build();
 
             var organisaionId = Guid.NewGuid();
@@ -86,9 +91,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             var organisation = new Builder().CreateNew<Organisation>()
                 .Build();
 
-            certificate.Organisation = organisation;       
+            certificate.Organisation = organisation;
 
             return certificate;
+        }
+
+        private StandardOptions SetupOptions()
+        {
+            var option = new StandardOptions
+            {
+                CourseOption = new List<string> { "CourseOption1" },
+                StandardCode = 1,
+                StandardReference = "ST0001",
+                StandardUId = "StandardUId1"
+            };
+
+            return option;
         }
     }
 }

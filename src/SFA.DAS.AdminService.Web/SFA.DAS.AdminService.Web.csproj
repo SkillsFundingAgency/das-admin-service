@@ -116,9 +116,6 @@
     <Content Update="Views\CertificateAmend\Option.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmend\StandardCode.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\CertificateAmend\Ukprn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
             var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
             httpClient.BaseAddress = new Uri("http://test/");
 
-            _sut = new ApiClient(httpClient, Mock.Of<ILogger<ApiClient>>(), Mock.Of<ITokenService>());
+            _sut = new ApiClient(httpClient, Mock.Of<ITokenService>());
         }
 
 

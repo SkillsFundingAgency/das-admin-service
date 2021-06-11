@@ -46,7 +46,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<LearnerDetailResult> GetLearner(int stdCode, long uln, bool allLogs);
         Task<ScheduleRun> GetNextScheduledRun(int scheduleType);
         Task<ScheduleRun> GetNextScheduleToRunNow();
-        Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode);
         Task<Organisation> GetOrganisation(Guid id);
         Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
         Task<OrganisationStandard> GetOrganisationStandard(int organisationStandardId);
@@ -67,5 +66,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
         Task RestartSchedule(Guid id);
+        Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
+        Task<StandardVersion> GetStandardVersion(string standardUId);
+        Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
@@ -23,20 +22,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
-        private readonly ILogger<ApiClient> _logger;
         private readonly ITokenService _tokenService;
 
-        public ApiClient(HttpClient client, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(HttpClient client, ITokenService tokenService)
         {
             _client = client;
-            _logger = logger;
             _tokenService = tokenService;
         }
 
-        public ApiClient(string baseUri, ILogger<ApiClient> logger, ITokenService tokenService)
+        public ApiClient(string baseUri, ITokenService tokenService)
         {
             _client = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _logger = logger;
             _tokenService = tokenService;
         }
 
@@ -262,11 +258,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<List<Contact>>($"api/v1/organisations/organisation/{organisationId}/contacts");
         }
 
-        public async Task<List<AssessorService.Domain.Entities.Option>> GetOptions(int stdCode)
-        {
-            return await Get<List<AssessorService.Domain.Entities.Option>>($"api/v1/certificates/options/?stdCode={stdCode}");
-        }
-
         public async Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest)
         {
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
@@ -317,6 +308,20 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public async Task<List<StandardCollation>> SearchStandards(string searchString)
         {
             return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
+        }
+
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode)
+        {
+            return await Get<IEnumerable<StandardVersion>>($"/api/v1/standard-version/standards/versions/{larsCode}");
+        }
+        public async Task<StandardVersion> GetStandardVersion(string standardUId)
+        {
+            return await Get<StandardVersion>($"/api/v1/standard-version/standards/{standardUId}");
+        }
+
+        public async Task<StandardOptions> GetStandardOptions(string standardId)
+        {
+            return await Get<StandardOptions>($"/api/v1/standard-version/standard-options/{standardId}");
         }
 
         public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
