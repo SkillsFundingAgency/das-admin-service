@@ -54,6 +54,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(vm);
         }
 
+        [HttpPost(Name = "Index")]
+        public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
+        {
+            var vm = await ReprintCertificate(duplicateRequestViewModel.CertificateId, duplicateRequestViewModel.SearchString,
+                duplicateRequestViewModel.StdCode, duplicateRequestViewModel.Uln, duplicateRequestViewModel.Page);
+
+            return View(vm);
+        }
+
         [HttpGet]
         public async Task<IActionResult> ConfirmReprint(Guid certificateId,
             int stdCode,
@@ -63,15 +72,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var vm = await ReprintCertificate(certificateId, searchString, stdCode, uln, page);
             return View("Index", vm);
-        }
-
-        [HttpPost(Name = "Index")]
-        public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
-        {
-            var vm = await ReprintCertificate(duplicateRequestViewModel.CertificateId, duplicateRequestViewModel.SearchString,
-                duplicateRequestViewModel.StdCode, duplicateRequestViewModel.Uln, duplicateRequestViewModel.Page);
-
-            return View(vm);
         }
 
         private async Task<DuplicateRequestViewModel> ReprintCertificate(Guid certificateId, string searchString, int larsCode, long uln, int page)
