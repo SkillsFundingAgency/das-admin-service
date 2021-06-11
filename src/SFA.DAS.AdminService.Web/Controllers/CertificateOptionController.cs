@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -23,7 +24,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var viewModel =  await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
             if (viewModel is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
+            {
+                var standardOption = await ApiClient.GetStandardOptions(certificateOptionViewModel.GetStandardId());
+
                 certificateOptionViewModel.FromApproval = fromApproval;
+                certificateOptionViewModel.Options = standardOption != null ? standardOption.CourseOption : new List<string>();
+                certificateOptionViewModel.SelectedOption = certificateOptionViewModel.Option;
+            }
 
             return viewModel;
         }

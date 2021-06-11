@@ -19,6 +19,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             FullName = CertificateData.FullName;
             Level = CertificateData.StandardLevel;
             IsPrivatelyFunded = cert.IsPrivatelyFunded;
+            StandardUId = cert.StandardUId;
+            StandardCode = cert.StandardCode;
+            Version = CertificateData.Version;
         }
         public string PrivatelyFundedStatus { get; set; }
         public bool FromApproval { get; set; }
@@ -29,8 +32,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public string Username { get; set; }
         public string FullName { get; set; }
         public int Level { get; set; }    
+        public string Version { get; set; }
+        public string StandardUId { get; set; }
+        public int StandardCode { get; set; }
         public bool IsPrivatelyFunded { get; set; }
         public bool BackToCheckPage { get; set; }
         public string ReasonForChange { get; set; }
+
+        public string GetStandardId() => string.IsNullOrWhiteSpace(StandardUId) ? StandardCode.ToString() : StandardUId;
     }
 }

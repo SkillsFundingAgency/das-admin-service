@@ -15,7 +15,7 @@
 else
 {
     <a class="govuk-back-link" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StandardCode"
-        asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">Back to details</a>
+       asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">Back to details</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -28,6 +28,22 @@ else
                 <h2 class="govuk-heading-m">Please check before submitting</h2>
                 <p class="govuk-body">The apprentice and apprenticeship details will be printed on the certificate.</p>
             </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a sfa-validation-for="Option"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
 
             <h2 class="govuk-heading-m">
                 Apprentice details
@@ -93,12 +109,7 @@ else
                         @Model.Standard (@Model.StandardCode)
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        @if (Model.IsPrivatelyFunded)
-                        {
-                            <a class="govuk-link" asp-controller="CertificatePrivateStandardCode" asp-action="StandardCode" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                                Change<span class="govuk-visually-hidden"> standard</span>
-                            </a>
-                        }
+
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -109,6 +120,29 @@ else
                         @Model.Level
                     </dd>
                     <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Version
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!string.IsNullOrWhiteSpace(Model.Version))
+                        {
+                            @Model.Version
+                        }
+                        else
+                        {
+                            <text>None</text>
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.StandardHasMultipleVersions)
+                        {
+                            <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> version</span>
+                            </a>
+                        }
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -124,22 +158,32 @@ else
                         </a>
                     </dd>
                 </div>
-                @if ((bool)TempData["HideOption"] == false)
-                {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Option
-                        </dt>
-                        <dd class="govuk-summary-list__value">
+
+                <div class="govuk-summary-list__row" id="Option">
+                    <dt class="govuk-summary-list__key" sfa-validation-for="Option" sfa-validationerror-class="govuk-form-group--error">
+                        Option
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                        @if (string.IsNullOrWhiteSpace(Model.Option))
+                        {
+                            <text>None</text>
+                        }
+                        else
+                        {
                             @Model.Option
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
+                        }
+
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if ((bool)TempData["ShowOptionsChangeLink"])
+                        {
                             <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
                                 Change<span class="govuk-visually-hidden"> option</span>
                             </a>
-                        </dd>
-                    </div>
-                }
+                        }
+                    </dd>
+                </div>
 
                 @if (Model.IsPrivatelyFunded)
                 {
@@ -182,14 +226,14 @@ else
                             @Model.Ukprn
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn"  asp-route-fromapproval="@Model.FromApproval"  asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                            <a class="govuk-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
                                 Change<span class="govuk-visually-hidden"> UKPRN</span>
                             </a>
                         </dd>
                     </div>
                 }
             </dl>
-            
+
             @if (Model.SelectedGrade != CertificateGrade.Fail)
             {
                 <h2 class="govuk-heading-m">
@@ -262,27 +306,29 @@ else
                 </dl>
             }
 
-            @if(Model.CanRequestDuplicate)
-            {
-                <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
-                    @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })
+            <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StandardCode)
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.Page)
+                @Html.HiddenFor(m => m.SearchString)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.PrivatelyFundedStatus)
+                @Html.HiddenFor(m => m.FromApproval)
+
+                @if (Model.CanRequestDuplicate)
+                {
                     <button class="govuk-button">Confirm reprint</button>
-                </form>
-            }
-            else 
-            {
-                <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
-                    @Html.HiddenFor(c => c.Id)
-                    @Html.HiddenFor(m => m.StandardCode)
-                    @Html.HiddenFor(m => m.Uln)
-                    @Html.HiddenFor(m => m.Page)
-                    @Html.HiddenFor(m => m.SearchString)
-                    @Html.HiddenFor(m => m.Status)
-                    @Html.HiddenFor(m => m.PrivatelyFundedStatus)
-                    @Html.HiddenFor(m => m.FromApproval)
+                }
+                else
+                {
                     <button type="submit" class="govuk-button">Confirm and submit</button>
-                </form>
-            }
+                }
+            </form>
         </div>
     </div>
 </main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

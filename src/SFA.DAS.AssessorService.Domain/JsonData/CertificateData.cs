@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string LearnerFamilyName { get; set; }
         public string StandardReference { get; set; }
         public string StandardName { get; set; }
+        public string Version { get; set; }
         public int StandardLevel { get; set; }
         public DateTime? StandardPublicationDate { get; set; }
         public string ContactName { get; set; }

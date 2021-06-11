@@ -153,7 +153,6 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<IApiClient>(x => new ApiClient(
                 ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<ApiClient>>(),
                 x.GetService<ITokenService>()));
 
             services.AddTransient<ICertificateApiClient>(x => new CertificateApiClient(
