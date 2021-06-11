@@ -306,27 +306,25 @@ else
                 </dl>
             }
 
-            @if (Model.CanRequestDuplicate)
-            {
-                <form asp-action="Index" asp-controller="DuplicateRequest" method="post">
-                    @Html.Hidden("certificateId", Model.Id, new { @id = "certificateId" })
+            <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StandardCode)
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.Page)
+                @Html.HiddenFor(m => m.SearchString)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.PrivatelyFundedStatus)
+                @Html.HiddenFor(m => m.FromApproval)
+
+                @if (Model.CanRequestDuplicate)
+                {
                     <button class="govuk-button">Confirm reprint</button>
-                </form>
-            }
-            else
-            {
-                <form type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
-                    @Html.HiddenFor(c => c.Id)
-                    @Html.HiddenFor(m => m.StandardCode)
-                    @Html.HiddenFor(m => m.Uln)
-                    @Html.HiddenFor(m => m.Page)
-                    @Html.HiddenFor(m => m.SearchString)
-                    @Html.HiddenFor(m => m.Status)
-                    @Html.HiddenFor(m => m.PrivatelyFundedStatus)
-                    @Html.HiddenFor(m => m.FromApproval)
+                }
+                else
+                {
                     <button type="submit" class="govuk-button">Confirm and submit</button>
-                </form>
-            }
+                }
+            </form>
         </div>
     </div>
 </main>

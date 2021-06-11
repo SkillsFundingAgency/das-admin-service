@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (vm.CanRequestDuplicate)
             {
-                return RedirectToAction("Index", "DuplicateRequest",
+                return RedirectToAction("ConfirmReprint", "DuplicateRequest",
                     new
                     {
                         certificateId = vm.Id,
