@@ -3,6 +3,6 @@
     public interface IManagedIdentityApiAuthentication
     {
         string Identifier { get; set; }
-        string ApiBaseAddress { get; set; }       
+        string ApiBaseAddress { get; set; }
     }
 }
