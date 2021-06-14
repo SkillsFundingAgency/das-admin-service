@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using Microsoft.Azure.Services.AppAuthentication;
+using Microsoft.Extensions.Hosting;
 using SFA.DAS.AdminService.Settings;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -19,17 +19,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (_hostingEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.ApplyApiAuthentication.TenantId;
-            var clientId = _configuration.ApplyApiAuthentication.ClientId;
-            var appKey = _configuration.ApplyApiAuthentication.ClientSecret;
-            var resourceId = _configuration.ApplyApiAuthentication.ResourceId;
+            var azureServiceTokenProvider = new AzureServiceTokenProvider();
+            var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(_configuration.ApplyApiAuthentication.Identifier);
 
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
-
-            return result.AccessToken;
+            return generateTokenTask.GetAwaiter().GetResult();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Settings
 
         string IfaApiClientBaseUrl { get; set; }
         AuthSettings StaffAuthentication { get; set; }
-        ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }
 
