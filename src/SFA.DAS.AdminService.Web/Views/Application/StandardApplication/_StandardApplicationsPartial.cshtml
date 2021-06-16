@@ -106,7 +106,7 @@
                 var standardAndVersion = application.StandardName;
                 if(!string.IsNullOrWhiteSpace(application.Versions))
                 {
-                    standardAndVersion = $"{standardAndVersion}<br>Version {application.Versions}";
+                    standardAndVersion = $"{standardAndVersion}<br>Version {string.Join(",",application.VersionsList)}";
                 }
             }
             <td class="govuk-table__cell govuk-table__cell">@Html.Raw(standardAndVersion)</td>
