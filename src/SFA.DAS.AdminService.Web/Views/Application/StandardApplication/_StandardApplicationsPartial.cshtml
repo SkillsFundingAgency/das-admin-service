@@ -29,7 +29,7 @@
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Organisation</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+            <th scope="col" class="govuk-table__header govuk-table__header">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@StandardApplicationsSortColumn.StandardReference"
                                             asp-action="@Model.SortColumnAction"
@@ -39,7 +39,7 @@
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Reference</sfa-sortable-column-header>
             </th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">
+            <th scope="col" class="govuk-table__header govuk-table__header">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@StandardApplicationsSortColumn.StandardName"
                                             asp-action="@Model.SortColumnAction"
@@ -47,7 +47,7 @@
                                             asp-fragment="@Model.Fragment"
                                             sfa-sort-column="@StandardApplicationsSortColumn.StandardName"
                                             sfa-table-sort-column="@Model.SortColumn"
-                                            sfa-sort-direction="@Model.SortDirection">Name of Standard</sfa-sortable-column-header>
+                                            sfa-sort-direction="@Model.SortDirection">Standard and version</sfa-sortable-column-header>
             </th>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
@@ -62,6 +62,16 @@
                                                 sfa-sort-direction="@Model.SortDirection">Status</sfa-sortable-column-header>
                 </th>
             }
+            <th scope="col" class="govuk-table__header govuk-table__header">
+                <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
+                                            data-sortColumn="@StandardApplicationsSortColumn.Type"
+                                            asp-action="@Model.SortColumnAction"
+                                            asp-controller="StandardApplication"
+                                            asp-fragment="@Model.Fragment"
+                                            sfa-sort-column="@StandardApplicationsSortColumn.Type"
+                                            sfa-table-sort-column="@Model.SortColumn"
+                                            sfa-sort-direction="@Model.SortDirection">Type</sfa-sortable-column-header>
+            </th>
             <th scope="col" class="govuk-table__header govuk-table__header--numeric">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@Model.DateSortColumnNameForReviewStatus()"
@@ -71,8 +81,8 @@
                                             sfa-sort-column="@Model.DateSortColumnNameForReviewStatus()"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">@Model.DateHeaderColumnNameForReviewStatus()</sfa-sortable-column-header>
-            </th>
-        </tr>
+                </th>
+            </tr>
     </thead>
     <tbody class="govuk-table__body">
         @if (Model?.PaginatedList != null)
@@ -91,12 +101,30 @@
                     @application.OrganisationName
                 </a>
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardReference</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@application.StandardName</td>
+            <td class="govuk-table__cell govuk-table__cell">@application.StandardReference</td>
+            @{
+                var standardAndVersion = application.StandardName;
+                if(!string.IsNullOrWhiteSpace(application.Versions))
+                {
+                    standardAndVersion = $"{standardAndVersion}<br>Version {application.Versions}";
+                }
+            }
+            <td class="govuk-table__cell govuk-table__cell">@Html.Raw(standardAndVersion)</td>
             @if (Model.ReviewStatus == ApplicationReviewStatus.InProgress || Model.ReviewStatus == ApplicationReviewStatus.HasFeedback)
             {
                 <td class="govuk-table__cell govuk-table__cell--numeric">@Model.StatusColumnValue(application.ApplicationStatus, application.ReviewStatus)</td>
             }
+            @{
+                var govukTagColor = "govuk-tag--blue";
+                var applicationType = "FULL";
+                if (!string.IsNullOrWhiteSpace(application.ApplicationType) && application.ApplicationType.Trim().ToLower().Equals("version"))
+                {
+                    govukTagColor = "govuk-tag--purple";
+                    applicationType = "SHORT";
+                }
+            }
+            <td class="govuk-table__cell govuk-table__cell das-no-wrap "><strong class="govuk-tag @govukTagColor"> @applicationType </strong></td>
+
             <td class="govuk-table__cell govuk-table__cell--numeric das-no-wrap">@application.DateValueForReviewStatus()</td>
         </tr>
             }

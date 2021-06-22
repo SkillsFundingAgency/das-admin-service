@@ -9,5 +9,6 @@
         public const string SubmittedDate = "SubmittedDate";
         public const string FeedbackAddedDate = "FeedbackAddedDate";
         public const string ClosedDate = "ClosedDate";
+        public const string Type = "Type";
     }
 }
