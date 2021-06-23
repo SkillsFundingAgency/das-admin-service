@@ -104,9 +104,9 @@
             <td class="govuk-table__cell govuk-table__cell">@application.StandardReference</td>
             @{
                 var standardAndVersion = application.StandardName;
-                if(!string.IsNullOrWhiteSpace(application.Versions))
+                if(null != application.Versions && application.Versions.Any())
                 {
-                    standardAndVersion = $"{standardAndVersion}<br>Version {application.Versions}";
+                    standardAndVersion = $"{standardAndVersion}<br>Version {String.Join(",", application.Versions)}";
                 }
             }
             <td class="govuk-table__cell govuk-table__cell">@Html.Raw(standardAndVersion)</td>
