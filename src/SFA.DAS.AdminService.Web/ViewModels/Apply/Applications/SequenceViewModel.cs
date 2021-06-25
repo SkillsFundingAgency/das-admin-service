@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             StandardName = application.ApplyData.Apply.StandardName;
             StandardCode = application.ApplyData.Apply.StandardCode;
             StandardReference = application.ApplyData.Apply.StandardReference;
-            StandardVersion = string.Join(",",application.ApplyData.Apply.Versions);
+            StandardVersion = (null != application.ApplyData.Apply.Versions) ? string.Join(",",application.ApplyData.Apply.Versions) : null;
             ReviewStatus = application.ReviewStatus;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
