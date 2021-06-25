@@ -87,16 +87,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string ContactName { get; }
         public string ContactEmail { get; }
 
-        // SV-657 helper to set the link text. Ugly but effective.
+        // SV-657 helper to set the link text.
         public string GetApplicationLinkText(string linkTitle)
         {
-            var text = $"{linkTitle}";
-
-            if(linkTitle.Equals("Apply to assess a standard", StringComparison.OrdinalIgnoreCase))
-            {
-                text = "Evaluate application";
-            }
-
+            var text = $"Evaluate {linkTitle.ToLower()}";
             return text;
         }
     }
