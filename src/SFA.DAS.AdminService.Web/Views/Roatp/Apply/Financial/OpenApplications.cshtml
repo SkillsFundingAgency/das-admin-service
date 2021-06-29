@@ -26,13 +26,6 @@
             </h1>
         </div>
     </div>
-    
-    @if(Model.Applications.TotalRecordCount > 0)
-    {
-        <p class="govuk-body">
-            <a href="@Url.Action("DownloadOpenApplications", "RoatpFinancial")" class="govuk-link govuk-link--no-visited-state">Download all current applications</a> (CSV)
-        </p>
-    }
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
@@ -153,4 +146,15 @@
             </div>
         </div>
     </div>
+
+    @if (Model.Applications.TotalRecordCount > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-action="DownloadOpenApplications" asp-controller="RoatpFinancial">Download all current applications</a> (CSV)
+                </p>
+            </div>
+        </div>
+    }
 </main>
