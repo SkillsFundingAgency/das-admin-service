@@ -8,7 +8,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
     {
         public int Id { get; set; }
         public string OrganisationId { get; set; }
-        public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
 
         public DateTime? DateStandardApprovedOnRegister { get; set; }
         public Guid? ContactId { get; set; }
@@ -16,6 +16,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? EffectiveTo { get; set; }
 
         public StandardCollation StandardCollation { get; set; }
+        public List<string> Versions { get; set; }
         public List<int> DeliveryAreas { get; set; }
 
         public OrganisationStandardData OrganisationStandardData { get; set; }
