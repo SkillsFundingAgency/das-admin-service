@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using SFA.DAS.AdminService.Common.Settings;
+﻿using SFA.DAS.AdminService.Common.Settings;
 
 namespace SFA.DAS.AdminService.Settings
 {
@@ -11,7 +10,7 @@ namespace SFA.DAS.AdminService.Settings
 
         string IfaApiClientBaseUrl { get; set; }
         AuthSettings StaffAuthentication { get; set; }
-        ClientApiAuthentication ApplyApiAuthentication { get; set; }
+        ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }
 
