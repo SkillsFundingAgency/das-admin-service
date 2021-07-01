@@ -232,6 +232,25 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
 
+        [HttpGet("register/edit-standard/{organisationStandardId}/{organisationStandardVersion")]
+        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, decimal organisationStandardVersion)
+        {
+            var viewModel = new RegisterEditOrganisationStandardVersionViewModel();
+
+            return View(viewModel);
+        }
+
+        [HttpPost("register/edit-standard/{organisationStandardId}/{organisationStandardVersion")]
+        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, RegisterEditOrganisationStandardVersionViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            return RedirectToAction("ViewStandard", "Register", new { organisationStandardId });
+        }
+
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/set-status-user/{organisationId}/{contactId}/{status}", Name= "Register_SetStatusAndNotify")]
         public async Task<IActionResult> SetStatusAndNotify(string organisationId, Guid contactId, string status)
