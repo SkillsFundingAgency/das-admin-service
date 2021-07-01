@@ -4,6 +4,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
     public class RegisterEditOrganisationStandardVersionViewModel
     {
+        public string OrganisationId { get; set; }
         public string Standard { get; set; }
         public string Reference { get; set; }
         public string Version { get; set; }
@@ -12,11 +13,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public DateTime? DateApprovedOnRegister { get; set; }
         public string Status { get; set; }
 
-        public string EffectiveFromDay { get; set; }
-        public string EffectiveFromMonth { get; set; }
-        public string EffectiveFromYear { get; set; }
-        public string EffectiveToDay { get; set; }
-        public string EffectiveToMonth { get; set; }
-        public string EffectiveToYear { get; set; }
+        public int EffectiveFromDay { get; set; }
+        public int EffectiveFromMonth { get; set; }
+        public int EffectiveFromYear { get; set; }
+        public int EffectiveToDay { get; set; }
+        public int EffectiveToMonth { get; set; }
+        public int EffectiveToYear { get; set; }
     }
 }
