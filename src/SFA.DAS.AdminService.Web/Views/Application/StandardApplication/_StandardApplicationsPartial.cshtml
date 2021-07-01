@@ -117,7 +117,7 @@
             @{
                 var govukTagColor = "govuk-tag--blue";
                 var applicationType = "FULL";
-                if (!string.IsNullOrWhiteSpace(application.ApplicationType) && application.ApplicationType.Trim().ToLower().Equals("version"))
+                if (!string.IsNullOrWhiteSpace(application.StandardApplicationType) && application.StandardApplicationType.Trim().ToLower().Equals("version"))
                 {
                     govukTagColor = "govuk-tag--purple";
                     applicationType = "SHORT";
