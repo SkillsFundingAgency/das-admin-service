@@ -248,6 +248,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(viewModel);
             }
 
+            var request = new UpdateEpaOrganisationStandardVersionRequest
+            {
+                OrganisationId = viewModel.OrganisationId,
+                EffectiveFrom = new DateTime(viewModel.EffectiveFromYear, viewModel.EffectiveFromMonth, viewModel.EffectiveFromDay),
+                EffectiveTo = new DateTime(viewModel.EffectiveToYear, viewModel.EffectiveToMonth, viewModel.EffectiveToDay)
+            };
+
+            var update = await _apiClient.UpdateEpaOrganisationStandardVersion(request);
+
             return RedirectToAction("ViewStandard", "Register", new { organisationStandardId });
         }
 
