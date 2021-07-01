@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -48,11 +47,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpGet("/Roatp/Financial/Current")]
-        public async Task<IActionResult> OpenApplications(int page = 1)
+        public async Task<IActionResult> OpenApplications(string sortOrder, string sortColumn,int page = 1)
         {
             var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
 
-            var applications = await _applyApiClient.GetOpenFinancialApplications();
+            var applications = await _applyApiClient.GetOpenFinancialApplications( sortOrder,  sortColumn);
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -78,11 +77,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpGet("/Roatp/Financial/Clarification")]
-        public async Task<IActionResult> ClarificationApplications(int page = 1)
+        public async Task<IActionResult> ClarificationApplications(string sortOrder, string sortColumn,int page = 1)
         {
             var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
 
-            var applications = await _applyApiClient.GetClarificationFinancialApplications();
+            var applications = await _applyApiClient.GetClarificationFinancialApplications(sortOrder, sortColumn);
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 
@@ -92,11 +91,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpGet("/Roatp/Financial/Outcome")]
-        public async Task<IActionResult> ClosedApplications(int page = 1)
+        public async Task<IActionResult> ClosedApplications(string sortOrder, string sortColumn,int page = 1)
         {
             var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
 
-            var applications = await _applyApiClient.GetClosedFinancialApplications();
+            var applications = await _applyApiClient.GetClosedFinancialApplications(sortOrder,sortColumn);
 
             var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -122,6 +123,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             MappingStartup.AddMappings();
 
             ConfigureDependencyInjection(services);
