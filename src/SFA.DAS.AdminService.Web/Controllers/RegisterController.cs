@@ -800,7 +800,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 OrganisationName = organisationStandard.OrganisationName,
                 OrganisationStatus = organisationStandard.OrganisationStatus,
                 DeliveryAreasDetails = organisationStandard.DeliveryAreasDetails,
-                DeliveryAreasComments = organisationStandard.OrganisationStandardData?.DeliveryAreasComments
+                DeliveryAreasComments = organisationStandard.OrganisationStandardData?.DeliveryAreasComments,
+                Versions = organisationStandard.Versions
             };
         }
     }
