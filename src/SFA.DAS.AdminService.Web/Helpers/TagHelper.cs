@@ -11,6 +11,7 @@ using SFA.DAS.AdminService.Web.Types;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {
+    
     public class SortableColumnTagHelper : TagHelper
     {
         private const string CssClass = "govuk-link das-table__sort ";
@@ -40,15 +41,21 @@ namespace SFA.DAS.AdminService.Web.Helpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.TagName = "";
-            var content = new StringBuilder();
+
+            if (output.TagName != "sortable-column")
+                return;
 
             var action = ViewContext.RouteData.Values["action"] as string;
             var controller = ViewContext.RouteData.Values["controller"] as string;
 
             var sortColumn = GetColumnFromQueryString();
             var sortOrder = GetSortOrderFromQueryString();
+
             var isSortColumn = sortColumn == ColumnName || (string.IsNullOrWhiteSpace(sortColumn) && IsDefault);
+
+
+            output.TagName = "";
+            var content = new StringBuilder();
 
             var values = new
             {
@@ -59,7 +66,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
             var href = _urlHelper.Action(action, controller, values);
 
             var sortOrderCssSuffix = string.Empty;
-            if (isSortColumn)
+            if (isSortColumn  && (!string.IsNullOrWhiteSpace(sortColumn)))
             {
                 sortOrderCssSuffix = sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
             }
