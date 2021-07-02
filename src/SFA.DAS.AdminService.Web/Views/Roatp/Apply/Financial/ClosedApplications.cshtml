@@ -57,8 +57,12 @@
                                     <th class="govuk-table__header" scope="col">Organisation name</th>
                                     <th class="govuk-table__header" scope="col">UKPRN</th>
                                     <th class="govuk-table__header" scope="col">Provider route</th>
-                                    <th class="govuk-table__header" scope="col">Outcome date</th>
-                                    <th class="govuk-table__header" scope="col">Outcome made by</th>
+                                    <th class="govuk-table__header" scope="col">
+                                        <sortable-column column-name="OutcomeMadeDate" column-label="Outcome date" default="true" default-order="Descending"></sortable-column>
+                                    </th>
+                            <th class="govuk-table__header" scope="col">
+                            <sortable-column column-name="OutcomeMadeByClosed" column-label="Outcome made by" default="true" default-order="Descending"></sortable-column>
+                            </th>
                                     <th class="govuk-table__header" scope="col">Outcome</th>
                                 </tr>
                             </thead>
