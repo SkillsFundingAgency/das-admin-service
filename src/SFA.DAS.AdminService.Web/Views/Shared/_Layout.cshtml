@@ -22,7 +22,6 @@
     <link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png" />
 
     <!--[if !IE 8]><!-->
-    <link href="/css/main.css" rel="stylesheet"   />
     <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.13.0.min.css"  />
     <!--<![endif]-->
     <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.13.0.min.css"><![endif]-->
@@ -31,11 +30,11 @@
     @RenderSection("Styles", required: false)
 
     <environment include="Development">
-        <link rel="stylesheet" href="/stylesheets/application.css"   no-cdn />
+        <link rel="stylesheet" href="/stylesheets/application.css"  />
     </environment>
 
     <environment exclude="Development">
-        <link rel="stylesheet" href="/stylesheets/application.min.css" no-cdn />
+        <link rel="stylesheet" href="/stylesheets/application.min.css"  />
     </environment>
 
 
