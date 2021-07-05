@@ -29,7 +29,7 @@ stages:
   jobs:
   - job: 'BuildAndTest'
     pool:
-      name: 'DAS - Continuous Integration'
+      name: 'DAS - Continuous Integration Beta'
     steps:
     - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
       displayName: GitVersion
