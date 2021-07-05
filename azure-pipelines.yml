@@ -13,7 +13,7 @@ variables:
     value: 'release'
 
 pool:
-  name: 'DAS - Continuous Integration'
+  name: 'DAS - Continuous Integration Beta'
 
 resources:
   repositories:
