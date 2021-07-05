@@ -75,7 +75,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 EffectiveFrom = request?.EffectiveFrom,
                 EffectiveTo = request?.EffectiveTo,
                 ContactId = request?.ContactId,
-                DeliveryAreas = request?.DeliveryAreas
+                DeliveryAreas = request?.DeliveryAreas,
+                StandardApplicationType = request?.StandardApplicationType
             };
         }
 

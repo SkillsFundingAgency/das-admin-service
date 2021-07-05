@@ -159,7 +159,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList(),
                 applyingContact.Id,
-                null);
+                application.StandardApplicationType);
 
             return command;
         }
