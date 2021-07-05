@@ -11,7 +11,7 @@ using SFA.DAS.AdminService.Web.Types;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {
-    
+    [HtmlTargetElement("sortable-column")]
     public class SortableColumnTagHelper : TagHelper
     {
         private const string CssClass = "govuk-link das-table__sort ";
@@ -41,10 +41,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-
-            if (output.TagName != "sortable-column")
-                return;
-
             var action = ViewContext.RouteData.Values["action"] as string;
             var controller = ViewContext.RouteData.Values["controller"] as string;
 
@@ -52,10 +48,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
             var sortOrder = GetSortOrderFromQueryString();
 
             var isSortColumn = sortColumn == ColumnName || (string.IsNullOrWhiteSpace(sortColumn) && IsDefault);
-
-
-            output.TagName = "";
-            var content = new StringBuilder();
 
             var values = new
             {
@@ -73,13 +65,14 @@ namespace SFA.DAS.AdminService.Web.Helpers
 
             var ariaSort = sortOrder.ToString().ToLower();
 
+            var content = new StringBuilder();
             content.Append($"<a class=\"{CssClass}{sortOrderCssSuffix}\" href=\"{href}\" aria-sort=\"{ariaSort}\">");
             content.Append(Label);
             content.Append("</a>");
 
+            output.TagName = "";
             output.PostContent.SetHtmlContent(content.ToString());
             output.Attributes.Clear();
-
         }
 
         private SortOrder GetSortOrderFromQueryString()
