@@ -16,9 +16,10 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
         public List<string> DeliveryAreas { get; set; }
 
         public Guid ApplyingContactId { get; set; }
+        public string StandardApplicationType { get; set; }
 
         public CreateOrganisationStandardCommand(Guid organisationId, string endPointAssessorOrganisationId,
-            int standardCode, string standardReference, List<string> standardVersions, DateTime effectiveFrom, List<string> deliveryAreas, Guid applyingContactId)
+            int standardCode, string standardReference, List<string> standardVersions, DateTime effectiveFrom, List<string> deliveryAreas, Guid applyingContactId, string standardApplicationType)
         {
             OrganisationId = organisationId;
             EndPointAssessorOrganisationId = endPointAssessorOrganisationId;
@@ -28,6 +29,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Commands
             EffectiveFrom = effectiveFrom;
             DeliveryAreas = deliveryAreas;
             ApplyingContactId = applyingContactId;
+            StandardApplicationType = standardApplicationType;
         }
 
         public CreateOrganisationStandardCommand()

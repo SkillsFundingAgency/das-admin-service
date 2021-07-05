@@ -158,7 +158,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 application.ApplyData?.Apply?.Versions,
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList(),
-                applyingContact.Id);
+                applyingContact.Id,
+                application.StandardApplicationType);
 
             return command;
         }

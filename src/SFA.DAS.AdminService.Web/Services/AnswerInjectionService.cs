@@ -481,7 +481,8 @@ namespace SFA.DAS.AdminService.Web.Services
                 EffectiveFrom = command.EffectiveFrom,
                 ContactId = command.ApplyingContactId.ToString(),
                 DeliveryAreas = await MapCommandToDeliveryAreas(command),
-                DeliveryAreasComments = string.Empty
+                DeliveryAreasComments = string.Empty,
+                StandardApplicationType = command.StandardApplicationType
             };
         }
 

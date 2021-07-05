@@ -51,5 +51,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public string CreatedBy { get; set; }
         public string ContactName { get; set; }
         public string ContactEmail { get; set; }
+        public string StandardApplicationType { get; set; }
     }
 }
