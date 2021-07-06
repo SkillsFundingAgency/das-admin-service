@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentValidation;
 using FluentValidation.Validators;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Common.Validation;
@@ -34,8 +34,8 @@ namespace SFA.DAS.AdminService.Web.Validators
                     vm.EffectiveToYear, "EffectiveToDay",
                     "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
 
-                vm.EffectiveFrom = ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
-                vm.EffectiveTo = ConstructDate(vm.EffectiveToDay, vm.EffectiveToMonth, vm.EffectiveToYear);
+                vm.EffectiveFrom = ValidatorExtensions.ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
+                vm.EffectiveTo = ValidatorExtensions.ConstructDate(vm.EffectiveToDay, vm.EffectiveToMonth, vm.EffectiveToYear);
 
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
@@ -60,29 +60,6 @@ namespace SFA.DAS.AdminService.Web.Validators
             {
                 context.AddFailure(error.Field, error.ErrorMessage);
             }
-        }
-
-        private static DateTime? ConstructDate(string dayString, string monthString, string yearString)
-        {
-
-            if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
-                !int.TryParse(yearString, out var year)) return null;
-
-            if (!IsValidDate(year, month, day))
-                return null;
-
-            return new DateTime(year, month, day);
-        }
-
-        public static bool IsValidDate(int year, int month, int day)
-        {
-            if (year < DateTime.MinValue.Year || year > DateTime.MaxValue.Year)
-                return false;
-
-            if (month < 1 || month > 12)
-                return false;
-
-            return day > 0 && day <= DateTime.DaysInMonth(year, month);
         }
     }
 }
