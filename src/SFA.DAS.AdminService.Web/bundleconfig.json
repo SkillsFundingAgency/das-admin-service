@@ -9,7 +9,6 @@
             "wwwroot/javascripts/govuk-frontend-2.13.0.min.js",
             "wwwroot/lib/jquery/dist/jquery-1.12.4.js",
             "wwwroot/javascripts/das-expandable-table.js",
-            "wwwroot/javascripts/das-table-sort.js",
             "wwwroot/javascripts/das-cookie-banner.js",
             "wwwroot/javascripts/application.js"
         ],
