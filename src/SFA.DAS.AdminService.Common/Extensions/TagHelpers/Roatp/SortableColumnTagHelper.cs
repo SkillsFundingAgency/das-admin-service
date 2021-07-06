@@ -6,15 +6,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using SFA.DAS.AdminService.Web.Extensions;
-using SFA.DAS.AdminService.Web.Types;
 
-namespace SFA.DAS.AdminService.Web.Helpers
+namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
 {
-    [HtmlTargetElement("sortable-column")]
+    [HtmlTargetElement("sfa-roatp-sortable-column")]
     public class SortableColumnTagHelper : TagHelper
     {
-        private const string CssClass = "govuk-link das-table__sort ";
+        private const string CssClass = "govuk-link das-table__sort";
 
         [HtmlAttributeName("column-name")]
         public string ColumnName { get; set; }
@@ -41,9 +39,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (output.TagName != "sortable-column")
-                return;
-
             var action = ViewContext.RouteData.Values["action"] as string;
             var controller = ViewContext.RouteData.Values["controller"] as string;
 
@@ -61,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
             var href = _urlHelper.Action(action, controller, values);
 
             var sortOrderCssSuffix = string.Empty;
-            if (isSortColumn  && (!string.IsNullOrWhiteSpace(sortColumn)))
+            if (isSortColumn && (!string.IsNullOrWhiteSpace(sortColumn)))
             {
                 sortOrderCssSuffix = sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
             }
@@ -69,7 +64,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
             var ariaSort = sortOrder.ToString().ToLower();
 
             var content = new StringBuilder();
-            content.Append($"<a class=\"{CssClass}{sortOrderCssSuffix}\" href=\"{href}\" aria-sort=\"{ariaSort}\">");
+            content.Append($"<a class=\"{CssClass} {sortOrderCssSuffix}\" href=\"{href}\" aria-sort=\"{ariaSort}\">");
             content.Append(Label);
             content.Append("</a>");
 
@@ -102,6 +97,21 @@ namespace SFA.DAS.AdminService.Web.Helpers
             }
 
             return string.Empty;
+        }
+    }
+
+    public enum SortOrder
+    {
+        Ascending, Descending
+    }
+
+    public static class SortOrderExtensions
+    {
+        public static SortOrder Reverse(this SortOrder sortOrder)
+        {
+            return sortOrder == SortOrder.Ascending
+                ? SortOrder.Descending
+                : SortOrder.Ascending;
         }
     }
 }
