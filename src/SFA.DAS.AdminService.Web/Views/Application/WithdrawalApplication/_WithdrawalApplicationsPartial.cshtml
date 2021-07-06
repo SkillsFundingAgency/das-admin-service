@@ -90,7 +90,22 @@
                                                     }
                                                     else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                                     {
-                                                        @($"{application.StandardName} ({application.StandardReference})")
+                                                        if (application.WithdrawalType == WithdrawalTypes.Register)
+                                                        {
+                                                            <text>Withdrawal from register</text>
+                                                        }
+                                                        else if (application.WithdrawalType == WithdrawalTypes.Standard)
+                                                        {
+                                                            @($"{application.StandardName}") <br /> <text>(All versions)</text>
+                                                        }
+                                                        else if (application.WithdrawalType == WithdrawalTypes.Version)
+                                                        {
+                                                            @($"{application.StandardName}") <br /> @($"Version {string.Join(",", application.Versions)}")
+                                                        }
+                                                        else
+                                                        {
+                                                            @($"{application.StandardName} ({application.StandardReference})")
+                                                        }
                                                     }
                                                 </td>
 

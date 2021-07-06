@@ -24,6 +24,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
         public string StandardApplicationType { get; set; }
 
         public string SequenceStatus { get; set; } // NOTE: Only used for Closed Applications
+        public string WithdrawalType { get; set; } // Only used for Withdrawal applications
 
         public string DateValueForReviewStatus()
         {
