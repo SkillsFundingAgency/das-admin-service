@@ -133,8 +133,8 @@
                 <ul class="govuk-list">
                     @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
-                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO && 
-                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO && 
+                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO &&
+                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO &&
                             !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
                         {
                             // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
@@ -186,20 +186,37 @@
 
                 @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
                 {
-                    <form class="js-disable-on-submit"
-                          asp-controller="Application"
-                          asp-action="Assessment"
-                          asp-route-applicationId="@Model.ApplicationId"
-                          asp-route-sequenceNo="@Model.SequenceNo"
-                          asp-route-backAction="@Model.BackAction"
-                          asp-route-backController="@Model.BackController"
-                          asp-route-backOrganisationId="@Model.BackOrganisationId"
-                          method="get">
-                        <button class="govuk-button" type="submit">Complete review</button>
-                    </form>
+                    if (Model.IsWithdrawal)
+                    {
+                        <form class="js-disable-on-submit"
+                              asp-controller="Application"
+                              asp-action="Assessment"
+                              asp-route-applicationId="@Model.ApplicationId"
+                              asp-route-sequenceNo="@Model.SequenceNo"
+                              asp-route-backAction="@Model.BackAction"
+                              asp-route-backController="@Model.BackController"
+                              asp-route-backOrganisationId="@Model.BackOrganisationId"
+                              method="get">
+                            <button class="govuk-button" type="submit">Continue</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form class="js-disable-on-submit"
+                              asp-controller="Application"
+                              asp-action="Assessment"
+                              asp-route-applicationId="@Model.ApplicationId"
+                              asp-route-sequenceNo="@Model.SequenceNo"
+                              asp-route-backAction="@Model.BackAction"
+                              asp-route-backController="@Model.BackController"
+                              asp-route-backOrganisationId="@Model.BackOrganisationId"
+                              method="get">
+                            <button class="govuk-button" type="submit">Complete review</button>
+                        </form>
+                    }
                 }
             }
-            
+
             <p class="govuk-body">
                 <a class="govuk-link"
                    asp-action="@Model.BackAction"
