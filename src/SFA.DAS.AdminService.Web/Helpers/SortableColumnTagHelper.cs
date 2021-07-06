@@ -41,6 +41,9 @@ namespace SFA.DAS.AdminService.Web.Helpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
+            if (output.TagName != "sortable-column")
+                return;
+
             var action = ViewContext.RouteData.Values["action"] as string;
             var controller = ViewContext.RouteData.Values["controller"] as string;
 
