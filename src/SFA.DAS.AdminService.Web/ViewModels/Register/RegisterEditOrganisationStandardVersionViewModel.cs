@@ -18,6 +18,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string EffectiveToDay { get; set; }
         public string EffectiveToMonth { get; set; }
         public string EffectiveToYear { get; set; }
-        public string OrganisationStandardId { get; set; }
+        public int OrganisationStandardId { get; set; }
     }
 }

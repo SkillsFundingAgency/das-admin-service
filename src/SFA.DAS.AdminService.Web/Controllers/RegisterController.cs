@@ -825,6 +825,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             
             return new RegisterEditOrganisationStandardVersionViewModel
             {
+                OrganisationStandardId = standard.Id,
                 Standard = standard.StandardTitle,
                 Reference = standard.IFateReferenceNumber,
                 Version = selectedVersion.Version.ToString(),
