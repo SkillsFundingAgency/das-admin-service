@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -279,6 +278,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
                 return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                    validationRequest);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandardVersion(int organisationStandardId, string version, DateTime? effectiveFrom, DateTime? effectiveTo)
+        {
+            var validationRequest = new UpdateEpaOrganisationStandardVersionValidationRequest
+            {
+                OrganisationStandardId = organisationStandardId,
+                OrganisationStandardVersion = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/version/validate-existing/"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardVersionValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }
