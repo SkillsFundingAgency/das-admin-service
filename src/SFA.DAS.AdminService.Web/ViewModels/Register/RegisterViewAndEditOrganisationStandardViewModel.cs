@@ -35,7 +35,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string EffectiveToDay { get; set; }
         public string EffectiveToMonth { get; set; }
         public string EffectiveToYear { get; set; }
-
+        public List<OrganisationStandardVersion> Versions { get; set; }
 
         public List<ContactResponse> Contacts { get; set; }
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
