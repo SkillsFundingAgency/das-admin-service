@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
             var href = _urlHelper.Action(action, controller, values);
 
             var sortOrderCssSuffix = string.Empty;
-            if (isSortColumn && (!string.IsNullOrWhiteSpace(sortColumn)))
+            if (isSortColumn)
             {
                 sortOrderCssSuffix = sortOrder == SortOrder.Ascending ? "das-table__sort--asc" : "das-table__sort--desc";
             }
