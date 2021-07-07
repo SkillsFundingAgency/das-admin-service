@@ -220,6 +220,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var updateOrganisationStandardRequest = new UpdateEpaOrganisationStandardRequest
             {
                 OrganisationId = viewModel.OrganisationId,
+                OrganisationStandardId = viewModel.OrganisationStandardId,
                 StandardCode = viewModel.StandardId,
                 EffectiveFrom = viewModel.EffectiveFrom,
                 EffectiveTo = viewModel.EffectiveTo,
