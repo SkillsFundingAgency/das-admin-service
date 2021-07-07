@@ -146,6 +146,52 @@
                     </div>
                 </dl>
 
+                <h2 class="govuk-heading-l">Edit standard version </h2>
+
+                <div class="govuk-tabs" data-module="tabs">
+
+                    <ul class="govuk-tabs__list">
+                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                            <a class="govuk-tabs__tab" href="#live">
+                                Live
+                            </a>
+                        </li>
+                    </ul>
+
+                    <section class="govuk-tabs__panel" id="live">
+                        <div>
+                            <h2 class="govuk-heading-l">Live</h2>
+                            <table class="govuk-table">
+                                <thead class="govuk-table__head">
+                                    <tr class="govuk-table__row">
+                                        <th scope="col" class="govuk-table__header">Version</th>
+                                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Effective from</th>
+                                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Effective to</th>
+                                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Date approved</th>
+                                        <th scope="col" class="govuk-table__header govuk-table__header--numeric">Action</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="govuk-table__body">
+                                    @foreach (var version in Model.Versions.OrderByDescending(v => v.Version))
+                                    {
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell">@version.Version</td>
+                                            <td class="govuk-table__cell govuk-table__cell--numeric">@version.EffectiveFrom.ToSfaShortDateString()</td>
+                                            <td class="govuk-table__cell govuk-table__cell--numeric">@version.EffectiveTo.ToSfaShortDateString()</td>
+                                            <td class="govuk-table__cell govuk-table__cell--numeric">@version.DateVersionApproved.ToSfaShortDateString()</td>
+                                            <td class="govuk-table__cell govuk-table__cell--numeric">
+                                                <a asp-controller="Register" asp-action="EditStandardVersion" asp-route-organisationStandardId="@Model.OrganisationStandardId" asp-route-organisationStandardVersion="@version.Version" class="govuk-link--no-visited-state"> Edit </a>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
                 <h2 class="govuk-heading-l">New organisation standard details</h2>
 
                 <div class="govuk-form-group error-message-container" sfa-anyvalidationerror-class="govuk-form-group--error">

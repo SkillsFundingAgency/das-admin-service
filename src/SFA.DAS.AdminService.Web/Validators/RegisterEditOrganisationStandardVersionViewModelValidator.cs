@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Validators;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
-using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class RegisterEditOrganisationStandardViewModelValidator : AbstractValidator<RegisterViewAndEditOrganisationStandardViewModel>
+    public class RegisterEditOrganisationStandardVersionViewModelValidator : AbstractValidator<RegisterEditOrganisationStandardVersionViewModel>
     {
         private readonly IOrganisationsApiClient _apiClient;
         private readonly IRegisterValidator _registerValidator;
-        public RegisterEditOrganisationStandardViewModelValidator(IOrganisationsApiClient apiClient,
-            IRegisterValidator registerValidator)
+
+        public RegisterEditOrganisationStandardVersionViewModelValidator(IOrganisationsApiClient apiClient, IRegisterValidator registerValidator)
         {
-            _apiClient = apiClient;
             _registerValidator = registerValidator;
+            _apiClient = apiClient;
+
             var errorInEffectiveFrom = false;
 
             RuleFor(vm => vm).Custom((vm, context) =>
@@ -28,8 +29,8 @@ namespace SFA.DAS.AdminService.Web.Validators
                     "EffectiveFromMonth", "EffectiveFromYear", "EffectiveFrom", "Effective From");
 
                 errorInEffectiveFrom = validationResultEffectiveFrom.Errors.Count > 0;
-
-                var validationResultEffectiveTo = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
+                
+                var validationResultEffectiveTo = _registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
                     vm.EffectiveToMonth,
                     vm.EffectiveToYear, "EffectiveToDay",
                     "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
@@ -40,17 +41,14 @@ namespace SFA.DAS.AdminService.Web.Validators
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
 
-                var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
-                var validationResultExternals = _apiClient
-                    .ValidateUpdateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
-                        vm.EffectiveTo, vm.ContactId, deliveryAreas, vm.ActionChoice, vm.Status, vm.OrganisationStatus).Result;
+                var validationResultExternals = _apiClient.ValidateUpdateOrganisationStandardVersion(vm.OrganisationStandardId, vm.Version, vm.EffectiveFrom, vm.EffectiveTo).Result;
+
                 if (validationResultExternals.IsValid) return;
                 foreach (var error in validationResultExternals.Errors)
                 {
                     if (errorInEffectiveFrom == false || error.Field != "EffectiveFrom")
                         context.AddFailure(error.Field, error.ErrorMessage);
                 }
-
             });
         }
 
