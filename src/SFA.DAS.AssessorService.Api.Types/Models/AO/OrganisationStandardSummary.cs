@@ -16,7 +16,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime? EffectiveTo { get; set; }
 
         public StandardCollation StandardCollation { get; set; }
-        public List<string> Versions { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public List<OrganisationStandardVersion> StandardVersions { get; set; }
 
