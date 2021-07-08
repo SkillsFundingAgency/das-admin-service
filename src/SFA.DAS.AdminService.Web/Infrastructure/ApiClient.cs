@@ -199,6 +199,15 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
+        public async Task<string> UpdateEpaOrganisationStandardVersion(UpdateEpaOrganisationStandardVersionRequest request)
+        {
+            var results =
+                await Put<UpdateEpaOrganisationStandardVersionRequest, EpaoStandardVersionResponse>("api/v1/organisationstandardversion/update",
+                    request);
+
+            return results.Details;
+        }
+
         public async Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request)
         {
             var result = await Put<UpdateEpaOrganisationRequest, EpaOrganisationResponse>("api/ao/assessment-organisations", request);

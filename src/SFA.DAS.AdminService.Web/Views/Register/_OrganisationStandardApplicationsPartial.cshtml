@@ -1,5 +1,4 @@
-﻿@using SFA.DAS.AdminService.Web.Domain.Apply;
-@using SFA.DAS.AdminService.Web.ViewModels.Register;
+﻿@using SFA.DAS.AdminService.Web.ViewModels.Register;
 @model OrganisationStandardsApplicationsViewModel
 
 <h2 class="govuk-heading-m">@Model.PaginationViewModel.Title</h2>
@@ -22,7 +21,10 @@
             @foreach (var standardApplication in Model.PaginationViewModel.PaginatedList.Items)
             {
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@standardApplication.StandardName</td>
+                    <td class="govuk-table__cell">
+                        @standardApplication.StandardName <br />
+                        Version @String.Join(", ", standardApplication.Versions)
+                    </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@standardApplication.StandardReference</td>
                     <td class="govuk-table__cell">
                         <a class="govuk-link"

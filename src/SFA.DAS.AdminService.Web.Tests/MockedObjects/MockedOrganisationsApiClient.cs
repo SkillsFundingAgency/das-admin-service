@@ -21,15 +21,15 @@ namespace SFA.DAS.AdminService.Web.Tests.MockedObjects
             {
                 new OrganisationStandardSummary
                 {
-                    StandardCode = 93
+                    StandardReference = "ST0093"
                 },
                 new OrganisationStandardSummary
                 {
-                    StandardCode = 92
+                    StandardReference = "ST0092"
                 },
                 new OrganisationStandardSummary
                 {
-                    StandardCode = 91
+                    StandardReference = "ST0091"
                 }
             };
 
