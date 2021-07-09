@@ -1,0 +1,36 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
+
+<form class="app-search-form" method="get" asp-action="@Model.SelectedTab" asp-controller="RoatpFinancial" novalidate>
+    @if (!string.IsNullOrWhiteSpace(Model.SortColumn))
+    {
+        <input type="hidden" asp-for="SortColumn" />
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.SortOrder))
+    {
+        <input type="hidden" asp-for="SortOrder" />
+    }
+    <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+        <label asp-for="SearchTerm" class="govuk-visually-hidden">
+            Search
+        </label>
+        <span class="govuk-error-message" asp-validation-for="SearchTerm"></span>
+        <div class="app-search-form__group">
+            <input class="govuk-input app-search-form__input" asp-for="SearchTerm" maxlength="50" autocomplete="off" sfa-validation-for="SearchTerm" sfa-validationerror-class="govuk-input--error" />
+            <div class="app-search-form__button-wrap">
+                <button type="submit" class="govuk-button app-search-form__button" data-disable-on-submit="true">
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(Model.SearchTerm) && ViewData.ModelState.IsValid)
+{
+    <div class="app-search-results-info">
+        <p class="app-search-results-info__content">
+            Showing results for <span class="app-search-results-info__search-term">@Model.SearchTerm</span>
+        </p>
+        <a class="govuk-link app-search-results-info__clear-link" asp-action="@(Model.SelectedTab)" asp-controller="RoatpFinancial">Clear results</a>
+    </div>
+}

@@ -26,6 +26,9 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
         [HtmlAttributeName("default-order")]
         public SortOrder DefaultSortOrder { get; set; }
 
+        [HtmlAttributeName("fragment")]
+        public string Fragment { get; set; }
+
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -49,11 +52,12 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
 
             var values = new
             {
+                SearchTerm = GetSearchTermFromQueryString(),
                 SortColumn = ColumnName,
                 SortOrder = isSortColumn ? sortOrder.Reverse().ToString() : DefaultSortOrder.ToString()
             };
 
-            var href = _urlHelper.Action(action, controller, values);
+            var href = _urlHelper.Action(action, controller, values, null, null, Fragment);
 
             var sortOrderCssSuffix = string.Empty;
             if (isSortColumn)
@@ -94,6 +98,16 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
             if (ViewContext.HttpContext.Request.Query.ContainsKey("SortColumn"))
             {
                 return ViewContext.HttpContext.Request.Query["SortColumn"];
+            }
+
+            return string.Empty;
+        }
+
+        private string GetSearchTermFromQueryString()
+        {
+            if (ViewContext.HttpContext.Request.Query.ContainsKey("SearchTerm"))
+            {
+                return ViewContext.HttpContext.Request.Query["SearchTerm"];
             }
 
             return string.Empty;

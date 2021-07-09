@@ -25,19 +25,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<RoatpApply>($"/Application/{applicationId}");
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string sortOrder, string sortColumn)
+        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications?sortOrder={sortOrder}&sortColumn={sortColumn}");            
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications?searchTerm={searchTerm}&sortColumn ={sortColumn}&sortOrder={sortOrder}");            
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string sortOrder, string sortColumn)
+        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications?sortOrder={sortOrder}&sortColumn={sortColumn}");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string sortOrder, string sortColumn)
+        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications?sortOrder={sortOrder}&sortColumn={sortColumn}");
+            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
         }
 
         public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
@@ -45,9 +45,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<RoatpFinancialSummaryDownloadItem>>($"/Financial/OpenApplicationsForDownload");
         }
 
-        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm)
         {
-            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts");
+            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts?searchTerm={searchTerm}");
         }
 
         public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails)
