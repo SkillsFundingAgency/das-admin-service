@@ -19,6 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string OrganisationStatus { get; set; }
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
+        public string StandardReference { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? DateStandardApprovedOnRegister { get; set; }
