@@ -799,6 +799,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 OrganisationStandardId = organisationStandard.Id,
                 StandardId = organisationStandard.StandardId,
                 StandardTitle = organisationStandard.StandardTitle,
+                StandardReference = organisationStandard.IFateReferenceNumber,
                 OrganisationId = organisationStandard.OrganisationId,
                 Ukprn = organisationStandard.Ukprn,
                 EffectiveFrom = organisationStandard.EffectiveFrom,
