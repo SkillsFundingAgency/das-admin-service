@@ -14,11 +14,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
     {
         Task<RoatpApply> GetApplication(Guid applicationId);
 
-        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string sortOrder, string sortColumn);
-        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string sortOrder, string sortColumn);
-        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string sortOrder, string sortColumn);
+        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
+        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
+        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
         Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
-        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm);
 
         Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);

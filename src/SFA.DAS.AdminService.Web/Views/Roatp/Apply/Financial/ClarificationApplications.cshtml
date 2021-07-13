@@ -20,6 +20,19 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="SearchTerm"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
             <h1 class="govuk-heading-xl">
                 <span class="govuk-caption-xl">RoATP financial applications</span>
                 Clarifications
@@ -29,25 +42,12 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
+            <partial name="_DashboardSearch.cshtml" />
+
             <div class="govuk-tabs">
-                <ul class="govuk-tabs__list">
-                    <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" asp-action="OpenApplications" asp-controller="RoatpFinancial">
-                            Current applications (@Model.StatusCounts.ApplicationsOpen)
-                        </a>
-                    </li>
-                    <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab govuk-tabs__tab--selected" asp-action="ClarificationApplications" asp-controller="RoatpFinancial">
-                            Clarifications (@Model.StatusCounts.ApplicationsWithClarification)
-                        </a>
-                    </li>
-                    <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" asp-action="ClosedApplications" asp-controller="RoatpFinancial">
-                            Outcome (@Model.StatusCounts.ApplicationsClosed)
-                        </a>
-                    </li>
-                </ul>
-                <div class="govuk-tabs__panel" id="clarifications">
+                <partial name="_DashboardNavigation.cshtml" />
+
+                <div class="govuk-tabs__panel">
                     @if (@Model.Applications.Items.Any())
                     {
                         <table class="govuk-table govuk-table--s das-table--responsive">

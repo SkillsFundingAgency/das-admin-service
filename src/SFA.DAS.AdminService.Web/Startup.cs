@@ -100,6 +100,7 @@ namespace SFA.DAS.AdminService.Web
                     options.Filters.Add<FeatureToggleFilter>();
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new StringTrimmingModelBinderProvider());
                 })
                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
