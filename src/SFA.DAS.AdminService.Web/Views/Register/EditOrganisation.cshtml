@@ -267,16 +267,19 @@
                         <thead class="govuk-table__head">
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header">Name</th>
-                                <th class="govuk-table__header">Code</th>
+                                <th class="govuk-table__header govuk-table__header--numeric">Reference</th>
                             </tr>
                         </thead>
                         <tbody class="govuk-table__body">
                             @foreach (var result in Model.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items.OrderBy(x =>
-                           x.StandardCollation.Title))
+                                x.StandardCollation.Title))
                             {
                                 <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell" data-label="Name">@result.StandardCollation.Title</td>
-                                    <td class="govuk-table__cell" data-label="ID">@result.StandardCode</td>
+                                    <td class="govuk-table__cell" data-label="Name">
+                                        @result.StandardCollation.Title <br />
+                                        Version @string.Join(", ", result.StandardVersions.Select(v => v.Version))
+                                    </td>
+                                    <td class="govuk-table__cell govuk-table__cell--numeric" data-label="ID">@result.StandardReference</td>
                                 </tr>
                             }
                         </tbody>
