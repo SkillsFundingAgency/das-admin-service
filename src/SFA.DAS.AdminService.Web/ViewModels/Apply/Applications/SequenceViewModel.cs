@@ -68,18 +68,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 if(null != withdrawalSection)
                 {
                     var withdrawalDatePage = withdrawalSection.QnAData.Pages.FirstOrDefault(p => p.LinkTitle.Trim().ToUpper() == "WITHDRAWAL DATE");  //@ToDo: tech debt - very brittle
-                    if(null != withdrawalDatePage)
+                    if(null != withdrawalDatePage && withdrawalDatePage.PageOfAnswers.Any())
                     {
-                        if(withdrawalDatePage.PageOfAnswers.Any())
+                        var answers = withdrawalDatePage.PageOfAnswers[0].Answers;
+                        if(answers.Any())
                         {
-                            var answers = withdrawalDatePage.PageOfAnswers[0].Answers;
-                            if(answers.Any())
-                            {
-                                var answer = answers[0];
-                                withdrawalDate = DateTime.Parse(answer.Value);
-                            }
+                            var answer = answers[0];
+                            withdrawalDate = DateTime.Parse(answer.Value);
                         }
-                        
                     }
                 }
             }
