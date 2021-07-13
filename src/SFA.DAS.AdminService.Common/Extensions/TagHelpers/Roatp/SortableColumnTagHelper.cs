@@ -26,9 +26,6 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
         [HtmlAttributeName("default-order")]
         public SortOrder DefaultSortOrder { get; set; }
 
-        [HtmlAttributeName("fragment")]
-        public string Fragment { get; set; }
-
         [ViewContext]
         [HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
@@ -57,7 +54,7 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
                 SortOrder = isSortColumn ? sortOrder.Reverse().ToString() : DefaultSortOrder.ToString()
             };
 
-            var href = _urlHelper.Action(action, controller, values, null, null, Fragment);
+            var href = _urlHelper.Action(action, controller, values);
 
             var sortOrderCssSuffix = string.Empty;
             if (isSortColumn)
