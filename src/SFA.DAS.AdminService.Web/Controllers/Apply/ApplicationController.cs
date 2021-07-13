@@ -258,6 +258,108 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View(nameof(Assessment), viewModel);
         }
 
+        [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateCheck/{backOrganisationId?}")]
+        public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+
+            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+
+            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+                activeApplySequence.Sections,
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId);
+
+            return View(nameof(WithdrawalDateCheck), sequenceVm);
+        }
+
+        [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateCheck/{backOrganisationId?}")]
+        public async Task<IActionResult> WithdrawalDateCheckSave(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string dateApproved)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+
+            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+
+            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+                activeApplySequence.Sections,
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId);
+
+            var errorMessages = new Dictionary<string, string>();
+
+            if (string.IsNullOrWhiteSpace(dateApproved) || (dateApproved.Trim().ToUpper() != "NO" && dateApproved.Trim().ToUpper() != "YES"))
+            {
+                errorMessages["WithdrawalDate"] = "Please choose an option either 'Yes' or 'No'.";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach (var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+
+                return View(nameof(WithdrawalDateCheck), sequenceVm);
+            }
+
+            if(dateApproved.Trim().ToUpper() == "NO")
+            {
+                return View(nameof(WithdrawalDateChange), sequenceVm);
+            }
+
+            return View(nameof(WithdrawalDateCheck), null);
+        }
+
+        [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateChange/{backOrganisationId?}")]
+        public async Task<IActionResult> WithdrawalDateChange(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string effectiveFromDay, string effectiveFromMonth, string effectiveFromYear)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+
+            var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
+            var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
+
+            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+                activeApplySequence.Sections,
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId);
+
+            var errorMessages = new Dictionary<string, string>();
+
+            string effectiveFromDateText = $"{effectiveFromDay}/{effectiveFromMonth}/{effectiveFromYear}";
+            if (!DateTime.TryParse(effectiveFromDateText, out DateTime effectiveFromDate))
+            {
+                errorMessages["WithdrawalDate"] = "Please enter a valid date.";
+            }
+
+            if (errorMessages.Any())
+            {
+                foreach (var error in errorMessages)
+                {
+                    ModelState.AddModelError(error.Key, error.Value);
+                }
+
+                return View(nameof(WithdrawalDateChange), sequenceVm);
+            }
+
+            return RedirectToAction(nameof(Assessment));
+        }
+
+
+
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId?}")]
         public async Task<IActionResult> Return(Guid applicationId, int sequenceNo, string returnType, BackViewModel backViewModel)
         {
