@@ -259,12 +259,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int organisationStandardId, int standardId, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
             var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
+                OrganisationStandardId = organisationStandardId,
                 StandardCode = standardId,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
