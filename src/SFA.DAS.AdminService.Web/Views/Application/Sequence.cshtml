@@ -26,7 +26,14 @@
             }
             else
             {
-                <h1 class="govuk-heading-xl">Application overview</h1>
+                @if (Model.IsWithdrawal)
+                {
+                    <h1 class="govuk-heading-xl">Withdrawal application overview</h1>
+                }
+                else
+                {
+                    <h1 class="govuk-heading-xl">Application overview</h1>
+                }
 
                 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                     @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
@@ -64,11 +71,20 @@
                             <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Details</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardWithReference</dd>
+                            <dd class="govuk-summary-list__value">
+                                @{
+                                    var standardWithVersion = Model.StandardName;
+                                    if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
+                                    {
+                                        standardWithVersion += $"<br> Version {string.Join(",", Model.StandardVersion)}";
+                                    }
+                                }
+                                @Html.Raw(standardWithVersion)
+                            </dd>
                         </div>
                     }
                     @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
@@ -122,7 +138,7 @@
                     }
                 </dl>
 
-                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber))
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber) && !Model.IsWithdrawal)
                 {
                     <p class="govuk-body">
                         <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
@@ -151,7 +167,7 @@
                                    asp-route-backAction="@Model.BackAction"
                                    asp-route-backController="@Model.BackController"
                                    asp-route-backOrganisationId="@Model.BackOrganisationId">
-                                    @Model.GetApplicationLinkText(applicationSection.LinkTitle)
+                                    @Model.GetApplicationLinkText(applicationSection.LinkTitle, Model.IsWithdrawal)
                                 </a>
                             </h2>
                             <span id="company-details-hint" class="govuk-hint">

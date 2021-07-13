@@ -120,9 +120,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public string ContactEmail { get; }
 
         // SV-657 helper to set the link text.
-        public string GetApplicationLinkText(string linkTitle)
+        // SV-914 Withdrawal application
+        public string GetApplicationLinkText(string linkTitle, bool isWithdrawal = false)
         {
             var text = $"Evaluate {linkTitle.ToLower()}";
+            if(IsWithdrawal)
+            {
+                text = "Evaluate withdrawal application";
+            }
             return text;
         }
     }

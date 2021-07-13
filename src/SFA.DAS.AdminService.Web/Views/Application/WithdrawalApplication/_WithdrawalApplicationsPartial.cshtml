@@ -90,22 +90,12 @@
                                                     }
                                                     else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                                     {
-                                                        if (application.WithdrawalType == WithdrawalTypes.Register)
+                                                        var standardWithVersion = application.StandardName;
+                                                        if (application.Versions.Any())
                                                         {
-                                                            <text>Withdrawal from register</text>
+                                                            standardWithVersion += $"<br> Version {string.Join(",", application.Versions)}";
                                                         }
-                                                        else if (application.WithdrawalType == WithdrawalTypes.Standard)
-                                                        {
-                                                            @($"{application.StandardName}") <br /> <text>(All versions)</text>
-                                                        }
-                                                        else if (application.WithdrawalType == WithdrawalTypes.Version)
-                                                        {
-                                                            @($"{application.StandardName}") <br /> @($"Version {string.Join(",", application.Versions)}")
-                                                        }
-                                                        else
-                                                        {
-                                                            @($"{application.StandardName} ({application.StandardReference})")
-                                                        }
+                                                        @Html.Raw(standardWithVersion)
                                                     }
                                                 </td>
 
