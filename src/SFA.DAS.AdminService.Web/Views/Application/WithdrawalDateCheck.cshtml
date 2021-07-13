@@ -51,7 +51,17 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Details</dt>
-                    <dd class="govuk-summary-list__value">Withdrawal from register</dd>
+                    <dd class="govuk-summary-list__value">
+                        @{ 
+                            var standardWithVersion = Model.StandardName;
+                            if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
+                            {
+                                standardWithVersion += $"<br> Version {Model.StandardVersion}";
+                            }
+                        }
+                        @Html.Raw(standardWithVersion)
+
+                    </dd>
                 </div>
 
                 <div class="govuk-summary-list__row">
