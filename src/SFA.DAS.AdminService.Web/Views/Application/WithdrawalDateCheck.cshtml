@@ -52,15 +52,21 @@
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">Details</dt>
                     <dd class="govuk-summary-list__value">
-                        @{ 
-                            var standardWithVersion = Model.StandardName;
-                            if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
+                        @{
+                            if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                             {
-                                standardWithVersion += $"<br> Version {Model.StandardVersion}";
+                                <text>Withdrawal from register</text>
+                            }
+                            else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                            {
+                                var standardWithVersion = Model.StandardName;
+                                if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
+                                {
+                                    standardWithVersion += $"<br> Version {Model.StandardVersion}";
+                                }
+                                @Html.Raw(standardWithVersion)
                             }
                         }
-                        @Html.Raw(standardWithVersion)
-
                     </dd>
                 </div>
 
