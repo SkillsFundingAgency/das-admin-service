@@ -312,7 +312,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View(nameof(WithdrawalDateCheck), sequenceVm);
             }
 
-            if(dateApproved.Trim().ToUpper() == "NO")
+            if(dateApproved?.Trim().ToUpper() == "NO")
             {
                 return View(nameof(WithdrawalDateChange), sequenceVm);
             }
