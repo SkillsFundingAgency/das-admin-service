@@ -355,6 +355,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View(nameof(WithdrawalDateChange), sequenceVm);
             }
 
+            // @ToDo: Save the withdrawal date
+
+            // @ToDo: If multuple versions are being withdrawn from, cycle through each version and perform a withdrawal date check for each version
+            //        then figure out how to savea multiple withdrawal versions (one date per version) in the QnA API
+
             return RedirectToAction(nameof(Assessment));
         }
 
