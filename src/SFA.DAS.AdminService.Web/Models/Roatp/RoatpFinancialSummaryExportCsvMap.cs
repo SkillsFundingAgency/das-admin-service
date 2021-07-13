@@ -28,6 +28,7 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
             Map(x => x.Borrowings).Name("Total borrowings");
             Map(x => x.AccountingReferenceDate).Name("Accounting reference date").TypeConverterOption.Format("yyyy-MM-dd");
             Map(x => x.AccountingPeriod).Name("Accounting period");
+            Map(x => x.AverageNumberofFTEEmployees).Name("FTE");
         }
     }
 }

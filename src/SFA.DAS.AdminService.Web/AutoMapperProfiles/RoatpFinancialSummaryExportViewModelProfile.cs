@@ -28,7 +28,10 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.ShareholderFunds, opt => opt.MapFrom(source => source.FinancialData.ShareholderFunds))
                 .ForMember(dest => dest.Borrowings, opt => opt.MapFrom(source => source.FinancialData.Borrowings))
                 .ForMember(dest => dest.AccountingReferenceDate, opt => opt.MapFrom(source => source.FinancialData.AccountingReferenceDate))
-                .ForMember(dest => dest.AccountingPeriod, opt => opt.MapFrom(source => source.FinancialData.AccountingPeriod));
+                .ForMember(dest => dest.AccountingPeriod, opt => opt.MapFrom(source => source.FinancialData.AccountingPeriod))
+                .ForMember(dest => dest.AverageNumberofFTEEmployees, opt => opt.MapFrom(source => source.FinancialData.AverageNumberofFTEEmployees));
+
+
         }
     }
 }

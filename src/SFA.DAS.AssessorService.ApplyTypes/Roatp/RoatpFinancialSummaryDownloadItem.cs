@@ -23,6 +23,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
         public long? Borrowings { get; set; }
         public DateTime? AccountingReferenceDate { get; set; }
         public byte? AccountingPeriod { get; set; }
+        public long? AverageNumberofFTEEmployees { get; set; }
     }
 
 }
