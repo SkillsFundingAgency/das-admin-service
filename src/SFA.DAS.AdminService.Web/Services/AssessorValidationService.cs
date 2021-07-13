@@ -71,10 +71,12 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 OrganisationId = request?.OrganisationId,
                 StandardCode = request?.StandardCode ?? 0,
+                StandardVersions = request?.StandardVersions,
                 EffectiveFrom = request?.EffectiveFrom,
                 EffectiveTo = request?.EffectiveTo,
                 ContactId = request?.ContactId,
-                DeliveryAreas = request?.DeliveryAreas
+                DeliveryAreas = request?.DeliveryAreas,
+                StandardApplicationType = request?.StandardApplicationType
             };
         }
 

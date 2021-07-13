@@ -21,6 +21,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             StandardName = application.ApplyData.Apply.StandardName;
             StandardCode = application.ApplyData.Apply.StandardCode;
             StandardReference = application.ApplyData.Apply.StandardReference;
+            StandardVersion = (null != application.ApplyData.Apply.Versions) ? string.Join(",",application.ApplyData.Apply.Versions) : null;
             ReviewStatus = application.ReviewStatus;
 
             FinancialReviewStatus = application.FinancialReviewStatus;
@@ -61,6 +62,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public int? StandardCode { get; set; }
         public string Standard => StandardCode.HasValue ? $"{StandardName} ({StandardCode})" : StandardName;
         public string StandardWithReference => $"{StandardName} ({StandardReference})";
+        public string StandardVersion { get; set; }
         public string ReviewStatus { get; set; }
 
         public string FinancialReviewStatus { get; set; }
@@ -84,5 +86,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         public string ContactName { get; }
         public string ContactEmail { get; }
+
+        // SV-657 helper to set the link text.
+        public string GetApplicationLinkText(string linkTitle)
+        {
+            var text = $"Evaluate {linkTitle.ToLower()}";
+            return text;
+        }
     }
 }

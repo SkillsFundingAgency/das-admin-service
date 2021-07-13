@@ -154,9 +154,12 @@ namespace SFA.DAS.AdminService.Web.Services
                 organisation.Id,
                 organisation.EndPointAssessorOrganisationId,
                 application.StandardCode ?? 0,
+                application.ApplyData?.Apply?.StandardReference,
+                application.ApplyData?.Apply?.Versions,
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList(),
-                applyingContact.Id);
+                applyingContact.Id,
+                application.StandardApplicationType);
 
             return command;
         }
