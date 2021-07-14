@@ -65,6 +65,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
+        Task<string> UpdateEpaOrganisationStandardVersion(UpdateEpaOrganisationStandardVersionRequest request);
         Task RestartSchedule(Guid id);
         Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
         Task<StandardVersion> GetStandardVersion(string standardUId);
