@@ -45,8 +45,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         {
             ApiClient.Setup(client => client.UpdateEpaOrganisationStandardVersion(It.IsAny<UpdateEpaOrganisationStandardVersionRequest>()))
                 .ReturnsAsync("OK");
+            var model = new RegisterEditOrganisationStandardVersionViewModel();
 
-            var result = await Sut.EditStandardVersion(1, 1.0m) as RedirectToActionResult;
+            var result = await Sut.EditStandardVersion(1, 1.0m, model) as RedirectToActionResult;
 
             result.ControllerName.Should().Be("Register");
             result.ActionName.Should().Be("ViewStandard");
