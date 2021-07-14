@@ -64,11 +64,17 @@
                             <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                     {
+                        var standardAndVersion = Model.StandardName;
+                        if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
+                        {
+                            standardAndVersion = $"{standardAndVersion}<br>Version {Model.StandardVersion}";
+                        }
+
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Details</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardWithReference</dd>
+                            <dd class="govuk-summary-list__value">@Html.Raw(standardAndVersion)</dd>
                         </div>
                     }
                     @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
