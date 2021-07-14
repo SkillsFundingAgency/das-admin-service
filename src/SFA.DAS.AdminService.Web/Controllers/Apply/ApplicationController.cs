@@ -296,7 +296,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 backViewModel.BackAction,
                 backViewModel.BackController,
                 backViewModel.BackOrganisationId,
-                versionsToProcess);
+                null);
 
             var errorMessages = new Dictionary<string, string>();
 
@@ -336,8 +336,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     return RedirectToAction(nameof(WithdrawalDateCheck), new { versionsToProcess });
                 }
             }
-
-
 
             return RedirectToAction(nameof(Assessment));
         }
@@ -380,8 +378,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, versionsToProcess, effectiveToDate);
 
-
-            // @todo: copy the code from above
+            if (!string.IsNullOrWhiteSpace(versionsToProcess))
+            {
+                return RedirectToAction(nameof(WithdrawalDateCheck), new { versionsToProcess });
+            }
 
             return RedirectToAction(nameof(Assessment));
         }
