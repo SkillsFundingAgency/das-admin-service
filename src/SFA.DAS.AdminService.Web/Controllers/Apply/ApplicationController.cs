@@ -290,11 +290,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+            var sequenceVm = new WithdrawalDateCheckViewModel(application, organisation, sequence, sections,
                 activeApplySequence.Sections,
                 backViewModel.BackAction,
                 backViewModel.BackController,
-                backViewModel.BackOrganisationId);
+                backViewModel.BackOrganisationId,
+                null,
+                null);
 
             var errorMessages = new Dictionary<string, string>();
 
@@ -332,11 +334,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+            var sequenceVm = new WithdrawalDateCheckViewModel(application, organisation, sequence, sections,
                 activeApplySequence.Sections,
                 backViewModel.BackAction,
                 backViewModel.BackController,
-                backViewModel.BackOrganisationId);
+                backViewModel.BackOrganisationId,
+                null,
+                null);
 
             var errorMessages = new Dictionary<string, string>();
 
@@ -357,6 +361,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             // @ToDo: Save the withdrawal date
+            /*
+            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(application.OrganisationId.ToString());
+            if(null != organisationStandards && organisationStandards.Any())
+            {
+                var organisationStandard = organisationStandards.FirstOrDefault(os => os.StandardCode == application.StandardCode);
+            }
+            */
 
             // @ToDo: If multuple versions are being withdrawn from, cycle through each version and perform a withdrawal date check for each version
 
