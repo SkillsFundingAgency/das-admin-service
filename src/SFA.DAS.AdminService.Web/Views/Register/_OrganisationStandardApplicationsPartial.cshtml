@@ -22,8 +22,14 @@
             {
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
-                        @standardApplication.StandardName <br />
-                        Version @String.Join(", ", standardApplication.Versions)
+                        @standardApplication.StandardName
+                        @if (standardApplication.Versions != null)
+                        {
+                            <span>
+                                <br />
+                                Version @String.Join(", ", standardApplication.Versions)
+                            </span>
+                        }
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@standardApplication.StandardReference</td>
                     <td class="govuk-table__cell">
