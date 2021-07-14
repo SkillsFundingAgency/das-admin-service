@@ -154,7 +154,7 @@
                                        asp-route-backAction="@Model.BackAction"
                                        asp-route-backController="@Model.BackController"
                                        asp-route-backOrganisationId="@Model.BackOrganisationId">
-                                        @applicationSection.LinkTitle
+                                        @Model.GetApplicationLinkText(applicationSection.LinkTitle)
                                     </a>
                                 </h2>
                                 <span class="govuk-hint">
