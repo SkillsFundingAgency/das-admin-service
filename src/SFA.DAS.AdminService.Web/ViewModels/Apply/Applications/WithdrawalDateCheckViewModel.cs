@@ -13,54 +13,42 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     {
         public DateTime? RequestedWithdrawalDate { get; set; }
 
-        // If the withdrawal is a standard withdrawal for multiple versions of the standard,
-        // this holds the specific version being processed by the withdrawal date check.
-        // Otherwise null.
-        public string SpecifiedVersion { get; set; }
+        public string VersionsToProcess { get; set; }
 
-        // Mapping from version to withdrawal date
-        public Dictionary<string, DateTime?> StandardVersionWithdrawalDates { get; set; }
+        public string CurrentVersion { get; set; }
 
         public WithdrawalDateCheckViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence,
             List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId,
-            string specifiedVersion, Dictionary<string, DateTime?> standardVersionWithdrawalDates)
+            string versionsToProcess)
         : base(application, organisation, sequence, sections, applySections, backAction, backController, backOrganisationId)
         {
             RequestedWithdrawalDate = GetWithdrawalDate(Sections);
-
-            if(null != standardVersionWithdrawalDates && standardVersionWithdrawalDates.Any())
+            VersionsToProcess = versionsToProcess;
+            if(null == VersionsToProcess)
             {
-                StandardVersionWithdrawalDates = standardVersionWithdrawalDates;
+                VersionsToProcess = string.Join(",", application.ApplyData.Apply.Versions);
             }
-            else
-            {
-                InitStandardVersionWithdrawalDates();
-            }
-
-            if(!string.IsNullOrWhiteSpace(specifiedVersion))
-            {
-                SpecifiedVersion = specifiedVersion;
-            }
-            else
-            {
-                if(null != StandardVersionWithdrawalDates && StandardVersionWithdrawalDates.Any())
-                {
-                    SpecifiedVersion = StandardVersionWithdrawalDates.First().Key;
-                }
-            }
+            PopNextVersion();
         }
-        
-        private void InitStandardVersionWithdrawalDates()
-        {
-            var requestWithdrawalDate = GetWithdrawalDate(Sections);
 
-            if (!string.IsNullOrWhiteSpace(StandardVersion))
+        private void PopNextVersion()
+        {
+            CurrentVersion = null;
+            if (!string.IsNullOrWhiteSpace(VersionsToProcess))
             {
-                var versionList = StandardVersion.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                StandardVersionWithdrawalDates = new Dictionary<string, DateTime?>();
-                foreach(var version in versionList)
+                var versionList = VersionsToProcess.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+                if(versionList.Any())
                 {
-                    StandardVersionWithdrawalDates.Add(version, RequestedWithdrawalDate);
+                    CurrentVersion = versionList[0];
+                    versionList.RemoveAt(0);
+                    if(versionList.Any())
+                    {
+                        VersionsToProcess = string.Join(",", versionList);
+                    }
+                    else
+                    {
+                        VersionsToProcess = string.Empty;
+                    }
                 }
             }
         }
@@ -89,6 +77,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             return withdrawalDate;
         }
-
     }
 }
