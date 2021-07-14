@@ -3,7 +3,7 @@
 @using SFA.DAS.AdminService.Web.Helpers;
 @using SFA.DAS.AdminService.Common.Extensions
 
-@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.SequenceViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.WithdrawalDateCheckViewModel
 
 @{
     ViewBag.Title = "Check the withdrawal date";
@@ -26,7 +26,7 @@
             </h2>
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
-                    <li><a sfa-validation-for="WithdrawalDate"></a></li>
+                    <li><a sfa-validation-for="RequestedWithdrawalDate"></a></li>
                 </ul>
             </div>
         </div>
@@ -74,9 +74,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Requested withdrawal date</dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.WithdrawalDate.HasValue)
+                            @if (Model.RequestedWithdrawalDate.HasValue)
                             {
-                                @Model.WithdrawalDate.Value.ToString("dd/MM/yyyy");
+                                @Model.RequestedWithdrawalDate.Value.ToString("dd/MM/yyyy");
                             }
                         </dd>
                     </div>

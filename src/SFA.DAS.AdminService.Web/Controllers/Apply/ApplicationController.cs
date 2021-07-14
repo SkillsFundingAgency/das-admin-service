@@ -269,11 +269,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplySequence.SequenceId);
             var sections = await _qnaApiClient.GetSections(application.ApplicationId, sequence.Id);
 
-            var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
+            var sequenceVm = new WithdrawalDateCheckViewModel(application, organisation, sequence, sections,
                 activeApplySequence.Sections,
                 backViewModel.BackAction,
                 backViewModel.BackController,
-                backViewModel.BackOrganisationId);
+                backViewModel.BackOrganisationId,
+                null, null);
 
             return View(nameof(WithdrawalDateCheck), sequenceVm);
         }
@@ -358,7 +359,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             // @ToDo: Save the withdrawal date
 
             // @ToDo: If multuple versions are being withdrawn from, cycle through each version and perform a withdrawal date check for each version
-            //        then figure out how to savea multiple withdrawal versions (one date per version) in the QnA API
 
             return RedirectToAction(nameof(Assessment));
         }
