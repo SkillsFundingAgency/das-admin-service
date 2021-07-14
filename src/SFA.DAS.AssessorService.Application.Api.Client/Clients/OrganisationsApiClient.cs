@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -260,12 +259,13 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int standardId, DateTime? effectiveFrom,
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandard(string organisationId, int organisationStandardId, int standardId, DateTime? effectiveFrom,
             DateTime? effectiveTo, Guid? contactId, List<int> deliveryAreas, string actionChoice, string organisationStandardStatus, string organisationStatus)
         {
             var validationRequest = new UpdateEpaOrganisationStandardValidationRequest
             {
                 OrganisationId = organisationId,
+                OrganisationStandardId = organisationStandardId,
                 StandardCode = standardId,
                 EffectiveFrom = effectiveFrom?.Date,
                 EffectiveTo = effectiveTo?.Date,
@@ -279,6 +279,23 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/validate-existing/"))
             {
                 return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardValidationRequest, ValidationResponse>(request,
+                    validationRequest);
+            }
+        }
+
+        public async Task<ValidationResponse> ValidateUpdateOrganisationStandardVersion(int organisationStandardId, string version, DateTime? effectiveFrom, DateTime? effectiveTo)
+        {
+            var validationRequest = new UpdateEpaOrganisationStandardVersionValidationRequest
+            {
+                OrganisationStandardId = organisationStandardId,
+                OrganisationStandardVersion = version,
+                EffectiveFrom = effectiveFrom,
+                EffectiveTo = effectiveTo
+            };
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/standards/version/validate-existing/"))
+            {
+                return await PostPutRequestWithResponse<UpdateEpaOrganisationStandardVersionValidationRequest, ValidationResponse>(request,
                     validationRequest);
             }
         }

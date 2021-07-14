@@ -19,6 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string OrganisationStatus { get; set; }
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
+        public string StandardReference { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? DateStandardApprovedOnRegister { get; set; }
@@ -35,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string EffectiveToDay { get; set; }
         public string EffectiveToMonth { get; set; }
         public string EffectiveToYear { get; set; }
-
+        public List<OrganisationStandardVersion> Versions { get; set; }
 
         public List<ContactResponse> Contacts { get; set; }
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
