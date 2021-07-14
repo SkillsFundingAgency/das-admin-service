@@ -45,11 +45,25 @@
                             <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.Standard) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Standard</dt>
-                            <dd class="govuk-summary-list__value">@Model.Standard</dd>
+                            <dd class="govuk-summary-list__value">@Model.StandardName</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardReference) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Standard reference</dt>
+                            <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.StandardVersion) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">Version</dt>
+                            <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
                         </div>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.StandardWithReference) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
@@ -96,7 +110,7 @@
                             <dt class="govuk-summary-list__key">Financial due date</dt>
                             <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
                         </div>
-                    }          
+                    }
                     @if (Model.IsWithdrawal)
                     {
                         <div class="govuk-summary-list__row">
@@ -140,7 +154,7 @@
                                        asp-route-backAction="@Model.BackAction"
                                        asp-route-backController="@Model.BackController"
                                        asp-route-backOrganisationId="@Model.BackOrganisationId">
-                                        @applicationSection.LinkTitle
+                                        @Model.GetApplicationLinkText(applicationSection.LinkTitle)
                                     </a>
                                 </h2>
                                 <span class="govuk-hint">
