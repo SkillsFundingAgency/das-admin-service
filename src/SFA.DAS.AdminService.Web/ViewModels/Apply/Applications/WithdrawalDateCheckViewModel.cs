@@ -13,44 +13,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     {
         public DateTime? RequestedWithdrawalDate { get; set; }
 
-        public string VersionsToProcess { get; set; }
+        public int? CurrentVersionIndex { get; set; }
 
-        public string CurrentVersion { get; set; }
+        public List<string> Versions { get; private set; }
 
         public WithdrawalDateCheckViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence,
             List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId,
-            string versionsToProcess)
+            int currentVersionIndex)
         : base(application, organisation, sequence, sections, applySections, backAction, backController, backOrganisationId)
         {
             RequestedWithdrawalDate = GetWithdrawalDate(Sections);
-            VersionsToProcess = versionsToProcess;
-            if(null == VersionsToProcess)
-            {
-                VersionsToProcess = string.Join(",", application.ApplyData.Apply.Versions);
-            }
-            PopNextVersion();
-        }
-
-        private void PopNextVersion()
-        {
-            CurrentVersion = null;
-            if (!string.IsNullOrWhiteSpace(VersionsToProcess))
-            {
-                var versionList = VersionsToProcess.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-                if(versionList.Any())
-                {
-                    CurrentVersion = versionList[0];
-                    versionList.RemoveAt(0);
-                    if(versionList.Any())
-                    {
-                        VersionsToProcess = string.Join(",", versionList);
-                    }
-                    else
-                    {
-                        VersionsToProcess = string.Empty;
-                    }
-                }
-            }
+            CurrentVersionIndex = currentVersionIndex;
+            Versions = application.ApplyData.Apply.Versions;
         }
 
         private DateTime? GetWithdrawalDate(List<Section> sections)
@@ -76,6 +50,25 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             }
 
             return withdrawalDate;
+        }
+
+        public void IncrementCurrentVersionIndex()
+        {
+            if(null == Versions || !Versions.Any())
+            {
+                CurrentVersionIndex = null;
+            }
+            else
+            {
+                if (CurrentVersionIndex < 0 || CurrentVersionIndex >= (Versions.Count - 1))
+                {
+                    CurrentVersionIndex = null;
+                }
+                else
+                {
+                    CurrentVersionIndex++;
+                }
+            }
         }
     }
 }

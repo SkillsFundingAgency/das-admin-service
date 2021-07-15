@@ -43,7 +43,7 @@
               asp-route-backController="@Model.BackController"
               asp-route-backOrganisationId="@Model.BackOrganisationId">
             <h1 class="govuk-heading-xl">Check the withdrawal date</h1>
-            <input type="hidden" name="VersionsToProcess" value="@Model.VersionsToProcess" />
+            <input type="hidden" name="CurrentVersionIndex" value="@Model.CurrentVersionIndex" />
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
 
                 <div class="govuk-summary-list__row">
@@ -63,9 +63,9 @@
                                 var standardWithVersion = Model.StandardName;
                                 if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
                                 {
-                                    if(!string.IsNullOrWhiteSpace(Model.CurrentVersion))
+                                    if (Model.CurrentVersionIndex.HasValue)
                                     {
-                                        standardWithVersion += $"<br> Version {Model.CurrentVersion}";
+                                        standardWithVersion += $"<br> Version {Model.Versions[Model.CurrentVersionIndex.Value]}";
                                     }
                                     else
                                     {

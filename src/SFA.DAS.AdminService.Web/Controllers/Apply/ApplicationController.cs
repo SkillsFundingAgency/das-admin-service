@@ -1,23 +1,23 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Domain.Apply;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Services;
-using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
-using SFA.DAS.AssessorService.ApplyTypes;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using Microsoft.AspNetCore.Http;
-using SFA.DAS.AdminService.Web.Extensions;
-using SFA.DAS.AdminService.Common.Extensions;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AdminService.Web.Domain.Apply;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -147,7 +147,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
                 var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
-                
+
                 var section = await _qnaApiClient.GetSection(application.ApplicationId, applySection.SectionId);
                 var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application.ApplicationId);
 
@@ -217,11 +217,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View(nameof(Page), pageVm);
             }
 
-           var feedback = new QnA.Api.Types.Page.Feedback { Id= Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
+            var feedback = new QnA.Api.Types.Page.Feedback { Id = Guid.NewGuid(), Message = feedbackMessage, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
 
-           await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
+            await _qnaApiClient.UpdateFeedback(application.ApplicationId, section.Id, pageId, feedback);
 
-           return RedirectToAction(nameof(Section), new { applicationId, backViewModel.BackAction, backViewModel.BackController, sequenceNo, sectionNo, backViewModel.BackOrganisationId });
+            return RedirectToAction(nameof(Section), new { applicationId, backViewModel.BackAction, backViewModel.BackController, sequenceNo, sectionNo, backViewModel.BackOrganisationId });
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/{feedbackId}/{backOrganisationId?}")]
@@ -245,7 +245,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-            if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || 
+            if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo ||
                 activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
                 // This is to stop the wrong sequence being assessed, or if not all sections are Evaluated
@@ -260,7 +260,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateCheck/{backOrganisationId?}")]
-        public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string versionsToProcess)
+        public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel, int currentVersionIndex) 
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -275,13 +275,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 backViewModel.BackAction,
                 backViewModel.BackController,
                 backViewModel.BackOrganisationId,
-                versionsToProcess);
+                currentVersionIndex);
 
             return View(nameof(WithdrawalDateCheck), sequenceVm);
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateCheck/{backOrganisationId?}")]
-        public async Task<IActionResult> WithdrawalDateCheckSave(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string dateApproved, string versionsToProcess)
+        public async Task<IActionResult> WithdrawalDateCheckSave(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string dateApproved, int currentVersionIndex)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -296,13 +296,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 backViewModel.BackAction,
                 backViewModel.BackController,
                 backViewModel.BackOrganisationId,
-                null);
+                currentVersionIndex);
 
             var errorMessages = new Dictionary<string, string>();
 
             if (string.IsNullOrWhiteSpace(dateApproved) || (dateApproved.Trim().ToUpper() != "NO" && dateApproved.Trim().ToUpper() != "YES"))
             {
-                errorMessages["WithdrawalDate"] = "Please choose an option either 'Yes' or 'No'.";
+                errorMessages["RequestedWithdrawalDate"] = "Please choose an option either 'Yes' or 'No'.";
             }
 
             if (errorMessages.Any())
@@ -315,25 +315,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View(nameof(WithdrawalDateCheck), sequenceVm);
             }
 
-            if(dateApproved?.Trim().ToUpper() == "NO")
+            if (dateApproved?.Trim().ToUpper() == "NO")
             {
                 return View(nameof(WithdrawalDateChange), sequenceVm);
             }
 
-            if(sequenceVm.RequestedWithdrawalDate.HasValue)
+            if (sequenceVm.RequestedWithdrawalDate.HasValue)
             {
-                if(sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                 {
                     await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, sequenceVm.RequestedWithdrawalDate.Value);
                 }
                 else
                 {
-                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, null, sequenceVm.RequestedWithdrawalDate.Value);
+                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, sequenceVm.Versions[sequenceVm.CurrentVersionIndex.Value], sequenceVm.RequestedWithdrawalDate.Value);
                 }
 
-                if (!string.IsNullOrWhiteSpace(versionsToProcess))
+                sequenceVm.IncrementCurrentVersionIndex();
+                if(sequenceVm.CurrentVersionIndex.HasValue)
                 {
-                    return RedirectToAction(nameof(WithdrawalDateCheck), new { versionsToProcess });
+                    return RedirectToAction(nameof(WithdrawalDateCheck), new { currentVersionIndex = sequenceVm.CurrentVersionIndex.Value });
                 }
             }
 
@@ -341,7 +342,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateChange/{backOrganisationId?}")]
-        public async Task<IActionResult> WithdrawalDateChange(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string effectiveToDay, string effectiveToMonth, string effectiveToYear, string versionsToProcess)
+        public async Task<IActionResult> WithdrawalDateChange(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string effectiveToDay, string effectiveToMonth, string effectiveToYear, int currentVersionIndex)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -356,14 +357,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 backViewModel.BackAction,
                 backViewModel.BackController,
                 backViewModel.BackOrganisationId,
-                versionsToProcess);
+                currentVersionIndex);
 
             var errorMessages = new Dictionary<string, string>();
 
             string effectiveToDateText = $"{effectiveToDay}/{effectiveToMonth}/{effectiveToYear}";
             if (!DateTime.TryParse(effectiveToDateText, out DateTime effectiveToDate))
             {
-                errorMessages["WithdrawalDate"] = "Please enter a valid date.";
+                errorMessages["RequestedWithdrawalDate"] = "Please enter a valid date.";
             }
 
             if (errorMessages.Any())
@@ -376,11 +377,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return View(nameof(WithdrawalDateChange), sequenceVm);
             }
 
-            await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, versionsToProcess, effectiveToDate);
-
-            if (!string.IsNullOrWhiteSpace(versionsToProcess))
+            if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                return RedirectToAction(nameof(WithdrawalDateCheck), new { versionsToProcess });
+                await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, effectiveToDate);
+            }
+            else
+            {
+                await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, sequenceVm.Versions[sequenceVm.CurrentVersionIndex.Value], effectiveToDate);
+            }
+
+            sequenceVm.IncrementCurrentVersionIndex();
+            if (sequenceVm.CurrentVersionIndex.HasValue)
+            {
+                return RedirectToAction(nameof(WithdrawalDateCheck), new { currentVersionIndex = sequenceVm.CurrentVersionIndex.Value });
             }
 
             return RedirectToAction(nameof(Assessment));
@@ -420,7 +429,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     return View(nameof(Assessment), viewModel);
                 }
             }
-           
+
             var warningMessages = new List<string>();
             if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
             {
@@ -465,7 +474,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
             var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
-            
+
             return View("Returned", returnedViewModel);
         }
 
@@ -550,10 +559,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var organisationStandardsWithVersions = await _apiClient.GetEpaOrganisationStandards(endPointAssessorOrganisationId);
             if (null != organisationStandardsWithVersions && organisationStandardsWithVersions.Any())
             {
-                if(string.IsNullOrWhiteSpace(standardReference))
+                if (string.IsNullOrWhiteSpace(standardReference))
                 {
                     // The organisation is withdrawing from the register so update every organisation standard
-                    foreach(var standardWithVersions in organisationStandardsWithVersions)
+                    foreach (var standardWithVersions in organisationStandardsWithVersions)
                     {
                         await UpdateStandardWithVersions(standardWithVersions);
                     }
