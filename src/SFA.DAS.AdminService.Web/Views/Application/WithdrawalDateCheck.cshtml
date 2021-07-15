@@ -43,53 +43,7 @@
               asp-route-backController="@Model.BackController"
               asp-route-backOrganisationId="@Model.BackOrganisationId">
             <h1 class="govuk-heading-xl">Check the withdrawal date</h1>
-            <input type="hidden" name="CurrentVersionIndex" value="@Model.CurrentVersionIndex" />
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Organisation name</dt>
-                    <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Details</dt>
-                    <dd class="govuk-summary-list__value">
-                        @{
-                            if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-                            {
-                                <text>Withdrawal from register</text>
-                            }
-                            else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                            {
-                                var standardWithVersion = Model.StandardName;
-                                if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
-                                {
-                                    if (Model.CurrentVersionIndex.HasValue)
-                                    {
-                                        standardWithVersion += $"<br> Version {Model.Versions[Model.CurrentVersionIndex.Value]}";
-                                    }
-                                    else
-                                    {
-                                        standardWithVersion += $"<br> Version {Model.StandardVersion}";
-                                    }
-                                }
-                                @Html.Raw(standardWithVersion)
-                            }
-                        }
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">Requested withdrawal date</dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.RequestedWithdrawalDate.HasValue)
-                        {
-                            @Model.RequestedWithdrawalDate.Value.ToString("dd/MM/yyyy");
-                        }
-                    </dd>
-                </div>
-
-            </dl>
-
+            @{await Html.RenderPartialAsync("_WithdrawalDatePartial", @Model);}
             <div class="govuk-form-group">
 
                 <fieldset class="govuk-fieldset">
@@ -102,7 +56,6 @@
 
                     </legend>
 
-
                     <div class="govuk-radios govuk-radios--inline">
 
                         <div class="govuk-radios__item">
@@ -110,7 +63,6 @@
                             <label class="govuk-label govuk-radios__label" for="dateApproved-yes">
                                 Yes
                             </label>
-
                         </div>
 
                         <div class="govuk-radios__item">
@@ -118,7 +70,6 @@
                             <label class="govuk-label govuk-radios__label" for="dateApproved-no">
                                 No, input date manually
                             </label>
-
                         </div>
 
                     </div>
