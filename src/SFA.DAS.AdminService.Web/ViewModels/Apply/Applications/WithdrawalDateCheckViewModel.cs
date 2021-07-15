@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 var withdrawalSection = sections.FirstOrDefault(s => s.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || s.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO);
                 if (null != withdrawalSection)
                 {
-                    var withdrawalDatePage = withdrawalSection.QnAData.Pages.FirstOrDefault(p => p.LinkTitle.Trim().ToUpper() == "WITHDRAWAL DATE");  //@ToDo: tech debt - very brittle
+                    var withdrawalDatePage = withdrawalSection.QnAData.Pages.FirstOrDefault(p => p.LinkTitle.Trim().ToUpper() == "WITHDRAWAL DATE");  // Reported in SV-1029 tech debt
                     if (null != withdrawalDatePage && withdrawalDatePage.PageOfAnswers.Any())
                     {
                         var answers = withdrawalDatePage.PageOfAnswers[0].Answers;
