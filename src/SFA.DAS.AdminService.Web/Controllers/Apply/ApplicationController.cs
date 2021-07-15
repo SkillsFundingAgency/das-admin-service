@@ -521,21 +521,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         // If no version specified, then we update every version, otherwise we only update the specified version.
         private async Task UpdateOrganisationStandardWithdrawalDate(string endPointAssessorOrganisationId, string standardReference, string version, DateTime effectiveToDate)
         {
+            async Task UpdateEpaOrganisationStandardVersion(int organisationStandardId, AssessorService.Api.Types.Models.AO.OrganisationStandardVersion standardVersion)
+            {
+                var request = new UpdateEpaOrganisationStandardVersionRequest
+                {
+                    OrganisationStandardId = organisationStandardId,
+                    OrganisationStandardVersion = decimal.Parse(standardVersion.Version),
+                    EffectiveFrom = standardVersion.EffectiveFrom,
+                    EffectiveTo = effectiveToDate
+                };
+
+                await _apiClient.UpdateEpaOrganisationStandardVersion(request);
+            }
+
             async Task UpdateStandardWithVersions(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary standardWithVersions)
             {
                 if (string.IsNullOrWhiteSpace(version))
                 {
                     foreach (var standardVersion in standardWithVersions.StandardVersions)
                     {
-                        var request = new UpdateEpaOrganisationStandardVersionRequest
-                        {
-                            OrganisationStandardId = standardWithVersions.Id,
-                            OrganisationStandardVersion = decimal.Parse(standardVersion.Version),
-                            EffectiveFrom = standardVersion.EffectiveFrom,
-                            EffectiveTo = effectiveToDate
-                        };
-
-                        await _apiClient.UpdateEpaOrganisationStandardVersion(request);
+                        await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
                 }
                 else
@@ -543,15 +548,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     var standardVersion = standardWithVersions.StandardVersions.FirstOrDefault(sv => sv.Version == version);
                     if (null != standardVersion)
                     {
-                        var request = new UpdateEpaOrganisationStandardVersionRequest
-                        {
-                            OrganisationStandardId = standardWithVersions.Id,
-                            OrganisationStandardVersion = decimal.Parse(standardVersion.Version),
-                            EffectiveFrom = standardVersion.EffectiveFrom,
-                            EffectiveTo = effectiveToDate
-                        };
-
-                        await _apiClient.UpdateEpaOrganisationStandardVersion(request);
+                        await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
                 }
             }
