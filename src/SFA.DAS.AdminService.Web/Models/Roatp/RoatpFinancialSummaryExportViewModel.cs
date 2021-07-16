@@ -24,5 +24,6 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
         public long? Borrowings { get; set; }
         public DateTime? AccountingReferenceDate { get; set; }
         public byte? AccountingPeriod { get; set; }
+        public long? AverageNumberofFTEEmployees { get; set; }
     }
 }
