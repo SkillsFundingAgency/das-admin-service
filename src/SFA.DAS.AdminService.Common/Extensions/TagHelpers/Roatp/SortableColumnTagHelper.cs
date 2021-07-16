@@ -49,6 +49,7 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
 
             var values = new
             {
+                SearchTerm = GetSearchTermFromQueryString(),
                 SortColumn = ColumnName,
                 SortOrder = isSortColumn ? sortOrder.Reverse().ToString() : DefaultSortOrder.ToString()
             };
@@ -94,6 +95,16 @@ namespace SFA.DAS.AdminService.Common.Extensions.TagHelpers.Roatp
             if (ViewContext.HttpContext.Request.Query.ContainsKey("SortColumn"))
             {
                 return ViewContext.HttpContext.Request.Query["SortColumn"];
+            }
+
+            return string.Empty;
+        }
+
+        private string GetSearchTermFromQueryString()
+        {
+            if (ViewContext.HttpContext.Request.Query.ContainsKey("SearchTerm"))
+            {
+                return ViewContext.HttpContext.Request.Query["SearchTerm"];
             }
 
             return string.Empty;
