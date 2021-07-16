@@ -26,7 +26,15 @@
             }
             else
             {
-                <h1 class="govuk-heading-xl">Application overview</h1>
+                @if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <h1 class="govuk-heading-xl">Withdrawal request overview</h1>
+                }
+                else
+                {
+                    <h1 class="govuk-heading-xl">Application overview</h1>
+                }
+                
 
                 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                     @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
