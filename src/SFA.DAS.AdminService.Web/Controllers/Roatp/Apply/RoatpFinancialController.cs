@@ -52,8 +52,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetOpenFinancialApplications(searchTerm, sortColumn, sortOrder);
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(searchTerm);
+            var applications = await _applyApiClient.GetOpenFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
             var viewmodel = new RoatpFinancialDashboardViewModel 
             { 
@@ -89,8 +89,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetClarificationFinancialApplications(searchTerm, sortColumn, sortOrder);
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(searchTerm);
+            var applications = await _applyApiClient.GetClarificationFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
             var viewmodel = new RoatpFinancialDashboardViewModel
             {
@@ -110,8 +110,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetClosedFinancialApplications(searchTerm, sortColumn, sortOrder);
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(searchTerm);
+            var applications = await _applyApiClient.GetClosedFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
             var viewmodel = new RoatpFinancialDashboardViewModel
             {
