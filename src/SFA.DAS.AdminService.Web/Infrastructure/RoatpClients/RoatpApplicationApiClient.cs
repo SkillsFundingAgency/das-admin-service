@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowList;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -156,6 +157,43 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
 
             return true;
+        }
+
+        public async Task<List<AllowedUkprn>> GetAllowedUkprns(string sortColumn, string sortOrder)
+        {
+            return new List<AllowedUkprn>
+                                {
+                                    new AllowedUkprn
+                                    {
+                                        Ukprn = "12345678",
+                                        StartDate = DateTime.MinValue,
+                                        EndDate = DateTime.MaxValue,
+                                        AddedDate = DateTime.Today
+                                    },
+                                    new AllowedUkprn
+                                    {
+                                        Ukprn = "98765432",
+                                        StartDate = DateTime.MinValue,
+                                        EndDate = DateTime.MaxValue,
+                                        AddedDate = DateTime.Today
+                                    }
+                                };
+            //return await Get<List<AllowedUkprn>>($"/AllowedUkprns?sortColumn={sortColumn}&sortOrder={sortOrder}");
+        }
+
+        public async Task<bool> AddToAllowUkprns(string ukprn, DateTime startDate, DateTime endDate)
+        {
+            return true;
+            //try
+            //{
+            //    var response = await Post($"/AllowedUkprns", new AllowedUkprn { Ukprn = ukprn, StartDate = startDate, EndDate = endDate });
+            //    return response == HttpStatusCode.OK;
+            //}
+            //catch (HttpRequestException ex)
+            //{
+            //    _logger.LogError(ex, $"Error when adding UKPRN {ukprn.Ukprn} to allow list");
+            //    return false;
+            //}
         }
     }
 }

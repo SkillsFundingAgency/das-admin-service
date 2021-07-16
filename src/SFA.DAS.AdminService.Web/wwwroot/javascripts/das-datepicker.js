@@ -20,12 +20,38 @@
     locale: {
       firstDayOfWeek: 1
     }
-    // altInput: true,
-    // altFormat: "j F Y", // GDS date format: 30 June 2020
   };
 
   var fromFlatpickr = flatpickr(".js-flatpickr-from", flatpickrFromOptions);
   var toFlatpickr = flatpickr(".js-flatpickr-to", flatpickrToOptions);
+
+
+    var flatpickrStartOptions = {
+        allowInput: true,
+        wrap: true,
+        disableMobile: "true",
+        locale: {
+            firstDayOfWeek: 1
+        },
+        onChange: function (selectedDates, dateStr) {
+            endFlatpickr.set("minDate", dateStr);
+        },
+    };
+
+    var flatpickrEndOptions = {
+        allowInput: true,
+        wrap: true,
+        disableMobile: "true",
+        locale: {
+            firstDayOfWeek: 1
+        }
+    };
+
+    var startFlatpickr = flatpickr(".js-flatpickr-start", flatpickrStartOptions);
+    var endFlatpickr = flatpickr(".js-flatpickr-end", flatpickrEndOptions);
+
+
+
 
   var removeSelectedClassFromNodeList = function (nodeListSelector) {
     var nodeList = document.querySelectorAll("." + nodeListSelector);
