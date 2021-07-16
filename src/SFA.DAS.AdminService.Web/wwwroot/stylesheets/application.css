@@ -1750,10 +1750,10 @@ TODO: change to 'das-page-navigation' and BEM
 }
 
 
-/* Inline search component */
+/* Inline roatp search component */
 
 @media (min-width: 40.0625em) {
-    .app-search-form {
+    .app-search-form__group {
         max-width: 33%;
     }
 }
