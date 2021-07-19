@@ -1,0 +1,186 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+@model SFA.DAS.AdminService.Web.ViewModels.Register.RegisterEditOrganisationStandardVersionViewModel;
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Edit an organisation standard version";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="Register" asp-action="EditOrganisationStandard" asp-route-organisationStandardId="@Model.OrganisationStandardId">Return to view organisation standard</a>
+
+<main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="EffectiveFrom"></a></li>
+                            <li><a sfa-validation-for="EffectiveTo"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromDay"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromYear"></a></li>
+                            <li><a sfa-validation-for="EffectiveToDay"></a></li>
+                            <li><a sfa-validation-for="EffectiveToMonth"></a></li>
+                            <li><a sfa-validation-for="EffectiveToYear"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            <h1 class="govuk-heading-xl"> Edit an organisation standard version </h1>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Standard
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Standard
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Reference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Reference
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Version
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Version
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Effective from
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.EffectiveFrom.ToSfaShortDateString()
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Effective to
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.EffectiveTo.ToSfaShortDateString()
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date approved on register
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.DateApprovedOnRegister.ToSfaShortDateString()
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Status
+                    </dd>
+                </div>
+            </dl>
+
+            <h2 class="govuk-heading-l"> Edit an organisation standard version </h2>
+
+            <form asp-action="EditStandardVersion" asp-controller="Register" method="post">
+                <input type="hidden" asp-for="Standard">
+                <input type="hidden" asp-for="Reference">
+                <input type="hidden" asp-for="Version">
+                <input type="hidden" asp-for="DateApprovedOnRegister">
+                <input type="hidden" asp-for="Status">
+
+                <div class="govuk-form-group error-message-container" sfa-validation-for="EffectiveFrom" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFrom"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromDay"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromMonth"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromYear"></span>
+
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Effective from
+                    </legend>
+
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromDay">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveFromDay" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromDay" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveFromMonth" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromMonth" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveFromYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveFromYear" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveFromYear" type="text" maxlength="4" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="govuk-form-group error-message-container" sfa-validation-for="EffectiveTo" sfa-validationerror-class="govuk-form-group--error">
+
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Effective to
+                    </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="EffectiveTo"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToDay"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToMonth"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveToYear"></span>
+
+                    <div class="govuk-date-input">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToDay">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveToDay" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToDay" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 js-integers-only" sfa-validation-for="EffectiveToMonth" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToMonth" type="text" maxlength="2" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="EffectiveToYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 js-integers-only" sfa-validation-for="EffectiveToYear" sfa-validationerror-class="govuk-input--error" asp-for="EffectiveToYear" type="text" maxlength="4" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="govuk-button govuk-!-margin-right-1" type="submit" name="ActionChoice" value="Save">Save</button>
+                <a class="govuk-button govuk-button--secondary" href="/register/view-standard/@Model.OrganisationStandardId">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+</main>
