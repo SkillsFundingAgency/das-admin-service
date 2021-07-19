@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders
         {
             _applyApiClient = applyApiClient;
 
-            RuleFor(x => x.Ukprn).NotEmpty().WithMessage("Enter UKPRN")
+            RuleFor(x => x.Ukprn).NotEmpty().WithMessage("Enter a UKPRN")
                 .DependentRules(() =>
                 {
                     RuleFor(x => x.Ukprn).CustomAsync(async (ukprnInput, context, cancellationToken) =>
@@ -23,24 +23,24 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders
                         }
                         else if (ukprn < 10000000 || ukprn > 19999999)
                         {
-                            context.AddFailure("Enter a UKPRN using 8 numbers");
+                            context.AddFailure("Enter a valid UKPRN using 8 numbers");
                         }
                         else if (await _applyApiClient.GetAllowedProviderDetails(ukprn) != null)
                         {
-                            context.AddFailure("UKPRN exists in the allow list");
+                            context.AddFailure($"UKPRN {ukprn} exists in the allow list");
                         }
                     });
                 });
 
-            RuleFor(x => x.StartDate).NotEmpty().WithMessage("Enter start date")
+            RuleFor(x => x.StartDate).NotEmpty().WithMessage("Select an invitation start date")
                 .DependentRules(() =>
                 {
                     RuleFor(x => x.StartDate).LessThanOrEqualTo(x => x.EndDate)
                         .When(x => x.StartDate.HasValue && x.EndDate.HasValue)
-                        .WithMessage("The start date must be before the end date");
+                        .WithMessage("The invitation end date must be on or after the start date");
                 });
 
-            RuleFor(x => x.EndDate).NotEmpty().WithMessage("Enter end date");
+            RuleFor(x => x.EndDate).NotEmpty().WithMessage("Select an invitation end date");
         }
     }
 }
