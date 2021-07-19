@@ -7,24 +7,24 @@ using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Testing.MockedObjects;
 using SFA.DAS.AdminService.Web.Controllers.Roatp;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowList;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowList;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
     [TestFixture]
-    public class RoatpAllowListControllerTests
+    public class RoatpAllowedProvidersControllerTests
     {
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
 
-        private RoatpAllowListController _controller;
+        private RoatpAllowedProvidersController _controller;
 
         [SetUp]
         public void Before_each_test()
         {
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
 
-            _controller = new RoatpAllowListController(_applicationApplyApiClient.Object)
+            _controller = new RoatpAllowedProvidersController(_applicationApplyApiClient.Object)
             {
                 ControllerContext = MockedControllerContext.Setup()
             };
@@ -35,22 +35,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase("column", "order", "2021-01-01", "2021-01-31")]
         public async Task List_creates_correct_viewmodel(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
-            _applicationApplyApiClient.Setup(x => x.GetAllowedUkprns(sortColumn, sortOrder)).ReturnsAsync(new List<AllowedUkprn>());
+            _applicationApplyApiClient.Setup(x => x.GetAllowedProvidersList(sortColumn, sortOrder)).ReturnsAsync(new List<AllowedProvider>());
 
-            var expectedViewModel = new AddUkprnToAllowListViewModel
+            var expectedViewModel = new AddUkprnToAllowedProvidersListViewModel
             {
                 SortColumn = sortColumn,
                 SortOrder = sortOrder,
                 Ukprn = null,
                 StartDate = startDate,
                 EndDate = endDate,
-                AllowedUkprns = new List<AllowedUkprn>()
+                AllowedProviders = new List<AllowedProvider>()
             };
 
             var result = await _controller.List(sortColumn, sortOrder, startDate, endDate);
 
             var viewResult = result as ViewResult;
-            var viewModel = viewResult?.Model as AddUkprnToAllowListViewModel;
+            var viewModel = viewResult?.Model as AddUkprnToAllowedProvidersListViewModel;
 
             Assert.IsNotNull(viewModel);
             Assert.AreEqual(expectedViewModel.SortColumn, viewModel.SortColumn);
@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual(expectedViewModel.Ukprn, viewModel.Ukprn);
             Assert.AreEqual(expectedViewModel.StartDate, viewModel.StartDate);
             Assert.AreEqual(expectedViewModel.EndDate, viewModel.EndDate);
-            CollectionAssert.AreEquivalent(expectedViewModel.AllowedUkprns, viewModel.AllowedUkprns);
+            CollectionAssert.AreEquivalent(expectedViewModel.AllowedProviders, viewModel.AllowedProviders);
         }
 
         [TestCase(null, null, null, null)]
@@ -68,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             var result = await _controller.List(sortColumn, sortOrder, startDate, endDate);
 
-            _applicationApplyApiClient.Verify(x => x.GetAllowedUkprns(sortColumn, sortOrder), Times.Once);
+            _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(sortColumn, sortOrder), Times.Once);
         }
 
         [TestCase("12345678", "2021-01-01", "2021-01-31")]
@@ -76,12 +76,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
-            var request = new AddUkprnToAllowListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
-            _applicationApplyApiClient.Verify(x => x.AddToAllowUkprns(ukprn, startDate, endDate), Times.Once);
-            _applicationApplyApiClient.Verify(x => x.GetAllowedUkprns(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _applicationApplyApiClient.Verify(x => x.AddToAllowedProviders(ukprn, startDate, endDate), Times.Once);
+            _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [TestCase("12345678", "2021-01-01", "2021-01-31")]
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
-            var request = new AddUkprnToAllowListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
@@ -103,12 +103,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
 
-            var request = new AddUkprnToAllowListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
-            _applicationApplyApiClient.Verify(x => x.AddToAllowUkprns(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
-            _applicationApplyApiClient.Verify(x => x.GetAllowedUkprns(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _applicationApplyApiClient.Verify(x => x.AddToAllowedProviders(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+            _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestCase("12345678", "2021-01-01", "2021-01-31")]
@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
 
-            var request = new AddUkprnToAllowListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 

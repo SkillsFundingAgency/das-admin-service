@@ -5,45 +5,45 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using SFA.DAS.AdminService.Web.Domain;
-    using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowList;
+    using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
     using System;
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
-    public class RoatpAllowListController : Controller
+    public class RoatpAllowedProvidersController : Controller
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
 
-        public RoatpAllowListController(IRoatpApplicationApiClient applyApiClient)
+        public RoatpAllowedProvidersController(IRoatpApplicationApiClient applyApiClient)
         {
             _applyApiClient = applyApiClient;
         }
 
-        [HttpGet("/Roatp/AllowList")]
+        [HttpGet("/Roatp/AllowedProviders")]
         public async Task<IActionResult> List(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
-            var model = new AddUkprnToAllowListViewModel
+            var model = new AddUkprnToAllowedProvidersListViewModel
             {
                 SortColumn = sortColumn,
                 SortOrder = sortOrder,
                 Ukprn = null,
                 StartDate = startDate,
                 EndDate = endDate,
-                AllowedUkprns = await _applyApiClient.GetAllowedUkprns(sortColumn, sortOrder)
+                AllowedProviders = await _applyApiClient.GetAllowedProvidersList(sortColumn, sortOrder)
             };
 
-            return View("~/Views/Roatp/AllowList/List.cshtml", model);
+            return View("~/Views/Roatp/AllowedProviders/List.cshtml", model);
         }
 
-        [HttpPost("/Roatp/AllowList")]
-        public async Task<IActionResult> AddUkprn(AddUkprnToAllowListViewModel model)
+        [HttpPost("/Roatp/AllowedProviders")]
+        public async Task<IActionResult> AddUkprn(AddUkprnToAllowedProvidersListViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.AllowedUkprns = await _applyApiClient.GetAllowedUkprns(model.SortColumn, model.SortOrder);
-                return View("~/Views/Roatp/AllowList/List.cshtml", model);
+                model.AllowedProviders = await _applyApiClient.GetAllowedProvidersList(model.SortColumn, model.SortOrder);
+                return View("~/Views/Roatp/AllowedProviders/List.cshtml", model);
             }
 
-            await _applyApiClient.AddToAllowUkprns(model.Ukprn, model.StartDate.Value, model.EndDate.Value);
+            await _applyApiClient.AddToAllowedProviders(model.Ukprn, model.StartDate.Value, model.EndDate.Value);
 
             return RedirectToAction(nameof(List), model);
         }

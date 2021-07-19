@@ -5,30 +5,30 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.Validators.Roatp.AllowList;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowList;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowList;
+using SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
 
-namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowList
+namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
 {
     public class AllowedListValidatorTests
     {
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
 
-        private AddUkprnToAllowListValidator _validator;
+        private AddUkprnToAllowProvidersListValidator _validator;
 
-        private AddUkprnToAllowListViewModel _viewModel;
+        private AddUkprnToAllowedProvidersListViewModel _viewModel;
 
         [SetUp]
         public void Before_each_test()
         {
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
 
-            _applicationApplyApiClient.Setup(x => x.GetAllowedUkprns(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<AllowedUkprn>());
+            _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(It.IsAny<int>())).ReturnsAsync(default(AllowedProvider));
 
-            _validator = new AddUkprnToAllowListValidator(_applicationApplyApiClient.Object);
+            _validator = new AddUkprnToAllowProvidersListValidator(_applicationApplyApiClient.Object);
 
-            _viewModel = new AddUkprnToAllowListViewModel
+            _viewModel = new AddUkprnToAllowedProvidersListViewModel
             {
                 Ukprn = "12345678",
                 StartDate = DateTime.MinValue,
@@ -92,8 +92,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowList
         [Test]
         public void Validator_rejects_Ukprn_if_already_in_allow_list()
         {
-            var allowedUkprnEntry = new AllowedUkprn { Ukprn = _viewModel.Ukprn };
-            _applicationApplyApiClient.Setup(x => x.GetAllowedUkprns(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<AllowedUkprn> { allowedUkprnEntry });
+            var allowedUkprnEntry = new AllowedProvider { Ukprn = _viewModel.Ukprn };
+            _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(It.IsAny<int>())).ReturnsAsync(new AllowedProvider());
 
             var validationResponse = _validator.Validate(_viewModel);
 

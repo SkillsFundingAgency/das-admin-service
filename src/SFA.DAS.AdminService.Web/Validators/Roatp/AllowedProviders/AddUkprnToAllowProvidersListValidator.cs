@@ -1,16 +1,14 @@
 ﻿using FluentValidation;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowList;
-using System.Linq;
-using System.Threading.Tasks;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
 
-namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowList
+namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders
 {
-    public class AddUkprnToAllowListValidator : AbstractValidator<AddUkprnToAllowListViewModel>
+    public class AddUkprnToAllowProvidersListValidator : AbstractValidator<AddUkprnToAllowedProvidersListViewModel>
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
 
-        public AddUkprnToAllowListValidator(IRoatpApplicationApiClient applyApiClient)
+        public AddUkprnToAllowProvidersListValidator(IRoatpApplicationApiClient applyApiClient)
         {
             _applyApiClient = applyApiClient;
 
@@ -19,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowList
                 {
                     RuleFor(x => x.Ukprn).CustomAsync(async (ukprnInput, context, cancellationToken) =>
                     {
-                        if(!long.TryParse(ukprnInput, out var ukprn))
+                        if (!int.TryParse(ukprnInput, out var ukprn))
                         {
                             context.AddFailure("Enter a valid UKPRN");
                         }
@@ -27,16 +25,10 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowList
                         {
                             context.AddFailure("Enter a UKPRN using 8 numbers");
                         }
-                        else
+                        else if (await _applyApiClient.GetAllowedProviderDetails(ukprn) != null)
                         {
-                            var allowList = await _applyApiClient.GetAllowedUkprns(null, null);
-
-                            if(allowList.Any(x => x.Ukprn == ukprn.ToString()))
-                            {
-                                context.AddFailure("UKPRN exists in the allow list");
-                            }
+                            context.AddFailure("UKPRN exists in the allow list");
                         }
-                        await Task.CompletedTask;
                     });
                 });
 
