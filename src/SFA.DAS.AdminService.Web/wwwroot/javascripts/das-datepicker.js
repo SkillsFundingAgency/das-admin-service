@@ -30,18 +30,20 @@
         allowInput: true,
         wrap: true,
         disableMobile: "true",
+        dateFormat: "j M Y",
         locale: {
             firstDayOfWeek: 1
         },
         onChange: function (selectedDates, dateStr) {
             endFlatpickr.set("minDate", dateStr);
-        },
+        }
     };
 
     var flatpickrEndOptions = {
         allowInput: true,
         wrap: true,
         disableMobile: "true",
+        dateFormat: "j M Y",
         locale: {
             firstDayOfWeek: 1
         }
