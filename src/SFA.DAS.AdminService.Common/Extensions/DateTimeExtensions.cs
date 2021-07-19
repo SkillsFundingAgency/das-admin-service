@@ -13,6 +13,17 @@ namespace SFA.DAS.AdminService.Common.Extensions
         {
             return time?.ToString("dd MMMM yyyy");
         }
+
+        public static string ToSfaShorterDateString(this DateTime time)
+        {
+            return time.ToString("dd MMM yyyy");
+        }
+
+        public static string ToSfaShorterDateString(this DateTime? time)
+        {
+            return time?.ToString("dd MMM yyyy");
+        }
+
         public static string ToSfaShortestDateString(this DateTime? time)
         {
             return time == null ?
