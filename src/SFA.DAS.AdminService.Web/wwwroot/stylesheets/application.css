@@ -1629,10 +1629,20 @@ TODO: change to 'das-page-navigation' and BEM
   background-color: #b10e1e;
 }
 
+.govuk-tag--blue {
+    color: #144e81;
+    background: #d2e2f1;
+}
+
+.govuk-tag--purple {
+    color: #3d2375;
+    background: #dbd5e9;
+}
+
 /* Roatp org results.. remove for v4 */
 .selected-item {
-  background-color: #005ea5;
-  color: #ffffff;
+    background-color: #005ea5;
+    color: #ffffff;
 }
 
 .selected-item > .govuk-body > .govuk-link,
