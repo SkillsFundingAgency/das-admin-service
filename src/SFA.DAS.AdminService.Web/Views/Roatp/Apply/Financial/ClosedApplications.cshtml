@@ -58,7 +58,10 @@
                                     <th class="govuk-table__header" scope="col">UKPRN</th>
                                     <th class="govuk-table__header" scope="col">Provider route</th>
                                     <th class="govuk-table__header" scope="col">
-                                        <sfa-roatp-sortable-column column-name="OutcomeMadeDate" column-label="Outcome date" default="true" default-order="Descending" />
+                                        <sfa-roatp-sortable-column column-name="SubmittedDate" column-label="Application submitted date" default="true" default-order="Descending" />
+                                    </th>
+                                    <th class="govuk-table__header" scope="col">
+                                        <sfa-roatp-sortable-column column-name="OutcomeMadeDate" column-label="Outcome date" />
                                     </th>
                                     <th class="govuk-table__header" scope="col">
                                         <sfa-roatp-sortable-column column-name="OutcomeMadeByClosed" column-label="Outcome made by" />
@@ -79,6 +82,9 @@
                                     <td class="govuk-table__cell" data-label="Provider route">
                                         @item.ApplicationRouteShortText
                                     </td>
+                                    <td class="govuk-table__cell" data-label="Application submitted date">
+                                        @item.SubmittedDate.ToSfaShortMonthDateString()
+                                    </td>
                                     <td class="govuk-table__cell" data-label="Outcome date">
                                         @item.OutcomeMadeDate.ToSfaShortDateString()
                                     </td>
@@ -86,7 +92,7 @@
                                         @item.OutcomeMadeBy
                                     </td>
                                     @if (item.ApplicationStatus == ApplicationStatus.Withdrawn
-                                        || item.ApplicationStatus == ApplicationStatus.Removed)
+                                       || item.ApplicationStatus == ApplicationStatus.Removed)
                                     {
                                         <td class="govuk-table__cell" data-label="Outcome">
                                             @item.ApplicationStatus
