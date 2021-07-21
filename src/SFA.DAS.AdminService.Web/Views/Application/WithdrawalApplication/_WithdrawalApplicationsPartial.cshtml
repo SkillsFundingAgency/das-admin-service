@@ -91,7 +91,7 @@
                                                     else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                                     {
                                                         var standardWithVersion = application.StandardName;
-                                                        if (application.Versions.Any())
+                                                        if (null != application.Versions && application.Versions.Any())
                                                         {
                                                             standardWithVersion += $"<br> Version {string.Join(",", application.Versions)}";
                                                         }
