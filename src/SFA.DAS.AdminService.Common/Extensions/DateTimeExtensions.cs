@@ -30,6 +30,11 @@ namespace SFA.DAS.AdminService.Common.Extensions
                 string.Empty : time.Value.ToString("dd MMM yy");
         }
 
+        public static string ToSfaShortMonthDateString(this DateTime? time)
+        {
+            return time?.ToString("dd MMM yyyy");
+        }
+
         public static DateTime UtcFromTimeZoneTime(this DateTime time, string timeZoneId = "GMT Standard Time")
         {
             TimeZoneInfo tzi;

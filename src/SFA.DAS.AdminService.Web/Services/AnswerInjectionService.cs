@@ -475,10 +475,14 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 OrganisationId = organisationId,
                 StandardCode = command.StandardCode,
+                StandardReference = command.StandardReference,
+                StandardVersions = command.StandardVersions,
+                DateStandardApprovedOnRegister = command.DateStandardApprovedOnRegister,
                 EffectiveFrom = command.EffectiveFrom,
                 ContactId = command.ApplyingContactId.ToString(),
                 DeliveryAreas = await MapCommandToDeliveryAreas(command),
-                DeliveryAreasComments = string.Empty
+                DeliveryAreasComments = string.Empty,
+                StandardApplicationType = command.StandardApplicationType
             };
         }
 
