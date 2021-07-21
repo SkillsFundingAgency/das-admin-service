@@ -43,7 +43,7 @@
                 return View("~/Views/Roatp/AllowedProviders/List.cshtml", model);
             }
 
-            await _applyApiClient.AddToAllowedProviders(model.Ukprn, model.StartDate.Value, model.EndDate.Value);
+            await _applyApiClient.AddToAllowedProviders(int.Parse(model.Ukprn), model.StartDate.Value, model.EndDate.Value);
 
             return RedirectToAction(nameof(List), model);
         }

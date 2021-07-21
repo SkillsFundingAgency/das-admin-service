@@ -169,7 +169,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<List<AllowedProvider>>($"/AllowedProviders?sortColumn={sortColumn}&sortOrder={sortOrder}");
         }
 
-        public async Task<bool> AddToAllowedProviders(string ukprn, DateTime startDate, DateTime endDate)
+        public async Task<bool> AddToAllowedProviders(int ukprn, DateTime startDate, DateTime endDate)
         {
             try
             {

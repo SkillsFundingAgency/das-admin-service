@@ -71,12 +71,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(sortColumn, sortOrder), Times.Once);
         }
 
-        [TestCase("12345678", "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_valid_ModelState_calls_AddToAllowUkprns_with_expected_parameters(string ukprn, DateTime startDate, DateTime endDate)
+        [TestCase(12345678, "2021-01-01", "2021-01-31")]
+        public async Task AddUkprn_when_valid_ModelState_calls_AddToAllowUkprns_with_expected_parameters(int ukprn, DateTime startDate, DateTime endDate)
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
-            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
@@ -97,17 +97,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual("List", redirectResult.ActionName);
         }
 
-        [TestCase("12345678", "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_invalid_ModelState_does_not_call_AddToAllowUkprns(string ukprn, DateTime startDate, DateTime endDate)
+        [TestCase(12345678, "2021-01-01", "2021-01-31")]
+        public async Task AddUkprn_when_invalid_ModelState_does_not_call_AddToAllowUkprns(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
 
-            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
-            _applicationApplyApiClient.Verify(x => x.AddToAllowedProviders(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
+            _applicationApplyApiClient.Verify(x => x.AddToAllowedProviders(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
             _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
