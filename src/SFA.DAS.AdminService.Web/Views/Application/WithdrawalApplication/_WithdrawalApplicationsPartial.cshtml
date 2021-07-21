@@ -1,4 +1,4 @@
-﻿@using SFA.DAS.AdminService.Web.Domain.Apply;
+@using SFA.DAS.AdminService.Web.Domain.Apply;
 @using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 @using SFA.DAS.AdminService.Web.ViewModels.Shared;
 @using SFA.DAS.AssessorService.ApplyTypes;
@@ -90,12 +90,22 @@
                                                     }
                                                     else if (application.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                                                     {
-                                                        var standardWithVersion = application.StandardName;
-                                                        if (null != application.Versions && application.Versions.Any())
+                                                        if (application.WithdrawalType == WithdrawalTypes.Register)
                                                         {
-                                                            standardWithVersion += $"<br> Version {string.Join(",", application.Versions)}";
+                                                            <text>Withdrawal from register</text>
                                                         }
-                                                        @Html.Raw(standardWithVersion)
+                                                        else if (application.WithdrawalType == WithdrawalTypes.Standard)
+                                                        {
+                                                            @($"{application.StandardName}") <br /> <text>(All versions)</text>
+                                                        }
+                                                        else if (application.WithdrawalType == WithdrawalTypes.Version)
+                                                        {
+                                                            @($"{application.StandardName}") <br /> @($"Version {string.Join(",", application.Versions)}")
+                                                        }
+                                                        else
+                                                        {
+                                                            @($"{application.StandardName} ({application.StandardReference})")
+                                                        }
                                                     }
                                                 </td>
 
