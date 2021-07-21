@@ -92,8 +92,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
         [Test]
         public void Validator_rejects_Ukprn_if_already_in_allow_list()
         {
-            var allowedUkprnEntry = new AllowedProvider { Ukprn = _viewModel.Ukprn };
-            _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(It.IsAny<int>())).ReturnsAsync(new AllowedProvider());
+            int.TryParse(_viewModel.Ukprn, out var ukprn);
+            var allowedUkprnEntry = new AllowedProvider { Ukprn = ukprn };
+            _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(ukprn)).ReturnsAsync(new AllowedProvider());
 
             var validationResponse = _validator.Validate(_viewModel);
 
