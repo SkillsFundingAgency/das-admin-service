@@ -79,19 +79,6 @@
                         }
 
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Version</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
-                        </div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        var standardAndVersion = Model.StandardName;
-                        if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
-                        {
-                            standardAndVersion = $"{standardAndVersion}<br>Version {Model.StandardVersion}";
-                        }
-
-                        <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">Details</dt>
                             <dd class="govuk-summary-list__value">
                                 @{
