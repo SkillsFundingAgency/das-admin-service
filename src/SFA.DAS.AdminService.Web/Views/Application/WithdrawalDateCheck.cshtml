@@ -84,8 +84,13 @@
                     Continue
                 </button>
 
-                &nbsp;
-                <a id="centru" class="govuk-link govuk-link--no-visted-state" href="#">Return to application overview</a>
+                <p class="govuk-body">
+                    <a class="govuk-link"
+                       asp-action="@Model.BackAction"
+                       asp-controller="@Model.BackController"
+                       asp-route-organisationId="@Model.BackOrganisationId"
+                       asp-fragment="@Fragment">Return to @(Model.IsWithdrawal ? "withdrawal " : "")applications</a>
+                </p>
             </div>
         </form>
 
