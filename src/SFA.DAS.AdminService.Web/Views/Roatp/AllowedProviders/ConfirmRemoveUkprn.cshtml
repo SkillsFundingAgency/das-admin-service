@@ -1,0 +1,110 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders.RemoveUkprnFromAllowedProvidersListViewModel
+
+@{
+    ViewBag.Title = "Are you sure you want to remove this UKPRN";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="List" asp-controller="RoatpAllowedProviders">UKPRN allow list</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Are you sure you want to remove this UKPRN</li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-xl">Are you sure you want to remove this UKPRN?</h1>
+        </div>
+    </div>
+
+    @if (@Model.AllowedProvider is null)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p class="govuk-body-l">The UKPRN could not be found on the allow list.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <table class="govuk-table govuk-table--s das-table--responsive">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">UKPRN</th>
+                            <th class="govuk-table__header" scope="col">Invitation start date</th>
+                            <th class="govuk-table__header" scope="col">Invitation end date</th>
+                            <th class="govuk-table__header" scope="col">Date UKPRN added</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="UKPRN">
+                                @Model.AllowedProvider.Ukprn
+                            </td>
+                            <td class="govuk-table__cell" data-label="Invitation start date">
+                                @Model.AllowedProvider.StartDateTime.ToSfaShorterDateString()
+                            </td>
+                            <td class="govuk-table__cell" data-label="Invitation end date">
+                                @Model.AllowedProvider.EndDateTime.ToSfaShorterDateString()
+                            </td>
+                            <td class="govuk-table__cell" data-label="Date UKPRN added">
+                                @Model.AllowedProvider.AddedDateTime.ToSfaShorterDateString()
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form data-module="das-clear-form-errors" novalidate method="post">
+                    <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                        <input type="hidden" asp-for="AllowedProvider.Ukprn" />
+                        <fieldset class="govuk-fieldset">
+                            <span class="govuk-error-message" asp-validation-for="Confirm"></span>
+
+                            <div class="govuk-radios">
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="Confirm" id="Confirm-Yes" type="radio" value="True" sfa-validation-for="Confirm" sfa-validationerror-class="form-control-error" />
+                                    <label class="govuk-label govuk-radios__label" for="Confirm-Yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="Confirm" id="Confirm-No" type="radio" value="False" sfa-validation-for="Confirm" sfa-validationerror-class="form-control-error" />
+                                    <label class="govuk-label govuk-radios__label" for="Confirm-No">
+                                        No
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <button data-prevent-double-click="true" class="govuk-button" data-module="govuk-button">Save and continue</button>
+                </form>
+            </div>
+        </div>
+    }
+</main>
+
+@section Styles {
+    <link rel="stylesheet" href="~/stylesheets/lib/flatpickr/das-datepicker.css" no-cdn />
+}
+
+@section Scripts {
+    <script src="~/javascripts/lib/flatpickr/flatpickr-4.6.6.js" no-cdn></script>
+    <script src="~/javascripts/das-datepicker.js" no-cdn></script>
+}

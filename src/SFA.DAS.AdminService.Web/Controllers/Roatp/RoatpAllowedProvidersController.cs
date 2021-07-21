@@ -47,5 +47,38 @@
 
             return RedirectToAction(nameof(List), model);
         }
+
+        [HttpGet("/Roatp/AllowedProviders/{ukprn}/Remove")]
+        public async Task<IActionResult> ConfirmRemoveUkprn(string ukprn)
+        {
+            if (!int.TryParse(ukprn, out var providerUkprn))
+            {
+                return RedirectToAction(nameof(List));
+            }
+
+            var model = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                AllowedProvider = await _applyApiClient.GetAllowedProviderDetails(providerUkprn)
+            };
+
+            return View("~/Views/Roatp/AllowedProviders/ConfirmRemoveUkprn.cshtml", model);
+        }
+
+        [HttpPost("/Roatp/AllowedProviders/{ukprn}/Remove")]
+        public async Task<IActionResult> RemoveUkprn(int ukprn, RemoveUkprnFromAllowedProvidersListViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.AllowedProvider = await _applyApiClient.GetAllowedProviderDetails(ukprn);
+                return View("~/Views/Roatp/AllowedProviders/ConfirmRemoveUkprn.cshtml", model);
+            }
+
+            if (model.Confirm is true)
+            {
+                await _applyApiClient.RemoveFromAllowedProviders(ukprn);
+            }
+
+            return RedirectToAction(nameof(List));
+        }
     }
 }

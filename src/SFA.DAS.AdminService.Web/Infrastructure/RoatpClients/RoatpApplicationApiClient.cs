@@ -182,5 +182,19 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
                 return false;
             }
         }
+
+        public async Task<bool> RemoveFromAllowedProviders(int ukprn)
+        {
+            try
+            {
+                var response = await Delete($"/AllowedProviders/{ukprn}");
+                return response == HttpStatusCode.OK;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when adding UKPRN {ukprn} to Allowed Providers list");
+                return false;
+            }
+        }
     }
 }

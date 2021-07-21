@@ -140,7 +140,7 @@
                                             @item.AddedDateTime.ToSfaShorterDateString()
                                         </td>
                                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                                            <a>Remove</a>
+                                            <a asp-action="ConfirmRemoveUkprn" asp-controller="RoatpAllowedProviders" asp-route-ukprn="@item.Ukprn">Remove</a>
                                         </td>
                                     </tr>
                                 }

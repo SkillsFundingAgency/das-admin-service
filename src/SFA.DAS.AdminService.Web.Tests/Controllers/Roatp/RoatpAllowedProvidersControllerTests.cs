@@ -111,18 +111,123 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
-        [TestCase("12345678", "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_invalid_ModelState_shows_List_view(string ukprn, DateTime startDate, DateTime endDate)
+        [TestCase(12345678, "2021-01-01", "2021-01-31")]
+        public async Task AddUkprn_when_invalid_ModelState_shows_List_view(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
 
-            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
+            var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
             var viewResult = result as ViewResult;
             Assert.IsTrue(viewResult.ViewName.EndsWith("List.cshtml"));
+        }
+
+        [Test]
+        public async Task ConfirmRemoveUkprn_when_ukprn_missing_redirects_to_List()
+        {
+            var result = await _controller.ConfirmRemoveUkprn(null);
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.AreEqual("List", redirectResult.ActionName);
+
+            _applicationApplyApiClient.Verify(x => x.GetAllowedProviderDetails(It.IsAny<int>()), Times.Never);
+        }
+
+        [TestCase(12345678)]
+        public async Task ConfirmRemoveUkprn_creates_correct_viewmodel(int ukprn)
+        {
+            _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(ukprn)).ReturnsAsync(new AllowedProvider { Ukprn = ukprn });
+
+            var expectedViewModel = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                AllowedProvider = new AllowedProvider { Ukprn = ukprn }
+            };
+
+            var result = await _controller.ConfirmRemoveUkprn(ukprn.ToString());
+
+            var viewResult = result as ViewResult;
+            var viewModel = viewResult?.Model as RemoveUkprnFromAllowedProvidersListViewModel;
+
+            Assert.IsNotNull(viewModel);
+            Assert.IsNotNull(viewModel.AllowedProvider);
+            Assert.AreEqual(expectedViewModel.AllowedProvider.Ukprn, viewModel.AllowedProvider.Ukprn);
+        }
+
+        [TestCase(12345678)]
+        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_True_calls_RemoveFromAllowedProviders_with_expected_parameters(int ukprn)
+        {
+            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel 
+            { 
+                Confirm = true 
+            };
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            _applicationApplyApiClient.Verify(x => x.RemoveFromAllowedProviders(ukprn), Times.Once);
+        }
+
+        [TestCase(12345678)]
+        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_does_not_call_RemoveFromAllowedProviders(int ukprn)
+        {
+            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                Confirm = false
+            };
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            _applicationApplyApiClient.Verify(x => x.RemoveFromAllowedProviders(ukprn), Times.Never);
+        }
+
+        [TestCase(12345678, true)]
+        [TestCase(12345678, false)]
+        public async Task RemoveUkprn_when_valid_ModelState_redirects_to_List(int ukprn, bool confirm)
+        {
+            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                Confirm = confirm
+            };
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.AreEqual("List", redirectResult.ActionName);
+        }
+
+        [TestCase(12345678)]
+        public async Task RemoveUkprn_when_invalid_ModelState_does_not_call_RemoveFromAllowedUkprns(int ukprn)
+        {
+            _controller.ModelState.AddModelError("Confirm", "Forced ModelState error");
+            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel();
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            _applicationApplyApiClient.Verify(x => x.RemoveFromAllowedProviders(It.IsAny<int>()), Times.Never);
+        }
+
+        [TestCase(12345678)]
+        public async Task RemoveUkprn_when_invalid_ModelState_shows_ConfirmRemoveUkprn_view(int ukprn)
+        {
+            _controller.ModelState.AddModelError("Confirm", "Forced ModelState error");
+            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel ();
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            var viewResult = result as ViewResult;
+            Assert.IsTrue(viewResult.ViewName.EndsWith("ConfirmRemoveUkprn.cshtml"));
         }
     }
 }
