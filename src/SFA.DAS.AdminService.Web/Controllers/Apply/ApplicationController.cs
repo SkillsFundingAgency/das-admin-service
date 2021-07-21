@@ -381,6 +381,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, effectiveToDate);
             }
+            else if(null == sequenceVm.Versions || !sequenceVm.Versions.Any())
+            {
+                // No versions supplied in the withdrawal application means they are withdrawing from the standard completely
+                await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, null, effectiveToDate);
+            }
             else
             {
                 await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, sequenceVm.Versions[sequenceVm.CurrentVersionIndex.Value], effectiveToDate);
