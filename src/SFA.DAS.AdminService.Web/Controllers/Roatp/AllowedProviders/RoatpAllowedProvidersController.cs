@@ -7,6 +7,7 @@
     using SFA.DAS.AdminService.Web.Domain;
     using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
     using System;
+    using SFA.DAS.AdminService.Web.Infrastructure;
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class RoatpAllowedProvidersController : Controller
@@ -18,6 +19,7 @@
             _applyApiClient = applyApiClient;
         }
 
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         [HttpGet("/Roatp/AllowedProviders")]
         public async Task<IActionResult> Index(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
@@ -34,21 +36,20 @@
             return View("~/Views/Roatp/AllowedProviders/Index.cshtml", model);
         }
 
+        [ModelStatePersist(ModelStatePersist.Store)]
         [HttpPost("/Roatp/AllowedProviders")]
         public async Task<IActionResult> AddUkprn(AddUkprnToAllowedProvidersListViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                model.AllowedProviders = await _applyApiClient.GetAllowedProvidersList(model.SortColumn, model.SortOrder);
-                return View("~/Views/Roatp/AllowedProviders/Index.cshtml", model);
+                await _applyApiClient.AddToAllowedProviders(int.Parse(model.Ukprn), model.StartDate.Value, model.EndDate.Value);
             }
 
-            await _applyApiClient.AddToAllowedProviders(int.Parse(model.Ukprn), model.StartDate.Value, model.EndDate.Value);
-
-            return RedirectToAction(nameof(Index), model);
+            return RedirectToAction(nameof(Index), new { model.SortColumn, model.SortOrder, model.StartDate, model.EndDate });
         }
 
-        [HttpGet("/Roatp/AllowedProviders/{ukprn}/Remove")]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        [HttpGet("/Roatp/AllowedProviders/{ukprn}/ConfirmRemove")]
         public async Task<IActionResult> ConfirmRemoveUkprn(string ukprn)
         {
             if (!int.TryParse(ukprn, out var providerUkprn))
@@ -64,13 +65,13 @@
             return View("~/Views/Roatp/AllowedProviders/ConfirmRemoveUkprn.cshtml", model);
         }
 
-        [HttpPost("/Roatp/AllowedProviders/{ukprn}/Remove")]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        [HttpPost("/Roatp/AllowedProviders/{ukprn}/ConfirmRemove")]
         public async Task<IActionResult> RemoveUkprn(int ukprn, RemoveUkprnFromAllowedProvidersListViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                model.AllowedProvider = await _applyApiClient.GetAllowedProviderDetails(ukprn);
-                return View("~/Views/Roatp/AllowedProviders/ConfirmRemoveUkprn.cshtml", model);
+                return RedirectToAction(nameof(ConfirmRemoveUkprn), new { ukprn });               
             }
 
             if (model.Confirm is true)

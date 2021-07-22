@@ -94,7 +94,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.AddUkprn(request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("Index", redirectResult.ActionName);
+            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
         }
 
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
@@ -108,11 +108,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.AddUkprn(request);
 
             _applicationApplyApiClient.Verify(x => x.AddToAllowedProviders(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()), Times.Never);
-            _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_invalid_ModelState_shows_Index_view(int ukprn, DateTime startDate, DateTime endDate)
+        public async Task AddUkprn_when_invalid_ModelState_PRG_redirects_to_Index(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
@@ -121,8 +120,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var result = await _controller.AddUkprn(request);
 
-            var viewResult = result as ViewResult;
-            Assert.IsTrue(viewResult.ViewName.EndsWith("Index.cshtml"));
+            var redirectResult = result as RedirectToActionResult;
+            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
         }
 
         [Test]
@@ -131,7 +130,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.ConfirmRemoveUkprn(null);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("Index", redirectResult.ActionName);
+            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
 
             _applicationApplyApiClient.Verify(x => x.GetAllowedProviderDetails(It.IsAny<int>()), Times.Never);
         }
@@ -184,7 +183,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("UkprnRemoved", redirectResult.ActionName);
+            Assert.AreEqual(nameof(_controller.UkprnRemoved), redirectResult.ActionName);
         }
 
         [TestCase(12345678)]
@@ -215,7 +214,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("Index", redirectResult.ActionName);
+            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
         }
 
         [TestCase(12345678)]
@@ -232,7 +231,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [TestCase(12345678)]
-        public async Task RemoveUkprn_when_invalid_ModelState_shows_ConfirmRemoveUkprn_view(int ukprn)
+        public async Task RemoveUkprn_when_invalid_ModelState_PRG_redirects_to_ConfirmRemoveUkprn(int ukprn)
         {
             _controller.ModelState.AddModelError("Confirm", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
@@ -241,8 +240,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var result = await _controller.RemoveUkprn(ukprn, request);
 
-            var viewResult = result as ViewResult;
-            Assert.IsTrue(viewResult.ViewName.EndsWith("ConfirmRemoveUkprn.cshtml"));
+            var redirectResult = result as RedirectToActionResult;
+            Assert.AreEqual(nameof(_controller.ConfirmRemoveUkprn), redirectResult.ActionName);
         }
 
         [TestCase(12345678)]
