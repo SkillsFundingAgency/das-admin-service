@@ -1,4 +1,4 @@
-﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp
+﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp.AllowedProviders
 {
     using System.Threading.Tasks;
     using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
