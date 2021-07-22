@@ -19,7 +19,7 @@
         }
 
         [HttpGet("/Roatp/AllowedProviders")]
-        public async Task<IActionResult> List(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> Index(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
             var model = new AddUkprnToAllowedProvidersListViewModel
             {
@@ -31,7 +31,7 @@
                 AllowedProviders = await _applyApiClient.GetAllowedProvidersList(sortColumn, sortOrder)
             };
 
-            return View("~/Views/Roatp/AllowedProviders/List.cshtml", model);
+            return View("~/Views/Roatp/AllowedProviders/Index.cshtml", model);
         }
 
         [HttpPost("/Roatp/AllowedProviders")]
@@ -40,12 +40,12 @@
             if (!ModelState.IsValid)
             {
                 model.AllowedProviders = await _applyApiClient.GetAllowedProvidersList(model.SortColumn, model.SortOrder);
-                return View("~/Views/Roatp/AllowedProviders/List.cshtml", model);
+                return View("~/Views/Roatp/AllowedProviders/Index.cshtml", model);
             }
 
             await _applyApiClient.AddToAllowedProviders(int.Parse(model.Ukprn), model.StartDate.Value, model.EndDate.Value);
 
-            return RedirectToAction(nameof(List), model);
+            return RedirectToAction(nameof(Index), model);
         }
 
         [HttpGet("/Roatp/AllowedProviders/{ukprn}/Remove")]
@@ -53,7 +53,7 @@
         {
             if (!int.TryParse(ukprn, out var providerUkprn))
             {
-                return RedirectToAction(nameof(List));
+                return RedirectToAction(nameof(Index));
             }
 
             var model = new RemoveUkprnFromAllowedProvidersListViewModel
@@ -80,7 +80,7 @@
             }
             else
             {
-                return RedirectToAction(nameof(List));
+                return RedirectToAction(nameof(Index));
             }     
         }
 
@@ -89,7 +89,7 @@
         {
             if (!int.TryParse(ukprn, out var providerUkprn))
             {
-                return RedirectToAction(nameof(List));
+                return RedirectToAction(nameof(Index));
             }
 
             var model = new UkprnRemovedFromAllowedProvidersListViewModel

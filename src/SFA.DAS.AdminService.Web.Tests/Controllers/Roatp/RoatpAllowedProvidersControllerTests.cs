@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase(null, null, null, null)]
         [TestCase("column", "order", null, null)]
         [TestCase("column", "order", "2021-01-01", "2021-01-31")]
-        public async Task List_creates_correct_viewmodel(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
+        public async Task Index_creates_correct_viewmodel(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
             _applicationApplyApiClient.Setup(x => x.GetAllowedProvidersList(sortColumn, sortOrder)).ReturnsAsync(new List<AllowedProvider>());
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 AllowedProviders = new List<AllowedProvider>()
             };
 
-            var result = await _controller.List(sortColumn, sortOrder, startDate, endDate);
+            var result = await _controller.Index(sortColumn, sortOrder, startDate, endDate);
 
             var viewResult = result as ViewResult;
             var viewModel = viewResult?.Model as AddUkprnToAllowedProvidersListViewModel;
@@ -64,9 +64,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase(null, null, null, null)]
         [TestCase("column", "order", null, null)]
         [TestCase("column", "order", "2021-01-01", "2021-01-31")]
-        public async Task List_calls_GetAllowedUkprns_with_expected_parameters(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
+        public async Task Index_calls_GetAllowedUkprns_with_expected_parameters(string sortColumn, string sortOrder, DateTime? startDate, DateTime? endDate)
         {
-            var result = await _controller.List(sortColumn, sortOrder, startDate, endDate);
+            var result = await _controller.Index(sortColumn, sortOrder, startDate, endDate);
 
             _applicationApplyApiClient.Verify(x => x.GetAllowedProvidersList(sortColumn, sortOrder), Times.Once);
         }
@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [TestCase("12345678", "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_valid_ModelState_redirects_to_List(string ukprn, DateTime startDate, DateTime endDate)
+        public async Task AddUkprn_when_valid_ModelState_redirects_to_Index(string ukprn, DateTime startDate, DateTime endDate)
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
@@ -94,7 +94,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.AddUkprn(request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("List", redirectResult.ActionName);
+            Assert.AreEqual("Index", redirectResult.ActionName);
         }
 
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
@@ -112,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
-        public async Task AddUkprn_when_invalid_ModelState_shows_List_view(int ukprn, DateTime startDate, DateTime endDate)
+        public async Task AddUkprn_when_invalid_ModelState_shows_Index_view(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
             Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
@@ -122,16 +122,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.AddUkprn(request);
 
             var viewResult = result as ViewResult;
-            Assert.IsTrue(viewResult.ViewName.EndsWith("List.cshtml"));
+            Assert.IsTrue(viewResult.ViewName.EndsWith("Index.cshtml"));
         }
 
         [Test]
-        public async Task ConfirmRemoveUkprn_when_ukprn_missing_redirects_to_List()
+        public async Task ConfirmRemoveUkprn_when_ukprn_missing_redirects_to_Index()
         {
             var result = await _controller.ConfirmRemoveUkprn(null);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("List", redirectResult.ActionName);
+            Assert.AreEqual("Index", redirectResult.ActionName);
 
             _applicationApplyApiClient.Verify(x => x.GetAllowedProviderDetails(It.IsAny<int>()), Times.Never);
         }
@@ -203,7 +203,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [TestCase(12345678)]
-        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_redirects_to_List(int ukprn)
+        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_redirects_to_Index(int ukprn)
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
@@ -215,7 +215,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual("List", redirectResult.ActionName);
+            Assert.AreEqual("Index", redirectResult.ActionName);
         }
 
         [TestCase(12345678)]
