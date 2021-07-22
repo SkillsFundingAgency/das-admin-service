@@ -172,6 +172,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         }
 
         [TestCase(12345678)]
+        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_True_redirects_to_UkprnRemoved(int ukprn)
+        {
+            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                Confirm = true
+            };
+
+            var result = await _controller.RemoveUkprn(ukprn, request);
+
+            var redirectResult = result as RedirectToActionResult;
+            Assert.AreEqual("UkprnRemoved", redirectResult.ActionName);
+        }
+
+        [TestCase(12345678)]
         public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_does_not_call_RemoveFromAllowedProviders(int ukprn)
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
@@ -186,15 +202,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _applicationApplyApiClient.Verify(x => x.RemoveFromAllowedProviders(ukprn), Times.Never);
         }
 
-        [TestCase(12345678, true)]
-        [TestCase(12345678, false)]
-        public async Task RemoveUkprn_when_valid_ModelState_redirects_to_List(int ukprn, bool confirm)
+        [TestCase(12345678)]
+        public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_redirects_to_List(int ukprn)
         {
             Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
 
             var request = new RemoveUkprnFromAllowedProvidersListViewModel
             {
-                Confirm = confirm
+                Confirm = false
             };
 
             var result = await _controller.RemoveUkprn(ukprn, request);
@@ -228,6 +243,23 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var viewResult = result as ViewResult;
             Assert.IsTrue(viewResult.ViewName.EndsWith("ConfirmRemoveUkprn.cshtml"));
+        }
+
+        [TestCase(12345678)]
+        public void UkprnRemoved_creates_correct_viewmodel(int ukprn)
+        {
+            var expectedViewModel = new UkprnRemovedFromAllowedProvidersListViewModel
+            {
+                Ukprn = ukprn
+            };
+
+            var result = _controller.UkprnRemoved(ukprn.ToString());
+
+            var viewResult = result as ViewResult;
+            var viewModel = viewResult?.Model as UkprnRemovedFromAllowedProvidersListViewModel;
+
+            Assert.IsNotNull(viewModel);
+            Assert.AreEqual(expectedViewModel.Ukprn, viewModel.Ukprn);
         }
     }
 }

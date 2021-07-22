@@ -76,9 +76,28 @@
             if (model.Confirm is true)
             {
                 await _applyApiClient.RemoveFromAllowedProviders(ukprn);
+                return RedirectToAction(nameof(UkprnRemoved), new { ukprn });
+            }
+            else
+            {
+                return RedirectToAction(nameof(List));
+            }     
+        }
+
+        [HttpGet("/Roatp/AllowedProviders/{ukprn}/Removed")]
+        public IActionResult UkprnRemoved(string ukprn)
+        {
+            if (!int.TryParse(ukprn, out var providerUkprn))
+            {
+                return RedirectToAction(nameof(List));
             }
 
-            return RedirectToAction(nameof(List));
+            var model = new UkprnRemovedFromAllowedProvidersListViewModel
+            {
+                Ukprn = providerUkprn
+            };
+
+            return View("~/Views/Roatp/AllowedProviders/UkprnRemoved.cshtml", model);
         }
     }
 }
