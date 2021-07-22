@@ -45,7 +45,7 @@
                 await _applyApiClient.AddToAllowedProviders(int.Parse(model.Ukprn), model.StartDate.Value, model.EndDate.Value);
             }
 
-            return RedirectToAction(nameof(Index), new { model.SortColumn, model.SortOrder, model.StartDate, model.EndDate });
+            return RedirectToAction(nameof(Index), new { sortColumn = model.SortColumn, sortOrder = model.SortOrder, startDate = model.StartDate?.ToString("yyyy-MM-dd"), endDate = model.EndDate?.ToString("yyyy-MM-dd") });
         }
 
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
