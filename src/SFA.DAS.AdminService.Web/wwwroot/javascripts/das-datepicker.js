@@ -42,6 +42,7 @@
 
     var flatpickrEndOptions = {
         allowInput: true,
+        minDate: "today",
         wrap: true,
         disableMobile: "true",
         dateFormat: "j M Y",
