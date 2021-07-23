@@ -36,7 +36,7 @@
             firstDayOfWeek: 1
         },
         onChange: function (selectedDates, dateStr) {
-            endFlatpickr.set("minDate", dateStr);
+            endFlatpickr.set("minDate", !!dateStr ? dateStr : "today");
         }
     };
 
