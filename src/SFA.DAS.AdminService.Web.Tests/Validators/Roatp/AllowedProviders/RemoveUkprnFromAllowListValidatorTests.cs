@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
 
             var validationResponse = _validator.Validate(_viewModel);
 
-            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Confirm-Yes");
+            var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Confirm");
             error.Should().NotBeNull();
         }
     }
