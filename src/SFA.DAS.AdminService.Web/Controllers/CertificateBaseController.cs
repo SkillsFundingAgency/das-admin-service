@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
-            ApiClient = apiClient;           
+            ApiClient = apiClient;
         }
 
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()
@@ -35,7 +35,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
-            var viewModel = new T();            
+            var viewModel = new T();
             var certificate = await ApiClient.GetCertificate(id);
             var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);
             certificate.Organisation = organisation;
