@@ -1,160 +1,119 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
 {
     public class ApplicationControllerTests
     {
-        /*
         private ApplicationController _controller;
 
         private Mock<IApiClient> _apiClient;
         private Mock<IApplicationApiClient> _applyApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
+        private Mock<IAnswerService> _answerService;
+        private Mock<IAnswerInjectionService> _answerInjectionService;
         private Mock<ILogger<ApplicationController>> _logger;
-
-        private Fixture _autoFixture;
-
-        private const string WithdrawalApplication_NewApplications = "WithdrawalApplication_NewApplications";
-        private const string WithdrawalApplication_InProgressApplications = "WithdrawalApplication_InProgressApplications";
-        private const string WithdrawalApplication_FeedbackApplications = "WithdrawalApplication_FeedbackApplications";
-        private const string WithdrawalApplication_ApprovedApplications = "WithdrawalApplication_ApprovedApplications";
-
-        private const int DefaultItemsPerPage = 10;
-        private const string DefaultSortColumn = "SubmittedDate";
-        private const string DefaultSortDirection = "Desc";
-
-        private ApplicationSummaryItem ApplicationSummaryItemNew;
-        private ApplicationSummaryItem ApplicationSummaryItemInProgress;
-        private ApplicationSummaryItem ApplicationSummaryItemFeedback;
-        private ApplicationSummaryItem ApplicationSummaryItemApproved;
-        private ApplicationSummaryItem ApplicationSummaryItemApproved2;
 
         [SetUp]
         public void Setup()
         {
-            _autoFixture = new Fixture();
-
-            ApplicationSummaryItemNew = _autoFixture.Build<ApplicationSummaryItem>().With(x => x.ReviewStatus, ApplicationReviewStatus.New).Create();
-            ApplicationSummaryItemInProgress = _autoFixture.Build<ApplicationSummaryItem>().With(x => x.ReviewStatus, ApplicationReviewStatus.InProgress).Create();
-            ApplicationSummaryItemFeedback = _autoFixture.Build<ApplicationSummaryItem>().With(x => x.ReviewStatus, ApplicationReviewStatus.HasFeedback).Create();
-            ApplicationSummaryItemApproved = _autoFixture.Build<ApplicationSummaryItem>().With(x => x.ReviewStatus, ApplicationReviewStatus.Approved).Create();
-            ApplicationSummaryItemApproved2 = _autoFixture.Build<ApplicationSummaryItem>().With(x => x.ReviewStatus, ApplicationReviewStatus.Approved).Create();
-
-            _controllerSession = new Mock<IControllerSession>();
-            _apiClient = new Mock<IApplicationApiClient>();
-            _sessionService = new Mock<ISessionService>();
-            _logger = new Mock<ILogger<WithdrawalApplicationController>>();
-
-            SetupSessionServiceMock();
-            SetupControllerSessionMock();
-
-            _controller = new ApplicationController(_controllerSession.Object, _apiClient.Object, _logger.Object);
+            _apiClient = new Mock<IApiClient>();
+            _applyApiClient = new Mock<IApplicationApiClient>();
+            _qnaApiClient = new Mock<IQnaApiClient>();
+            _httpContextAccessor = new Mock<IHttpContextAccessor>();
+            _answerService = new Mock<IAnswerService>();
+            _answerInjectionService = new Mock<IAnswerInjectionService>();
+            _logger = new Mock<ILogger<ApplicationController>>();
+            _controller = new ApplicationController(_apiClient.Object, _applyApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object);
         }
 
         [Test]
         public async Task When_RequestingWithdrawalDateCheckPage_Then_WithdrawalDateCheckViewIsReturned()
         {
-            ViewResult viewResult = await _controller.WithdrawalApplications() as ViewResult;
+            // Arrange
 
-            Assert.AreEqual("WithdrawalApplications", viewResult.ViewName);
+            ArrangeMocksWithIrrelevantData();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = 0;
+            var backModel = new BackViewModel();
+            var currentVersionIndex = 0;
+
+            // Act
+
+            ViewResult viewResult = await _controller.WithdrawalDateCheck(applicationId, sequenceNumber, backModel, currentVersionIndex) as ViewResult;
+
+            // Assert
+
+            viewResult.ViewName.Should().Be("WithdrawalDateCheck");
         }
 
-/*
-        [Test]
-        public async Task When_RequestingWithdrawalApplicationsPage_Then_CorrectTabTitlesAreSet()
+        private void ArrangeMocksWithIrrelevantData()
         {
-            SetupSingleNewApplication();
+            _applyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>()))
+                .ReturnsAsync(new ApplicationResponse()
+                {
+                    ApplyData = new AssessorService.ApplyTypes.ApplyData()
+                    {
+                        Apply = new AssessorService.ApplyTypes.Apply()
+                        {
+                            ReferenceNumber = "123456",
+                        },
+                        Sequences = new List<ApplySequence>
+                        {
+                            new ApplySequence
+                            {
+                                SequenceNo = 5,
+                                IsActive = true,
+                                NotRequired = false,
+                                Sections = new List<ApplySection>()
+                                {
+                                    new ApplySection()
+                                    {
+                                        NotRequired = false,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
 
-            var result = await _controller.WithdrawalApplications() as ViewResult;
-            var model = result.Model as ApplicationsDashboardViewModel;
+            _apiClient.Setup(x => x.GetOrganisation(It.IsAny<Guid>()))
+                .ReturnsAsync(new Organisation()
+                {
+                    OrganisationData = new OrganisationData()
+                    {
+                        LegalName = "Test Organisation",
+                    }
+                });
 
-            Assert.AreEqual("New", model.NewApplications.Title);
-            Assert.AreEqual("In progress", model.InProgressApplications.Title);
-            Assert.AreEqual("Feedback", model.FeedbackApplications.Title);
-            Assert.AreEqual("Approved", model.ApprovedApplications.Title);
+            _qnaApiClient.Setup(x => x.GetSequence(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new QnA.Api.Types.Sequence()
+                {
+
+                });
+
+            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new List<QnA.Api.Types.Section>()
+                {
+                    new QnA.Api.Types.Section()
+                    {
+                    }
+                });
         }
-
-        [Test]
-        public async Task When_RequestingWithdrawalApplicationsPage_Then_ApplicationsAreMapped()
-        {
-            SetupMultipleApplications();
-
-            var result = await _controller.WithdrawalApplications() as ViewResult;
-            var model = result.Model as ApplicationsDashboardViewModel;
-
-            Assert.AreEqual(1, model.NewApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(1, model.InProgressApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(1, model.FeedbackApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(2, model.ApprovedApplications.PaginatedList.Items.Count);
-        }
-
-        private void SetupSessionServiceMock()
-        {
-            _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_NewApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_NewApplications}_SortColumn")).Returns(DefaultSortColumn);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_NewApplications}_SortDirection")).Returns(DefaultSortDirection);
-
-            _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_InProgressApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_InProgressApplications}_SortColumn")).Returns(DefaultSortColumn);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_InProgressApplications}_SortDirection")).Returns(DefaultSortDirection);
-
-            _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_FeedbackApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_FeedbackApplications}_SortColumn")).Returns(DefaultSortColumn);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_FeedbackApplications}_SortDirection")).Returns(DefaultSortDirection);
-
-            _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_ApprovedApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_ApprovedApplications}_SortColumn")).Returns(DefaultSortColumn);
-            _sessionService.Setup(x => x.Get($"{WithdrawalApplication_ApprovedApplications}_SortDirection")).Returns(DefaultSortDirection);
-
-        }
-        private void SetupControllerSessionMock()
-        {
-            _controllerSession.Setup(x => x.WithdrawalApplication_NewApplications).Returns(new PagingState(_sessionService.Object, WithdrawalApplication_NewApplications));
-            _controllerSession.Setup(x => x.WithdrawalApplication_InProgressApplications).Returns(new PagingState(_sessionService.Object, WithdrawalApplication_InProgressApplications));
-            _controllerSession.Setup(x => x.WithdrawalApplication_FeedbackApplications).Returns(new PagingState(_sessionService.Object, WithdrawalApplication_FeedbackApplications));
-            _controllerSession.Setup(x => x.WithdrawalApplication_ApprovedApplications).Returns(new PagingState(_sessionService.Object, WithdrawalApplication_ApprovedApplications));
-        }
-
-        private void SetupSingleNewApplication()
-        {
-            _apiClient.Setup(x => x.GetWithdrawalApplications(It.Is<WithdrawalApplicationsRequest>(y => y.ReviewStatus == "New")))
-                .ReturnsAsync(new PaginatedList<ApplicationSummaryItem>(new List<ApplicationSummaryItem>() {
-                    ApplicationSummaryItemNew
-                }, 1, 1, 10));
-        }
-
-        private void SetupMultipleApplications()
-        {
-            _apiClient.Setup(x => x.GetWithdrawalApplications(It.Is<WithdrawalApplicationsRequest>(y => y.ReviewStatus == "New")))
-                .ReturnsAsync(new PaginatedList<ApplicationSummaryItem>(new List<ApplicationSummaryItem>() {
-                    ApplicationSummaryItemNew
-                }, 1, 1, 10));
-            _apiClient.Setup(x => x.GetWithdrawalApplications(It.Is<WithdrawalApplicationsRequest>(y => y.ReviewStatus == "In Progress")))
-                .ReturnsAsync(new PaginatedList<ApplicationSummaryItem>(new List<ApplicationSummaryItem>() {
-                    ApplicationSummaryItemInProgress
-                }, 1, 1, 10));
-            _apiClient.Setup(x => x.GetWithdrawalApplications(It.Is<WithdrawalApplicationsRequest>(y => y.ReviewStatus == "Has Feedback")))
-                .ReturnsAsync(new PaginatedList<ApplicationSummaryItem>(new List<ApplicationSummaryItem>() {
-                    ApplicationSummaryItemFeedback
-                }, 1, 1, 10));
-            _apiClient.Setup(x => x.GetWithdrawalApplications(It.Is<WithdrawalApplicationsRequest>(y => y.ReviewStatus == "Approved")))
-                .ReturnsAsync(new PaginatedList<ApplicationSummaryItem>(new List<ApplicationSummaryItem>() {
-                    ApplicationSummaryItemApproved,
-                    ApplicationSummaryItemApproved2
-                }, 1, 1, 10));
-        }
-*/
     }
 }
