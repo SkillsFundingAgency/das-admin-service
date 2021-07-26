@@ -1,0 +1,166 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders.AddUkprnToAllowedProvidersListViewModel
+
+@{
+    ViewBag.Title = "UKPRN allow list";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">UKPRN allow list</li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-xl">UKPRN allow list</h1>
+            <p class="govuk-body-l">This list shows the UKPRNs for training providers who have been invited to apply to the RoATP.</p>
+        </div>
+    </div>
+
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form data-module="das-clear-form-errors" novalidate method="post">
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
+                        <span class="govuk-error-message" asp-validation-for="StartDate"></span>
+                        <span class="govuk-error-message" asp-validation-for="EndDate"></span>
+
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-one-third">
+                                <label asp-for="Ukprn" class="govuk-label">
+                                    UKPRN
+                                </label>
+                                <span id="Ukprn-hint" class="govuk-hint js-hidden">For example, 12345678</span>
+                                <div class="flatpickr--input-group js-flatpickr-ukprn">
+                                    <input asp-for="Ukprn" class="govuk-input" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-input--error" type="text" placeholder="UKPRN:" autocomplete="off" aria-describedby="Ukprn-hint" data-input>
+                                </div>
+                            </div>
+                            <div class="govuk-grid-column-one-third">
+                                <label asp-for="StartDate" class="govuk-label">
+                                    Start date
+                                </label>
+                                <span id="StartDate-hint" class="govuk-hint js-hidden">For example, 1-Jan-2022</span>
+                                <div class="flatpickr--input-group js-flatpickr-start">
+                                    <input asp-for="StartDate" value="@Model.StartDate?.ToString("d-MMM-yyyy")" class="govuk-input flatpickr-input js-flatpickr-start-input" sfa-validation-for="StartDate" sfa-validationerror-class="govuk-input--error" type="text" placeholder="Start:" autocomplete="off" aria-describedby="StartDate-hint" data-input>
+                                    <a class="flatpickr__input-button" title="toggle" data-toggle>
+                                        <svg version="1.1" viewBox="0 0 512 512" width="24" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="m492 352c11.046 0 20-8.954 20-20v-212c0-44.112-35.888-80-80-80h-26v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-91v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-90v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-25c-44.112 0-80 35.888-80 80v312c0 44.112 35.888 80 80 80h352c44.112 0 80-35.888 80-80 0-11.046-8.954-20-20-20s-20 8.954-20 20c0 22.056-17.944 40-40 40h-352c-22.056 0-40-17.944-40-40v-312c0-22.056 17.944-40 40-40h25v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h90v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h91v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h26c22.056 0 40 17.944 40 40v212c0 11.046 8.954 20 20 20z" />
+                                            <circle cx="125" cy="210" r="20" />
+                                            <circle cx="299" cy="210" r="20" />
+                                            <circle cx="386" cy="210" r="20" />
+                                            <circle cx="125" cy="297" r="20" />
+                                            <circle cx="125" cy="384" r="20" />
+                                            <circle cx="212" cy="210" r="20" />
+                                            <circle cx="212" cy="297" r="20" />
+                                            <circle cx="212" cy="384" r="20" />
+                                            <circle cx="299" cy="297" r="20" />
+                                            <circle cx="386" cy="297" r="20" />
+                                            <circle cx="299" cy="384" r="20" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="govuk-grid-column-one-third">
+                                <label asp-for="EndDate" class="govuk-label">
+                                    End date
+                                </label>
+                                <span id="EndDate-hint" class="govuk-hint js-hidden">For example, 31-Jan-2022</span>
+                                <div class="flatpickr--input-group js-flatpickr-end">
+                                    <input asp-for="EndDate" value="@Model.EndDate?.ToString("d-MMM-yyyy")" class="govuk-input flatpickr-input js-flatpickr-end-input" sfa-validation-for="EndDate" sfa-validationerror-class="govuk-input--error" type="text" placeholder="End:" autocomplete="off" aria-describedby="EndDate-hint" data-input>
+                                    <a class="flatpickr__input-button" title="toggle" data-toggle>
+                                        <svg version="1.1" viewBox="0 0 512 512" width="24" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="m492 352c11.046 0 20-8.954 20-20v-212c0-44.112-35.888-80-80-80h-26v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-91v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-90v-20c0-11.046-8.954-20-20-20s-20 8.954-20 20v20h-25c-44.112 0-80 35.888-80 80v312c0 44.112 35.888 80 80 80h352c44.112 0 80-35.888 80-80 0-11.046-8.954-20-20-20s-20 8.954-20 20c0 22.056-17.944 40-40 40h-352c-22.056 0-40-17.944-40-40v-312c0-22.056 17.944-40 40-40h25v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h90v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h91v20c0 11.046 8.954 20 20 20s20-8.954 20-20v-20h26c22.056 0 40 17.944 40 40v212c0 11.046 8.954 20 20 20z" />
+                                            <circle cx="125" cy="210" r="20" />
+                                            <circle cx="299" cy="210" r="20" />
+                                            <circle cx="386" cy="210" r="20" />
+                                            <circle cx="125" cy="297" r="20" />
+                                            <circle cx="125" cy="384" r="20" />
+                                            <circle cx="212" cy="210" r="20" />
+                                            <circle cx="212" cy="297" r="20" />
+                                            <circle cx="212" cy="384" r="20" />
+                                            <circle cx="299" cy="297" r="20" />
+                                            <circle cx="386" cy="297" r="20" />
+                                            <circle cx="299" cy="384" r="20" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button data-prevent-double-click="true" class="govuk-button" data-module="govuk-button">Add</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+                    @if (@Model.AllowedProviders.Any())
+                    {
+                        <table class="govuk-table govuk-table--s das-table--responsive">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th class="govuk-table__header" scope="col">UKPRN</th>
+                                    <th class="govuk-table__header" scope="col">
+                                        <sfa-roatp-sortable-column column-name="StartDate" column-label="Invitation start date" />
+                                    </th>
+                                    <th class="govuk-table__header" scope="col">Invitation end date</th>
+                                    <th class="govuk-table__header" scope="col">
+                                        <sfa-roatp-sortable-column column-name="AddedDate" column-label="Date UKPRN added" default="true" default-order="Descending" />
+                                    </th>
+                                    <th class="govuk-table__header" scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                @foreach (var item in Model.AllowedProviders)
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell" data-label="UKPRN">
+                                            @item.Ukprn
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Invitation start date">
+                                            @item.StartDateTime.ToSfaShorterDateString()
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Invitation end date">
+                                            @item.EndDateTime.ToSfaShorterDateString()
+                                        </td>
+                                        <td class="govuk-table__cell" data-label="Date UKPRN added">
+                                            @item.AddedDateTime.ToSfaShorterDateString()
+                                        </td>
+                                        <td class="govuk-table__cell govuk-table__cell--numeric">
+                                            <a asp-action="ConfirmRemoveUkprn" asp-controller="RoatpAllowedProviders" asp-route-ukprn="@item.Ukprn">Remove</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="govuk-body-l">There are no allowed UKPRNs at this time.</p>
+                    }
+            </div>
+    </div>
+
+</main>
+
+@section Styles {
+    <link rel="stylesheet" href="~/stylesheets/lib/flatpickr/das-datepicker.css" no-cdn />
+}
+
+@section Scripts {
+    <script src="~/javascripts/lib/flatpickr/flatpickr-4.6.6.js" no-cdn></script>
+    <script src="~/javascripts/das-datepicker.js" no-cdn></script>
+}
