@@ -6,7 +6,6 @@ using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
@@ -82,15 +81,20 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public int SequenceNo { get; }
 
         public bool IsWithdrawal => SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO ||
-                                    SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+                                    SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;        
 
         public string ContactName { get; }
         public string ContactEmail { get; }
 
         // SV-657 helper to set the link text.
-        public string GetApplicationLinkText(string linkTitle)
+        // SV-914 Withdrawal application
+        public string GetApplicationLinkText(string linkTitle, bool isWithdrawal = false)
         {
             var text = $"Evaluate {linkTitle.ToLower()}";
+            if(IsWithdrawal)
+            {
+                text = "Evaluate withdrawal application";
+            }
             return text;
         }
     }
