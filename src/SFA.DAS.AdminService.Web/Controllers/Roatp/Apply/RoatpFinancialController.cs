@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -26,6 +25,7 @@ using SFA.DAS.AdminService.Web.Validators.Roatp.Applications;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
 using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
+using SFA.DAS.AdminService.Web.ModelBinders;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -34,29 +34,36 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
     {
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IRoatpSearchTermValidator _searchTermValidator;
         private readonly IRoatpFinancialClarificationViewModelValidator _clarificationValidator;
         private readonly ICsvExportService _csvExportService;
 
-        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IRoatpFinancialClarificationViewModelValidator clarificationValidator, ICsvExportService csvExportService)
+        public RoatpFinancialController(IRoatpOrganisationApiClient apiClient, IRoatpApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IRoatpSearchTermValidator searchTermValidator, IRoatpFinancialClarificationViewModelValidator clarificationValidator, ICsvExportService csvExportService)
         {
             _applyApiClient = applyApiClient;
-            _contextAccessor = contextAccessor;
+            _searchTermValidator = searchTermValidator;
             _clarificationValidator = clarificationValidator;
             _csvExportService = csvExportService;
             _qnaApiClient = qnaApiClient;
         }
 
         [HttpGet("/Roatp/Financial/Current")]
-        public async Task<IActionResult> OpenApplications(int page = 1)
+        public async Task<IActionResult> OpenApplications([StringTrim] string searchTerm, string sortColumn, string sortOrder, int page = 1)
         {
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+            ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetOpenFinancialApplications();
+            var applications = await _applyApiClient.GetOpenFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
-            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
+            var viewmodel = new RoatpFinancialDashboardViewModel 
+            { 
+                Applications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue),
+                StatusCounts = statusCounts,
+                SelectedTab = nameof(OpenApplications),
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn,
+                SortOrder = sortOrder
+            };
 
             return View("~/Views/Roatp/Apply/Financial/OpenApplications.cshtml", viewmodel);
         }
@@ -78,32 +85,60 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         }
 
         [HttpGet("/Roatp/Financial/Clarification")]
-        public async Task<IActionResult> ClarificationApplications(int page = 1)
+        public async Task<IActionResult> ClarificationApplications([StringTrim] string searchTerm, string sortColumn, string sortOrder, int page = 1)
         {
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+            ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetClarificationFinancialApplications();
+            var applications = await _applyApiClient.GetClarificationFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
-            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
+            var viewmodel = new RoatpFinancialDashboardViewModel
+            {
+                Applications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue),
+                StatusCounts = statusCounts,
+                SelectedTab = nameof(ClarificationApplications),
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn,
+                SortOrder = sortOrder
+            };
 
             return View("~/Views/Roatp/Apply/Financial/ClarificationApplications.cshtml", viewmodel);
         }
 
         [HttpGet("/Roatp/Financial/Outcome")]
-        public async Task<IActionResult> ClosedApplications(int page = 1)
+        public async Task<IActionResult> ClosedApplications([StringTrim] string searchTerm, string sortColumn, string sortOrder, int page = 1)
         {
-            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts();
+            ValidateSearchTerm(searchTerm);
 
-            var applications = await _applyApiClient.GetClosedFinancialApplications();
+            var applications = await _applyApiClient.GetClosedFinancialApplications(ModelState.IsValid ? searchTerm : null, sortColumn, sortOrder);
+            var statusCounts = await _applyApiClient.GetFinancialApplicationsStatusCounts(ModelState.IsValid ? searchTerm : null);
 
-            var paginatedApplications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue);
-
-            var viewmodel = new RoatpFinancialDashboardViewModel { Applications = paginatedApplications, StatusCounts = statusCounts };
+            var viewmodel = new RoatpFinancialDashboardViewModel
+            {
+                Applications = new PaginatedList<RoatpFinancialSummaryItem>(applications, applications.Count, page, int.MaxValue),
+                StatusCounts = statusCounts,
+                SelectedTab = nameof(ClosedApplications),
+                SearchTerm = searchTerm,
+                SortColumn = sortColumn,
+                SortOrder = sortOrder
+            };
 
             return View("~/Views/Roatp/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
+
+        private void ValidateSearchTerm(string searchTerm)
+        {
+            if (searchTerm != null)
+            {
+                var validationResponse = _searchTermValidator.Validate(searchTerm);
+
+                foreach (var error in validationResponse.Errors)
+                {
+                    ModelState.AddModelError(error.Field, error.ErrorMessage);
+                }
+            }
+        }
+
 
         [HttpGet("/Roatp/Financial/{applicationId}")]
         public async Task<IActionResult> ViewApplication(Guid applicationId)
@@ -130,7 +165,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 {
                     case FinancialReviewStatus.New:
                     case FinancialReviewStatus.InProgress:
-                        await _applyApiClient.StartFinancialReview(application.ApplicationId, _contextAccessor.HttpContext.User.UserDisplayName());
+                        await _applyApiClient.StartFinancialReview(application.ApplicationId, HttpContext.User.UserDisplayName());
                         return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
                     case FinancialReviewStatus.ClarificationSent:
                         var clarificationVm = ConvertFinancialApplicationToFinancialClarificationViewModel(vm, vm.ClarificationComments);
@@ -156,7 +191,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             {
                 var financialReviewDetails = new FinancialReviewDetails
                 {
-                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                    GradedBy = HttpContext.User.UserDisplayName(),
                     GradedDateTime = DateTime.UtcNow,
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
@@ -243,7 +278,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 
             var financialReviewDetails = new FinancialReviewDetails
             {
-                GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
+                GradedBy = HttpContext.User.UserDisplayName(),
                 GradedDateTime = DateTime.UtcNow,
                 SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                 FinancialDueDate = GetFinancialDueDate(vm),
@@ -330,7 +365,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
          string removeClarificationFileName, RoatpApply application)
         {
             var fileRemoved = await _applyApiClient.RemoveClarificationFile(applicationId,
-                _contextAccessor.HttpContext.User.UserId(), removeClarificationFileName);
+                HttpContext.User.UserId(), removeClarificationFileName);
 
 
             var financialReviewDets = vm.FinancialReviewDetails;
@@ -378,7 +413,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 if (!FileAlreadyInClarifications(financialReviewDets.ClarificationFiles, fileToUpload))
                 {
                     var fileUploadedSuccessfully = await _applyApiClient.UploadClarificationFile(applicationId,
-                        _contextAccessor.HttpContext.User.UserId(), vm.FilesToUpload);
+                        HttpContext.User.UserId(), vm.FilesToUpload);
 
 
                     if (fileUploadedSuccessfully)

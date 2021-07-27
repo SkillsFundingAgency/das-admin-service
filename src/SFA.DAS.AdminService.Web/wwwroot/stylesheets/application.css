@@ -1595,6 +1595,55 @@ TODO: change to 'das-page-navigation' and BEM
   }
 }
 
+/* Sortable tables */
+
+.das-table__sort,
+.das-table__sort:link,
+.das-table__sort:visited {
+  color: #005ea5;
+	display: inline-block;
+}
+
+.das-table__sort:active, 
+.das-table__sort:hover {
+  color: #2b8cc4;
+}
+
+.das-table__sort:focus {
+  color: #0b0c0c;
+  text-decoration: none;
+}
+
+.das-table__sort:after {
+	position: absolute;
+	left: 0;
+	top: 5px;
+}
+
+
+.das-table__sort--asc,
+.das-table__sort--desc {
+	position: relative;
+	padding-left: 15px;
+}
+
+.das-table__sort--asc:after,
+.das-table__sort--desc:after {
+	border-color: transparent;
+	border-width: 10px;
+	border-style: solid;
+	width: 0;
+	height: 0;
+	content: "";
+	border-width: 10px 5.77367px 0 5.77367px;
+	border-color: currentColor transparent transparent transparent;
+}
+
+.das-table__sort--asc:after {
+	border-width: 0 5.77367px 10px 5.77367px;
+	border-color: transparent transparent currentColor transparent;
+}
+
 /* Small tables */
 
 @media (min-width: 40.0625em) {
@@ -1709,3 +1758,81 @@ TODO: change to 'das-page-navigation' and BEM
   color: #0b0c0c;
   background-color: #ffbf47;
 }
+
+
+/* Inline roatp search component */
+
+@media (min-width: 40.0625em) {
+    .app-search-form__group {
+        max-width: 33%;
+    }
+}
+
+.app-search-form__group {
+    position: relative;
+}
+
+.app-search-form__input {
+    border-color: #b1b4b6;
+    border-width: 1px;
+}
+
+.app-search-form__button-wrap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.app-search-form__button {
+    overflow: hidden;
+    text-indent: -9999px;
+    background: none;
+    background-image: url(../images/icon-search--black.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 54%;
+    box-shadow: none;
+    width: 40px;
+    height: 100%;
+    margin: 0;
+}
+
+.app-search-form__button:hover {
+    background-color: transparent;
+}
+
+.app-search-form__button:active,
+.app-search-form__button:focus {
+    top: 0;
+}
+
+.app-search-results-info {
+    background: #f3f2f1;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.app-search-results-info__content {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.app-search-results-info__search-term {
+    font-weight: 700;
+}
+
+@media (min-width: 40.0625em) {
+
+    .app-search-results-info__content {
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    .app-search-results-info__clear-link {
+        float: right;
+    }
+}
+
+

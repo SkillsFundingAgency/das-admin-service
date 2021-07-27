@@ -33,6 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private Mock<IRoatpOrganisationApiClient> _roatpOrganisationApiClient;
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IRoatpSearchTermValidator> _searchTermValidator;
         private Mock<IRoatpFinancialClarificationViewModelValidator> _clarificationValidator;
         private Mock<ICsvExportService> _csvExportService;
         private RoatpFinancialController _controller;
@@ -48,6 +49,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         {
             _roatpOrganisationApiClient = new Mock<IRoatpOrganisationApiClient>();
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
+            _searchTermValidator = new Mock<IRoatpSearchTermValidator>();
             _clarificationValidator = new Mock<IRoatpFinancialClarificationViewModelValidator>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _csvExportService = new Mock<ICsvExportService>();
@@ -59,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object, _csvExportService.Object)
+                _searchTermValidator.Object, _clarificationValidator.Object, _csvExportService.Object)
             {
                 ControllerContext = MockedControllerContext.Setup() 
             };
@@ -261,7 +263,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
+                _searchTermValidator.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };
@@ -352,7 +354,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
+                _searchTermValidator.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };
@@ -441,7 +443,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _controller = new RoatpFinancialController(_roatpOrganisationApiClient.Object,
                 _applicationApplyApiClient.Object,
                 _qnaApiClient.Object,
-                MockHttpContextAccessor.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
+                _searchTermValidator.Object, _clarificationValidator.Object, Mock.Of<ICsvExportService>())
             {
                 ControllerContext = MockedControllerContext.Setup(buttonPressed)
             };

@@ -181,8 +181,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 OutstandingFinancialDueDate = new FinancialDueDate
                 {
                     Day = DateTime.Today.AddDays(-1).Day.ToString(),
-                    Month = DateTime.Today.Month.ToString(),
-                    Year = DateTime.Today.Year.ToString()
+                    Month = DateTime.Today.AddDays(-1).Month.ToString(),
+                    Year = DateTime.Today.AddDays(-1).Year.ToString()
                 },
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
@@ -268,8 +268,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 GoodFinancialDueDate = new FinancialDueDate
                 {
                     Day = DateTime.Today.AddDays(-1).Day.ToString(),
-                    Month = DateTime.Today.Month.ToString(),
-                    Year = DateTime.Today.Year.ToString()
+                    Month = DateTime.Today.AddDays(-1).Month.ToString(),
+                    Year = DateTime.Today.AddDays(-1).Year.ToString()
                 },
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
@@ -356,8 +356,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
                 SatisfactoryFinancialDueDate = new FinancialDueDate
                 {
                     Day = DateTime.Today.AddDays(-1).Day.ToString(),
-                    Month = DateTime.Today.Month.ToString(),
-                    Year = DateTime.Today.Year.ToString()
+                    Month = DateTime.Today.AddDays(-1).Month.ToString(),
+                    Year = DateTime.Today.AddDays(-1).Year.ToString()
                 },
                 FinancialReviewDetails = new FinancialReviewDetails
                 {
