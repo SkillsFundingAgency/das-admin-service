@@ -18,6 +18,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
@@ -26,6 +27,10 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
 using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
 using SFA.DAS.AdminService.Web.ModelBinders;
+using SFA.DAS.AssessorService.ApplyTypes;
+using ApplicationStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.ApplicationStatus;
+using ClarificationFile = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.ClarificationFile;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -161,10 +166,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             }
             else
             {
-                switch (application.FinancialReviewStatus)
+                var financialReviewDetails = await _applyApiClient.GetFinancialReviewDetails(applicationId);
+                switch (financialReviewDetails?.Status)
                 {
                     case FinancialReviewStatus.New:
                     case FinancialReviewStatus.InProgress:
+                    case null:
                         await _applyApiClient.StartFinancialReview(application.ApplicationId, HttpContext.User.UserDisplayName());
                         return View("~/Views/Roatp/Apply/Financial/Application.cshtml", vm);
                     case FinancialReviewStatus.ClarificationSent:
@@ -192,7 +199,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 var financialReviewDetails = new FinancialReviewDetails
                 {
                     GradedBy = HttpContext.User.UserDisplayName(),
-                    GradedDateTime = DateTime.UtcNow,
+                    GradedOn = DateTime.UtcNow,
                     SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                     FinancialDueDate = GetFinancialDueDate(vm),
                     Comments = GetFinancialReviewComments(vm),
@@ -225,17 +232,20 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         {
             var removeClarificationFileName = string.Empty;
             var application = await _applyApiClient.GetApplication(vm.ApplicationId);
+           
             if (application is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
+
+            var financialReview = await _applyApiClient.GetFinancialReviewDetails(vm.ApplicationId);
             var isClarificationFilesUpload = HttpContext.Request.Form["submitClarificationFiles"].Count != 0;
             var isClarificationOutcome = HttpContext.Request.Form["submitClarificationOutcome"].Count == 1;
             if (!isClarificationFilesUpload && !isClarificationOutcome &&
                 HttpContext.Request.Form["removeClarificationFile"].Count == 1)
                 removeClarificationFileName = HttpContext.Request.Form["removeClarificationFile"].ToString();
 
-            vm.FinancialReviewDetails.ClarificationFiles = application.FinancialGrade.ClarificationFiles;
+            vm.FinancialReviewDetails.ClarificationFiles = financialReview.ClarificationFiles;
             vm.FilesToUpload = HttpContext.Request.Form.Files;
             
             var validationResponse = _clarificationValidator.Validate(vm, isClarificationFilesUpload, isClarificationOutcome);
@@ -279,13 +289,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var financialReviewDetails = new FinancialReviewDetails
             {
                 GradedBy = HttpContext.User.UserDisplayName(),
-                GradedDateTime = DateTime.UtcNow,
+                GradedOn = DateTime.UtcNow,
                 SelectedGrade = vm.FinancialReviewDetails.SelectedGrade,
                 FinancialDueDate = GetFinancialDueDate(vm),
                 Comments = comments,
                 ExternalComments = externalComments,
                 ClarificationResponse = vm.ClarificationResponse,
                 ClarificationRequestedOn = vm.FinancialReviewDetails.ClarificationRequestedOn,
+                ClarificationRequestedBy = vm.FinancialReviewDetails.ClarificationRequestedBy,
                 ClarificationFiles = vm.FinancialReviewDetails.ClarificationFiles
             };
             return financialReviewDetails;
@@ -353,12 +364,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
         public async Task<IActionResult> Graded(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            if (application?.FinancialGrade is null)
+            var financialReviewDetails = await _applyApiClient.GetFinancialReviewDetails(applicationId);
+            if (application is null || financialReviewDetails is null)
             {
                 return RedirectToAction(nameof(OpenApplications));
             }
 
-            return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", application.FinancialGrade);
+
+            return View("~/Views/Roatp/Apply/Financial/Graded.cshtml", financialReviewDetails);
         }
 
         private async Task<RoatpFinancialClarificationViewModel> RemoveUploadedFileAndRebuildViewModel(Guid applicationId, RoatpFinancialClarificationViewModel vm,
@@ -467,7 +480,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var organisationTypeSection = await GetOrganisationTypeSection(application.ApplicationId);
             var financialSections = await GetFinancialSections(application);
 
-            return new RoatpFinancialApplicationViewModel(application, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
+            var financialReviewDetails = await _applyApiClient.GetFinancialReviewDetails(application.ApplicationId);
+            return new RoatpFinancialApplicationViewModel(application, financialReviewDetails, parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
         }
 
         private async Task<Section> GetParentCompanySection(Guid applicationId)
