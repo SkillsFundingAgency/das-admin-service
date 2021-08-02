@@ -7,14 +7,14 @@
 
 @{
     ViewBag.Title = "Check the withdrawal date";
-    var Fragment = ApplicationReviewHelpers.ApplicationFragment("");   // Model.ReviewStatus
+    var Fragment = ApplicationReviewHelpers.ApplicationFragment(Model.ReviewStatus);
 }
 
 <a class="govuk-back-link"
-   asp-action="@Model.BackAction"
-   asp-controller="@Model.BackController"
+   asp-action="WithdrawalDateCheck"
+   asp-controller="Application"
    asp-route-organisationId="@Model.BackOrganisationId"
-   asp-fragment="@Fragment">Back</a>
+   asp-fragment="">Back</a>
 
 <div class="govuk-grid-row marginal">
 
