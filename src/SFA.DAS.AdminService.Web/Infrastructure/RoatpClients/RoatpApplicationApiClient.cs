@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
@@ -161,6 +162,44 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
 
             return true;
+        }
+
+        public async Task<AllowedProvider> GetAllowedProviderDetails(int ukprn)
+        {
+            return await Get<AllowedProvider>($"/AllowedProviders/{ukprn}");
+        }
+
+        public async Task<List<AllowedProvider>> GetAllowedProvidersList(string sortColumn, string sortOrder)
+        {
+            return await Get<List<AllowedProvider>>($"/AllowedProviders?sortColumn={sortColumn}&sortOrder={sortOrder}");
+        }
+
+        public async Task<bool> AddToAllowedProviders(int ukprn, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var response = await Post($"/AllowedProviders", new AllowedProvider { Ukprn = ukprn, StartDateTime = startDate, EndDateTime = endDate });
+                return response == HttpStatusCode.OK;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when adding UKPRN {ukprn} to Allowed Providers list");
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveFromAllowedProviders(int ukprn)
+        {
+            try
+            {
+                var response = await Delete($"/AllowedProviders/{ukprn}");
+                return response == HttpStatusCode.OK;
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when adding UKPRN {ukprn} to Allowed Providers list");
+                return false;
+            }
         }
     }
 }
