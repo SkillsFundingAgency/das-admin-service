@@ -31,10 +31,10 @@
         <div class="govuk-grid-column-two-thirds">
             <form data-module="das-clear-form-errors" novalidate method="post">
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
+                    <span class="govuk-error-message" asp-validation-for="StartDate"></span>
+                    <span class="govuk-error-message" asp-validation-for="EndDate"></span>
                     <fieldset class="govuk-fieldset app-form-group-inline">
-                        <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
-                        <span class="govuk-error-message" asp-validation-for="StartDate"></span>
-                        <span class="govuk-error-message" asp-validation-for="EndDate"></span>
                         <div class="app-form-group-inline__item">
                             <label asp-for="Ukprn" class="govuk-label">
                                 UKPRN
