@@ -403,7 +403,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 return RedirectToAction(nameof(WithdrawalDateCheck), new { currentVersionIndex = sequenceVm.CurrentVersionIndex.Value });
             }
 
-            return RedirectToAction(nameof(Assessment), new { BackAction = "wibble" });
+            return RedirectToAction(nameof(Assessment));
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId?}")]
