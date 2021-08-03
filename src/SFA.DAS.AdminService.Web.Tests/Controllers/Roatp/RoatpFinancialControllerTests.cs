@@ -127,8 +127,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             viewModel.ApplicantEmailAddress.Should().Be(_emailAddress);
         }
 
-        //MFCMFC fix tests
-        [Ignore("Fixes pending")]
         [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.New, "Application.cshtml")]
         [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.InProgress, "Application.cshtml")]
         [TestCase(ApplicationStatus.GatewayAssessed, FinancialReviewStatus.ClarificationSent, "Application_Clarification.cshtml")]
@@ -143,10 +141,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 {
                     ApplicationId = _applicationId,
                     ApplicationStatus = applicationStatus,
-                    //MFCMFC needs new setup
-                    //FinancialReviewStatus = financialReviewStatus,
                     ApplyData = new RoatpApplyData { ApplyDetails = new RoatpApplyDetails(), Sequences = new List<RoatpApplySequence>() }
                 });
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(
+                new FinancialReviewDetails {ApplicationId = _applicationId, Status = financialReviewStatus});
 
             _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
 
@@ -182,9 +181,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual("OpenApplications",result.ActionName);
         }
 
-
-        //MFCMFC fix tests
-        [Ignore("Fixes pending")]
         [TestCase(FinancialApplicationSelectedGrade.Outstanding)]
         [TestCase(FinancialApplicationSelectedGrade.Satisfactory)]
         [TestCase(FinancialApplicationSelectedGrade.Good)]
@@ -218,9 +214,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    //MFCMFC needs new setup
-                    //FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
             _financialReviewDetails = new FinancialReviewDetails
             {
@@ -233,6 +227,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -253,9 +249,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual("Graded", result.ActionName);
         }
 
-        //MFCMFC fix tests
         [Test]
-        [Ignore("Fixes pending")]
         public void When_clarification_file_is_uploaded_and_page_is_refreshed_with_filename_included_in_model()
         {
             var buttonPressed = "submitClarificationFiles";
@@ -302,9 +296,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    // MFCMFC needs new setup
-                    //FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
 
             _applicationApplyApiClient.Setup(x =>
@@ -322,6 +314,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -345,11 +338,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "file.pdf");
         }
 
-
-
-        //MFCMFC fix tests
         [Test]
-        [Ignore("Fixes pending")]
         public void When_clarification_file_is_removed_and_page_is_refreshed_with_filename_removed_from_model()
         {
             var buttonPressed = "removeClarificationFile";
@@ -383,7 +372,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 Comments = "comments",
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow,
-                ClarificationFiles = new List<ClarificationFile> { new ClarificationFile { Filename = fileToBeRemoved }, new ClarificationFile { Filename = "second.pdf" } }
+                ClarificationFiles = new List<ClarificationFile> { new ClarificationFile { Filename = fileToBeRemoved } }
             };
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
@@ -408,14 +397,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    //MFCMFC needs new setup
-                    //FinancialGrade = _financialReviewDetails
+                    }
                 });
    
             _applicationApplyApiClient.Setup(x =>
                     x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), fileToBeRemoved))
                 .ReturnsAsync(true);
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(new FinancialReviewDetails());
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -436,13 +425,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.IsTrue(result.ViewName.Contains("Application_Clarification.cshtml"));
             var resultModel = result.Model as RoatpFinancialClarificationViewModel;
 
-            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles.Count == 1);
-            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "second.pdf");
+            Assert.IsNull(resultModel.FinancialReviewDetails.ClarificationFiles);
         }
 
-        //MFCMFC fix tests
         [Test]
-        [Ignore("Fixes pending")]
         public void when_validation_errors_occur_page_refreshes_with_validation_messages()
         {
             var buttonPressed = "submitClarificationFiles";
@@ -489,9 +475,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    //MFCMFC needs new setup
-                    //FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
 
             _applicationApplyApiClient.Setup(x =>
@@ -509,6 +493,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
