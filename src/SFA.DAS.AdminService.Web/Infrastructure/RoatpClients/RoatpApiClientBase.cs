@@ -231,6 +231,32 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             }
         }
 
+        /// <summary>
+        /// HTTP DELETE to the specified URI
+        /// </summary>
+        /// <param name="uri">The URI to the end point you wish to interact with.</param>
+        /// <returns>The HttpStatusCode, which is the responsibility of the caller to handle.</returns>
+        /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
+        protected async Task<HttpStatusCode> Delete(string uri)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            try
+            {
+                using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    await LogErrorIfUnsuccessfulResponse(response);
+                    return response.StatusCode;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"Error when processing request: {HttpMethod.Delete} - {uri}");
+                throw;
+            }
+        }
+
         private async Task LogErrorIfUnsuccessfulResponse(HttpResponseMessage response)
         {
             if (response?.RequestMessage != null && !response.IsSuccessStatusCode)
