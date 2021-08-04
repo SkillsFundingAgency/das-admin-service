@@ -45,11 +45,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("InvalidRole", "Home");
             }
 
-            if (HttpContext.User.HasRoatpRoleOnly())
-            {
-                return RedirectToAction("Index", "RoatpHome");
-            }
-
             return RedirectToAction("Index", "Dashboard");
         }
 

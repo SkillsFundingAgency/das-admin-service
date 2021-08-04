@@ -32,21 +32,5 @@ namespace SFA.DAS.AdminService.Web.Domain
                    || user.IsInRole(RoatpApplicationOversightTeam)
                    || user.IsInRole(EpaoReportsOnlyTeam);
         }
-
-        public static bool HasRoatpRoleOnly(this ClaimsPrincipal user)
-        {
-            if (user.IsInRole(RoatpGatewayTeam)
-                && !user.IsInRole(CertificationTeam)
-                && !user.IsInRole(OperationsTeam)
-                && !user.IsInRole(AssessmentDeliveryTeam)
-                && !user.IsInRole(ProviderRiskAssuranceTeam)
-                && !user.IsInRole(RegisterViewOnlyTeam)
-                && !user.IsInRole(EpaoReportsOnlyTeam))
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

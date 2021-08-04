@@ -1,15 +1,17 @@
 ﻿@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AddOrganisationViaUkprnViewModel
 
-@using SFA.DAS.AdminService.Web
-@using SFA.DAS.AdminService.Web.Domain
-
 @{ 
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "What is the organisation's UKPRN?"; 
 }
 
-<form asp-controller="RoatpHome" asp-action="Index" method="post" name="backForm">
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Add a new training provider</li>
+    </ol>
+</div>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
