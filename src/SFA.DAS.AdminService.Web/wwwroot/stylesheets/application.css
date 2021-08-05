@@ -1835,4 +1835,34 @@ TODO: change to 'das-page-navigation' and BEM
     }
 }
 
+@media (min-width: 40.0625em) {
+  .app-form-group-inline {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+
+.js-enabled .app-form-group-inline .flatpickr-input, 
+.js-enabled .app-form-group-inline .flatpickr__input-button {
+  margin-bottom: 0;
+}
+
+.app-form-group-inline__item {
+  margin-bottom: 20px;
+}
+
+.app-form-group-inline__item:last-child {
+  margin-bottom: 0;
+}
+
+.app-form-group-inline__button {
+  margin-bottom: 2px;
+}
+
+@media (min-width: 40.0625em) {
+  .app-form-group-inline__item {
+    margin-bottom: 0;
+    margin-right: 15px;
+  }
+}
 
