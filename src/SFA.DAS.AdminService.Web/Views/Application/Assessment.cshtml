@@ -63,7 +63,15 @@
                         }
 
                         <input type="hidden" asp-for="ReturnType" value="@ReturnTypes.Approve" />
-                        <button class="govuk-button" type="submit">Approve application</button>
+
+                        if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                        {
+                            <button class="govuk-button" type="submit">Approve withdrawal</button>
+                        }
+                        else
+                        {
+                            <button class="govuk-button" type="submit">Approve application</button>
+                        }
                     }
                     else
                     {
