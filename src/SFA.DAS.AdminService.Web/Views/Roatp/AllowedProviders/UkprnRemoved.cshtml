@@ -1,0 +1,44 @@
+@model SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders.UkprnRemovedFromAllowedProvidersListViewModel
+
+@{
+    ViewBag.Title = "Removed from allow list";
+    Layout = "_Layout";
+}
+
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="Dashboard">Dashboard</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" asp-action="Index" asp-controller="RoatpAllowedProviders">UKPRN allow list</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item" aria-current="page">Removed from allow list</li>
+    </ol>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Removed from allow list
+                </h1>
+                <div class="govuk-panel__body">
+                    <div>
+                        <span class="govuk-!-font-size-24">
+                            The following UKPRN was removed:
+                        </span>
+                        <br>
+                        <strong>@Model.Ukprn</strong>
+                    </div>
+                </div>
+            </div>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="Index" asp-controller="RoatpAllowedProviders">Return to UKPRN allow list</a>
+            </p>
+        </div>
+    </div>
+</main>
