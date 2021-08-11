@@ -44,7 +44,7 @@
               asp-route-backOrganisationId="@Model.BackOrganisationId">
             <h1 class="govuk-heading-xl">Check the withdrawal date</h1>
             @{await Html.RenderPartialAsync("_WithdrawalDatePartial", @Model);}
-            <div class="govuk-form-group">
+            <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
 
                 <fieldset class="govuk-fieldset">
 
@@ -55,6 +55,8 @@
                         </h1>
 
                     </legend>
+
+                    <span class="govuk-error-message" asp-validation-for="RequestedWithdrawalDate"></span>
 
                     <div class="govuk-radios govuk-radios--inline">
 
