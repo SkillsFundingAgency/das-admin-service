@@ -302,7 +302,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (string.IsNullOrWhiteSpace(dateApproved) || (dateApproved.Trim().ToUpper() != "NO" && dateApproved.Trim().ToUpper() != "YES"))
             {
-                errorMessages["RequestedWithdrawalDate"] = "Please choose an option either 'Yes' or 'No'.";
+                errorMessages["RequestedWithdrawalDate"] = "Select Yes or No";
             }
 
             if (errorMessages.Any())
@@ -370,7 +370,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             string effectiveToDateText = $"{effectiveToDay}/{effectiveToMonth}/{effectiveToYear}";
             if (!DateTime.TryParse(effectiveToDateText, out DateTime effectiveToDate))
             {
-                errorMessages["RequestedWithdrawalDate"] = "Please enter a valid date.";
+                errorMessages["RequestedWithdrawalDate"] = "Enter a valid date";
+            }
+            if (string.IsNullOrWhiteSpace(effectiveToDay) && string.IsNullOrWhiteSpace(effectiveToMonth) && string.IsNullOrWhiteSpace(effectiveToYear))
+            {
+                errorMessages["RequestedWithdrawalDate"] = "Enter a date";
             }
 
             if (errorMessages.Any())
