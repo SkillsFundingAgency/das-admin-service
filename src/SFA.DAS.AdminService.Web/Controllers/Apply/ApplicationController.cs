@@ -367,17 +367,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var errorMessages = new Dictionary<string, string>();
 
-            if(string.IsNullOrWhiteSpace(effectiveToDay) && string.IsNullOrWhiteSpace(effectiveToMonth) && string.IsNullOrWhiteSpace(effectiveToYear))
+            string effectiveToDateText = $"{effectiveToDay}/{effectiveToMonth}/{effectiveToYear}";
+            if (!DateTime.TryParse(effectiveToDateText, out DateTime effectiveToDate))
             {
-                errorMessages["RequestedWithdrawalDate"] = "Enter a date.";
+                errorMessages["RequestedWithdrawalDate"] = "Enter a valid date";
             }
-            else
+            if (string.IsNullOrWhiteSpace(effectiveToDay) && string.IsNullOrWhiteSpace(effectiveToMonth) && string.IsNullOrWhiteSpace(effectiveToYear))
             {
-                string effectiveToDateText = $"{effectiveToDay}/{effectiveToMonth}/{effectiveToYear}";
-                if (!DateTime.TryParse(effectiveToDateText, out DateTime effectiveToDate))
-                {
-                    errorMessages["RequestedWithdrawalDate"] = "Enter a valid date.";
-                }
+                errorMessages["RequestedWithdrawalDate"] = "Enter a date";
             }
 
             if (errorMessages.Any())
