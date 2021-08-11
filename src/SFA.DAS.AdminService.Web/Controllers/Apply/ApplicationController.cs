@@ -370,7 +370,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             string effectiveToDateText = $"{effectiveToDay}/{effectiveToMonth}/{effectiveToYear}";
             if (!DateTime.TryParse(effectiveToDateText, out DateTime effectiveToDate))
             {
-                errorMessages["RequestedWithdrawalDate"] = "Please enter a valid date.";
+                errorMessages["RequestedWithdrawalDate"] = "Enter a valid date.";
             }
 
             if (errorMessages.Any())
