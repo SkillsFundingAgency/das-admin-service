@@ -302,7 +302,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (string.IsNullOrWhiteSpace(dateApproved) || (dateApproved.Trim().ToUpper() != "NO" && dateApproved.Trim().ToUpper() != "YES"))
             {
-                errorMessages["RequestedWithdrawalDate"] = "Please choose an option either 'Yes' or 'No'.";
+                errorMessages["RequestedWithdrawalDate"] = "Select Yes or No";
             }
 
             if (errorMessages.Any())
