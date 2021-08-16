@@ -324,7 +324,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                 {
-                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, sequenceVm.RequestedWithdrawalDate.Value);
+                    await WithdrawalOrganisation(organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value);
                 }
                 else if (null == sequenceVm.Versions || !sequenceVm.Versions.Any())
                 {
@@ -389,7 +389,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, effectiveToDate);
+                await WithdrawalOrganisation(organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value); 
             }
             else if(null == sequenceVm.Versions || !sequenceVm.Versions.Any())
             {
@@ -588,6 +588,17 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     }
                 }
             }
+        }
+
+        private async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        {
+            var request = new WithdrawOrganisationRequest
+            {
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                WithdrawalDate = withdrawalDate
+            };
+
+            await _apiClient.WithdrawOrganisation(request);
         }
     }
 }
