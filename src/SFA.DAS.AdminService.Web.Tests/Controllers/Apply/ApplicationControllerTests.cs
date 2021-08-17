@@ -15,6 +15,8 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
@@ -41,6 +43,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             _answerService = new Mock<IAnswerService>();
             _answerInjectionService = new Mock<IAnswerInjectionService>();
             _logger = new Mock<ILogger<ApplicationController>>();
+
+            var identity = new GenericIdentity("test user");
+            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", "JOHN"));
+            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname", "DUNHILL"));
+
+            _httpContextAccessor.Setup(a => a.HttpContext.User.Identities)
+               .Returns(new List<ClaimsIdentity>() { identity });
+
             _controller = new ApplicationController(_apiClient.Object, _applyApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object);
         }
 
@@ -143,7 +153,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             var viewResult = await _controller.WithdrawalDateCheckSave(applicationId, sequenceNumber, backModel, dateApproved, currentVersionIndex);
 
             // Assert
-            _apiClient.Verify(m => m.WithdrawOrganisation(It.Is<WithdrawOrganisationRequest>(x => x.WithdrawalDate == withdrawalDate)));
+            _apiClient.Verify(m => m.WithdrawOrganisation(It.Is<WithdrawOrganisationRequest>(x => x.WithdrawalDate == withdrawalDate &&
+                                                                                                   x.UpdatedBy == "JOHN DUNHILL")));
         }
 
         private void ArrangeMocksWithIrrelevantData()

@@ -324,7 +324,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                 {
-                    await WithdrawalOrganisation(organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value);
+                    await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value);
                 }
                 else if (null == sequenceVm.Versions || !sequenceVm.Versions.Any())
                 {
@@ -389,7 +389,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                await WithdrawalOrganisation(organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value); 
+                await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value); 
             }
             else if(null == sequenceVm.Versions || !sequenceVm.Versions.Any())
             {
@@ -590,12 +590,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
         }
 
-        private async Task WithdrawalOrganisation(string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        private async Task WithdrawalOrganisation(ApplicationResponse application, string endPointAssessorOrganisationId, DateTime withdrawalDate)
         {
             var request = new WithdrawOrganisationRequest
             {
+                ApplicationId = application.Id,
                 EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
-                WithdrawalDate = withdrawalDate
+                WithdrawalDate = withdrawalDate,
+                UpdatedBy = _contextAccessor.HttpContext.User.UserDisplayName()
             };
 
             await _apiClient.WithdrawOrganisation(request);
