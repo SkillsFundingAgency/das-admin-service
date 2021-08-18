@@ -389,7 +389,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value); 
+                await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, effectiveToDate); 
             }
             else if(null == sequenceVm.Versions || !sequenceVm.Versions.Any())
             {
