@@ -541,7 +541,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 var request = new UpdateEpaOrganisationStandardVersionRequest
                 {
                     OrganisationStandardId = organisationStandardId,
-                    OrganisationStandardVersion = decimal.Parse(standardVersion.Version),
+                    OrganisationStandardVersion = standardVersion.Version,
                     EffectiveFrom = standardVersion.EffectiveFrom,
                     EffectiveTo = effectiveToDate
                 };
