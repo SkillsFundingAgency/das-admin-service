@@ -416,6 +416,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
+
+
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
                 // This is to stop the wrong sequence being returned, or if not all sections are Evaluated
@@ -461,8 +465,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 else
                 {
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One IS REQUIRED.");
-                    var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
 
                     //    'Inject' the Organisation and associated contacts if not RoEPAO approved
                     if (!organisation.OrganisationData.RoEPAOApproved)
@@ -488,7 +490,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
-            var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            var versions = application.ApplyData?.Apply?.Versions;
+            if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && versions != null && versions.Any())
+                standardDescription = $"{standardDescription}, Version {String.Join(",", versions)}";
+
+            var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, organisation.EndPointAssessorName, 
+                versions, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             return View("Returned", returnedViewModel);
         }

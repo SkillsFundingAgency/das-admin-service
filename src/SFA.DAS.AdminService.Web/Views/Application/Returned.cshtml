@@ -6,7 +6,7 @@
     ViewBag.Title = Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO
         ? Model.ReturnType == ReturnTypes.ReturnWithFeedback
             ? "You've asked for more information"
-            : "You've approved this withdrawal notification"
+            : "You've approved this withdrawal application"
         : Model.WarningMessages.Any()
             ? "Issue during approval"
             : "Feedback sent";
@@ -39,27 +39,27 @@
             }
             else
             {
-                <p class="govuk-body">
-                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        if (Model.ReturnType == ReturnTypes.ReturnWithFeedback)
-                        {
-                            <text>We've sent an email to the applicant.</text>
-                        }
-                        else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-                        {
-                            <text>You've approved this organisation to withdraw from the register of end-point assessment organisations.</text>
-                        }
-                        else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                        {
-                            <text>You've approved this organisation to withdraw from assessing @Model.StandardDescription.</text>
-                        }
-                    }
-                    else
-                    {
-                        <text>An email has been sent to the applicant.</text>
-                    }
-                </p>
+        <p class="govuk-body">
+            @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO || Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+            {
+                if (Model.ReturnType == ReturnTypes.ReturnWithFeedback)
+                {
+                    <text>We've sent an email to the applicant.</text>
+                }
+                else if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <text>You've approved @Model.OrganisationName to withdraw from the register of end-point assessment organisations.</text>
+                }
+                else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <text>You've approved @Model.OrganisationName to withdraw from assessing @Model.StandardDescription.</text>
+                }
+            }
+            else
+            {
+                <text>An email has been sent to the applicant.</text>
+            }
+        </p>
             }
 
             <h2 class="govuk-heading-m">
@@ -85,13 +85,19 @@
                         <li>We've sent an email to the applicant confirming this approval.</li>
                         @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                         {
-                            <li>You'll need to manually remove this organisation from the register of end-point assessment organisations on the agreed date.</li>
+                            <li>@Model.OrganisationName will be withdrawn from the register of end-point assessment organisations on the agreed date.</li>
                         }
                         else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                        {                        
-                            <li>You'll need to manually remove this organisation from assessing @Model.StandardDescription.</li>
+                        {
+                            if (Model.Versions != null)
+                            {
+                                <li>@Model.OrganisationName will be withdrawn from the selected standard versions(s) on the agreed date.</li>
+                            }
+                            else
+                            {
+                                <li>@Model.OrganisationName will be withdrawn from the selected standard on the agreed date.</li>
+                            }
                         }
-                        
                     </ul>
                 }
             }
