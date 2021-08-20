@@ -226,6 +226,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
+        public async Task WithdrawOrganisation(WithdrawOrganisationRequest request)
+        {
+            await Post<WithdrawOrganisationRequest>("api/v1/organisations/withdraw", request);
+        }
+
         public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request)
         {
             return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
