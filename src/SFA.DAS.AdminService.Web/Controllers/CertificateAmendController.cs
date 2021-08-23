@@ -33,9 +33,23 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var (actionResult, model) = await GetCheckViewModel(vm.Id, vm.SearchString, vm.Page, vm.FromApproval);
             var options = await ApiClient.GetStandardOptions(vm.GetStandardId());
+            var isIncompleteAddressee = string.IsNullOrWhiteSpace(model.Name) || string.IsNullOrWhiteSpace(model.AddressLine1);
             if (options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option))
             {
                 ModelState.AddModelError("Option", "Add an option");
+                return actionResult;
+            }
+
+            if (isIncompleteAddressee)
+            {
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    ModelState.AddModelError("Name", "You need to give a name of who will receive the certificate"); 
+                }
+                if (string.IsNullOrWhiteSpace(model.AddressLine1))
+                {
+                    ModelState.AddModelError("AddressLine1", "You need to give an address of where we will send the certificate");
+                }
                 return actionResult;
             }
 
