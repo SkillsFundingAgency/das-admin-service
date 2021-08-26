@@ -556,6 +556,24 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 await _apiClient.UpdateEpaOrganisationStandardVersion(request);
             }
 
+            async Task UpdateEpaOrganisationStandard(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary orgStandard)
+            {
+                var request = new UpdateEpaOrganisationStandardRequest
+                {
+                    OrganisationId = orgStandard.OrganisationId,
+                    OrganisationStandardId = orgStandard.Id,
+                    StandardCode = orgStandard.StandardCode,
+                    EffectiveFrom = orgStandard.EffectiveFrom,
+                    EffectiveTo = effectiveToDate,
+                    ContactId = orgStandard.ContactId?.ToString(),
+                    DeliveryAreas = orgStandard.DeliveryAreas,
+                    Comments = orgStandard.Comments,
+                    DeliveryAreasComments = orgStandard.OrganisationStandardData.DeliveryAreasComments
+                };
+
+                await _apiClient.UpdateEpaOrganisationStandard(request);
+            }
+
             async Task UpdateStandardWithVersions(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary standardWithVersions)
             {
                 if (string.IsNullOrWhiteSpace(version))
@@ -564,6 +582,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     {
                         await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
+
+                    // As all versions are being withdrawn, also update the standard.
+                    await UpdateEpaOrganisationStandard(standardWithVersions);
                 }
                 else
                 {
