@@ -580,46 +580,45 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 };
 
                 await _apiClient.UpdateEpaOrganisationStandard(request);
-
-                async Task UpdateStandardWithVersions(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary standardWithVersions)
+            }
+            async Task UpdateStandardWithVersions(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary standardWithVersions)
+            {
+                if (string.IsNullOrWhiteSpace(version))
                 {
-                    if (string.IsNullOrWhiteSpace(version))
+                    foreach (var standardVersion in standardWithVersions.StandardVersions)
                     {
-                        foreach (var standardVersion in standardWithVersions.StandardVersions)
-                        {
-                            await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
-                        }
-
-                        await UpdateEpaOrganisationStandard(standardWithVersions);
+                        await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
-                    else
+
+                    await UpdateEpaOrganisationStandard(standardWithVersions);
+                }
+                else
+                {
+                    var standardVersion = standardWithVersions.StandardVersions.FirstOrDefault(sv => sv.Version == version);
+                    if (null != standardVersion)
                     {
-                        var standardVersion = standardWithVersions.StandardVersions.FirstOrDefault(sv => sv.Version == version);
-                        if (null != standardVersion)
-                        {
-                            await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
-                        }
+                        await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
                 }
+            }
 
-                var organisationStandardsWithVersions = await _apiClient.GetEpaOrganisationStandards(endPointAssessorOrganisationId);
-                if (null != organisationStandardsWithVersions && organisationStandardsWithVersions.Any())
+            var organisationStandardsWithVersions = await _apiClient.GetEpaOrganisationStandards(endPointAssessorOrganisationId);
+            if (null != organisationStandardsWithVersions && organisationStandardsWithVersions.Any())
+            {
+                if (string.IsNullOrWhiteSpace(standardReference))
                 {
-                    if (string.IsNullOrWhiteSpace(standardReference))
+                    // The organisation is withdrawing from the register so update every organisation standard
+                    foreach (var standardWithVersions in organisationStandardsWithVersions)
                     {
-                        // The organisation is withdrawing from the register so update every organisation standard
-                        foreach (var standardWithVersions in organisationStandardsWithVersions)
-                        {
-                            await UpdateStandardWithVersions(standardWithVersions);
-                        }
+                        await UpdateStandardWithVersions(standardWithVersions);
                     }
-                    else
+                }
+                else
+                {
+                    var standardWithVersions = organisationStandardsWithVersions.FirstOrDefault(os => os.StandardReference == standardReference);
+                    if (null != standardWithVersions)
                     {
-                        var standardWithVersions = organisationStandardsWithVersions.FirstOrDefault(os => os.StandardReference == standardReference);
-                        if (null != standardWithVersions)
-                        {
-                            await UpdateStandardWithVersions(standardWithVersions);
-                        }
+                        await UpdateStandardWithVersions(standardWithVersions);
                     }
                 }
             }
