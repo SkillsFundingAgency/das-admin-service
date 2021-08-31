@@ -10,6 +10,7 @@ namespace SFA.DAS.AdminService.Settings
 
         string IfaApiClientBaseUrl { get; set; }
         AuthSettings StaffAuthentication { get; set; }
+        ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
         ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }
@@ -20,8 +21,6 @@ namespace SFA.DAS.AdminService.Settings
         string RoatpAssessorBaseUrl { get; set; }
 
         ClientApiAuthentication RoatpApiAuthentication { get; set; }
-
-        ClientApiAuthentication QnaApiAuthentication { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }
         RedisCacheSettings RedisCacheSettings { get; }
