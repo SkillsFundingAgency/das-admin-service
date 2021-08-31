@@ -840,7 +840,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
                 EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null,
                 EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null,
-                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
+                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null,
 
             };
         }
