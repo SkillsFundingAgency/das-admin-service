@@ -35,8 +35,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var options = await ApiClient.GetStandardOptions(vm.GetStandardId());
             var isDueCertificate = vm.SelectedGrade != null & vm.SelectedGrade != CertificateGrade.Fail;
             var isMissingOptions = options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option);
+            var isMissingRecipient = string.IsNullOrWhiteSpace(model.AddressLine1) || string.IsNullOrWhiteSpace(model.Name);
 
-            if (isDueCertificate || isMissingOptions)
+            if ((isDueCertificate & isMissingRecipient) || isMissingOptions)
             {
                 if (isMissingOptions)
                 {
