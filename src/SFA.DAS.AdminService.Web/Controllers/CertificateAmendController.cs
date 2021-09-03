@@ -33,9 +33,24 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var (actionResult, model) = await GetCheckViewModel(vm.Id, vm.SearchString, vm.Page, vm.FromApproval);
             var options = await ApiClient.GetStandardOptions(vm.GetStandardId());
-            if (options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option))
+            var isDueCertificate = vm.SelectedGrade != null & vm.SelectedGrade != CertificateGrade.Fail;
+            var isMissingOptions = options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option);
+            var isMissingRecipient = string.IsNullOrWhiteSpace(model.AddressLine1) || string.IsNullOrWhiteSpace(model.Name);
+
+            if ((isDueCertificate & isMissingRecipient) || isMissingOptions)
             {
-                ModelState.AddModelError("Option", "Add an option");
+                if (isMissingOptions)
+                {
+                    ModelState.AddModelError("Option", "Add an option");
+                }
+                if (isDueCertificate & string.IsNullOrWhiteSpace(model.Name))
+                {
+                    ModelState.AddModelError("Name", "You need to give a name of who will receive the certificate"); 
+                }
+                if (isDueCertificate & string.IsNullOrWhiteSpace(model.AddressLine1))
+                {
+                    ModelState.AddModelError("AddressLine1", "You need to give an address of where we will send the certificate");
+                }
                 return actionResult;
             }
 
