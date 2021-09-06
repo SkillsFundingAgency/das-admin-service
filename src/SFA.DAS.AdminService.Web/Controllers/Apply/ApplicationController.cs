@@ -260,7 +260,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateCheck/{backOrganisationId?}")]
-        public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel, int currentVersionIndex) 
+        public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel, int currentVersionIndex)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
@@ -324,7 +324,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
                 {
-                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, sequenceVm.RequestedWithdrawalDate.Value);
+                    await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, sequenceVm.RequestedWithdrawalDate.Value);
                 }
                 else if (null == sequenceVm.Versions || !sequenceVm.Versions.Any())
                 {
@@ -338,7 +338,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
 
                 sequenceVm.IncrementCurrentVersionIndex();
-                if(sequenceVm.CurrentVersionIndex.HasValue)
+                if (sequenceVm.CurrentVersionIndex.HasValue)
                 {
                     return RedirectToAction(nameof(WithdrawalDateCheck), new { currentVersionIndex = sequenceVm.CurrentVersionIndex.Value });
                 }
@@ -389,9 +389,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             if (sequenceVm.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
             {
-                await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, null, null, effectiveToDate);
+                await WithdrawalOrganisation(application, organisation.EndPointAssessorOrganisationId, effectiveToDate);
             }
-            else if(null == sequenceVm.Versions || !sequenceVm.Versions.Any())
+            else if (null == sequenceVm.Versions || !sequenceVm.Versions.Any())
             {
                 // No versions supplied in the withdrawal application means they are withdrawing from the standard completely
                 await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, sequenceVm.StandardReference, null, effectiveToDate);
@@ -415,6 +415,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
+
+            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
+
 
             if (activeApplicationSequence is null || activeApplicationSequence.SequenceNo != sequenceNo || activeApplicationSequence.Sections.Any(s => s.Status != ApplicationSectionStatus.Evaluated && !s.NotRequired))
             {
@@ -461,8 +465,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 else
                 {
                     _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One IS REQUIRED.");
-                    var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
-                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
 
                     //    'Inject' the Organisation and associated contacts if not RoEPAO approved
                     if (!organisation.OrganisationData.RoEPAOApproved)
@@ -488,7 +490,12 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
-            var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+            var versions = application.ApplyData?.Apply?.Versions;
+            if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && versions != null && versions.Any())
+                standardDescription = $"{standardDescription}, Version {String.Join(",", versions)}";
+
+            var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, organisation.EndPointAssessorName,
+                versions, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             return View("Returned", returnedViewModel);
         }
@@ -538,10 +545,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             async Task UpdateEpaOrganisationStandardVersion(int organisationStandardId, AssessorService.Api.Types.Models.AO.OrganisationStandardVersion standardVersion)
             {
+                if (standardVersion.EffectiveTo != null && standardVersion.EffectiveTo < effectiveToDate)
+                    return;
+
                 var request = new UpdateEpaOrganisationStandardVersionRequest
                 {
                     OrganisationStandardId = organisationStandardId,
-                    OrganisationStandardVersion = decimal.Parse(standardVersion.Version),
+                    OrganisationStandardVersion = standardVersion.Version,
                     EffectiveFrom = standardVersion.EffectiveFrom,
                     EffectiveTo = effectiveToDate
                 };
@@ -549,6 +559,28 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 await _apiClient.UpdateEpaOrganisationStandardVersion(request);
             }
 
+            async Task UpdateEpaOrganisationStandard(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary orgStandard)
+            {
+                // As all versions are being withdrawn, also update the standard.
+                // but only if the effective to is null, or > than the date now being set
+                if (orgStandard.EffectiveTo != null && orgStandard.EffectiveTo < effectiveToDate)
+                    return;
+
+                var request = new UpdateEpaOrganisationStandardRequest
+                {
+                    OrganisationId = orgStandard.OrganisationId,
+                    OrganisationStandardId = orgStandard.Id,
+                    StandardCode = orgStandard.StandardCode,
+                    EffectiveFrom = orgStandard.EffectiveFrom,
+                    EffectiveTo = effectiveToDate,
+                    ContactId = orgStandard.ContactId?.ToString(),
+                    DeliveryAreas = orgStandard.DeliveryAreas,
+                    Comments = orgStandard.Comments,
+                    DeliveryAreasComments = orgStandard.OrganisationStandardData.DeliveryAreasComments
+                };
+
+                await _apiClient.UpdateEpaOrganisationStandard(request);
+            }
             async Task UpdateStandardWithVersions(AssessorService.Api.Types.Models.AO.OrganisationStandardSummary standardWithVersions)
             {
                 if (string.IsNullOrWhiteSpace(version))
@@ -557,6 +589,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     {
                         await UpdateEpaOrganisationStandardVersion(standardWithVersions.Id, standardVersion);
                     }
+
+                    await UpdateEpaOrganisationStandard(standardWithVersions);
                 }
                 else
                 {
@@ -588,6 +622,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     }
                 }
             }
+        }
+
+        private async Task WithdrawalOrganisation(ApplicationResponse application, string endPointAssessorOrganisationId, DateTime withdrawalDate)
+        {
+            var request = new WithdrawOrganisationRequest
+            {
+                ApplicationId = application.Id,
+                EndPointAssessorOrganisationId = endPointAssessorOrganisationId,
+                WithdrawalDate = withdrawalDate,
+                UpdatedBy = _contextAccessor.HttpContext.User.UserDisplayName()
+            };
+
+            await _apiClient.WithdrawOrganisation(request);
         }
     }
 }

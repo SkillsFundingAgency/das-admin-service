@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [Test]
         public async Task Then_correct_standard_version_is_mapped()
         {
-            var result = await Sut.EditStandardVersion(1, 1.0m) as ViewResult;
+            var result = await Sut.EditStandardVersion(1, "1.0") as ViewResult;
 
             var model = result.Model as RegisterEditOrganisationStandardVersionViewModel;
 
@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
                 .ReturnsAsync("OK");
             var model = new RegisterEditOrganisationStandardVersionViewModel();
 
-            var result = await Sut.EditStandardVersion(1, 1.0m, model) as RedirectToActionResult;
+            var result = await Sut.EditStandardVersion(1, "1.0", model) as RedirectToActionResult;
 
             result.ControllerName.Should().Be("Register");
             result.ActionName.Should().Be("ViewStandard");
