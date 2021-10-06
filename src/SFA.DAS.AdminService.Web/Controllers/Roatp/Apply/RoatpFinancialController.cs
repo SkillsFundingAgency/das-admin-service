@@ -479,23 +479,26 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var hasParentCompanyTagValue = await _qnaApiClient.GetQuestionTag(applicationId, RoatpQnaConstants.QnaQuestionTags.HasParentCompany);
 
             if ("Yes".Equals(hasParentCompanyTagValue, StringComparison.OrdinalIgnoreCase))
-            {                
-                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
+            {
+                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
                 parentCompanySection.LinkTitle = ParentCompanySectionTitle;
                 parentCompanySection.Title = ParentCompanySectionTitle;
-                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyCheck 
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails).ToList();
-            }
+                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page =>
+                        page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyCheck
+                        || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails)
+                    .ToList();
 
-
-            // This is a workaround for a single issue of layout. If any more go in, needs to be converted to a service
-            var companyOrCharityNumberQuestionId = "YO-21";
-            if (parentCompanySection?.QnAData?.Pages != null)
-            {
-                foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
-                    page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
+                // This is a workaround for a single issue of layout. If any more go in, needs to be converted to a service
+                var companyOrCharityNumberQuestionId = "YO-21";
+                if (parentCompanySection?.QnAData?.Pages != null)
                 {
-                    question.Label = "Company or charity number";
+                    foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
+                        page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
+                    {
+                        question.Label = "Company or charity number";
+                    }
                 }
             }
 
