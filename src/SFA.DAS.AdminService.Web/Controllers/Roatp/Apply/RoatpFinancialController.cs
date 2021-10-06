@@ -487,8 +487,21 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                                                                                                     || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails).ToList();
             }
 
+
+            // This is a workaround for a single issue of layout. If any more go in, needs to be converted to a service
+            var companyOrCharityNumberQuestionId = "YO-21";
+            if (parentCompanySection?.QnAData?.Pages != null)
+            {
+                foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
+                    page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
+                {
+                    question.Label = "Company or charity number";
+                }
+            }
+
             return parentCompanySection;
         }
+        
 
         private async Task<Section> GetActivelyTradingSection(Guid applicationId)
         {
