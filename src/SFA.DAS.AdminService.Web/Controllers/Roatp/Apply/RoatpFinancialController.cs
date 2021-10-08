@@ -26,6 +26,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 using FinancialApplicationSelectedGrade = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.FinancialApplicationSelectedGrade;
 using FinancialReviewStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.FinancialReviewStatus;
 using SFA.DAS.AdminService.Web.ModelBinders;
+using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -491,14 +492,29 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                     .ToList();
 
                 // This is a workaround for a single issue of layout. If any more go in, needs to be converted to a service
-                var companyOrCharityNumberQuestionId = "YO-21";
+                // also contains code to remove an empty answer
+                const string companyOrCharityNumberQuestionId = "YO-21";
                 if (parentCompanySection?.QnAData?.Pages != null)
                 {
+                    var removeQuestions = new List<Question>();
                     foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
                         page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
                     {
                         question.Label = "Company or charity number";
+                        if (string.IsNullOrEmpty(question.Value))
+                        {
+                            removeQuestions.Add(question);
+                        }
                     }
+
+                    if (removeQuestions.Any())
+                    {
+                        foreach (var page in parentCompanySection.QnAData.Pages)
+                        {
+                            page.Questions.RemoveAll(x => removeQuestions.Contains(x));
+                        }
+                    }
+                    
                 }
             }
 
