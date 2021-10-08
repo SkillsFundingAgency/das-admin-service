@@ -18,6 +18,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
@@ -501,20 +502,19 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                         page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
                     {
                         question.Label = "Company or charity number";
-                        if (string.IsNullOrEmpty(question.Value))
-                        {
-                            removeQuestions.Add(question);
-                        }
+                        removeQuestions.Add(question);
                     }
 
-                    if (removeQuestions.Any())
+                    foreach (var parentCompanyDetails in parentCompanySection.QnAData.Pages.Where(page=> page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails))
                     {
-                        foreach (var page in parentCompanySection.QnAData.Pages)
+                        foreach (var x in from poa in parentCompanyDetails.PageOfAnswers from x in poa.Answers.Where(x=>x.QuestionId==companyOrCharityNumberQuestionId) where string.IsNullOrEmpty(x.Value) select x)
                         {
-                            page.Questions.RemoveAll(x => removeQuestions.Contains(x));
+                            foreach (var page in parentCompanySection.QnAData.Pages)
+                            {
+                                page.Questions.RemoveAll(pageToRemove => removeQuestions.Contains(pageToRemove));
+                            }
                         }
                     }
-                    
                 }
             }
 
