@@ -11,7 +11,9 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public string IFateReferenceNumber { get; set; }
         public int LarsCode { get; set; }
         public int Level { get; set; }
-        public DateTime EffectiveFrom { get; set; }
+        public DateTime? VersionLatestStartDate { get; set; }
+        public DateTime? EffectiveFrom { get; set; }
+        public DateTime? EffectiveTo{ get; set; }
         public IEnumerable<string> Options { get; set; }
 
     }
