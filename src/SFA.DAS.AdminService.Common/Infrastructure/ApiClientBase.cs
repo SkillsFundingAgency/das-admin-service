@@ -141,7 +141,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
                     catch (UnsupportedMediaTypeException unexpectedTypeEx)
                     {
                         var content = await response.Content.ReadAsStringAsync();
-                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Get} - {uri} || Content: {content}");
+                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Post} - {uri} || Content: {content}");
                         throw;
                     }
                 }
@@ -231,7 +231,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
                     catch (UnsupportedMediaTypeException unexpectedTypeEx)
                     {
                         var content = await response.Content.ReadAsStringAsync();
-                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Get} - {uri} || Content: {content}");
+                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Put} - {uri} || Content: {content}");
                         throw;
                     }
                 }
