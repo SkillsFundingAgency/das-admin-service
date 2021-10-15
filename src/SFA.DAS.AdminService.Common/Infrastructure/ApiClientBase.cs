@@ -47,8 +47,17 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
             {
                 using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
-                    await LogErrorIfUnsuccessfulResponse(response);
-                    return await response.Content.ReadAsAsync<T>();
+                    try
+                    {
+                        await LogErrorIfUnsuccessfulResponse(response);
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch(UnsupportedMediaTypeException unexpectedTypeEx)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Get} - {uri} || Content: {content}");
+                        throw;
+                    }
                 }
             }
             catch (HttpRequestException ex)
@@ -124,8 +133,17 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
                 using (var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative),
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
-                    await LogErrorIfUnsuccessfulResponse(response);
-                    return await response.Content.ReadAsAsync<U>();
+                    try
+                    { 
+                        await LogErrorIfUnsuccessfulResponse(response);
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (UnsupportedMediaTypeException unexpectedTypeEx)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Get} - {uri} || Content: {content}");
+                        throw;
+                    }
                 }
             }
             catch (HttpRequestException ex)
@@ -205,8 +223,17 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
                 using (var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative),
                     new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
-                    await LogErrorIfUnsuccessfulResponse(response);
-                    return await response.Content.ReadAsAsync<U>();
+                    try
+                    { 
+                        await LogErrorIfUnsuccessfulResponse(response);
+                        return await response.Content.ReadAsAsync<U>();
+                    }
+                    catch (UnsupportedMediaTypeException unexpectedTypeEx)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        _logger.LogError(unexpectedTypeEx, $"Error when processing request: {HttpMethod.Get} - {uri} || Content: {content}");
+                        throw;
+                    }
                 }
             }
             catch (HttpRequestException ex)
