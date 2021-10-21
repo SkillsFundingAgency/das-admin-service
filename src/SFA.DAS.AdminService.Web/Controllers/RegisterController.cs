@@ -236,7 +236,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet("register/edit-standard/{organisationStandardId}/{organisationStandardVersion}")]
-        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, decimal organisationStandardVersion)
+        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, string organisationStandardVersion)
         {
             var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
 
@@ -246,7 +246,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpPost("register/edit-standard/{organisationStandardId}/{organisationStandardVersion}")]
-        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, decimal organisationStandardVersion, RegisterEditOrganisationStandardVersionViewModel viewModel)
+        public async Task<IActionResult> EditStandardVersion(int organisationStandardId, string organisationStandardVersion, RegisterEditOrganisationStandardVersionViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -821,16 +821,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
             };
         }
 
-        private RegisterEditOrganisationStandardVersionViewModel MapOrganisationStandardToEditStandardVersionViewModel(OrganisationStandard standard, decimal version)
+        private RegisterEditOrganisationStandardVersionViewModel MapOrganisationStandardToEditStandardVersionViewModel(OrganisationStandard standard, string version)
         {
-            var selectedVersion = standard.Versions.FirstOrDefault(v => v.Version == version.ToString());
+            var selectedVersion = standard.Versions.FirstOrDefault(v => v.Version == version);
             
             return new RegisterEditOrganisationStandardVersionViewModel
             {
                 OrganisationStandardId = standard.Id,
                 Standard = standard.StandardTitle,
                 Reference = standard.IFateReferenceNumber,
-                Version = selectedVersion.Version.ToString(),
+                Version = selectedVersion.Version,
                 EffectiveFrom = selectedVersion.EffectiveFrom,
                 EffectiveTo = selectedVersion.EffectiveTo,
                 DateApprovedOnRegister = selectedVersion.DateVersionApproved,
@@ -840,7 +840,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
                 EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null,
                 EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null,
-                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
+                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null,
 
             };
         }

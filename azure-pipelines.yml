@@ -6,8 +6,6 @@ trigger:
 
 variables:
   - group: "ESFA - SonarCloud"
-  - name: sonarCloudProjectKey
-    value: "SkillsFundingAgency_das-admin-service"
   - group: 'Prod Management Resources'
   - name: buildConfiguration
     value: 'release'
@@ -20,8 +18,8 @@ resources:
   - repository: das-platform-building-blocks
     type: github
     name: SkillsFundingAgency/das-platform-building-blocks
-    ref: refs/heads/master
-    endpoint: "GitHub (SFA)"
+    ref: refs/tags/0.4.10
+    endpoint: SkillsFundingAgency
 
 stages:
 - stage: Build
@@ -29,42 +27,15 @@ stages:
   jobs:
   - job: 'BuildAndTest'
     pool:
-      name: 'DAS - Continuous Integration'
+      name: DAS - Continuous Integration Agents
+      demands: LATEST_DOTNET_VERSION -equals 3.1
     steps:
-    - task: gittools.gitversion-preview.gitversion-task.GitVersion@5
-      displayName: GitVersion
-      inputs:
-        configFilePath: GitVersion.yml
-        updateAssemblyInfo: true
-
-    - task: SonarCloudPrepare@1
-      displayName: 'Prepare Sonarcloud analysis configuration'
-      inputs:
-        SonarCloud: "$(SonarCloudConnectionId)"
-        organization: "$(SonarCloudOrganisationKey)"
-        scannerMode: 'MSBuild'
-        projectName: "$(Build.DefinitionName)"
-        projectKey: "$(sonarCloudProjectKey)"
-        extraProperties: sonar.exclusions=**/SFA.DAS.AdminService.Web/wwwroot/javascripts/lib/**/*,**/SFA.DAS.AdminService.Web/wwwroot/lib/**/*
-
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet restore'
-      inputs:
-        command: restore
-        projects: 'src/**/*.csproj'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build'
-      inputs:
-        projects: 'src/**/*.csproj'
-        arguments: '/p:Configuration=$(buildConfiguration) --no-restore'
-
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet test'
-      inputs:
-        command: test
-        projects: '**/*Tests.csproj'
-        arguments: '--configuration $(buildConfiguration) --no-build'
+    - template: azure-pipelines-templates/build/step/gitversion.yml@das-platform-building-blocks
+    
+    - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
+      parameters:
+        SonarCloud: true
+        SonarCloudProjectKey: SkillsFundingAgency_das-admin-service
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
@@ -73,14 +44,6 @@ stages:
         packagesToPack: 'src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj'
         versioningScheme: byBuildNumber
         packDirectory: $(build.artifactstagingdirectory)/NugetPackages
-
-    - task: SonarCloudAnalyze@1
-      displayName: 'Run SonarCloud analysis'
-
-    - task: SonarCloudPublish@1
-      displayName: 'Publish results on build summary'
-      inputs:
-        pollingTimeoutSec: '300'
 
     - template: azure-pipelines-templates/build/step/dependency-check.yml@das-platform-building-blocks
 

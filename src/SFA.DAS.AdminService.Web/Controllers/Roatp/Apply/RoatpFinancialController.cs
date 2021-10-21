@@ -18,7 +18,6 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
@@ -30,7 +29,6 @@ using SFA.DAS.AdminService.Web.ModelBinders;
 using SFA.DAS.AssessorService.ApplyTypes;
 using ApplicationStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.ApplicationStatus;
 using ClarificationFile = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.ClarificationFile;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
@@ -493,16 +491,46 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var hasParentCompanyTagValue = await _qnaApiClient.GetQuestionTag(applicationId, RoatpQnaConstants.QnaQuestionTags.HasParentCompany);
 
             if ("Yes".Equals(hasParentCompanyTagValue, StringComparison.OrdinalIgnoreCase))
-            {                
-                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpQnaConstants.RoatpSequences.YourOrganisation, RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
+            {
+                parentCompanySection = await _qnaApiClient.GetSectionBySectionNo(applicationId,
+                    RoatpQnaConstants.RoatpSequences.YourOrganisation,
+                    RoatpQnaConstants.RoatpSections.YourOrganisation.OrganisationDetails);
                 parentCompanySection.LinkTitle = ParentCompanySectionTitle;
                 parentCompanySection.Title = ParentCompanySectionTitle;
-                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page => page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyCheck 
-                                                                                                    || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails).ToList();
+                parentCompanySection.QnAData.Pages = parentCompanySection.QnAData.Pages?.Where(page =>
+                        page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyCheck
+                        || page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails)
+                    .ToList();
+
+                // This is a workaround for a single issue of layout. If any more go in, needs to be converted to a service
+                // also contains code to remove an empty answer
+                const string companyOrCharityNumberQuestionId = "YO-21";
+                if (parentCompanySection?.QnAData?.Pages != null)
+                {
+                    var removeQuestions = new List<Question>();
+                    foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
+                        page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
+                    {
+                        question.Label = "Company or charity number";
+                        removeQuestions.Add(question);
+                    }
+
+                    foreach (var parentCompanyDetails in parentCompanySection.QnAData.Pages.Where(page=> page.PageId == RoatpQnaConstants.RoatpSections.YourOrganisation.PageIds.ParentCompanyDetails))
+                    {
+                        foreach (var x in from poa in parentCompanyDetails.PageOfAnswers from x in poa.Answers.Where(x=>x.QuestionId==companyOrCharityNumberQuestionId) where string.IsNullOrEmpty(x.Value) select x)
+                        {
+                            foreach (var page in parentCompanySection.QnAData.Pages)
+                            {
+                                page.Questions.RemoveAll(pageToRemove => removeQuestions.Contains(pageToRemove));
+                            }
+                        }
+                    }
+                }
             }
 
             return parentCompanySection;
         }
+        
 
         private async Task<Section> GetActivelyTradingSection(Guid applicationId)
         {

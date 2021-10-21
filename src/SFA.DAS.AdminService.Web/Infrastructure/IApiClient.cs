@@ -32,8 +32,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<object> DeleteScheduleRun(Guid scheduleRunId);
         Task GatherAndCollateStandards();
         Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType);
-        Task<Certificate> GetCertificate(Guid certificateId);
-        Task<List<CertificateResponse>> GetCertificates();
+        Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs=false);
         Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex,
             string status, string privatelyFundedStatus);
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
@@ -66,6 +65,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);
         Task<string> UpdateEpaOrganisationStandardVersion(UpdateEpaOrganisationStandardVersionRequest request);
+        Task WithdrawOrganisation(WithdrawOrganisationRequest request);
         Task RestartSchedule(Guid id);
         Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
         Task<StandardVersion> GetStandardVersion(string standardUId);

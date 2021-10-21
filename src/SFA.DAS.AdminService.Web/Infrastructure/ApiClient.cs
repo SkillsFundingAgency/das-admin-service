@@ -94,11 +94,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
-        public async Task<List<CertificateResponse>> GetCertificates()
-        {
-            return await Get<List<CertificateResponse>>("/api/v1/certificates?statusses=Submitted");
-        }
-
         public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
         {
             return await Get<PaginatedList<CertificateSummaryResponse>>($"/api/v1/certificates/approvals/?pageSize={pageSize}&pageIndex={pageIndex}&status={status}&privatelyFundedStatus={privatelyFundedStatus}");
@@ -231,6 +226,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return result.Details;
         }
 
+        public async Task WithdrawOrganisation(WithdrawOrganisationRequest request)
+        {
+            await Post<WithdrawOrganisationRequest>("api/v1/organisations/withdraw", request);
+        }
+
         public async Task<bool> AssociateOrganisationWithEpaContact(AssociateEpaOrganisationWithEpaContactRequest request)
         {
             return await Put<AssociateEpaOrganisationWithEpaContactRequest, bool>("api/ao/assessment-organisations/contacts/associate-organisation", request);
@@ -252,9 +252,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<LearnerDetailResult>($"/api/v1/learnerDetails?stdCode={stdCode}&uln={uln}&alllogs={allLogs}");
         }
 
-        public async Task<Certificate> GetCertificate(Guid certificateId)
+        public async Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs=false)
         {
-            return await Get<Certificate>($"api/v1/certificates/{certificateId}");
+            return await Get<Certificate>($"api/v1/certificates/{certificateId}?includeLogs={includeLogs}");
         }
 
         public async Task<Organisation> GetOrganisation(Guid id)
