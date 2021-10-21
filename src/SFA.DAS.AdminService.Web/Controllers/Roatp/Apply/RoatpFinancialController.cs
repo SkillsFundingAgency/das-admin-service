@@ -507,7 +507,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
                 const string companyOrCharityNumberQuestionId = "YO-21";
                 if (parentCompanySection?.QnAData?.Pages != null)
                 {
-                    var removeQuestions = new List<Question>();
+                    var removeQuestions = new List<QnA.Api.Types.Page.Question>();
                     foreach (var question in parentCompanySection.QnAData.Pages.SelectMany(page =>
                         page.Questions.Where(question => question.QuestionId == companyOrCharityNumberQuestionId)))
                     {
