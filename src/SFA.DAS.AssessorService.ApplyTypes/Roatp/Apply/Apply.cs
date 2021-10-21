@@ -12,10 +12,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        //public string FinancialReviewStatus { get; set; }
 
         public RoatpApplyData ApplyData { get; set; }
-        //public FinancialReviewDetails FinancialGrade { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
