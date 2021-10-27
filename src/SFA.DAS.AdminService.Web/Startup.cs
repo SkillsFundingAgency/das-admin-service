@@ -37,6 +37,8 @@ using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Web.ModelBinders;
 using SFA.DAS.AdminService.Web.Extensions;
+using MediatR;
+using SFA.DAS.AdminService.Web.Commands.ApproveStandardApplication;
 
 namespace SFA.DAS.AdminService.Web
 {
@@ -232,6 +234,9 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<StandardServiceClient>>()));
 
             services.AddTransient<ICsvExportService, CsvExportService>();
+
+            services.AddTransient<IApplicationService, ApplicationService>();
+            services.AddMediatR(typeof(ApproveStandardApplicationHandler));
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
             services.AddTransient<IFeatureToggles>(x =>

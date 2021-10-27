@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Queries.GetApplication;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.Api.Types.Models;
@@ -32,8 +34,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IAnswerService _answerService;
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
+        private readonly IMediator _mediator;
 
-        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger, IMediator mediator)
         {
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
@@ -43,6 +46,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             _answerService = answerService;
             _answerInjectionService = answerInjectionService;
             _logger = logger;
+            _mediator = mediator;
         }
 
         [HttpGet("/Applications/{applicationId}/{backAction}/{backController}/{backOrganisationId?}")]
@@ -450,6 +454,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
+
             if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
             {
                 var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
@@ -470,8 +475,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     if (!organisation.OrganisationData.RoEPAOApproved)
                     {
                         _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Organisation");
+
                         var response = await AddOrganisationAndContactIntoRegister(application.Id);
-                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+
+                        if (response.WarningMessages != null) 
+                            warningMessages.AddRange(response.WarningMessages);
                     }
 
                     //    'Inject' the Standard which was applied for by the organisation
@@ -491,15 +499,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
             var versions = application.ApplyData?.Apply?.Versions;
+
             if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && versions != null && versions.Any())
-                standardDescription = $"{standardDescription}, Version {String.Join(",", versions)}";
+                standardDescription = $"{standardDescription}, Version {string.Join(",", versions)}";
 
             var returnedViewModel = new ApplicationReturnedViewModel(sequenceNo, standardDescription, returnType, organisation.EndPointAssessorName,
                 versions, warningMessages, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
 
             return View("Returned", returnedViewModel);
         }
-
+        
         [HttpGet("Application/{applicationId}/Sequence/{sequenceNo}/Section/{sectionNo}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
         public async Task<IActionResult> DownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
         {

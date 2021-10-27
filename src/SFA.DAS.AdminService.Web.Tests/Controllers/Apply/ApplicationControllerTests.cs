@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -32,10 +34,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
         private Mock<IAnswerService> _answerService;
         private Mock<IAnswerInjectionService> _answerInjectionService;
         private Mock<ILogger<ApplicationController>> _logger;
+        private Mock<IMediator> _mediator;
+
+        private Fixture _fixture;
+
+        private ApplicationResponse _applicationResponse;
+        private Organisation _organisation;
 
         [SetUp]
         public void Setup()
         {
+            _fixture = new Fixture();
+
             _apiClient = new Mock<IApiClient>();
             _applyApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
@@ -43,6 +53,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             _answerService = new Mock<IAnswerService>();
             _answerInjectionService = new Mock<IAnswerInjectionService>();
             _logger = new Mock<ILogger<ApplicationController>>();
+            _mediator = new Mock<IMediator>();
 
             var identity = new GenericIdentity("test user");
             identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", "JOHN"));
@@ -51,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             _httpContextAccessor.Setup(a => a.HttpContext.User.Identities)
                .Returns(new List<ClaimsIdentity>() { identity });
 
-            _controller = new ApplicationController(_apiClient.Object, _applyApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object);
+            _controller = new ApplicationController(_apiClient.Object, _applyApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object, _mediator.Object);
         }
 
         [Test]
@@ -155,6 +166,84 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             // Assert
             _apiClient.Verify(m => m.WithdrawOrganisation(It.Is<WithdrawOrganisationRequest>(x => x.WithdrawalDate == withdrawalDate &&
                                                                                                    x.UpdatedBy == "JOHN DUNHILL")));
+        }
+
+        [Test]
+        public async Task When_PostingReturn_Then_GetApplication()
+        {
+            var applicationId = Guid.NewGuid();
+            SetupValidApplication(applicationId);
+            SetupValidOrganisation();
+
+            var result = await _controller.Return(applicationId, 1, "1", new BackViewModel());
+
+            _applyApiClient.Verify(client => client.GetApplication(applicationId), Times.Once());
+        }
+
+        [Test]
+        public async Task When_PostingReturn_Then_GetOrganisation()
+        {
+            var applicationId = Guid.NewGuid();
+            SetupValidApplication(applicationId);
+            SetupValidOrganisation();
+
+            var result = await _controller.Return(applicationId, 1, "1", new BackViewModel());
+
+            _apiClient.Verify(client => client.GetOrganisation(_applicationResponse.OrganisationId), Times.Once());
+        }
+
+        [Test]
+        public void When_ActiveApplicationSequenceIsNull_Then_RedirectToApplicationsFromSequence() {}
+
+        [Test]
+        public void When_ActiveApplicationSequenceIsNotEqualToSequenceNo_Then_RedirectToApplicationsFromSequence() { }
+
+        [Test]
+        public void When_ActiveApplicationSequenceHasIncompleteRequiredSections_Then_RedirectToApplicationsFromSequence() { }
+
+        [Test]
+        public void When_AllRequiredSectionsAreComplete_And_ReturnTypeIsNull_Then_RedirectToAssessement()
+        {
+            // Verify get section
+            // Verify get sequence
+            // Verify view + view Model
+        }
+
+        [Test]
+        public void When_SequenceNoEqualsStandardSequenceNo_And_ReturnTypeEqualsApprove_And_SequenceOneIsNotRequired_Then_AddOrganisationStandardIntoRegister()
+        {
+            // Verify Get answers
+            // Verify Add organisation standard details into register
+        }
+
+        [Test]
+        public void When_WarningMessagesAreAdded_ThenVerify_ReturnApplicationSequence() { }
+
+        [Test]
+        public void VerifyViewModel()
+        {
+            // standard description contains versions
+        }
+
+        private void SetupValidApplication(Guid applicationId)
+        {
+            _applicationResponse = _fixture.Build<ApplicationResponse>()
+                .With(x => x.ApplicationId, applicationId).Create();
+
+            _applyApiClient.Setup(client => client.GetApplication(applicationId))
+                .ReturnsAsync(_applicationResponse);
+        }
+
+        private void SetupValidOrganisation()
+        {
+            _organisation = _fixture.Build<Organisation>()
+                .With(x => x.Id, _applicationResponse.OrganisationId)
+                .Without(x => x.Certificates)
+                .Without(x => x.Contacts)
+                .Create();
+
+            _apiClient.Setup(client => client.GetOrganisation(_organisation.Id))
+                .ReturnsAsync(_organisation);
         }
 
         private void ArrangeMocksWithIrrelevantData()
