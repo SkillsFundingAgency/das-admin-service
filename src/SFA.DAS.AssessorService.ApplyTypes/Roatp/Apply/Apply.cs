@@ -12,10 +12,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
 
         public RoatpApplyData ApplyData { get; set; }
-        public FinancialReviewDetails FinancialGrade { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -30,16 +28,18 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 
     public class FinancialReviewDetails
     {
+        public Guid ApplicationId { get; set; }
+        public string Status { get; set; }
         public string SelectedGrade { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public string GradedBy { get; set; }
-        public DateTime? GradedDateTime { get; set; }
+        public DateTime? GradedOn { get; set; }
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
-
+        public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
 
         public string Outcome => FinancialApplicationSelectedGrade.PassingGrades.Contains(SelectedGrade)

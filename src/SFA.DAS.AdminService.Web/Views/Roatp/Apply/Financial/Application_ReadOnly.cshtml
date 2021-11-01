@@ -196,9 +196,9 @@
                         Financial health assessed on
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
+                        @if (Model.FinancialReviewDetails.GradedOn.HasValue)
                         {
-                            @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToSfaShortDateString())
+                            @Html.Raw(Model.FinancialReviewDetails.GradedOn.Value.ToSfaShortDateString())
                         }
                     </dd>
                 </div>

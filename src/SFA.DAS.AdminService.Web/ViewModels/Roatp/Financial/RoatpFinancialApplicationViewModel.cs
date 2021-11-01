@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public RoatpFinancialApplicationViewModel() { }
 
-        public RoatpFinancialApplicationViewModel(RoatpApply application, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
+        public RoatpFinancialApplicationViewModel(RoatpApply application, FinancialReviewDetails financialReviewDetails, Section parentCompanySection, Section activelyTradingSection, Section organisationTypeSection, List<Section> financialSections)
         {
             ApplicationId = application.ApplicationId;
             OrgId = application.OrganisationId;
@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             ApplicationStatus = application.ApplicationStatus;
 
             Sections = SetupSections(parentCompanySection, activelyTradingSection, organisationTypeSection, financialSections);
-            SetupGradeAndFinancialDueDate(application.FinancialGrade);
+            SetupGradeAndFinancialDueDate(financialReviewDetails);
 
             if (application.ApplyData?.ApplyDetails != null)
             {
