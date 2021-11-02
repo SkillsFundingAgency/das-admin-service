@@ -1,7 +1,3 @@
-@using Newtonsoft.Json
-@using SFA.DAS.AssessorService.Domain.JsonData
-@using SFA.DAS.AssessorService.Domain.Consts
-
 @model SFA.DAS.AdminService.Web.Controllers.DuplicateRequestViewModel
 
 @{
@@ -15,7 +11,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">Re-print certificate</h1>
+            <h1 class="govuk-heading-xl">Reprint certificate</h1>
 
             @if (!Model.CanRequestDuplicate)
             {
@@ -23,7 +19,7 @@
             }
             else if (!Model.IsConfirmed)
             {
-                <p class="govuk-body-l">Request a duplicate print of the following certificate:</p>
+                <p class="govuk-body-l">Request a reprint of the following certificate:</p>
 
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
