@@ -36,10 +36,8 @@ namespace SFA.DAS.AdminService.Web.Services
             return await _apiClient.GetOrganisation(organisationId);
         }
 
-        public async Task<List<string>> ApproveApplication(Guid applicationId)
+        public async Task<List<string>> ApproveApplication(Models.Apply.Application application)
         {
-            var application = await GetApplication(applicationId);
-
             var warningMessages = new List<string>();
 
             if (application.RequiresFinancialApproval)

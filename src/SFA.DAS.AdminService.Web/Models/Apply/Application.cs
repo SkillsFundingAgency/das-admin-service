@@ -24,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Models.Apply
         public string ContactEmail { get; set; }
         public string StandardApplicationType { get; set; }
 
+        public List<string> Versions => ApplyData?.Apply?.Versions;
         public ApplySequence ActiveSequence => ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
         public bool RequiresFinancialApproval => ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO)?.NotRequired == false;
 

@@ -30,39 +30,34 @@ namespace SFA.DAS.AdminService.Web.Commands.ApproveStandardApplication
                 throw new InvalidOperationException();
             }
 
-            var errorMessages = new Dictionary<string, string>();
-
-            if (string.IsNullOrWhiteSpace(returnType))
-            {
-                errorMessages["ReturnType"] = "Please state what you would like to do next";
-            }
-
-            if (errorMessages.Any())
-            {
-                
-            }
-
             var organisation = await _applicationService.GetOrganisation(application.OrganisationId);
- 
-            var versions = application.ApplyData?.Apply?.Versions;
-            var standardDescription = application.GetStandardDescriptionWithVersions(versions, request.SequenceNo);
 
-            var approveResponse = new ApproveStandardApplicationResponse
+            var response = new ApproveStandardApplicationResponse
             {
-                Versions = versions,
+                Application = application,
+                Versions = application.Versions,
                 EndPointAssessorName = organisation.EndPointAssessorName,
-                StandardDescription = standardDescription,
-                WarningMessages = new List<string>()
+                StandardDescription = application.GetStandardDescriptionWithVersions(application.Versions, request.SequenceNo),
+                WarningMessages = new List<string>(),
+                ErrorMessages = new Dictionary<string, string>()
             };
 
-            if (request.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && request.ReturnType == ReturnTypes.Approve)
+            if (string.IsNullOrWhiteSpace(request.ReturnType))
             {
-                var response = await _applicationService.ApproveApplication(request.ApplicationId);
-
-                approveResponse.WarningMessages.AddWarningMessages(response);
+                response.ErrorMessages["ReturnType"] = "Please state what you would like to do next";
             }
 
-            return approveResponse;
+            if (!response.ErrorMessages.Any())
+            {
+                if (request.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && request.ReturnType == ReturnTypes.Approve)
+                {
+                    var approveResponse = await _applicationService.ApproveApplication(application);
+
+                    response.WarningMessages.AddWarningMessages(approveResponse);
+                }
+            }
+
+            return response;
         }
 
     }

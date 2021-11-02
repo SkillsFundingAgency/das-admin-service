@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
@@ -6,14 +7,13 @@ using SFA.DAS.AdminService.Web.Commands.ApproveStandardApplication;
 using SFA.DAS.AdminService.Web.Commands.ReturnApplicationSequence;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Queries.GetApplication;
-using SFA.DAS.AdminService.Web.Queries.GetOrganisation;
+using SFA.DAS.AdminService.Web.Queries.GetSequenceAndSections;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ApplicationModel = SFA.DAS.AdminService.Web.Models.Apply.Application;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -35,15 +35,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 var response = await _mediator.Send(new ApproveStandardApplicationCommand(applicationId, returnType, sequenceNo));
 
-                if (response.ErrorMessages)
+                if (response.ErrorMessages.Count > 0)
                 {
                     ModelState.AddErrorMessages(response.ErrorMessages);
 
-                    var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, activeApplicationSequence.SequenceId);
-                    var sections = await _qnaApiClient.GetSections(application.ApplicationId, activeApplicationSequence.SequenceId);
+                    var qnaData = await _mediator.Send(new GetSequenceAndSectionsQuery(applicationId, response.Application.ActiveSequence.SequenceId));
 
-                    var viewModel = new ApplicationSequenceAssessmentViewModel(application, sequence, sections, backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
-                    return View(nameof(Assessment), viewModel);
+                    var viewModel = new ApplicationSequenceAssessmentViewModel(Mapper.Map<ApplicationModel, ApplicationResponse>(response.Application), qnaData.Sequence, qnaData.Sections, 
+                        backViewModel.BackAction, backViewModel.BackController, backViewModel.BackOrganisationId);
+                    
+                    return View(nameof(ApplicationController.Assessment), viewModel);
                 }
 
                 if (!response.WarningMessages.Any())
@@ -60,7 +61,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
             catch (InvalidOperationException e)
             {
-                // log error
                 return RedirectToApplicationsFromSequence(sequenceNo);
             }
         }
