@@ -26,6 +26,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             return await Get<RoatpApply>($"/Application/{applicationId}");
         }
 
+        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
+        {
+            return await Get<FinancialReviewDetails>($"/Application/{applicationId}/FinancialReviewDetails");
+        }
+
         public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
         {
             return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");            
