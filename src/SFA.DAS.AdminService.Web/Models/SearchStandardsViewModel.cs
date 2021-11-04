@@ -9,7 +9,7 @@ namespace SFA.DAS.AdminService.Web.Models
 
         public string OrganisationName { get; set; }
         public string StandardSearchString { get; set; }
-        public List<StandardCollation> Results { get; set; }
+        public List<StandardVersion> Results { get; set; }
         public string ErrorMessage { get; set; }
     }
 

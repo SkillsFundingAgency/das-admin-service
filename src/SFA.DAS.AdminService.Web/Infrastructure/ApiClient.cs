@@ -314,9 +314,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 staffCertificateDuplicateRequest);
                 }
 
-        public async Task<List<StandardCollation>> SearchStandards(string searchString)
+        public async Task<List<StandardVersion>> SearchStandards(string searchString)
         {
-            return await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
+            return await Get<List<StandardVersion>>($"/api/ao/assessment-organisations/standards/search/{searchString}");
         }
 
         public async Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode)
