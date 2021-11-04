@@ -319,6 +319,7 @@ else
         @Html.HiddenFor(m => m.Name)
         @Html.HiddenFor(m => m.AddressLine1)
         @Html.HiddenFor(m => m.SelectedGrade)
+        @Html.HiddenFor(m => m.StandardUId)
         @if (Model.CanRequestDuplicate)
         {
             <button class="govuk-button">Confirm reprint</button>
