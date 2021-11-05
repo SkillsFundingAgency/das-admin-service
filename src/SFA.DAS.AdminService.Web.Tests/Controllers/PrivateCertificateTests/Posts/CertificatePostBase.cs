@@ -28,8 +28,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
         protected IOrganisationsApiClient MockOrganisationsApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
-        protected Mock<IStandardServiceClient> MockStandardServiceClient;
-
+        
         public CertificatePostBase()
         {
             Certificate = SetupCertificate();
@@ -41,43 +40,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Pos
 
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
-            MockStandardServiceClient = new Mock<IStandardServiceClient>();
             
-            var standards = new List<StandardCollation>
-            {
-                new StandardCollation
-                {
-                    StandardId = 91,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 1"
-                },
-                new StandardCollation
-                {
-                    StandardId = 92,
-                    StandardData = new StandardData{Level = 3},
-                    Title = "Test Title 2"
-                },
-                new StandardCollation
-                {
-                    StandardId = 93,
-                    StandardData = new StandardData{Level = 5},
-                    Title = "Test Title 3"
-                },
-                new StandardCollation
-                {
-                    StandardId = 94,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 4"
-                },
-                new StandardCollation
-                {
-                    StandardId = 95,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 5"
-                }
-            };
-
-            MockStandardServiceClient.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(standards.AsEnumerable()));
             MockOrganisationsApiClient = MockedOrganisationsApiClient.Setup(mockedOrganisationApiClientLogger);
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }

@@ -272,11 +272,11 @@
                         </thead>
                         <tbody class="govuk-table__body">
                             @foreach (var result in Model.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items.OrderBy(x =>
-                                x.StandardCollation.Title))
+                                x.Title))
                             {
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell" data-label="Name">
-                                        @result.StandardCollation.Title <br />
+                                        @result.Title <br />
                                         Version @string.Join(", ", result.StandardVersions.Select(v => v.Version))
                                     </td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric" data-label="ID">@result.StandardReference</td>
