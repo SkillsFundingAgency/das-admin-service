@@ -10,6 +10,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialClarificationViewModelValidator : IRoatpFinancialClarificationViewModelValidator
     {
         private const long MaxFileSizeInBytes = 5 * 1024 * 1024;

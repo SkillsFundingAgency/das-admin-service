@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Applications
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class OrganisationDetailsViewModel
     {
         public string ApplicationReference { get; set; }

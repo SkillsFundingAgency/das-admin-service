@@ -11,6 +11,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialClarificationViewModelValidatorTests
     {
         private RoatpFinancialClarificationViewModelValidator _validator = new RoatpFinancialClarificationViewModelValidator();
