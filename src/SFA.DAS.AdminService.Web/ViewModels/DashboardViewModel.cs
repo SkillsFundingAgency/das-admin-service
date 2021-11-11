@@ -20,5 +20,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public string RoatpOversightBaseUrl { get; set; }
         public string RoatpAssessorBaseUrl { get; set; }
         public string RoatpGatewayBaseUrl { get; set; }
+        public string RoatpFinanceBaseUrl { get; set; }
     }
 }
