@@ -145,10 +145,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
-        public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
+        public async Task<IActionResult> AddOrganisationStandard(string organisationId, string standardId)
        {
            var viewModelToHydrate =
-               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, StandardId = standardId};
+               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, IFateRefernceNumber = standardId };
            var vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
 
            return View(vm);
@@ -525,7 +525,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
         {
             var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _standardServiceClient.GetStandard(vm.StandardId);
+            var standard = await _apiClient.GetStandardVersion(vm.IFateRefernceNumber);
             
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
@@ -534,9 +534,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
             vm.StandardTitle = standard.Title;
-            vm.StandardEffectiveFrom = standard.StandardData.EffectiveFrom;
-            vm.StandardEffectiveTo = standard.StandardData.EffectiveTo;
-            vm.StandardLastDateForNewStarts = standard.StandardData.LastDateForNewStarts;
+            vm.StandardEffectiveFrom = standard.EffectiveFrom;
+            vm.StandardEffectiveTo = standard.EffectiveTo;
+            vm.StandardLastDateForNewStarts = standard.LastDateStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             vm.OrganisationStatus = organisation.Status;

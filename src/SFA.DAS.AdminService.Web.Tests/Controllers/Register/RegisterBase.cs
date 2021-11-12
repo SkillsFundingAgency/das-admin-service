@@ -79,12 +79,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             List<OrganisationStandardSummary> organisationStandards = new List<OrganisationStandardSummary>();
             for (int standard = 0; standard < 20; standard++)
-            { 
+            {
                 organisationStandards.Add(new OrganisationStandardSummary
                 {
                     Id = standard,
-                    DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100)
-                }); ;
+                    DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100),
+                    StandardVersions = new List<OrganisationStandardVersion> {
+                        new OrganisationStandardVersion {
+                            IFateReferenceNumber = string.Format("ST{0:4}", standard),
+                            LarsCode = standard,
+                            Title = string.Format("{0} Gravyboat Maker", NumberToAlpha(standard / 10))
+                        }
+                    }
+                });                
             }
 
             List<DeliveryArea> deliveryAreas = new List<DeliveryArea>
