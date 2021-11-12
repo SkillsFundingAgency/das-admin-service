@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 
 namespace SFA.DAS.AssessorService.Api.Types.Models.AO
@@ -16,11 +17,49 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
 
-        public StandardCollation StandardCollation { get; set; }
         public List<int> DeliveryAreas { get; set; }
         public string Comments { get; set; }
         public List<OrganisationStandardVersion> StandardVersions { get; set; }
 
         public OrganisationStandardData OrganisationStandardData { get; set; }
+
+        public string Title
+        {
+            get
+            {
+                if(StandardVersions != null && StandardVersions.Count > 0)
+                {
+                    return StandardVersions.OrderByDescending(s => s.VersionMajor).ThenBy(t => t.VersionMinor).First().Title;
+                }
+
+                return string.Empty;                        
+            }
+        }
+
+        public int LarsCode
+        {
+            get
+            {
+                if (StandardVersions != null && StandardVersions.Count > 0)
+                {
+                    return StandardVersions.OrderByDescending(s => s.VersionMajor).ThenBy(t => t.VersionMinor).First().LarsCode;
+                }
+
+                return 0;
+            }
+        }
+
+        public string IFateReferenceNumber
+        {
+            get
+            {
+                if (StandardVersions != null && StandardVersions.Count > 0)
+                {
+                    return StandardVersions.OrderByDescending(s => s.VersionMajor).ThenBy(t => t.VersionMinor).First().IFateReferenceNumber;
+                }
+
+                return string.Empty;
+            }
+        }
     }
 }

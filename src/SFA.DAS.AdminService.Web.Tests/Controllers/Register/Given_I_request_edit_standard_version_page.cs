@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ApiClient.Setup(c => c.GetOrganisationStandard(It.IsAny<int>()))
                 .ReturnsAsync(_orgStandardResponse);
 
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
         }
 
         [Test]

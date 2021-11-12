@@ -12,6 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public long? Ukprn { get; set; }
         public string OrganisationStatus { get; set; }
 
+        public string IFateRefernceNumber { get; set; }
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
         public DateTime? StandardEffectiveFrom { get; set; }

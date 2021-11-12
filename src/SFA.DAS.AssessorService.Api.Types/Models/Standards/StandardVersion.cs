@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Standards
         public DateTime? VersionLatestStartDate { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo{ get; set; }
+        public DateTime? LastDateStarts { get; set; }
         public IEnumerable<string> Options { get; set; }
 
     }

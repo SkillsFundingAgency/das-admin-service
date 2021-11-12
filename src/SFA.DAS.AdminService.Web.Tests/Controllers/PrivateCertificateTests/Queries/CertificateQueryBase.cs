@@ -27,7 +27,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
         protected ApiClient MockApiClient;
         protected Certificate Certificate;
         protected CertificateData CertificateData;
-        protected Mock<IStandardServiceClient> MockStandardServiceClient;
         protected IOrganisationsApiClient MockOrganisationsApiClient;
 
         public CertificateQueryBase()
@@ -39,45 +38,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.PrivateCertificateTests.Que
             var mockedOrganisationApiClientLogger = new Mock<ILogger<OrganisationsApiClient>>();
             MockHttpContextAccessor = MockedHttpContextAccessor.Setup();
             MockApiClient = MockedApiClient.Setup(Certificate, mockedApiClientLogger);
-            MockStandardServiceClient = new Mock<IStandardServiceClient>();
             MockOrganisationsApiClient = MockedOrganisationsApiClient.Setup(mockedOrganisationApiClientLogger); ;
-            var standards = new List<StandardCollation>
-            {
-                new StandardCollation
-                {
-                    StandardId = 91,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 1"
-                },
-                new StandardCollation
-                {
-                    StandardId = 92,
-                    StandardData = new StandardData{Level = 3},
-                    Title = "Test Title 2"
-                },
-                new StandardCollation
-                {
-                    StandardId = 93,
-                    StandardData = new StandardData{Level = 5},
-                    Title = "Test Title 3"
-                },
-                new StandardCollation
-                {
-                    StandardId = 94,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 4"
-                },
-                new StandardCollation
-                {
-                    StandardId = 95,
-                    StandardData = new StandardData{Level = 2},
-                    Title = "Test Title 5"
-                }
-            };
-
-            MockStandardServiceClient.Setup(s => s.GetAllStandards()).Returns(Task.FromResult(standards.AsEnumerable()));
-
-
+            
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
 

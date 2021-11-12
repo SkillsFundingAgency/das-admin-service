@@ -226,11 +226,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddTransient<CacheService>();
             services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-            services.AddTransient<IStandardServiceClient>(x => new StandardServiceClient(
-                ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
-                x.GetService<ITokenService>(),
-                x.GetService<ILogger<StandardServiceClient>>()));
-
+            
             services.AddTransient<ICsvExportService, CsvExportService>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
