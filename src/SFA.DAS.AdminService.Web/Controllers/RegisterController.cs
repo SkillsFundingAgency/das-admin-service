@@ -173,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var versions = _controllerSession.AddOrganisationStandardViewModel.Versions;
 
-            var versionsToAdd = versions.Where(v => v.EffectiveTo.HasValue).ToList();
+            var versionsToAdd = versions.Where(v => v.EffectiveFrom.HasValue).ToList();
 
             var addOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
             {
