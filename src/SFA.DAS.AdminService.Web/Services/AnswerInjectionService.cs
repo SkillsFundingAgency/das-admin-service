@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
@@ -476,7 +477,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 OrganisationId = organisationId,
                 StandardCode = command.StandardCode,
                 StandardReference = command.StandardReference,
-                StandardVersions = command.StandardVersions,
+                StandardVersions = await MapCommandToOrganisationStandardVersions(command),
                 DateStandardApprovedOnRegister = command.DateStandardApprovedOnRegister,
                 EffectiveFrom = command.EffectiveFrom,
                 ContactId = command.ApplyingContactId.ToString(),
@@ -484,6 +485,38 @@ namespace SFA.DAS.AdminService.Web.Services
                 DeliveryAreasComments = string.Empty,
                 StandardApplicationType = command.StandardApplicationType
             };
+        }
+
+        private async Task<List<OrganisationStandardVersion>> MapCommandToOrganisationStandardVersions(CreateOrganisationStandardCommand command)
+        {
+            var standardVersions = new List<OrganisationStandardVersion>();
+
+            if (command.StandardVersions != null && command.StandardVersions.Any())
+            {
+                var versions = await _apiClient.GetStandardVersions(command.StandardCode);
+
+                foreach(var version in versions)
+                {
+                    if (command.StandardVersions.Contains(version.Version))
+                    {
+                        var standardVersion = new OrganisationStandardVersion
+                        {
+                            Title = version.Title,
+                            EffectiveFrom = command.EffectiveFrom,
+                            DateVersionApproved = command.DateStandardApprovedOnRegister,
+                            Version = version.Version,
+                            VersionMajor = version.VersionMajor,
+                            VersionMinor = version.VersionMinor,
+                            LarsCode = version.LarsCode,
+                            IFateReferenceNumber = version.IFateReferenceNumber
+                        };
+
+                        standardVersions.Add(standardVersion);
+                    }
+                }
+            }
+
+            return standardVersions;
         }
 
         private async Task<List<int>> MapCommandToDeliveryAreas(CreateOrganisationStandardCommand command)

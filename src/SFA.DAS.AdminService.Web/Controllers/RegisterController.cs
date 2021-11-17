@@ -186,7 +186,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                DeliveryAreas = viewModel.DeliveryAreas,
                Comments = viewModel.Comments,
                DeliveryAreasComments = viewModel.DeliveryAreasComments,
-               Versions = versionsToAdd
+               StandardVersions = versionsToAdd
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
