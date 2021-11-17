@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Validators
 
                 if (date == null)
                 {
-                    context.AddFailure("EffectiveFrom", "The Effective from date is required");
+                    context.AddFailure("EffectiveFrom", "The effective from date is required");
                 }
             });
         }

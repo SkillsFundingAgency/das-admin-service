@@ -49,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Validators
 
                 var versionData = controllerSession.AddOrganisationStandardViewModel.Versions;
                 
-                if (versionData.Where(v => v.EffectiveTo.HasValue == true).Count() == 0)
+                if (versionData.Where(v => v.EffectiveFrom.HasValue == true).Count() == 0)
                 {
                     context.AddFailure("Versions", "Add at least one standard version");
                 }
