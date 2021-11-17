@@ -323,9 +323,20 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Get<IEnumerable<StandardVersion>>($"/api/v1/standard-version/standards/versions/{larsCode}");
         }
+
+        public async Task<IEnumerable<StandardVersion>> GetStandardVersions(string ifateReferenceNumber)
+        {
+            return await Get<IEnumerable<StandardVersion>>($"/api/v1/standard-version/standards/versions/{ifateReferenceNumber}");
+        }
+
         public async Task<StandardVersion> GetStandardVersion(string standardUId)
         {
             return await Get<StandardVersion>($"/api/v1/standard-version/standards/{standardUId}");
+        }
+
+        public async Task<StandardVersion> GetStandardVersion(string ifateReferenceNumber, string version)
+        {
+            return await Get<StandardVersion>($"/api/v1/standard-version/standards/{ifateReferenceNumber}/{version}");
         }
 
         public async Task<StandardOptions> GetStandardOptions(string standardId)

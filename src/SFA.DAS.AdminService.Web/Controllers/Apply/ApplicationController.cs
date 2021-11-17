@@ -571,6 +571,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                     OrganisationId = orgStandard.OrganisationId,
                     OrganisationStandardId = orgStandard.Id,
                     StandardCode = orgStandard.StandardCode,
+                    StandardReference = orgStandard.StandardReference,
                     EffectiveFrom = orgStandard.EffectiveFrom,
                     EffectiveTo = effectiveToDate,
                     ContactId = orgStandard.ContactId?.ToString(),

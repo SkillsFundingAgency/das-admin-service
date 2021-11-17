@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.AdminService.Web.Infrastructure
+﻿using SFA.DAS.AdminService.Web.ViewModels.Register;
+
+namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public interface IPagingState
     {
@@ -30,6 +32,9 @@
 
         bool Register_SessionValid { get; set; }
         IPagingState Register_ApprovedStandards { get; }
+
+        RegisterAddOrganisationStandardViewModel AddOrganisationStandardViewModel { get; set; }
+        void Remove(string key);
     } 
 
     public class ControllerSession : IControllerSession
@@ -191,6 +196,23 @@
             {
                 return new PagingState(_sessionService, "Register_ApprovedStandards");
             }
+        }
+
+        public RegisterAddOrganisationStandardViewModel AddOrganisationStandardViewModel
+        {
+            get
+            {
+                return _sessionService.Get<RegisterAddOrganisationStandardViewModel>("AddOrganisationStandardViewModel");
+            }
+            set
+            {
+                _sessionService.Set("AddOrganisationStandardViewModel", value);
+            }
+        }
+
+        public void Remove(string key)
+        {
+            _sessionService.Remove(key);
         }
     }
 

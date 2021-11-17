@@ -144,16 +144,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
-        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
-        public async Task<IActionResult> AddOrganisationStandard(string organisationId, string standardId)
-       {
-           var viewModelToHydrate =
-               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, IFateRefernceNumber = standardId };
-           var vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
+        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{ifateReferenceNumber}")]
+        public async Task<IActionResult> AddOrganisationStandard(string organisationId, string ifateReferenceNumber)
+        {
+            var vm = _controllerSession.AddOrganisationStandardViewModel;
 
-           return View(vm);
-       }
+            if (vm == null || vm.IFateReferenceNumber.ToString() != ifateReferenceNumber)
+            {
+                var viewModelToHydrate = new RegisterAddOrganisationStandardViewModel { OrganisationId = organisationId, IFateReferenceNumber = ifateReferenceNumber };
+                
+                vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
 
+                _controllerSession.AddOrganisationStandardViewModel = vm;
+            }
+
+            return View(vm);
+        }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
@@ -163,22 +169,39 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 var viewModelInvalid = await ConstructOrganisationAndStandardDetails(viewModel);
                 return View(viewModelInvalid);
-            }                   
+            }
+
+            var versions = _controllerSession.AddOrganisationStandardViewModel.Versions;
+
+            var versionsToAdd = versions.Where(v => v.EffectiveTo.HasValue).ToList();
 
             var addOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
             {
-                OrganisationId = viewModel.OrganisationId,
+               OrganisationId = viewModel.OrganisationId,
                StandardCode = viewModel.StandardId,
+               StandardReference = viewModel.IFateReferenceNumber,
                EffectiveFrom = viewModel.EffectiveFrom,
                EffectiveTo = viewModel.EffectiveTo,
                ContactId = viewModel.ContactId.ToString(),
                DeliveryAreas = viewModel.DeliveryAreas,
                Comments = viewModel.Comments,
-               DeliveryAreasComments = viewModel.DeliveryAreasComments
+               DeliveryAreasComments = viewModel.DeliveryAreasComments,
+               Versions = versionsToAdd
             };
 
             var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
+
+            _controllerSession.Remove("AddOrganisationStandardViewModel");
+
             return Redirect($"/register/view-standard/{organisationStandardId}");
+        }
+
+        [HttpGet("register/cancel-add-standard/{organisationId}")]
+        public IActionResult CancelAddStandard(string organisationId)
+        {
+            _controllerSession.Remove("AddOrganisationStandardViewModel");
+
+            return RedirectToAction("SearchStandards", "Register", new { organisationId });
         }
 
         [HttpGet("register/view-standard/{organisationStandardId}", Name="Register_ViewStandard")]
@@ -231,6 +254,69 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
 
             return Redirect($"/register/view-standard/{organisationStandardId}");
+        }
+
+        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{ifateReferenceNumber}/version/{version}")]
+        public async Task<IActionResult> AddOrganisationStandardVersion(string organisationId, string ifateReferenceNumber, string version)
+        {
+            var addStandardViewModel = _controllerSession.AddOrganisationStandardViewModel;
+
+            var viewModel = new RegisterAddStandardVersionViewModel
+            {
+                OrganisationId = organisationId,
+                IfateReferenceNumber = ifateReferenceNumber,
+                Version = version
+            };
+
+            if (addStandardViewModel == null)
+            {
+                var standardVersion = await _apiClient.GetStandardVersion(ifateReferenceNumber, version);
+
+                viewModel.Title = standardVersion.Title;
+            }
+            else
+            {
+                var selectedVersion = addStandardViewModel.Versions.FirstOrDefault(v => v.Version == version);
+
+                viewModel.Title = selectedVersion.Title;
+                viewModel.DateApproved = selectedVersion.DateVersionApproved;
+                viewModel.EffectiveFrom = selectedVersion.EffectiveFrom;
+                viewModel.EffectiveTo = selectedVersion.EffectiveTo;
+                viewModel.EffectiveFromDay = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Day.ToString() : null;
+                viewModel.EffectiveFromMonth = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Month.ToString() : null;
+                viewModel.EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null;
+                viewModel.EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null;
+                viewModel.EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null;
+                viewModel.EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null;
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost("register/add-standard/organisation/{organisationId}/standard/{ifateReferenceNumber}/version/{version}")]
+        public IActionResult AddOrganisationStandardVersion(RegisterAddStandardVersionViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            var addStandardViewModel = _controllerSession.AddOrganisationStandardViewModel;
+
+            foreach(var version in addStandardViewModel.Versions)
+            {
+                if (version.Version == viewModel.Version)
+                {
+                    version.EffectiveFrom = new DateTime(int.Parse(viewModel.EffectiveFromYear), int.Parse(viewModel.EffectiveFromMonth), int.Parse(viewModel.EffectiveFromDay));
+                    version.EffectiveTo = ConstructDate(viewModel.EffectiveFromDay, viewModel.EffectiveToMonth, viewModel.EffectiveToYear);
+                    version.DateVersionApproved = DateTime.UtcNow;
+                    break;
+                }
+            }
+
+            _controllerSession.AddOrganisationStandardViewModel = addStandardViewModel;
+
+            return RedirectToAction("AddOrganisationStandard", "Register", new { organisationId = viewModel.OrganisationId, standardId = viewModel.IfateReferenceNumber });
         }
 
         [HttpGet("register/edit-standard/{organisationStandardId}/{organisationStandardVersion}")]
@@ -524,22 +610,47 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
         {
+
+            if (_controllerSession.AddOrganisationStandardViewModel != null && _controllerSession.AddOrganisationStandardViewModel.IFateReferenceNumber == vm.IFateReferenceNumber)
+            {
+                vm.Versions = _controllerSession.AddOrganisationStandardViewModel.Versions;
+                vm.Contacts = _controllerSession.AddOrganisationStandardViewModel.Contacts;
+                vm.AvailableDeliveryAreas = _controllerSession.AddOrganisationStandardViewModel.AvailableDeliveryAreas;
+
+                return vm;
+            }
+
             var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _apiClient.GetStandardVersion(vm.IFateRefernceNumber);
-            
+
+            var versions = await _apiClient.GetStandardVersions(vm.IFateReferenceNumber);
+
+            var orderedVersions = versions.OrderByDescending(s => s.VersionMajor).ThenByDescending(t => t.VersionMinor);
+
+            var latestVersion = orderedVersions.First();
+
+            vm.Versions = orderedVersions.Select(v => new OrganisationStandardVersion
+            {
+                Version = v.Version,
+                VersionMajor = v.VersionMajor,
+                VersionMinor = v.VersionMinor,
+                Title = v.Title
+            }).ToList();
+
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
 
             vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId);
 
             vm.OrganisationName = organisation.Name;
             vm.Ukprn = organisation.Ukprn;
-            vm.StandardTitle = standard.Title;
-            vm.StandardEffectiveFrom = standard.EffectiveFrom;
-            vm.StandardEffectiveTo = standard.EffectiveTo;
-            vm.StandardLastDateForNewStarts = standard.LastDateStarts;
+            vm.StandardTitle = latestVersion.Title;
+            vm.StandardId = latestVersion.LarsCode;
+            vm.StandardEffectiveFrom = latestVersion.EffectiveFrom;
+            vm.StandardEffectiveTo = latestVersion.EffectiveTo;
+            vm.StandardLastDateForNewStarts = latestVersion.LastDateStarts;
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
             vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
             vm.OrganisationStatus = organisation.Status;
+                
             return vm;
         }
 
@@ -839,9 +950,31 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
                 EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null,
                 EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null,
-                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null,
-
+                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null
             };
+        }
+
+        private static DateTime? ConstructDate(string dayString, string monthString, string yearString)
+        {
+
+            if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
+                !int.TryParse(yearString, out var year)) return null;
+
+            if (!IsValidDate(year, month, day))
+                return null;
+
+            return new DateTime(year, month, day);
+        }
+
+        private static bool IsValidDate(int year, int month, int day)
+        {
+            if (year < DateTime.MinValue.Year || year > DateTime.MaxValue.Year)
+                return false;
+
+            if (month < 1 || month > 12)
+                return false;
+
+            return day > 0 && day <= DateTime.DaysInMonth(year, month);
         }
     }
 }

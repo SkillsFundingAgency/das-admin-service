@@ -68,7 +68,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task WithdrawOrganisation(WithdrawOrganisationRequest request);
         Task RestartSchedule(Guid id);
         Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
+        Task<IEnumerable<StandardVersion>> GetStandardVersions(string ifateReferenceNumber);
         Task<StandardVersion> GetStandardVersion(string standardUId);
+        Task<StandardVersion> GetStandardVersion(string ifateReferenceNumber, string version);
         Task<StandardOptions> GetStandardOptions(string standardId);
     }
 }

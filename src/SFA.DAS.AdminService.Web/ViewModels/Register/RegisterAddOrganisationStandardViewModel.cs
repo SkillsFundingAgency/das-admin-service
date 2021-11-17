@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public long? Ukprn { get; set; }
         public string OrganisationStatus { get; set; }
 
-        public string IFateRefernceNumber { get; set; }
+        public string IFateReferenceNumber { get; set; }
         public int StandardId { get; set; }
         public string StandardTitle { get; set; }
         public DateTime? StandardEffectiveFrom { get; set; }
@@ -20,6 +20,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public DateTime? StandardLastDateForNewStarts { get; set; }
         public List<ContactResponse> Contacts { get; set; }
         public List<DeliveryArea> AvailableDeliveryAreas { get; set; }
+        public List<OrganisationStandardVersion> Versions { get; set; }
         public string EffectiveFromDay { get; set; }
         public string EffectiveFromMonth { get; set; }
         public string EffectiveFromYear { get; set; }

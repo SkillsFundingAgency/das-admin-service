@@ -9,6 +9,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string OrganisationId { get; set; }
         public int OrganisationStandardId { get; set; }
         public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public string Comments { get; set; }

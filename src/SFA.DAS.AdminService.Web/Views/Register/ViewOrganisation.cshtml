@@ -302,7 +302,7 @@
                 @if (@Model.Contacts.Count > 0 || Model.Users.Count > 0)
                 {
                     <p class="govuk-body">
-                        @*<a class="govuk-link" href="/register/search-standards/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new standard</a>*@
+                        <a class="govuk-link" href="/register/search-standards/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new standard</a>
                     </p>
                 }
                 else

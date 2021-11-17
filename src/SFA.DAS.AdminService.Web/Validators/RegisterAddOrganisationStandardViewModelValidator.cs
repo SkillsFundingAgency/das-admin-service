@@ -6,28 +6,34 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class
-        RegisterAddOrganisationStandardViewModelValidator : AbstractValidator<RegisterAddOrganisationStandardViewModel>
+    public class RegisterAddOrganisationStandardViewModelValidator : AbstractValidator<RegisterAddOrganisationStandardViewModel>
     {
         private readonly IOrganisationsApiClient _apiClient;
         private readonly IRegisterValidator _registerValidator;
+        private readonly IControllerSession _controllerSession;
 
         public RegisterAddOrganisationStandardViewModelValidator(IOrganisationsApiClient apiClient,
-            IRegisterValidator registerValidator)
+            IRegisterValidator registerValidator, 
+            IControllerSession controllerSession)
         {
             _apiClient = apiClient;
             _registerValidator = registerValidator;
+            _controllerSession = controllerSession;
+
             var errorInEffectiveFrom = false;
+
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationResultEffectiveFrom = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveFromDay,
-                    vm.EffectiveFromMonth,
-                    vm.EffectiveFromYear, "EffectiveFromDay",
+                var validationResultEffectiveFrom = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveFromDay, 
+                    vm.EffectiveFromMonth, 
+                    vm.EffectiveFromYear, "EffectiveFromDay", 
                     "EffectiveFromMonth", "EffectiveFromYear", "EffectiveFrom", "Effective From");
-
+        
                 errorInEffectiveFrom = validationResultEffectiveFrom.Errors.Count > 0;
 
                 var validationResultEffectiveTo = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
@@ -41,11 +47,21 @@ namespace SFA.DAS.AdminService.Web.Validators
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
 
+                var versionData = controllerSession.AddOrganisationStandardViewModel.Versions;
+                
+                if (versionData.Where(v => v.EffectiveTo.HasValue == true).Count() == 0)
+                {
+                    context.AddFailure("Versions", "Add at least one standard version");
+                }
+
                 var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
-                var validationResultExternals = _apiClient
-                    .ValidateCreateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
+
+                var validationResultExternals = _apiClient.ValidateCreateOrganisationStandard(vm.OrganisationId, vm.StandardId, vm.EffectiveFrom,
                         vm.EffectiveTo, vm.ContactId, deliveryAreas).Result;
-                if (validationResultExternals.IsValid) return;
+
+                if (validationResultExternals.IsValid) 
+                    return;
+
                 foreach (var error in validationResultExternals.Errors)
                 {
                     if (errorInEffectiveFrom==false || error.Field !="EffectiveFrom")
