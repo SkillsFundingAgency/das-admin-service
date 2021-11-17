@@ -10,7 +10,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string OrganisationId { get; set; }
         public int StandardCode { get; set; }
         public string StandardReference { get; set; }
-        public List<string> StandardVersions { get; set; }
         public DateTime DateStandardApprovedOnRegister { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
@@ -19,6 +18,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public List<int> DeliveryAreas { get; set; }
         public string DeliveryAreasComments { get; set; }
         public string StandardApplicationType { get; set; }
-        public List<OrganisationStandardVersion> Versions { get; set; }
+        public List<OrganisationStandardVersion> StandardVersions { get; set; }
     }
 }
