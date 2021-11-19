@@ -21,8 +21,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [SetUp]
         public void Arrange()
         {
-           // ApiClient = new Mock<IApiClient>();
-
             Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
 
             SetUpAddStandardViewModelWithStandard();

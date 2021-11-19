@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using SFA.DAS.AdminService.Common.Helpers;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
@@ -10,8 +9,6 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class RegisterAddOrganisationStandardVersionViewModelValidator : AbstractValidator<RegisterAddStandardVersionViewModel>
     {
-        private readonly IRegisterValidator _registerValidator;
-
         public RegisterAddOrganisationStandardVersionViewModelValidator(IRegisterValidator registerValidator) 
         {
             RuleFor(vm => vm).Custom((vm, context) =>
