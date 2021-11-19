@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Helpers
@@ -10,7 +7,9 @@ namespace SFA.DAS.AdminService.Web.Helpers
         ValidationResponse CheckDateIsEmptyOrValid(string day, string month, string year, 
             string dayFieldName, string monthFieldName, string yearFieldName, string dateFieldName, string dateFieldDescription);
 
-        
+        ValidationResponse CheckDateIsNotEmptyAndIsValid(string day, string month, string year,
+                                                         string dayFieldName, string monthFieldName, string yearFieldName,
+                                                         string dateFieldName, string dateFieldDescription);
 
     }
 }

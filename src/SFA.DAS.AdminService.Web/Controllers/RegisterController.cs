@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
+using SFA.DAS.AdminService.Common.Helpers;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
@@ -193,7 +194,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             _controllerSession.Remove("AddOrganisationStandardViewModel");
 
-            return Redirect($"/register/view-standard/{organisationStandardId}");
+            return RedirectToAction("ViewStandard", "Register", new {organisationStandardId});
         }
 
         [HttpGet("register/cancel-add-standard/{organisationId}")]
@@ -257,38 +258,33 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet("register/add-standard/organisation/{organisationId}/standard/{ifateReferenceNumber}/version/{version}")]
-        public async Task<IActionResult> AddOrganisationStandardVersion(string organisationId, string ifateReferenceNumber, string version)
+        public IActionResult AddOrganisationStandardVersion(string organisationId, string ifateReferenceNumber, string version)
         {
             var addStandardViewModel = _controllerSession.AddOrganisationStandardViewModel;
+
+            if (addStandardViewModel == null)
+            {
+                return RedirectToAction("AddOrganisationStandard", "Register", new { organisationId, ifateReferenceNumber });
+            }
+
+            var selectedVersion = addStandardViewModel.Versions.FirstOrDefault(v => v.Version == version);
 
             var viewModel = new RegisterAddStandardVersionViewModel
             {
                 OrganisationId = organisationId,
                 IfateReferenceNumber = ifateReferenceNumber,
-                Version = version
+                Version = version,
+                Title = selectedVersion.Title,
+                DateApproved = selectedVersion.DateVersionApproved,
+                EffectiveFrom = selectedVersion.EffectiveFrom,
+                EffectiveTo = selectedVersion.EffectiveTo,
+                EffectiveFromDay = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Day.ToString() : null,
+                EffectiveFromMonth = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Month.ToString() : null,
+                EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null,
+                EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null,
+                EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null,
+                EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null
             };
-
-            if (addStandardViewModel == null)
-            {
-                var standardVersion = await _apiClient.GetStandardVersion(ifateReferenceNumber, version);
-
-                viewModel.Title = standardVersion.Title;
-            }
-            else
-            {
-                var selectedVersion = addStandardViewModel.Versions.FirstOrDefault(v => v.Version == version);
-
-                viewModel.Title = selectedVersion.Title;
-                viewModel.DateApproved = selectedVersion.DateVersionApproved;
-                viewModel.EffectiveFrom = selectedVersion.EffectiveFrom;
-                viewModel.EffectiveTo = selectedVersion.EffectiveTo;
-                viewModel.EffectiveFromDay = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Day.ToString() : null;
-                viewModel.EffectiveFromMonth = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Month.ToString() : null;
-                viewModel.EffectiveFromYear = selectedVersion.EffectiveFrom.HasValue ? selectedVersion.EffectiveFrom.Value.Year.ToString() : null;
-                viewModel.EffectiveToDay = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Day.ToString() : null;
-                viewModel.EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null;
-                viewModel.EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null;
-            }
 
             return View(viewModel);
         }
@@ -307,8 +303,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 if (version.Version == viewModel.Version)
                 {
-                    version.EffectiveFrom = new DateTime(int.Parse(viewModel.EffectiveFromYear), int.Parse(viewModel.EffectiveFromMonth), int.Parse(viewModel.EffectiveFromDay));
-                    version.EffectiveTo = ConstructDate(viewModel.EffectiveFromDay, viewModel.EffectiveToMonth, viewModel.EffectiveToYear);
+                    version.EffectiveFrom = DateHelper.ConstructDate(viewModel.EffectiveFromDay, viewModel.EffectiveFromMonth, viewModel.EffectiveFromYear);
+                    version.EffectiveTo = DateHelper.ConstructDate(viewModel.EffectiveFromDay, viewModel.EffectiveToMonth, viewModel.EffectiveToYear);
                     version.DateVersionApproved = DateTime.UtcNow;
                     break;
                 }
@@ -654,7 +650,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return vm;
         }
 
-
         private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddContactsAndDeliveryAreasAndDateDetails(RegisterViewAndEditOrganisationStandardViewModel vm)
         {
             var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
@@ -952,29 +947,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 EffectiveToMonth = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Month.ToString() : null,
                 EffectiveToYear = selectedVersion.EffectiveTo.HasValue ? selectedVersion.EffectiveTo.Value.Year.ToString() : null
             };
-        }
-
-        private static DateTime? ConstructDate(string dayString, string monthString, string yearString)
-        {
-
-            if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
-                !int.TryParse(yearString, out var year)) return null;
-
-            if (!IsValidDate(year, month, day))
-                return null;
-
-            return new DateTime(year, month, day);
-        }
-
-        private static bool IsValidDate(int year, int month, int day)
-        {
-            if (year < DateTime.MinValue.Year || year > DateTime.MaxValue.Year)
-                return false;
-
-            if (month < 1 || month > 12)
-                return false;
-
-            return day > 0 && day <= DateTime.DaysInMonth(year, month);
         }
     }
 }
