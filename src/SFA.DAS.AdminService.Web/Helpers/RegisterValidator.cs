@@ -1,8 +1,5 @@
-using System;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Logical;
 using SFA.DAS.AdminService.Common.Validation;
-
+using System;
 
 namespace SFA.DAS.AdminService.Web.Helpers
 {
@@ -13,6 +10,7 @@ namespace SFA.DAS.AdminService.Web.Helpers
                                                             string dateFieldName, string dateFieldDescription)
         {
             var validationResponse = new ValidationResponse();
+
             if (string.IsNullOrEmpty(day) && string.IsNullOrEmpty(month) && string.IsNullOrEmpty(year))
             {
                 return validationResponse;
@@ -21,8 +19,32 @@ namespace SFA.DAS.AdminService.Web.Helpers
             ValidateDay(day, dayFieldName, dateFieldDescription, validationResponse);
             ValidateMonth(month, monthFieldName, dateFieldDescription, validationResponse);
             ValidateYear(year, yearFieldName, dateFieldDescription, validationResponse);
+
             if (validationResponse.IsValid)
                 ValidateDate(day, month, year, dateFieldName, dateFieldDescription, validationResponse);
+
+            return validationResponse;
+        }
+
+        public ValidationResponse CheckDateIsNotEmptyAndIsValid(string day, string month, string year,
+                                                    string dayFieldName, string monthFieldName, string yearFieldName,
+                                                    string dateFieldName, string dateFieldDescription)
+        {
+            var validationResponse = new ValidationResponse();
+
+            if (string.IsNullOrEmpty(day) && string.IsNullOrEmpty(month) && string.IsNullOrEmpty(year))
+            {
+                RunValidationCheckAndAppendAnyError(dateFieldName, $"The {dateFieldDescription} date is required", validationResponse);
+                return validationResponse;
+            }
+
+            ValidateDay(day, dayFieldName, dateFieldDescription, validationResponse);
+            ValidateMonth(month, monthFieldName, dateFieldDescription, validationResponse);
+            ValidateYear(year, yearFieldName, dateFieldDescription, validationResponse);
+
+            if (validationResponse.IsValid)
+                ValidateDate(day, month, year, dateFieldName, dateFieldDescription, validationResponse);
+
             return validationResponse;
         }
 
@@ -30,9 +52,10 @@ namespace SFA.DAS.AdminService.Web.Helpers
         {
             if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
                 !int.TryParse(yearString, out var year)) return;
+            
             try
             {
-               var checkedDate= new DateTime(year, month, day);
+                var checkedDate= new DateTime(year, month, day);
                 if (checkedDate> DateTime.Now.AddYears(20) || checkedDate < DateTime.Now.AddYears(-20))
                 {
                     RunValidationCheckAndAppendAnyError(dateField, $"Enter a valid date for {description}", validationResponse);
@@ -42,7 +65,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
             {
                 RunValidationCheckAndAppendAnyError(dateField, $"Enter a valid date for {description}", validationResponse);
             }
-            
         }
 
         private void ValidateYear(string year, string yearFieldName, string description, ValidationResponse validationResponse)

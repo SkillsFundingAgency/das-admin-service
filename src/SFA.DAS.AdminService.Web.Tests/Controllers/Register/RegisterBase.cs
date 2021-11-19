@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using AutoFixture;
+using Microsoft.AspNetCore.Hosting;
 using Moq;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
@@ -36,10 +38,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Guid UserTwoId = Guid.NewGuid();
         protected Guid UserThreeId = Guid.NewGuid();
 
+        protected OrganisationStandardVersion StandardVersion1;
+        protected OrganisationStandardVersion StandardVersion2;
+
+        protected Fixture Fixture;
+
         protected RegisterController Sut;
 
         public RegisterBase()
         {
+            Fixture = new Fixture();
+
             EpaOrganisation organisation = new EpaOrganisation
             {
                 Id = OrganisationOneId,
@@ -151,7 +160,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ControllerSession = new Mock<IControllerSession>();
             ControllerSession.Setup(p => p.Register_SessionValid).Returns(true);
             ControllerSession.Setup(p => p.Register_ApprovedStandards).Returns(ApprovedStandards.Object);
-
+            
             ApiClient = new Mock<IApiClient>();
             ApiClient.Setup(p => p.GetEpaOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(organisation);
             ApiClient.Setup(p => p.GetOrganisationTypes()).ReturnsAsync(organisationTypes);

@@ -1,46 +1,42 @@
 ﻿using FluentValidation;
+using FluentValidation.Validators;
+using SFA.DAS.AdminService.Common.Helpers;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
-using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
     public class RegisterAddOrganisationStandardVersionViewModelValidator : AbstractValidator<RegisterAddStandardVersionViewModel>
     {
+        private readonly IRegisterValidator _registerValidator;
+
         public RegisterAddOrganisationStandardVersionViewModelValidator(IRegisterValidator registerValidator) 
         {
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var date = ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
+                var validationResultEffectiveFrom = registerValidator.CheckDateIsNotEmptyAndIsValid(
+                    vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear,
+                    "EffectiveFromDay", "EffectiveFromMonth", "EffectiveFromYear",
+                    "EffectiveFromDate", "effective from");
+      
+                var validationResultEffectiveTo = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
+                    vm.EffectiveToMonth,
+                    vm.EffectiveToYear, "EffectiveToDay",
+                    "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
 
-                if (date == null)
-                {
-                    context.AddFailure("EffectiveFrom", "The effective from date is required");
-                }
+                CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
+                CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
             });
         }
 
-        private static DateTime? ConstructDate(string dayString, string monthString, string yearString)
+        private static void CreateFailuresInContext(IEnumerable<ValidationErrorDetail> errs, CustomContext context)
         {
-
-            if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
-                !int.TryParse(yearString, out var year)) return null;
-
-            if (!IsValidDate(year, month, day))
-                return null;
-
-            return new DateTime(year, month, day);
-        }
-
-        private static bool IsValidDate(int year, int month, int day)
-        {
-            if (year < DateTime.MinValue.Year || year > DateTime.MaxValue.Year)
-                return false;
-
-            if (month < 1 || month > 12)
-                return false;
-
-            return day > 0 && day <= DateTime.DaysInMonth(year, month);
+            foreach (var error in errs)
+            {
+                context.AddFailure(error.Field, error.ErrorMessage);
+            }
         }
     }
 }
