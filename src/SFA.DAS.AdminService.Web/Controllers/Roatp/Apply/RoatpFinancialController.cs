@@ -32,6 +32,7 @@ using ClarificationFile = SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply.Clarifi
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     [Authorize(Roles = Roles.RoatpFinancialAssessorTeam)]
     public class RoatpFinancialController : Controller
     {

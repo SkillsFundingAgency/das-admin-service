@@ -3,6 +3,7 @@ using SFA.DAS.AssessorService.Domain.Paging;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialDashboardViewModel
     {
         public PaginatedList<RoatpFinancialSummaryItem> Applications { get; set; }

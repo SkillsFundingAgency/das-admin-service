@@ -27,6 +27,7 @@ using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     [TestFixture]
     public class RoatpFinancialControllerTests
     {

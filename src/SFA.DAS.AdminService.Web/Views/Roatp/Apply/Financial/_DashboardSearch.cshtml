@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
+﻿@*TODO: Remove after Roatp FHA migration (APR-1823)*@
+@model SFA.DAS.AdminService.Web.ViewModels.Apply.Financial.RoatpFinancialDashboardViewModel
 
 <form class="app-search-form" method="get" asp-action="@Model.SelectedTab" asp-controller="RoatpFinancial" novalidate>
     @if (!string.IsNullOrWhiteSpace(Model.SortColumn))

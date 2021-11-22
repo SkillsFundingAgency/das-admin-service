@@ -5,6 +5,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.Financial
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialClarificationViewModel : RoatpFinancialApplicationViewModel
     {
         public string Comments { get; set; }
