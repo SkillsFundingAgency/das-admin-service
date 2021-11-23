@@ -16,12 +16,12 @@ namespace SFA.DAS.AdminService.Web.Validators
                 var validationResultEffectiveFrom = registerValidator.CheckDateIsNotEmptyAndIsValid(
                     vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear,
                     "EffectiveFromDay", "EffectiveFromMonth", "EffectiveFromYear",
-                    "EffectiveFromDate", "effective from");
+                    "EffectiveFrom", "effective from");
       
                 var validationResultEffectiveTo = registerValidator.CheckDateIsEmptyOrValid(vm.EffectiveToDay,
                     vm.EffectiveToMonth,
                     vm.EffectiveToYear, "EffectiveToDay",
-                    "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
+                    "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "effective to");
 
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);

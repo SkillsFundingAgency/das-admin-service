@@ -20,6 +20,13 @@
                     <div class="govuk-error-summary__body">
                         <ul class="govuk-list govuk-error-summary__list">
                             <li><a sfa-validation-for="EffectiveFrom"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromDay"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromMonth"></a></li>
+                            <li><a sfa-validation-for="EffectiveFromYear"></a></li>
+                            <li><a sfa-validation-for="EffectiveTo"></a></li>
+                            <li><a sfa-validation-for="EffectiveToDay"></a></li>
+                            <li><a sfa-validation-for="EffectiveToMonth"></a></li>
+                            <li><a sfa-validation-for="EffectiveToYear"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -97,13 +104,16 @@
                 <input type="hidden" asp-for="DateApproved">
                 <input type="hidden" asp-for="Status">
 
-                <div class="govuk-form-group error-message-container" sfa-validation-for="EffectiveFrom" sfa-validationerror-class="govuk-form-group--error">
+                <div class="govuk-form-group error-message-container" sfa-validation-for-list="EffectiveFrom,EffectiveFromDay,EffectiveFromMonth,EffectiveFromYear" sfa-validationerror-class="govuk-form-group--error">
 
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Effective from
                     </legend>
 
                     <span class="govuk-error-message" asp-validation-for="EffectiveFrom"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromDay"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromMonth"></span>
+                    <span class="govuk-error-message" asp-validation-for="EffectiveFromYear"></span>
 
                     <div class="govuk-date-input">
                         <div class="govuk-date-input__item">
@@ -133,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="govuk-form-group error-message-container" sfa-validation-for="EffectiveTo" sfa-validationerror-class="govuk-form-group--error">
+                <div class="govuk-form-group error-message-container" sfa-validation-for-list="EffectiveTo,EffectiveToDay,EffectiveToMonth,EffectiveToYear" sfa-validationerror-class="govuk-form-group--error">
 
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         Effective to
