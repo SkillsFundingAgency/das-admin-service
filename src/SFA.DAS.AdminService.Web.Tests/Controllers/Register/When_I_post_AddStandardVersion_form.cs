@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         {
             _viewModel = new RegisterAddStandardVersionViewModel();
 
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
 
             SetUpAddStandardViewModelWithStandard();
         }
