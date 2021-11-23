@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 
 namespace SFA.DAS.AdminService.Web.Models.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public sealed class RoatpFinancialSummaryExportCsvMap : ClassMap<RoatpFinancialSummaryExportViewModel>
     {
         public RoatpFinancialSummaryExportCsvMap()

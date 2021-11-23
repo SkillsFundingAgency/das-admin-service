@@ -4,6 +4,7 @@ using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialApplicationViewModel
     {
         public string ApplicationReference { get; }
@@ -94,6 +95,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialDueDate
     {
         public string Day { get; set; }

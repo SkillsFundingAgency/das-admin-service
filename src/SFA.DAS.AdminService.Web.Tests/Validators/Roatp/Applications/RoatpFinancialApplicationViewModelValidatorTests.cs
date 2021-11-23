@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialApplicationViewModelValidatorTests
     {
         private RoatpFinancialApplicationViewModelValidator _validator = new RoatpFinancialApplicationViewModelValidator();
