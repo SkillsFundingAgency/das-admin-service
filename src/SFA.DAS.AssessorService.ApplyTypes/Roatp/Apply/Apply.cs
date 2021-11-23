@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
     public class RoatpApply
     {
         public Guid ApplicationId { get; set; }
@@ -26,6 +27,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ExternalComments { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialReviewDetails
     {
         public Guid ApplicationId { get; set; }
@@ -49,16 +51,19 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string OutcomeCssClass => Outcome == FinancialApplicationOutcome.Passed ? "govuk-tag govuk-tag--pass": "govuk-tag govuk-tag--fail";
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialEvidence
     {
         public string Filename { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class ClarificationFile
     {
         public string Filename { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public static class FinancialApplicationSelectedGrade
     {
         public const string Outstanding = "Outstanding";
@@ -77,12 +82,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         };
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public static class FinancialApplicationOutcome
     {
         public const string Passed = "Passed";
         public const string Failed = "Failed";
     }
 
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
     public class RoatpApplyData
     {
         public List<RoatpApplySequence> Sequences { get; set; }
@@ -106,6 +113,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ApplicationRemovedBy { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpApplyGatewayDetails
     {
         public DateTime? SourcesCheckedOn { get; set; }
@@ -150,6 +158,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public List<string> Roles { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class OrganisationRegisterStatus
     {
         public bool UkprnOnRegister { get; set; }

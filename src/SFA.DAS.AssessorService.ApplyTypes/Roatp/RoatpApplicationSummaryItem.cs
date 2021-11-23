@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpApplicationSummaryItem
     {
         public Guid Id { get; set; }

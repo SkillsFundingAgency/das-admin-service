@@ -70,7 +70,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 WithdrawalApplicationsApproved = applicationReviewStatusCounts.WithdrawalApplicationsApproved,
                 RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl,
                 RoatpAssessorBaseUrl = _configuration.RoatpAssessorBaseUrl,
-                RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl
+                RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl,
+                RoatpFinanceBaseUrl = _configuration.RoatpFinanceBaseUrl
             };
 
             return View(viewModel);

@@ -4,6 +4,7 @@ using SFA.DAS.AssessorService.ApplyTypes.Roatp;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialSummaryExportViewModelProfile : Profile
     {
         public RoatpFinancialSummaryExportViewModelProfile()

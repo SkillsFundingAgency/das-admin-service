@@ -45,8 +45,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             _dashboardUrl = "http://dashboard";
 
             _apiClient.Setup(x => x.GetApplicationReviewStatusCounts()).ReturnsAsync(_statusCounts);
-            _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
 
+            _configuration.Setup(c => c.RoatpOversightBaseUrl).Returns(_dashboardUrl);
+            _configuration.Setup(c => c.RoatpAssessorBaseUrl).Returns(_dashboardUrl);
+            _configuration.Setup(c => c.RoatpGatewayBaseUrl).Returns(_dashboardUrl);
+            _configuration.Setup(c => c.RoatpFinanceBaseUrl).Returns(_dashboardUrl);
 
             _controller = new DashboardController(_logger.Object, _apiClient.Object,_configuration.Object);
         }

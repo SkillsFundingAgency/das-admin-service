@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.ApplyTypes.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public static class FinancialReviewStatus
     {
         public const string Draft = "Draft";
