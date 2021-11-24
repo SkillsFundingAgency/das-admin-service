@@ -501,6 +501,7 @@ namespace SFA.DAS.AdminService.Web.Services
                     {
                         var standardVersion = new OrganisationStandardVersion
                         {
+                            StandardUId = version.StandardUId,
                             Title = version.Title,
                             EffectiveFrom = command.EffectiveFrom,
                             DateVersionApproved = command.DateStandardApprovedOnRegister,

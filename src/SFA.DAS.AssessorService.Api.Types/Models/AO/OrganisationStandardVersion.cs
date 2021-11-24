@@ -4,6 +4,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.AO
 {
     public class OrganisationStandardVersion
     {
+        public string StandardUId { get; set; }
         public string Title { get; set; }
         public DateTime? EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }

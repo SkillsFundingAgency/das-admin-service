@@ -628,6 +628,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             vm.Versions = orderedVersions.Select(v => new OrganisationStandardVersion
             {
+                StandardUId = v.StandardUId,
                 Version = v.Version,
                 VersionMajor = v.VersionMajor,
                 VersionMinor = v.VersionMinor,
