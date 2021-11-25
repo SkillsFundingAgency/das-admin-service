@@ -298,18 +298,6 @@
             {
                 <p class="govuk-body">There are no standards.</p>
             }
-            <div class="form-group">
-                @if (@Model.Contacts.Count > 0 || Model.Users.Count > 0)
-                {
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="/register/search-standards/@Model.OrganisationId" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">Add new standard</a>
-                    </p>
-                }
-                else
-                {
-                    <p class="govuk-body" sfa-show-for-roles="@string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam)">You can add standards when there are 1 or more contacts or users added to the organisation.</p>
-                }
-            </div>
         </div>
     </div>
 </main>

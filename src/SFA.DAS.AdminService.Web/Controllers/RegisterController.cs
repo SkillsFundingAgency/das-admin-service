@@ -143,45 +143,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             };
 
             return View(vm);
-        }
-
-        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
-        [HttpGet("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
-        public async Task<IActionResult> AddOrganisationStandard(string organisationId, int standardId)
-       {
-           var viewModelToHydrate =
-               new RegisterAddOrganisationStandardViewModel {OrganisationId = organisationId, StandardId = standardId};
-           var vm = await ConstructOrganisationAndStandardDetails(viewModelToHydrate);
-
-           return View(vm);
-       }
-
-
-        [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
-        [HttpPost("register/add-standard/organisation/{organisationId}/standard/{standardId}")]
-        public async Task<IActionResult> AddOrganisationStandard(RegisterAddOrganisationStandardViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                var viewModelInvalid = await ConstructOrganisationAndStandardDetails(viewModel);
-                return View(viewModelInvalid);
-            }                   
-
-            var addOrganisationStandardRequest = new CreateEpaOrganisationStandardRequest
-            {
-                OrganisationId = viewModel.OrganisationId,
-               StandardCode = viewModel.StandardId,
-               EffectiveFrom = viewModel.EffectiveFrom,
-               EffectiveTo = viewModel.EffectiveTo,
-               ContactId = viewModel.ContactId.ToString(),
-               DeliveryAreas = viewModel.DeliveryAreas,
-               Comments = viewModel.Comments,
-               DeliveryAreasComments = viewModel.DeliveryAreasComments
-            };
-
-            var organisationStandardId = await _apiClient.CreateEpaOrganisationStandard(addOrganisationStandardRequest);
-            return Redirect($"/register/view-standard/{organisationStandardId}");
-        }
+        }      
 
         [HttpGet("register/view-standard/{organisationStandardId}", Name="Register_ViewStandard")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
@@ -523,27 +485,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             return View(standardViewModel);
         }
-
-        private async Task<RegisterAddOrganisationStandardViewModel> ConstructOrganisationAndStandardDetails(RegisterAddOrganisationStandardViewModel vm)
-        {
-            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
-            var standard = await _standardServiceClient.GetStandard(vm.StandardId);
-            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
-
-            vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId);
-
-            vm.OrganisationName = organisation.Name;
-            vm.Ukprn = organisation.Ukprn;
-            vm.StandardTitle = standard.Title;
-            vm.StandardEffectiveFrom = standard.StandardData.EffectiveFrom;
-            vm.StandardEffectiveTo = standard.StandardData.EffectiveTo;
-            vm.StandardLastDateForNewStarts = standard.StandardData.LastDateForNewStarts;
-            vm.AvailableDeliveryAreas = availableDeliveryAreas;
-            vm.DeliveryAreas = vm.DeliveryAreas ?? new List<int>();
-            vm.OrganisationStatus = organisation.Status;
-            return vm;
-        }
-
 
         private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddContactsAndDeliveryAreasAndDateDetails(RegisterViewAndEditOrganisationStandardViewModel vm)
         {
