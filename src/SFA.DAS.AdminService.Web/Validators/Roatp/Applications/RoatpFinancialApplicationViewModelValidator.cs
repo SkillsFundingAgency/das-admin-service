@@ -7,6 +7,7 @@ using System.Globalization;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.Applications
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialApplicationViewModelValidator : AbstractValidator<RoatpFinancialApplicationViewModel>
     {
         public RoatpFinancialApplicationViewModelValidator()

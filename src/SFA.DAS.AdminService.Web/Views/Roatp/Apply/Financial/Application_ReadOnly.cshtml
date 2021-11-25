@@ -1,3 +1,4 @@
+@*TODO: Remove after Roatp FHA migration (APR-1823)*@
 @using System.Globalization;
 @using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 @using SFA.DAS.AdminService.Common.Extensions
@@ -196,9 +197,9 @@
                         Financial health assessed on
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.FinancialReviewDetails.GradedDateTime.HasValue)
+                        @if (Model.FinancialReviewDetails.GradedOn.HasValue)
                         {
-                            @Html.Raw(Model.FinancialReviewDetails.GradedDateTime.Value.ToSfaShortDateString())
+                            @Html.Raw(Model.FinancialReviewDetails.GradedOn.Value.ToSfaShortDateString())
                         }
                     </dd>
                 </div>

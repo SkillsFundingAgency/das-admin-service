@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.Models.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpFinancialSummaryExportViewModel
     {
         public Guid ApplicationId { get; set; }

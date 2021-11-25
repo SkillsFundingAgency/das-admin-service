@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
     public class RoatpApply
     {
         public Guid ApplicationId { get; set; }
@@ -12,10 +13,8 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
 
         public RoatpApplyData ApplyData { get; set; }
-        public FinancialReviewDetails FinancialGrade { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }
@@ -28,18 +27,21 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ExternalComments { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialReviewDetails
     {
+        public Guid ApplicationId { get; set; }
+        public string Status { get; set; }
         public string SelectedGrade { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public string GradedBy { get; set; }
-        public DateTime? GradedDateTime { get; set; }
+        public DateTime? GradedOn { get; set; }
         public string Comments { get; set; }
         public string ExternalComments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
-
+        public string ClarificationRequestedBy { get; set; }
         public string ClarificationResponse { get; set; }
 
         public string Outcome => FinancialApplicationSelectedGrade.PassingGrades.Contains(SelectedGrade)
@@ -49,16 +51,19 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string OutcomeCssClass => Outcome == FinancialApplicationOutcome.Passed ? "govuk-tag govuk-tag--pass": "govuk-tag govuk-tag--fail";
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialEvidence
     {
         public string Filename { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class ClarificationFile
     {
         public string Filename { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public static class FinancialApplicationSelectedGrade
     {
         public const string Outstanding = "Outstanding";
@@ -77,12 +82,14 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         };
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public static class FinancialApplicationOutcome
     {
         public const string Passed = "Passed";
         public const string Failed = "Failed";
     }
 
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
     public class RoatpApplyData
     {
         public List<RoatpApplySequence> Sequences { get; set; }
@@ -106,6 +113,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ApplicationRemovedBy { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class RoatpApplyGatewayDetails
     {
         public DateTime? SourcesCheckedOn { get; set; }
@@ -150,6 +158,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public List<string> Roles { get; set; }
     }
 
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class OrganisationRegisterStatus
     {
         public bool UkprnOnRegister { get; set; }

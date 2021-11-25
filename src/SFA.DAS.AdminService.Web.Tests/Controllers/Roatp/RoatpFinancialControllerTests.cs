@@ -27,6 +27,7 @@ using SFA.DAS.QnA.Api.Types.Page;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
+    //TODO: Remove after Roatp FHA migration (APR-1823)
     [TestFixture]
     public class RoatpFinancialControllerTests
     {
@@ -141,9 +142,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 {
                     ApplicationId = _applicationId,
                     ApplicationStatus = applicationStatus,
-                    FinancialReviewStatus = financialReviewStatus,
                     ApplyData = new RoatpApplyData { ApplyDetails = new RoatpApplyDetails(), Sequences = new List<RoatpApplySequence>() }
                 });
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(
+                new FinancialReviewDetails {ApplicationId = _applicationId, Status = financialReviewStatus});
 
             _applicationApplyApiClient.Setup(x => x.GetRoatpSequences()).ReturnsAsync(new List<RoatpSequence>());
 
@@ -179,7 +182,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.AreEqual("OpenApplications",result.ActionName);
         }
 
-
         [TestCase(FinancialApplicationSelectedGrade.Outstanding)]
         [TestCase(FinancialApplicationSelectedGrade.Satisfactory)]
         [TestCase(FinancialApplicationSelectedGrade.Good)]
@@ -213,13 +215,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
             _financialReviewDetails = new FinancialReviewDetails
             {
                 GradedBy = MockHttpContextAccessor.Name,
-                GradedDateTime = DateTime.UtcNow,
+                GradedOn = DateTime.UtcNow,
                 SelectedGrade = grade,
                 FinancialDueDate = DateTime.Today.AddDays(5),
                 Comments = "comments",
@@ -227,6 +228,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -294,8 +297,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
 
             _applicationApplyApiClient.Setup(x =>
@@ -306,13 +308,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _financialReviewDetails = new FinancialReviewDetails
             {
                 GradedBy = MockHttpContextAccessor.Name,
-                GradedDateTime = DateTime.UtcNow,
+                GradedOn = DateTime.UtcNow,
                 SelectedGrade = FinancialApplicationSelectedGrade.Good,
                 FinancialDueDate = DateTime.Today.AddDays(5),
                 Comments = "comments",
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -335,8 +338,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "file.pdf");
         }
-
-
 
         [Test]
         public void When_clarification_file_is_removed_and_page_is_refreshed_with_filename_removed_from_model()
@@ -366,13 +367,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _financialReviewDetails = new FinancialReviewDetails
             {
                 GradedBy = MockHttpContextAccessor.Name,
-                GradedDateTime = DateTime.UtcNow,
+                GradedOn = DateTime.UtcNow,
                 SelectedGrade = FinancialApplicationSelectedGrade.Good,
                 FinancialDueDate = DateTime.Today.AddDays(5),
                 Comments = "comments",
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow,
-                ClarificationFiles = new List<ClarificationFile> { new ClarificationFile { Filename = fileToBeRemoved }, new ClarificationFile { Filename = "second.pdf" } }
+                ClarificationFiles = new List<ClarificationFile> { new ClarificationFile { Filename = fileToBeRemoved } }
             };
 
             _applicationApplyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(
@@ -397,13 +398,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    FinancialGrade = _financialReviewDetails
+                    }
                 });
    
             _applicationApplyApiClient.Setup(x =>
                     x.RemoveClarificationFile(_applicationId, It.IsAny<string>(), fileToBeRemoved))
                 .ReturnsAsync(true);
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(new FinancialReviewDetails());
 
             var vm = new RoatpFinancialClarificationViewModel
             {
@@ -424,9 +426,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             Assert.IsTrue(result.ViewName.Contains("Application_Clarification.cshtml"));
             var resultModel = result.Model as RoatpFinancialClarificationViewModel;
 
-            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles.Count == 1);
-            Assert.IsTrue(resultModel.FinancialReviewDetails.ClarificationFiles[0].Filename == "second.pdf");
+            Assert.IsNull(resultModel.FinancialReviewDetails.ClarificationFiles);
         }
+
         [Test]
         public void when_validation_errors_occur_page_refreshes_with_validation_messages()
         {
@@ -474,8 +476,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                                 NotRequired = true
                             }
                         }
-                    },
-                    FinancialGrade = new FinancialReviewDetails()
+                    }
                 });
 
             _applicationApplyApiClient.Setup(x =>
@@ -486,13 +487,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _financialReviewDetails = new FinancialReviewDetails
             {
                 GradedBy = MockHttpContextAccessor.Name,
-                GradedDateTime = DateTime.UtcNow,
+                GradedOn = DateTime.UtcNow,
                 SelectedGrade = FinancialApplicationSelectedGrade.Good,
                 FinancialDueDate = DateTime.Today.AddDays(5),
                 Comments = "comments",
                 ClarificationResponse = "clarification response",
                 ClarificationRequestedOn = DateTime.UtcNow
             };
+
+            _applicationApplyApiClient.Setup(x => x.GetFinancialReviewDetails(_applicationId)).ReturnsAsync(_financialReviewDetails);
 
             var vm = new RoatpFinancialClarificationViewModel
             {
