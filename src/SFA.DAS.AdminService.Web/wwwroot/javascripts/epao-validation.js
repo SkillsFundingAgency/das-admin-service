@@ -69,7 +69,13 @@ GOVUK.epaoValidate = function (formElement, validationRulesObject, forwardToForm
           }
           $(element).removeClass("govuk-input--error");
           return false;
-        } else {          
+        } else if ($(element).hasClass("govuk-textarea")) {
+            $(element)
+                .removeClass("govuk-textarea--error")
+                .closest(".govuk-form-group")
+                .removeClass("govuk-form-group--error");
+            return false;
+        } else {
           $(element)
             .removeClass("govuk-input--error")
             .closest(".govuk-form-group")
