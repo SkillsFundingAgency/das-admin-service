@@ -41,12 +41,12 @@
                             {
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
-                                    <td class="govuk-table__cell" data-label="ID">@result.StandardId</td>
-                                    <td class="govuk-table__cell" data-label="Effective from">@result.StandardData.EffectiveFrom.ToSfaShortestDateString()</td>
-                                    <td class="govuk-table__cell" data-label="Effective to">@result.StandardData.EffectiveTo.ToSfaShortestDateString()</td>
-                                    <td class="govuk-table__cell" data-label="Last date for new starts">@result.StandardData.LastDateForNewStarts.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.IFateReferenceNumber</td>
+                                    <td class="govuk-table__cell" data-label="Effective from">@result.EffectiveFrom.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell" data-label="Effective to">@result.EffectiveTo.ToSfaShortestDateString()</td>
+                                    <td class="govuk-table__cell" data-label="Last date for new starts">@result.LastDateStarts.ToSfaShortestDateString()</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a class="govuk-link" href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.StandardId">
+                                        <a class="govuk-link" href="/register/add-standard/organisation/@Model.OrganisationId/standard/@result.IFateReferenceNumber">
                                             Add to organisation
                                         </a>
                                     </td>

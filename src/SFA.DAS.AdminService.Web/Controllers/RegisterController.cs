@@ -32,20 +32,18 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IContactsApiClient _contactsApiClient;
-        private readonly IStandardServiceClient _standardServiceClient;
         private readonly IHostingEnvironment _env;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultStandardsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
-        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IStandardServiceClient standardServiceClient,  IHostingEnvironment env)
+        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IHostingEnvironment env)
         {
             _controllerSession = controllerSession;
             _apiClient = apiClient;
             _applyApiClient = applyApiClient;
             _contactsApiClient = contactsApiClient;
-            _standardServiceClient = standardServiceClient;
             _env = env;
         }
 
@@ -619,10 +617,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
             switch (_controllerSession.Register_ApprovedStandards.SortColumn)
             {
                 case OrganisationStandardSortColumn.StandardName:
-                    sortPropertyName = $"{nameof(OrganisationStandardSummary.StandardCollation)}.{nameof(OrganisationStandardSummary.StandardCollation.Title)}";
+                    sortPropertyName = $"{nameof(OrganisationStandardSummary.Title)}";
                     break;
                 case OrganisationStandardSortColumn.StandardCode:
-                    sortPropertyName = $"{nameof(OrganisationStandardSummary.StandardCollation)}.{nameof(OrganisationStandardSummary.StandardCollation.ReferenceNumber)}";
+                    sortPropertyName = $"{nameof(OrganisationStandardSummary.LarsCode)}";
                     break;
                 case OrganisationStandardSortColumn.DateApproved:
                     sortPropertyName = $"{nameof(OrganisationStandardSummary.DateStandardApprovedOnRegister)}";

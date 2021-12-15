@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
         public async Task Setup(int approvedStandardsPerPage)
         {
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, StandardServiceClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
             
             Sut.ChangeStandardsPerPageViewOrganisationApprovedStandards(OrganisationOneOrganisationId, approvedStandardsPerPage);
             
@@ -51,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             await Setup(approvedStandardsPerPage);
             for (int standard = 0; standard < approvedStandardsPerPage; standard++)
             {
-                _viewModelResponse.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items[standard].StandardCollation.Title.Should().StartWith("A");
+                _viewModelResponse.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel.PaginatedList.Items[standard].Title.Should().StartWith("A");
             }
         }
     }

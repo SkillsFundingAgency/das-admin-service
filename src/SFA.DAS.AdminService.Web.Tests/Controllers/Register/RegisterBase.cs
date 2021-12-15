@@ -23,7 +23,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Mock<IApiClient> ApiClient;
         protected Mock<IApplicationApiClient> ApplyApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
-        protected Mock<IStandardServiceClient> StandardServiceClient;
         protected Mock<IHostingEnvironment> Env;
 
         protected Guid OrganisationOneId = Guid.NewGuid();
@@ -80,18 +79,19 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             List<OrganisationStandardSummary> organisationStandards = new List<OrganisationStandardSummary>();
             for (int standard = 0; standard < 20; standard++)
-            { 
+            {
                 organisationStandards.Add(new OrganisationStandardSummary
                 {
                     Id = standard,
-                    StandardCollation = new StandardCollation
-                    {
-                        ReferenceNumber = string.Format("ST{0:4}", standard),
-                        StandardId = standard,
-                        Title = string.Format("{0} Gravyboat Maker", NumberToAlpha(standard / 10))
-                    },
-                    DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100)
-                }); ;
+                    DateStandardApprovedOnRegister = DateTime.Now.AddDays(-100),
+                    StandardVersions = new List<OrganisationStandardVersion> {
+                        new OrganisationStandardVersion {
+                            IFateReferenceNumber = string.Format("ST{0:4}", standard),
+                            LarsCode = standard,
+                            Title = string.Format("{0} Gravyboat Maker", NumberToAlpha(standard / 10))
+                        }
+                    }
+                });                
             }
 
             List<DeliveryArea> deliveryAreas = new List<DeliveryArea>
@@ -169,7 +169,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisationIncludePrivileges(OrganisationOneOrganisationId, true)).ReturnsAsync(users);
             ContactsApiClient.Setup(p => p.GetAllContactsWhoCanBePrimaryForOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(contactsWhoCanBePrimary);
 
-            StandardServiceClient = new Mock<IStandardServiceClient>();
             Env = new Mock<IHostingEnvironment>();
         }
 

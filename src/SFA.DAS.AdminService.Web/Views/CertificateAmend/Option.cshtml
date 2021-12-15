@@ -40,7 +40,7 @@ else
                         </h2>
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
-                                <li><a sfa-validation-for="Option"></a></li>
+                                <li><a sfa-validation-for="SelectedOption"></a></li>
                                 <li><a sfa-validation-for="ReasonForChange"></a></li>
                             </ul>
                         </div>
@@ -54,21 +54,22 @@ else
                                 Did the apprentice take a learning option?
                             </h1>
                         </legend>
-                        <p class="govuk-body">
-                            You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.
-                        </p>
-                        <span id="options-conditional-hint" class="govuk-hint">
-                            The option will appear on the certificate.
-                        </span>
-                        <div class="govuk-form-group">
-                           
+                        <div class="govuk-form-group" sfa-validation-for="SelectedOption" sfa-validationerror-class="govuk-form-group--error">
+                            <p class="govuk-body">
+                                You may know options as 'occupational options', 'pathways', 'specialisms' or 'specialist functions'.
+                            </p>
+                            <span id="options-conditional-hint" class="govuk-hint">
+                                The option will appear on the certificate.
+                            </span>
+                            
+                            <div class="error-message-container"></div>
                             <div class="govuk-radios">
 
                                 @foreach (var option in Model.Options)
                                 {
                                     var selected = option == Model.Option;
                                     <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" id="choose-option-@option" name="SelectedOption" type="radio" value="@option" checked="@selected">
+                                        <input class="govuk-radios__input" id="choose-option-@option" name="SelectedOption" type="radio" value="@option" checked="@selected"  sfa-validation-for="SelectedOption" sfa-validationerror-class="govuk-input--error" />
                                         <label class="govuk-label govuk-radios__label" for="choose-option-@option">
                                             @option
                                         </label>
@@ -76,9 +77,7 @@ else
                                 }
 
                             </div>
-                           
                         </div>
-
                     </fieldset>
                 </div>
 

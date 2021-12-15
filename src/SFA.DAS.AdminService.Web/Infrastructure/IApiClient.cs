@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<object> RunNowScheduledRun(int scheduleType);
         Task<StaffSearchResult> Search(string searchString, int page);
         Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString);
-        Task<List<StandardCollation>> SearchStandards(string searchString);
+        Task<List<StandardVersion>> SearchStandards(string searchString);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest);
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);

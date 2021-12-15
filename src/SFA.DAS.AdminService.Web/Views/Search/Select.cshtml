@@ -389,7 +389,7 @@ else
                 @if (Model.CanRequestDuplicate)
                 {
                     <li>
-                        <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request duplicate certificate</a>
+                        <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request certificate reprint</a>
                     </li>
                 }
                 else if (Model.CanAmendCertificate)
