@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         public void Arrange()
         {
             var certificateGradeController = new CertificateGradeController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
-            _result = certificateGradeController.Grade(Certificate.Id, true).GetAwaiter().GetResult();           
+            _result = certificateGradeController.Grade(Certificate.Id).GetAwaiter().GetResult();           
         }
 
         [Test]
