@@ -96,6 +96,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<ApplicationResponse>($"/api/v1/Applications/{Id}/application");
         }
 
+        public async Task<ApplicationResponse> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        {
+            return await Get<ApplicationResponse>($"/api/v1/Applications/{orgId}/application/withdrawn/{standardCode}");
+        }
+
+
         #region Application
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
