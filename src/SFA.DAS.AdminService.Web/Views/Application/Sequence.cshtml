@@ -26,7 +26,7 @@
             }
             else
             {
-                @if (!Model.IsPreviousWithdrawalOlderThanTwelveMonths)
+                @if (Model.IsPreviousWithdrawalOlderThanTwelveMonths == false && Model.PreviousWithdrawalDate != null)
                 {
                     <div class="info-summary">
                         <h2 class="govuk-heading-m">This organisation withdrew from this @Model.PreviousWithdrawalType on @Model.PreviousWithdrawalDate.ToShortNumericFormatString()</h2>

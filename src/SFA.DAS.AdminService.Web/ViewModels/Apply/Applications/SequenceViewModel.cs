@@ -86,10 +86,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         ApplicationResponse PreviousWithdrawal { get; set; }
 
-        public string PreviousWithdrawalType => PreviousWithdrawal.StandardApplicationType.Replace("Withdrawal","");
-        public DateTime? PreviousWithdrawalDate => PreviousWithdrawal.ApplyData.Sequences
-            .Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO).Select(y => y.ApprovedDate).FirstOrDefault();
-        public bool IsPreviousWithdrawalOlderThanTwelveMonths => PreviousWithdrawalDate < DateTime.UtcNow.AddMonths(-12);
+        public string PreviousWithdrawalType => PreviousWithdrawal?.StandardApplicationType.Replace("Withdrawal","");
+        public DateTime? PreviousWithdrawalDate => PreviousWithdrawal?.ApplyData.Sequences.Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO).Select(y => y.ApprovedDate).FirstOrDefault();
+        public bool? IsPreviousWithdrawalOlderThanTwelveMonths => PreviousWithdrawalDate != null && PreviousWithdrawalDate < DateTime.UtcNow.AddMonths(-12);
 
 
         public bool IsWithdrawal => SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO ||
