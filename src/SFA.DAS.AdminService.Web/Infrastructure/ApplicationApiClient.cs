@@ -96,9 +96,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<ApplicationResponse>($"/api/v1/Applications/{Id}/application");
         }
 
-        public async Task<ApplicationResponse> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        public async Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? standardCode)
         {
-            return await Get<ApplicationResponse>($"/api/v1/Applications/{orgId}/application/withdrawn/{standardCode}");
+            return await Get<List<ApplicationResponse>>($"/api/v1/Applications/{orgId}/application/withdrawn/{standardCode}");
         }
 
 

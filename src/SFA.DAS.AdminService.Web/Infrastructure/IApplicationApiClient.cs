@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<ApplicationResponse> GetApplication(Guid Id);
-        Task<ApplicationResponse> GetWithdrawnApplications(Guid orgId, int? StandardCode);
+        Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? StandardCode);
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();

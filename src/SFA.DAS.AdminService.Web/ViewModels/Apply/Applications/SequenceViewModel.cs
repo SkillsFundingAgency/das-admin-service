@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     {
         public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, 
             List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId,
-            ApplicationResponse previousWithdrawal = null)
+            List<ApplicationResponse> previousWithdrawal = null)
             : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
@@ -44,7 +44,36 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             ContactName = application.ContactName;
             ContactEmail = application.ContactEmail;
 
-            PreviousWithdrawal = previousWithdrawal;
+            PreviousWithdrawal = GetPreviousWithdrawal(previousWithdrawal, application);
+        }
+
+        private ApplicationResponse GetPreviousWithdrawal(List<ApplicationResponse> previousWithdrawals, ApplicationResponse application)
+        {
+            //Version applications
+            if (application.StandardApplicationType == "version") 
+            {
+                foreach (var withdrawal in previousWithdrawals)
+                {
+                    if (withdrawal.ApplyData.Apply.Versions == application.ApplyData.Apply.Versions)
+                    {
+                        return withdrawal;
+                    }
+                }
+            }
+            else //Standard applications
+            {
+                foreach (var withdrawal in previousWithdrawals)
+                {
+                    if (withdrawal.ApplicationType == "StandardWithdrawal")
+                    {
+                        return withdrawal;
+                    }
+                }
+            }
+            
+            
+
+            return null;
         }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)

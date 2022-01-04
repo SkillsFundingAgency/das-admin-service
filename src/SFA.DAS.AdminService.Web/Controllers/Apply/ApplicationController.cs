@@ -72,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
-            var withdrawal = await _applyApiClient.GetWithdrawnApplications(application.OrganisationId, application.StandardCode);
+            var previousWithdrawals = await _applyApiClient.GetWithdrawnApplications(application.OrganisationId, application.StandardCode);
 
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
                 applySequence.Sections, backViewModel.BackAction, backViewModel.BackController,
-                backViewModel.BackOrganisationId, withdrawal);
+                backViewModel.BackOrganisationId, previousWithdrawals);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -453,7 +453,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var warningMessages = new List<string>();
             var withdrawal = await _applyApiClient.GetWithdrawnApplications(application.OrganisationId, application.StandardCode);
-            if (withdrawal != null)
+            if (withdrawal.Count != 0)
             {
                 foreach (var version in application.ApplyData.Apply.Versions)
                 {
