@@ -49,8 +49,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         private ApplicationResponse GetPreviousWithdrawal(List<ApplicationResponse> previousWithdrawals, ApplicationResponse application)
         {
+
             //Version applications
-            if (application.StandardApplicationType == "version") 
+            if (application.StandardApplicationType == StandardApplicationTypes.Version) 
             {
                 foreach (var withdrawal in previousWithdrawals)
                 {
@@ -64,7 +65,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             {
                 foreach (var withdrawal in previousWithdrawals)
                 {
-                    if (withdrawal.ApplicationType == "StandardWithdrawal")
+                    if (withdrawal.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
                     {
                         return withdrawal;
                     }
