@@ -50,30 +50,31 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         private ApplicationResponse GetPreviousWithdrawal(List<ApplicationResponse> previousWithdrawals, ApplicationResponse application)
         {
 
-            //Version applications
-            if (application.StandardApplicationType == StandardApplicationTypes.Version) 
+            if (previousWithdrawals != null)
             {
-                foreach (var withdrawal in previousWithdrawals)
+                //Version applications
+                if (application.StandardApplicationType == StandardApplicationTypes.Version)
                 {
-                    if (withdrawal.ApplyData.Apply.Versions == application.ApplyData.Apply.Versions)
+                    foreach (var withdrawal in previousWithdrawals)
                     {
-                        return withdrawal;
+                        if (withdrawal.ApplyData.Apply.Versions == application.ApplyData.Apply.Versions)
+                        {
+                            return withdrawal;
+                        }
                     }
                 }
-            }
-            else //Standard applications
-            {
-                foreach (var withdrawal in previousWithdrawals)
+                else //Standard applications
                 {
-                    if (withdrawal.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
+                    foreach (var withdrawal in previousWithdrawals)
                     {
-                        return withdrawal;
+                        if (withdrawal.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
+                        {
+                            return withdrawal;
+                        }
                     }
                 }
             }
             
-            
-
             return null;
         }
 
