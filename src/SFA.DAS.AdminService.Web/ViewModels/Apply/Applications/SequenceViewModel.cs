@@ -49,7 +49,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
         private ApplicationResponse GetPreviousWithdrawal(List<ApplicationResponse> previousWithdrawals, ApplicationResponse application)
         {
-
             if (previousWithdrawals != null)
             {
                 //Version applications
@@ -57,22 +56,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 {
                     foreach (var withdrawal in previousWithdrawals)
                     {
-                        foreach (var ver in withdrawal.ApplyData.Apply.Versions)
-                        {
-                            if (withdrawal.ApplyData.Apply.Versions.Contains(ver))
-                                return withdrawal;
-                        }
-                    }
+                        bool VersionPreviouslyWithdrawn = withdrawal.ApplyData.Apply.Versions
+                                        .Intersect(application.ApplyData.Apply.Versions).Any();
+
+                        if (VersionPreviouslyWithdrawn)
+                            return withdrawal;
+                    }                
                 }
                 else //Standard applications
                 {
-                    foreach (var withdrawal in previousWithdrawals)
-                    {
-                        if (withdrawal.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
-                        {
-                            return withdrawal;
-                        }
-                    }
+                    return previousWithdrawals
+                        .Where(x => x.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
+                        .FirstOrDefault();
                 }
             }
             
