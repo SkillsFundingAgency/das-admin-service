@@ -457,7 +457,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 foreach (var version in application.ApplyData.Apply.Versions)
                 {
-                    await UpdateOrganisationStandardWithdrawalDate(application.OrganisationId.ToString(), application.ApplyData.Apply.StandardReference, version, new DateTime());
+                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, application.ApplyData.Apply.StandardReference, version, new DateTime());
                 }
             }
             else
