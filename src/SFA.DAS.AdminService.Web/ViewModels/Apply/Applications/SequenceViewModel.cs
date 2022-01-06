@@ -57,9 +57,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                 {
                     foreach (var withdrawal in previousWithdrawals)
                     {
-                        if (withdrawal.ApplyData.Apply.Versions == application.ApplyData.Apply.Versions)
+                        foreach (var ver in withdrawal.ApplyData.Apply.Versions)
                         {
-                            return withdrawal;
+                            if (withdrawal.ApplyData.Apply.Versions.Contains(ver))
+                                return withdrawal;
                         }
                     }
                 }
