@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Common.Extensions
         public static string ToShortNumericFormatString(this DateTime? time)
         {
             return time == null ?
-                string.Empty : time.Value.ToString("dd/MMM/yyyy");
+                string.Empty : time.Value.ToString("dd.MM.yyyy");
         }
 
 
