@@ -23,12 +23,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Date(Guid certificateId , bool fromApproval)
+        public async Task<IActionResult> Date(Guid certificateId)
         {
             var viewModel = await LoadViewModel<CertificateDateViewModel>(certificateId, "~/Views/CertificateAmend/Date.cshtml");
-            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateDateViewModel certificateDateViewModel)
-                certificateDateViewModel.FromApproval = fromApproval;
-
             return viewModel;
         }
 
@@ -39,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Date.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.Date);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Date);
 
             return actionResult;
         }

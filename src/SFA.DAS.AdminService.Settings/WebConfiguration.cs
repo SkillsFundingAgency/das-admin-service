@@ -10,8 +10,6 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public ClientApiAuthentication EpaoApiAuthentication { get; set; }
 
 
-        [JsonRequired] public string IfaApiClientBaseUrl { get; set; }
-
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
         [JsonRequired] public ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
