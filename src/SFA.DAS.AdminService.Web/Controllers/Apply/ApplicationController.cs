@@ -452,47 +452,37 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
-            var withdrawal = await _applyApiClient.GetWithdrawnApplications(application.OrganisationId, application.StandardCode);
-            if (withdrawal.Count != 0)
+            
+            if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
             {
-                foreach (var version in application.ApplyData.Apply.Versions)
-                {
-                    await UpdateOrganisationStandardWithdrawalDate(organisation.EndPointAssessorOrganisationId, application.ApplyData.Apply.StandardReference, version, new DateTime());
-                }
-            }
-            else
-            {
-                if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
-                {
-                    var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
+                var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
 
-                    // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
-                    if (sequenceOne?.NotRequired is true)
+                // if sequenceOne is not required (ie, this is a standard application for an existing epao and no financials required) then Inject STANDARD
+                if (sequenceOne?.NotRequired is true)
+                {
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One is NOT REQUIRED - Injecting Standard");
+                    var response = await AddOrganisationStandardIntoRegister(application.Id);
+                    if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
+                }
+                // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
+                else
+                {
+                    _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One IS REQUIRED.");
+
+                    //    'Inject' the Organisation and associated contacts if not RoEPAO approved
+                    if (!organisation.OrganisationData.RoEPAOApproved)
                     {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One is NOT REQUIRED - Injecting Standard");
-                        var response = await AddOrganisationStandardIntoRegister(application.Id);
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Organisation");
+                        var response = await AddOrganisationAndContactIntoRegister(application.Id);
                         if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
-                    // if sequenceOne IS required (ie, this is a new EPAO or an existing EPAO requiring financials)
-                    else
+
+                    //    'Inject' the Standard which was applied for by the organisation
+                    if (!warningMessages.Any())
                     {
-                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Sequence One IS REQUIRED.");
-
-                        //    'Inject' the Organisation and associated contacts if not RoEPAO approved
-                        if (!organisation.OrganisationData.RoEPAOApproved)
-                        {
-                            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Organisation");
-                            var response = await AddOrganisationAndContactIntoRegister(application.Id);
-                            if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
-                        }
-
-                        //    'Inject' the Standard which was applied for by the organisation
-                        if (!warningMessages.Any())
-                        {
-                            _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Standard.");
-                            var response = await AddOrganisationStandardIntoRegister(application.Id);
-                            if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
-                        }
+                        _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Injecting Standard.");
+                        var response = await AddOrganisationStandardIntoRegister(application.Id);
+                        if (response.WarningMessages != null) warningMessages.AddRange(response.WarningMessages);
                     }
                 }
             }

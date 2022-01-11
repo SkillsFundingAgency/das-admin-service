@@ -254,6 +254,12 @@ namespace SFA.DAS.AdminService.Web.Services
                 _logger.LogInformation($"Inject standard failed at pre-check. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", warningMessages)}");
             }
 
+            
+            //if a withdrawal exists - then versions must exist - update rather than insert in the assessor service
+            var withdrawal = await _applyApiClient.GetWithdrawnApplications(command.OrganisationId, command.StandardCode);
+            if (withdrawal.Count != 0)
+                standard.ApplyFollowingWithdrawal = true;
+
             // If everything has checked out; approve the standard
             if (warningMessages.Count == 0)
             {
