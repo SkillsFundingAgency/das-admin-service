@@ -18,12 +18,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Version(Guid certificateId, bool fromApproval)
+        public async Task<IActionResult> Version(Guid certificateId)
         {
             var viewModel = await LoadViewModel<CertificateVersionViewModel>(certificateId, "~/Views/CertificateAmend/Version.cshtml");
             if (viewModel is ViewResult viewResult && viewResult.Model is CertificateVersionViewModel certificateVersionViewModel)
             {
-                certificateVersionViewModel.FromApproval = fromApproval;
                 certificateVersionViewModel.Standards = await ApiClient.GetStandardVersions(certificateVersionViewModel.StandardCode);
             }
 
@@ -37,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             vm.Version = (await ApiClient.GetStandardVersion(vm.StandardUId))?.Version;
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Version.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.Version);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Version);
         }
     }
 }

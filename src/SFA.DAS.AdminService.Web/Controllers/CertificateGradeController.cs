@@ -8,7 +8,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 
 namespace SFA.DAS.AdminService.Web.Controllers
-{   
+{
     public class CertificateGradeController : CertificateBaseController
     {
         public CertificateGradeController(ILogger<CertificateAmendController> logger,
@@ -18,12 +18,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Grade(Guid certificateId, bool fromApproval)
+        public async Task<IActionResult> Grade(Guid certificateId)
         {
             var viewModel = await LoadViewModel<CertificateGradeViewModel>(certificateId, "~/Views/CertificateAmend/Grade.cshtml");
-            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateGradeViewModel certificateGradeViewModel)
-                certificateGradeViewModel.FromApproval = fromApproval;
-
             return viewModel;
         }
 
@@ -32,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Grade.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id , fromapproval = vm.FromApproval }), action: CertificateActions.Grade);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Grade);
         }
     }
 }

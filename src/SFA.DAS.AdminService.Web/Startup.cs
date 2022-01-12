@@ -18,8 +18,6 @@ using Polly.Extensions.Http;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ExternalApis.IFAStandards;
-using SFA.DAS.AssessorService.ExternalApis.Services;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -211,9 +209,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();
 
-            services.AddTransient<IIfaStandardsApiClient>(x =>
-                new IfaStandardsApiClient(ApplicationConfiguration.IfaApiClientBaseUrl));
-
             services.AddTransient<IAzureTokenService, AzureTokenService>();
 
             services.AddTransient<IAzureApiClient>(x => new AzureApiClient(
@@ -223,10 +218,7 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IWebConfiguration>(),
                 x.GetService<IOrganisationsApiClient>(),
                 x.GetService<IContactsApiClient>()));
-
-            services.AddTransient<CacheService>();
-            services.AddTransient<CertificateLearnerStartDateViewModelValidator>();
-            
+                       
             services.AddTransient<ICsvExportService, CsvExportService>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);

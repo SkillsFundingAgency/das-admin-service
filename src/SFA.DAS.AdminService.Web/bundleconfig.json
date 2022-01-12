@@ -7,7 +7,7 @@
         "outputFileName": "wwwroot/javascripts/application.min.js",
         "inputFiles": [
             "wwwroot/javascripts/govuk-frontend-2.13.0.min.js",
-            "wwwroot/lib/jquery/dist/jquery-3.6.0.js",
+            "wwwroot/javascripts/lib/jquery/jquery-3.6.0.js",
             "wwwroot/javascripts/das-expandable-table.js",
             "wwwroot/javascripts/das-cookie-banner.js",
             "wwwroot/javascripts/application.js"
