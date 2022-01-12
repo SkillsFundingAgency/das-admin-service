@@ -1,0 +1,45 @@
+﻿@using SFA.DAS.AdminService.Web.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Merge.EpaoSearchResultsViewModel
+@{
+    ViewBag.Title = $"{Model.OrganisationType.CapitaliseFirstLetter()} EPAO search results";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                @Model.OrganisationType.CapitaliseFirstLetter() EPAO search
+            </h1>
+            <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
+        </div>
+    </div>
+
+    @if (@Model.Results.Count > 0)
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <table class="govuk-table govuk-table--s das-table--responsive">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">ID</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">UKPRN</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Results.OrderBy(x => x.Name))
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" asp-controller="MergeOrganisations" asp-action="ConfirmEpao" asp-route-type="@Model.OrganisationType" asp-route-epaoId="@result.Id">@result.Name</a></td>
+                                <td class="govuk-table__cell" data-label="ID">@result.Id</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">UKPRN TBC</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</main>

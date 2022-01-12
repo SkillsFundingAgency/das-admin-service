@@ -1,0 +1,33 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.MergeLogViewModel
+
+@{ 
+    ViewBag.Title = "Merge log";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="Dashboard" asp-action="Index">Return to dashboard</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">
+                Merge log
+            </h1>
+
+            <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="Start"> Start a new merge </a>
+
+            @if (Model.IsEmpty)
+            {
+                <div class="govuk-inset-text">
+                    You currently have no complete merges. <br />
+                    Once you start and complete at least one merge it will be dislayed on this page.
+                    @*check p tags instead of br*@
+                </div>
+            }
+            else
+            {
+                //Merge log table partial
+            }
+        </div>
+    </div>
+</main>

@@ -1,0 +1,39 @@
+﻿@using SFA.DAS.AdminService.Web.Extensions;
+ 
+@model SFA.DAS.AdminService.Web.ViewModels.Merge.SearchOrganisationViewModel
+@{
+    ViewBag.Title = $"{Model.OrganisationType.CapitaliseFirstLetter()} Epao search";
+    Layout = "_Layout";
+}
+
+@*<a class="govuk-back-link" asp-action="Index" asp-controller="Dashboard">Return to dashboard</a>*@
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <partial name="_ValidationSummaryPartial" />
+
+            <form asp-action="EpaoSearchResults" asp-controller="MergeOrganisations" method="get">
+
+                <h1 class="govuk-heading-xl">
+                    @Model.OrganisationType.CapitaliseFirstLetter() EPAO search
+                </h1>
+
+                <span class="govuk-hint">
+                    <p class="govuk-body govuk-body--hint">Search using either the:</p>
+                    <ul class="govuk-list govuk-list--bullet govuk-list--hint">
+                        <li>UKPRN</li>
+                        <li>organisation ID (EPAXXXX)</li>
+                        <li>name</li>
+                    </ul>
+                </span>
+
+                <span class="govuk-error-message" asp-validation-for="SearchString"></span>
+                <input class="govuk-input" asp-for="SearchString" name="SearchString" sfa-validationerror-class="govuk-input--error" type="text" />
+
+                <button class="govuk-button" type="submit">Search for @Model.OrganisationType EPAO </button>
+            </form>
+        </div>
+    </div>
+</main>
