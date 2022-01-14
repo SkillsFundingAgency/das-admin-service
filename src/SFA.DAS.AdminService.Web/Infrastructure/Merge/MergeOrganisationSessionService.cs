@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AdminService.Web.Models.Merge;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
 {
@@ -17,7 +18,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
         {
             _sessionService.Remove(_mergeOrganisationsSessionKey);
 
-            _sessionService.Set(_mergeOrganisationsSessionKey, new MergeRequest());
+            var mergeRequest = new MergeRequest();
+
+            mergeRequest.PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));
+
+            _sessionService.Set(_mergeOrganisationsSessionKey, mergeRequest);
         }
 
         public MergeRequest GetMergeRequest()
@@ -69,6 +74,24 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
             var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
 
             request.MarkComplete();
+
+            _sessionService.Set(_mergeOrganisationsSessionKey, request);
+        }
+
+        public void DeleteLastCommand()
+        {
+            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
+
+            request.DeleteLastCommand();
+
+            _sessionService.Set(_mergeOrganisationsSessionKey, request);
+        }
+
+        public void AddSearchEpaoCommand(string type, string searchString)
+        {
+            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
+
+            request.AddSearchEpaoCommand(type, searchString);
 
             _sessionService.Set(_mergeOrganisationsSessionKey, request);
         }

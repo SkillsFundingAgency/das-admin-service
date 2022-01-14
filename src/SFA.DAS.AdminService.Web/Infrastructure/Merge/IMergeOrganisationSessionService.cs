@@ -14,5 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
         void UpdateEpao(string type, string id, string name);
         void SetSecondaryEpaoEffectiveToDate(int day, int month, int year);
         void MarkComplete();
+        void DeleteLastCommand();
+        void AddSearchEpaoCommand(string type, string searchString);
     }
 }

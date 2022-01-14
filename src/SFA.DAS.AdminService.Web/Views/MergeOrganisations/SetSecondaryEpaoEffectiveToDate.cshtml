@@ -1,39 +1,73 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.SetSecondaryEpaoEffectiveToDateViewModel 
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.SetSecondaryEpaoEffectiveToDateViewModel
 
-<form asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate" method="post">
-    <div class="govuk-form-group">
+<a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="MergeOverview"> Back </a>
 
-        <div id="secondary-epao-effective-to-hint" class="govuk-hint">
-            For example, 27 3 2021
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <partial name="_ValidationSummaryPartial" />
+
+            <h1 class="govuk-heading-xl">
+                Choose an effective to date for the secondary EPAO
+            </h1>
+
+            <div class="govuk-inset-text">
+                The secondary EPAO will be removed from the Register of EPAOs on the Effective to date. <br />
+                They will no longer be able to use their Assessor account,
+            </div>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Secondary EPAO
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.SecondaryEpaoName != null ? Model.SecondaryEpaoName : "Not yet confirmed")
+                    </dd>
+                </div>
+            </dl>
+                
+            <form asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate" method="post">
+                <div class="govuk-form-group" sfa-validation-for-list="Date,Year,Month,Day" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--s"> Effective to </label>
+
+                    <div id="secondary-epao-effective-to-hint" class="govuk-hint">
+                        For example, 27 3 2021
+                    </div>
+
+                    <div class="govuk-date-input" id="secondard-epao-effective-to">
+                        
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="effective-to-day">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Day" type="text" sfa-validation-for-list="Date,Day" sfa-validationerror-class="govuk-input--error">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="effective-to-month">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="text" sfa-validation-for-list="Date,Month" sfa-validationerror-class="govuk-input--error">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="effective-to-year">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="text" sfa-validation-for-list="Date,Year" sfa-validationerror-class="govuk-input--error" >
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button class="govuk-button" type="submit"> Continue </button>
+            </form>
         </div>
-        <div class="govuk-date-input" id="secondard-epao-effective-to">
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="effective-to-day">
-                        Day
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="effective-to-day" asp-for="Day" type="text" pattern="[0-9]*" inputmode="numeric">
-                </div>
-            </div>
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="effective-to-month">
-                        Month
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="effective-to-month" asp-for="Month" type="text" pattern="[0-9]*" inputmode="numeric">
-                </div>
-            </div>
-            <div class="govuk-date-input__item">
-                <div class="govuk-form-group">
-                    <label class="govuk-label govuk-date-input__label" for="effective-to-year">
-                        Year
-                    </label>
-                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" id="effective-to-year" asp-for="Year" type="text" pattern="[0-9]*" inputmode="numeric">
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    <button class="govuk-button" type="submit"> Continue </button>
-</form>
+</main>

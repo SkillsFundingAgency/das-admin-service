@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.AdminService.Web.Extensions;
+﻿@using SFA.DAS.AdminService.Web.Models.Merge;
+@using SFA.DAS.AdminService.Web.Extensions;
 
 @model SFA.DAS.AdminService.Web.ViewModels.Merge.EpaoSearchResultsViewModel
 @{
@@ -6,20 +7,42 @@
     Layout = "_Layout";
 }
 
+@if (Model.PreviousCommand.CommandName == SessionCommands.SearchPrimaryEpao)
+{
+    <a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="primary" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+}
+else if (Model.PreviousCommand.CommandName == SessionCommands.SearchSecondaryEpao)
+{
+    <a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="secondary" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+}
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
                 @Model.OrganisationType.CapitaliseFirstLetter() EPAO search
             </h1>
             <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
         </div>
     </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (@Model.Results.Count == 0)
+            {
+                <span class="govuk-hint">
+                    <p class="govuk-body govuk-body--hint">Search using either the:</p>
 
-    @if (@Model.Results.Count > 0)
-    {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+                    <ul class="govuk-list govuk-list--bullet govuk-list--hint">
+                        <li>UKPRN</li>
+                        <li>organisation ID (EPAXXXX)</li>
+                        <li>name</li>
+                    </ul>
+                </span>
+
+                <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="@Model.OrganisationType" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True"> Return to @Model.OrganisationType EPAO search </a>
+            }
+            else
+            {
                 <table class="govuk-table govuk-table--s das-table--responsive">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -39,7 +62,8 @@
                         }
                     </tbody>
                 </table>
-            </div>
+
+            }
         </div>
-    }
+    </div>
 </main>

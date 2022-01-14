@@ -12,5 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string SecondaryEpaoName { get; set; }
 
         public DateTime? SecondaryEpaoEffectiveTo { get; set; }
+
+        public SessionCommand PreviousCommand { get; set; }
     }
 }

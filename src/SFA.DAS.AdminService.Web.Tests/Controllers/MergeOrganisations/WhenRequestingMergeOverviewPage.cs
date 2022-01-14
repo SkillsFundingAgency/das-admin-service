@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             MergeController.MergeOverview();
 
-            _mockMergeSessionService.Verify(ms => ms.GetMergeRequest(), Times.Once);
+            VerifyGetMergeRequest();
         }
 
         [Test]

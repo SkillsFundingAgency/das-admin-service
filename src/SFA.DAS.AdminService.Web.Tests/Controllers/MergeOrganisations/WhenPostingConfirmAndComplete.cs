@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
 using System.Threading.Tasks;
@@ -22,6 +23,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             // Verify executed
            // _mockApiClient.Verify()
+        }
+
+        [Test]
+        public async Task And_ExecuteMergeRequestSuccessful_Then_MarkMergeRequestComplete()
+        {
+            var viewModel = SetupViewModel();
+            // setup valid response
+
+            await MergeController.ConfirmAndComplete(viewModel);
+
+            _mockMergeSessionService.Verify(ms => ms.MarkComplete(), Times.Once());
         }
 
         [Test]

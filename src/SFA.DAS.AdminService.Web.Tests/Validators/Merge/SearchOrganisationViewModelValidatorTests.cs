@@ -9,7 +9,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
     {
         private SearchOrganisationViewModelValidator Validator;
 
-
         [SetUp]
         public void Arrange()
         {

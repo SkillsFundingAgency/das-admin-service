@@ -1,6 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Domain;
-
-namespace SFA.DAS.AdminService.Web.ViewModels.Merge
+﻿namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 {
     public class SearchOrganisationViewModel
     {

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,16 +22,25 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet("merge-organisations/log")]
-        public async Task<IActionResult> MergeLog()
+        public async Task<IActionResult> MergeLog(int? pageSize = 10, int? pageIndex = 1)
         {
-            // get merge logs
-
+            var response = await _apiClient.GetMergeLogs(pageSize.Value, pageIndex.Value);
+            
             var viewModel = new MergeLogViewModel()
             {
-                MergeLogs = null
+                PageIndex = pageIndex.Value,
+                PageSize = pageSize.Value,
+                MergeLogs = response
             };
 
             return View(viewModel);
+        }
+
+        [HttpGet("merge-organisations/log/{logId}")]
+        public async Task<IActionResult> ViewMergeLogEntry(int logId)
+        {
+
+            return View();
         }
 
         [HttpGet("merge-organisations/start")]
@@ -46,6 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction(nameof(MergeOverview));
         }
 
+        [MergeRequestFilter]
         [HttpGet("merge-organisations/overview")]
         public IActionResult MergeOverview()
         {
@@ -57,31 +69,36 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 PrimaryEpaoName = mergeRequest?.PrimaryEpao?.Name,
                 SecondaryEpaoId = mergeRequest?.SecondaryEpao?.Id,
                 SecondaryEpaoName = mergeRequest?.SecondaryEpao?.Name,
-                SecondaryEpaoEffectiveTo = mergeRequest?.SecondaryEpaoEffectiveTo
-            };
+                SecondaryEpaoEffectiveTo = mergeRequest?.SecondaryEpaoEffectiveTo,
+                PreviousCommand = mergeRequest?.Peek()
+        };
 
             return View(viewModel);
         }
 
+        [MergeRequestFilter]
         [HttpGet("merge-organisations/search/{type}")]
-        public IActionResult SearchEpao(string type)
+        public IActionResult SearchEpao(string type, string searchString = null)
         {
             var viewModel = new SearchOrganisationViewModel
             {
                 OrganisationType = type.ToLower(),
-                SearchString = null
+                SearchString = searchString
             };
 
             return View(viewModel);
         }
 
+        [MergeRequestFilter]
         [HttpGet("merge-organisations/results/{type}")]
         public async Task<IActionResult> EpaoSearchResults(string type, SearchOrganisationViewModel searchViewModel)
         {
             if (!ModelState.IsValid)
             {
-                View(nameof(SearchEpao), searchViewModel);
+                return View(nameof(SearchEpao), searchViewModel);
             }
+
+            _mergeSessionService.AddSearchEpaoCommand(type, searchViewModel.SearchString);
 
             var searchstring = searchViewModel.SearchString?.Trim().ToLower();
             searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
@@ -96,18 +113,24 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 OrganisationType = type.ToLower(),
                 Results = results,
-                SearchString = searchViewModel.SearchString
+                SearchString = searchViewModel.SearchString,
+                PreviousCommand = _mergeSessionService.GetMergeRequest().Peek()
             };
 
             return View(viewModel);
         }
 
+        [MergeRequestFilter]
         [HttpGet("merge-organisations/confirm/{type}/{epaoId}")]
         public async Task<IActionResult> ConfirmEpao(string type, string epaoId)
         {
+            var mergeRequest = _mergeSessionService.GetMergeRequest();
+
+            var previousCommand = mergeRequest.Peek();
+
             var epao = await _apiClient.GetEpaOrganisation(epaoId);
 
-            var viewModel = new ConfirmEpaoViewModel(epao, type);
+            var viewModel = new ConfirmEpaoViewModel(epao, type, previousCommand);
 
             return View(viewModel);
         }
@@ -117,6 +140,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (ModelState.IsValid == false)
             {
+                viewModel.PreviousCommand = _mergeSessionService.GetMergeRequest().Peek();
+
                 return View(viewModel);
             }
 
@@ -125,16 +150,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction(nameof(MergeOverview));
         }
 
+        [MergeRequestFilter]
         [HttpGet("merge-organisations/set-effective-to")]
         public IActionResult SetSecondaryEpaoEffectiveToDate()
         {
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            var viewModel = new SetSecondaryEpaoEffectiveToDateViewModel(mergeRequest.SecondaryEpaoEffectiveTo);
+            var viewModel = new SetSecondaryEpaoEffectiveToDateViewModel(mergeRequest.SecondaryEpao, mergeRequest.SecondaryEpaoEffectiveTo);
 
             return View(viewModel);
         }
-
+        
         [HttpPost("merge-organisations/set-effective-to")]
         public IActionResult SetSecondaryEpaoEffectiveToDate(SetSecondaryEpaoEffectiveToDateViewModel viewModel)
         {
@@ -153,6 +179,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                viewModel.PreviousCommand = _mergeSessionService.GetMergeRequest().Peek();
+
                 return View(viewModel);
             }
 
@@ -162,7 +190,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("merge-organsations/confirm-and-complete")]
         public IActionResult ConfirmAndComplete()
         {
-            var viewModel = new ConfirmAndCompleteViewModel();
+            var mergeRequest = _mergeSessionService.GetMergeRequest();
+
+            var viewModel = new ConfirmAndCompleteViewModel
+            {
+                PrimaryEpaoName = mergeRequest?.PrimaryEpao?.Name,
+                SecondaryEpaoName = mergeRequest?.SecondaryEpao?.Name
+            };
 
             return View(viewModel);
         }
@@ -177,18 +211,23 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             await Task.Delay(1);
 
-            return RedirectToAction(nameof(Completed));
+            // api 
+
+            _mergeSessionService.MarkComplete();
+
+            return RedirectToAction(nameof(MergeComplete));
         }
 
         [HttpGet("merge-organisation/complete")]
-        public IActionResult Completed()
+        public IActionResult MergeComplete()
         {
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            var viewModel = new MergeCompletedViewModel
+            var viewModel = new MergeCompleteViewModel
             {
                 PrimaryEpaoName = mergeRequest.PrimaryEpao.Name,
-                SecondaryEpaoName = mergeRequest.SecondaryEpao.Name
+                SecondaryEpaoName = mergeRequest.SecondaryEpao.Name,
+                SecondaryEpaoEffectiveTo = mergeRequest.SecondaryEpaoEffectiveTo.Value
             };
 
             return View(viewModel);

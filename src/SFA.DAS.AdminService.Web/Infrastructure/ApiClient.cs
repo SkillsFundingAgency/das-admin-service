@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -353,6 +354,13 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             var request = new UpdateLastRunStatusRequest { ScheduleRunId = id, LastRunStatus = LastRunStatus.Restarting };
             await Post("api/v1/schedule/updatelaststatus", request);
+        }
+
+        public async Task<PaginatedList<MergeLogEntry>> GetMergeLogs(int pageSize, int pageIndex)
+        {
+            var request = $"api/v1/mergeorganisations/log?pageSize={pageSize}&pageIndex={pageIndex}";
+
+            return await Get<PaginatedList<MergeLogEntry>>(request);
         }
 
         #region Reports

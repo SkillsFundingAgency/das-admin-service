@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Merge
@@ -28,9 +29,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         // my flag - need to change as OrganisationType exists on EpaOrganisation object
         public string OrganisationType { get; set; }
 
+        public SessionCommand PreviousCommand { get; set; }
         public ConfirmEpaoViewModel() { }
 
-        public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType)
+        public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType, SessionCommand previousCommand)
         {
             Name = epao.Name;
             EpaoId = epao.OrganisationId;
@@ -38,6 +40,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             PrimaryContactEmail = epao.PrimaryContact;
 
             OrganisationType = organisationType.ToLower();
+            PreviousCommand = previousCommand;
         }
     }
 }

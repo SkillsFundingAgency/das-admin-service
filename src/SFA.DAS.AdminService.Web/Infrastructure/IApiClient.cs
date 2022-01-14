@@ -3,6 +3,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -70,5 +71,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
         Task<StandardVersion> GetStandardVersion(string standardUId);
         Task<StandardOptions> GetStandardOptions(string standardId);
+
+        Task<PaginatedList<MergeLogEntry>> GetMergeLogs(int pageSize, int pageIndex);
     }
 }
