@@ -1,22 +1,14 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts;
 @model SFA.DAS.AdminService.Web.ViewModels.CertificateCheckViewModel
 @using SFA.DAS.AdminService.Common.Extensions;
-@using SFA.DAS.AssessorService.Domain.Consts;
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Check and approve the assessment details";
     Layout = "_Layout";
 }
 
-@if (Model.CanReturnToApprovals)
-{
-    <a class="govuk-back-link" asp-controller="CertificateApprovals" asp-action="Rejected">Back to approvals</a>
-}
-else
-{
-    <a class="govuk-back-link" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StandardCode"
-       asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">Back to details</a>
-}
+<a class="govuk-back-link" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StandardCode"
+   asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">Back to details</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -51,285 +43,238 @@ else
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Given name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @Model.GivenNames
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" asp-controller="CertificatePrivateFirstName" asp-action="FirstName" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                        Change<span class="govuk-visually-hidden"> given name</span>
-                    </a>
-                </dd>
-        </div>
+                    <dt class="govuk-summary-list__key">
+                        Given name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.GivenNames
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Family name
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.FamilyName
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificatePrivateLastName" asp-action="LastName" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> family name</span>
-                </a>
-            </dd>
-        </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Family name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FamilyName
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
 
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                <abbr title="Unique learner number">ULN</abbr>
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.Uln
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                @if (Model.IsPrivatelyFunded)
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <abbr title="Unique learner number">ULN</abbr>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Uln
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+            </dl>
+
+            <h2 class="govuk-heading-m">
+                Apprenticeship details
+            </h2>
+
+            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Standard
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Standard (@Model.StandardCode)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Level
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.Level
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Version
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!string.IsNullOrWhiteSpace(Model.Version))
+                        {
+                            @Model.Version
+                        }
+                        else
+                        {
+                            <text>None</text>
+                        }
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if (Model.StandardHasMultipleVersions)
+                        {
+                            <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> version</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Grade
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.SelectedGrade
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateGrade" asp-action="Grade" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                            Change<span class="govuk-visually-hidden"> grade</span>
+                        </a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row" id="Option">
+                    <dt class="govuk-summary-list__key" sfa-validation-for="Option" sfa-validationerror-class="govuk-form-group--error">
+                        Option
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+
+                        @if (string.IsNullOrWhiteSpace(Model.Option))
+                        {
+                            <text>None</text>
+                        }
+                        else
+                        {
+                            @Model.Option
+                        }
+
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        @if ((bool)TempData["ShowOptionsChangeLink"])
+                        {
+                            <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> option</span>
+                            </a>
+                        }
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @(Model.SelectedGrade == CertificateGrade.Fail ? "Fail date" : "Achievement date" )
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.AchievementDate?.ToSfaShortDateString()
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                            Change<span class="govuk-visually-hidden"> @(Model.SelectedGrade == CertificateGrade.Fail ? "fail date" : "achievement date" )</span>
+                        </a>
+                    </dd>
+                </div>
+            </dl>
+
+            @if (Model.SelectedGrade != CertificateGrade.Fail)
+            {
+                <h2 class="govuk-heading-m">
+                    We'll send the certificate to:
+                </h2>
+
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    <div class="govuk-summary-list__row" id="Name">
+                        <dt class="govuk-summary-list__key" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
+                            Name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-error-message" asp-validation-for="Name"></span>
+                            @Model.Name
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateId="@Model.Id" asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
+                                Change<span class="govuk-visually-hidden"> recipient name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Department
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Dept
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> department</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.Employer
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateId=@Model.Id asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> organisation</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row" id="AddressLine1">
+                        <dt class="govuk-summary-list__key" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
+                            Address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-error-message" asp-validation-for="AddressLine1"></span>
+                            @Model.AddressLine1<br />
+                            @if (@Model.AddressLine2 != null)
+                            {
+                                @Model.AddressLine2<br />
+                            }
+                            @if (@Model.AddressLine3 != null)
+                            {
+                                @Model.AddressLine3<br />
+                            }
+                            @Model.City<br />
+                            @Model.Postcode
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
+                                Change<span class="govuk-visually-hidden"> address</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            }
+            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+                @Html.HiddenFor(c => c.Id)
+                @Html.HiddenFor(m => m.StandardCode)
+                @Html.HiddenFor(m => m.Uln)
+                @Html.HiddenFor(m => m.Page)
+                @Html.HiddenFor(m => m.SearchString)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.PrivatelyFundedStatus)
+                @Html.HiddenFor(m => m.Name)
+                @Html.HiddenFor(m => m.AddressLine1)
+                @Html.HiddenFor(m => m.SelectedGrade)
+                @Html.HiddenFor(m => m.StandardUId)
+                @if (Model.CanRequestDuplicate)
                 {
-                    <a class="govuk-link" asp-controller="CertificatePrivateUln" asp-action="Uln" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                        Change<span class="govuk-visually-hidden"> ULN</span>
-                    </a>
+                    <button class="govuk-button">Confirm reprint</button>
                 }
-            </dd>
-        </div>
-        </dl>
-
-        <h2 class="govuk-heading-m">
-            Apprenticeship details
-        </h2>
-
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Standard
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.Standard (@Model.StandardCode)
-            </dd>
-            <dd class="govuk-summary-list__actions">
-
-            </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Level
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @Model.Level
-        </dd>
-        <dd class="govuk-summary-list__actions">
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Version
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @if (!string.IsNullOrWhiteSpace(Model.Version))
-            {
-                @Model.Version
-            }
-            else
-            {
-                <text>None</text>
-            }
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            @if (Model.StandardHasMultipleVersions)
-            {
-                <a class="govuk-link" asp-controller="CertificateVersion" asp-action="Version" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> version</span>
-                </a>
-            }
-        </dd>
-    </div>
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            Grade
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @Model.SelectedGrade
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" asp-controller="CertificateGrade" asp-action="Grade" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                Change<span class="govuk-visually-hidden"> grade</span>
-            </a>
-        </dd>
-    </div>
-
-    <div class="govuk-summary-list__row" id="Option">
-        <dt class="govuk-summary-list__key" sfa-validation-for="Option" sfa-validationerror-class="govuk-form-group--error">
-            Option
-        </dt>
-        <dd class="govuk-summary-list__value">
-
-            @if (string.IsNullOrWhiteSpace(Model.Option))
-            {
-                <text>None</text>
-            }
-            else
-            {
-                @Model.Option
-            }
-
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            @if ((bool)TempData["ShowOptionsChangeLink"])
-            {
-                <a class="govuk-link" asp-controller="CertificateOption" asp-action="Option" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> option</span>
-                </a>
-            }
-        </dd>
-    </div>
-
-    @if (Model.IsPrivatelyFunded)
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Apprenticeship start date
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.LearnerStartDate?.ToSfaShortDateString()
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificatePrivateLearnerStartDate" asp-action="LearnerStartDate" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> apprenticeship start date</span>
-                </a>
-            </dd>
-        </div>
-    }
-
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            @(Model.SelectedGrade == CertificateGrade.Fail ? "Fail date" : "Achievement date" )
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @Model.AchievementDate?.ToSfaShortDateString()
-        </dd>
-        <dd class="govuk-summary-list__actions">
-            <a class="govuk-link" asp-controller="CertificateDate" asp-action="Date" asp-route-redirecttocheck="true" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                Change<span class="govuk-visually-hidden"> @(Model.SelectedGrade == CertificateGrade.Fail ? "fail date" : "achievement date" )</span>
-            </a>
-        </dd>
-    </div>
-
-    @if (Model.IsPrivatelyFunded)
-    {
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                UKPRN
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.Ukprn
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificatePrivateProviderUkprn" asp-action="Ukprn" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> UKPRN</span>
-                </a>
-            </dd>
-        </div>
-    }
-    </dl>
-
-    @if (Model.SelectedGrade != CertificateGrade.Fail)
-    {
-        <h2 class="govuk-heading-m">
-            We'll send the certificate to:
-        </h2>
-
-        <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-            <div class="govuk-summary-list__row" id="Name">
-            <dt class="govuk-summary-list__key" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
-                Name
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <span class="govuk-error-message" asp-validation-for="Name"></span>
-                @Model.Name
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode=@Model.StandardCode asp-route-uln=@Model.Uln asp-route-searchstring=@Model.SearchString>
-                    Change<span class="govuk-visually-hidden"> recipient name</span>
-                </a>
-            </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Department
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.Dept
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificateRecipient" asp-action="Recipient" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> department</span>
-                </a>
-            </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                Organisation
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @Model.Employer
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId=@Model.Id asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> organisation</span>
-                </a>
-            </dd>
-            </div>
-            <div class="govuk-summary-list__row" id="AddressLine1">
-            <dt class="govuk-summary-list__key" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
-                Address
-            </dt>
-            <dd class="govuk-summary-list__value">
-                <span class="govuk-error-message" asp-validation-for="AddressLine1"></span>
-                @Model.AddressLine1<br />
-                @if (@Model.AddressLine2 != null)
+                else
                 {
-                    @Model.AddressLine2<br />
+                    <button type="submit" class="govuk-button">Confirm and submit</button>
                 }
-                @if (@Model.AddressLine3 != null)
-                {
-                    @Model.AddressLine3<br />
-                }
-                @Model.City<br />
-                @Model.Postcode
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" asp-controller="CertificateAddress" asp-action="Address" asp-route-fromapproval="@Model.FromApproval" asp-route-certificateId="@Model.Id" asp-route-stdcode="@Model.StandardCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString">
-                    Change<span class="govuk-visually-hidden"> address</span>
-                </a>
-            </dd>
-            </div>
-        </dl>
-    }
-    <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
-        @Html.HiddenFor(c => c.Id)
-        @Html.HiddenFor(m => m.StandardCode)
-        @Html.HiddenFor(m => m.Uln)
-        @Html.HiddenFor(m => m.Page)
-        @Html.HiddenFor(m => m.SearchString)
-        @Html.HiddenFor(m => m.Status)
-        @Html.HiddenFor(m => m.PrivatelyFundedStatus)
-        @Html.HiddenFor(m => m.FromApproval)
-        @Html.HiddenFor(m => m.Name)
-        @Html.HiddenFor(m => m.AddressLine1)
-        @Html.HiddenFor(m => m.SelectedGrade)
-        @Html.HiddenFor(m => m.StandardUId)
-        @if (Model.CanRequestDuplicate)
-        {
-            <button class="govuk-button">Confirm reprint</button>
-        }
-        else
-        {
-            <button type="submit" class="govuk-button">Confirm and submit</button>
-        }
-    </form>
-    </div>
+            </form>
+        </div>
     </div>
 </main>
 

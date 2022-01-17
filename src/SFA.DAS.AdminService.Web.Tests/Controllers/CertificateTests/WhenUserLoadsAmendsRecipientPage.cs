@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 new CertificateRecipientController(MockedLogger.Object,
                     MockHttpContextAccessor.Object,
                     ApiClient);
-            _result = certificateApprenticeDetailsController.Recipient(Certificate.Id, true).GetAwaiter().GetResult();
+            _result = certificateApprenticeDetailsController.Recipient(Certificate.Id).GetAwaiter().GetResult();
 
             var result = _result as ViewResult;
             _viewModelResponse = result.Model as CertificateRecipientViewModel;
