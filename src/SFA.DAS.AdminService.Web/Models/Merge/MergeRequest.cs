@@ -6,37 +6,22 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 {
     public class MergeRequest
     {
+        private List<SessionCommand> _actions;
+
         public Epao PrimaryEpao { get; set; }
         public Epao SecondaryEpao { get; set; }
         public DateTime? SecondaryEpaoEffectiveTo { get; set; }
-        public List<SessionCommand> Actions { get; set; } = new List<SessionCommand>();
-
         public bool Completed { get; set; }
-
-        public void SetPrimaryEpao(string id, string name)
-        {
-            PrimaryEpao = new Epao(id, name);
-
-            PushCommand(new SessionCommand(SessionCommands.ConfirmPrimaryEpao, null, id));
+        public SessionCommand PreviousCommand 
+        { 
+            get => _actions.OrderByDescending(c => c.Order).FirstOrDefault(); 
         }
 
-        public void SetSecondaryEpao(string id, string name)
+        public MergeRequest()
         {
-            SecondaryEpao = new Epao(id, name);
+            _actions = new List<SessionCommand>();
 
-            PushCommand(new SessionCommand(SessionCommands.ConfirmSecondaryEpao, null, id));
-        }
-
-        public void SetSecondaryEpaoEffectiveToDate(int day, int month, int year)
-        {
-            SecondaryEpaoEffectiveTo = new DateTime(year, month, day);
-
-            PushCommand(new SessionCommand(SessionCommands.SetSecondaryEpaoEffectiveTo, null, null));
-        }
-
-        public void MarkComplete()
-        {
-            Completed = true;
+            PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));
         }
 
         public void AddSearchEpaoCommand(string type, string searchString)
@@ -51,11 +36,33 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             }
         }
 
-        public SessionCommand Peek() => Actions.OrderByDescending(c => c.Order).FirstOrDefault();
+        public void UpdateEpao(string type, string epaoId, string name, long ukprn)
+        {
+            if (type == "primary")
+            {
+                SetPrimaryEpao(epaoId, name, ukprn);
+            }
+            else if (type == "secondary")
+            {
+                SetSecondaryEpao(epaoId, name, ukprn);
+            }
+        }
+
+        public void SetSecondaryEpaoEffectiveToDate(int day, int month, int year)
+        {
+            SecondaryEpaoEffectiveTo = new DateTime(year, month, day);
+
+            PushCommand(new SessionCommand(SessionCommands.SetSecondaryEpaoEffectiveTo, null, null));
+        }
+
+        public void MarkComplete()
+        {
+            Completed = true;
+        }
 
         public void DeleteLastCommand()
         {
-            var lastCommand = Actions.OrderByDescending(c => c.Order).FirstOrDefault();
+            var lastCommand = _actions.OrderByDescending(c => c.Order).FirstOrDefault();
 
             switch (lastCommand.CommandName) 
             {
@@ -72,14 +79,28 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
                     break;
             }
 
-            Actions.Remove(lastCommand);
+            _actions.Remove(lastCommand);
         } 
 
-        public void PushCommand(SessionCommand command)
+        private void SetPrimaryEpao(string id, string name, long ukprn)
         {
-            command.Order = Actions.Count + 1;
+            PrimaryEpao = new Epao(id, name, ukprn);
 
-            Actions.Add(command);
+            PushCommand(new SessionCommand(SessionCommands.ConfirmPrimaryEpao, null, id));
+        }
+
+        private void SetSecondaryEpao(string id, string name, long ukprn)
+        {
+            SecondaryEpao = new Epao(id, name, ukprn);
+
+            PushCommand(new SessionCommand(SessionCommands.ConfirmSecondaryEpao, null, id));
+        }
+
+        private void PushCommand(SessionCommand command)
+        {
+            command.Order = _actions.Count + 1;
+
+            _actions.Add(command);
         }
     }
 
@@ -87,12 +108,13 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public string Ukprn { get; set; }
+        public long? Ukprn { get; set; }
 
-        public Epao(string id, string name)
+        public Epao(string id, string name, long? ukprn )
         {
             Id = id;
             Name = name;
+            Ukprn = ukprn;
         }
     }
 }

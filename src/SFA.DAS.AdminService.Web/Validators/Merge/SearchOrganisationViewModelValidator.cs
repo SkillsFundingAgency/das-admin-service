@@ -18,12 +18,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
 
         private static bool IsLessThanTwoCharacters(string input)
         {
-            if (input == null)
-            {
-                return true;
-            }
-
-            return input.Length < 2;
+            return string.IsNullOrWhiteSpace(input) || input.Length < 2;
         }
     }
 }

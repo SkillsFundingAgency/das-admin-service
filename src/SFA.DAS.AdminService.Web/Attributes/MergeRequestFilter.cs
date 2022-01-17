@@ -9,25 +9,6 @@ namespace SFA.DAS.AdminService.Web.Attributes
 {
     public class MergeRequestFilter : Attribute, IActionFilter
     {
-        public void OnActionExecuted(ActionExecutedContext context)
-        {
-            var sessionService = context.HttpContext.RequestServices.GetService<IMergeOrganisationSessionService>();
-
-            var mergeRequest = sessionService.GetMergeRequest();
-
-            var actionName = context.ActionDescriptor.RouteValues["action"];
-
-            var back = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
-            
-            var lastCommand = mergeRequest.Peek();
-
-            if (back == true &&
-                (actionName == "SetSecondaryEpaoEffectiveToDate" && lastCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo))
-            {
-                sessionService.DeleteLastCommand();
-            }
-        }
-
         public void OnActionExecuting(ActionExecutingContext context)
         {
             var sessionService = context.HttpContext.RequestServices.GetService<IMergeOrganisationSessionService>();
@@ -38,22 +19,44 @@ namespace SFA.DAS.AdminService.Web.Attributes
             {
                 context.Result = new RedirectToActionResult("MergeComplete", "MergeOrganisations", new { });
             }
+            else
+            {
+                var actionName = context.ActionDescriptor.RouteValues["action"];
+                var type = context.RouteData.Values.ContainsKey("type") ? context.RouteData.Values["type"].ToString() : "";
+
+                var back = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
+
+                var lastCommand = mergeRequest.PreviousCommand;
+
+                if (back == true &&
+                    (actionName == "EpaoSearchResults" && type == "primary" && lastCommand.CommandName == SessionCommands.SearchPrimaryEpao
+                    || actionName == "EpaoSearchResults" && type == "secondary" && lastCommand.CommandName == SessionCommands.SearchSecondaryEpao
+                    || actionName == "ConfirmEpao" && type == "primary" && lastCommand.CommandName == SessionCommands.ConfirmPrimaryEpao
+                    || actionName == "ConfirmEpao" && type == "secondary" && lastCommand.CommandName == SessionCommands.ConfirmSecondaryEpao))
+                {
+                    sessionService.DeleteLastCommand();
+                }
+            }
+        }
+
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+            var sessionService = context.HttpContext.RequestServices.GetService<IMergeOrganisationSessionService>();
+
+            var mergeRequest = sessionService.GetMergeRequest();
 
             var actionName = context.ActionDescriptor.RouteValues["action"];
-            var type = context.RouteData.Values.ContainsKey("type") ? context.RouteData.Values["type"].ToString() : "";
 
             var back = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
-            var lastCommand = mergeRequest.Peek();
+            
+            var lastCommand = mergeRequest.PreviousCommand;
 
             if (back == true &&
-                (actionName == "EpaoSearchResults" && type == "primary" && lastCommand.CommandName == SessionCommands.SearchPrimaryEpao
-                || actionName == "EpaoSearchResults" && type == "secondary" && lastCommand.CommandName == SessionCommands.SearchSecondaryEpao
-                || actionName == "ConfirmEpao" && type == "primary" && lastCommand.CommandName == SessionCommands.ConfirmPrimaryEpao
-                || actionName == "ConfirmEpao" && type == "secondary" && lastCommand.CommandName == SessionCommands.ConfirmSecondaryEpao))
+                (actionName == "SetSecondaryEpaoEffectiveToDate" && lastCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo))
             {
                 sessionService.DeleteLastCommand();
             }
-           
         }
+
     }
 }

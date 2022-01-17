@@ -124,7 +124,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             }
         }
 
-
         public async Task<List<OrganisationType>> GetOrganisationTypes()
         {
             return await Get<List<OrganisationType>>($"/api/ao/organisation-types");

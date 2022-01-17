@@ -13,6 +13,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 
         public DateTime? SecondaryEpaoEffectiveTo { get; set; }
 
+        public string BackLinkAction { get; set; }
+        public string BackLinkType { get; set; }
+        public string BackLinkEpaoId { get; set; }
+
         public SessionCommand PreviousCommand { get; set; }
     }
 }

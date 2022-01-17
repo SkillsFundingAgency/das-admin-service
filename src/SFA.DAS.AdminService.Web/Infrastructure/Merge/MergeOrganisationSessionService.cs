@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.AdminService.Web.Models.Merge;
-using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
 {
@@ -16,11 +15,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
 
         public void StartNewMergeRequest()
         {
-            _sessionService.Remove(_mergeOrganisationsSessionKey);
-
             var mergeRequest = new MergeRequest();
-
-            mergeRequest.PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));
 
             _sessionService.Set(_mergeOrganisationsSessionKey, mergeRequest);
         }
@@ -30,43 +25,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
             return _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
         }
 
-        public Epao GetPrimaryEpao()
+        public void UpdateMergeRequest(MergeRequest mergeRequest)
         {
-            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
-
-            return request.PrimaryEpao;
-        }
-
-        public Epao GetSecondaryEpao()
-        {
-            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
-
-            return request.SecondaryEpao;
-        }
-
-        public void UpdateEpao(string type, string id, string name)
-        {
-            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
-
-            if (type == "primary")
-            {
-                request.SetPrimaryEpao(id, name);
-            }
-            else if (type == "secondary")
-            {
-                request.SetSecondaryEpao(id, name);
-            }
-
-            _sessionService.Set(_mergeOrganisationsSessionKey, request);
-        }
-
-        public void SetSecondaryEpaoEffectiveToDate(int day, int month, int year)
-        {
-            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
-
-            request.SetSecondaryEpaoEffectiveToDate(day, month, year);
-
-            _sessionService.Set(_mergeOrganisationsSessionKey, request);
+            _sessionService.Set(_mergeOrganisationsSessionKey, mergeRequest);
         }
 
         public void MarkComplete()

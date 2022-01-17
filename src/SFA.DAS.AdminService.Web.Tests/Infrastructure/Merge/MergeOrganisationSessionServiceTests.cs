@@ -19,28 +19,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.Merge
         [SetUp]
         public void Arrange()
         {
-
-            
             _mockSessionService = new Mock<ISessionService>();
 
             _mergeSessionService = new MergeOrganisationSessionService(_mockSessionService.Object);
         }
 
-        [Test]
-        public void When_GettingPrimaryEpao_Then_ReturnPrimaryEpao()
-        {
-            var mergeRequest = new MergeRequest
-            {
-                PrimaryEpao = new Epao("EPA001","Test name")
-            };
 
-            _mockSessionService.Setup(s => s.Get<MergeRequest>(_mergeOrganisationsSessionKey))
-                .Returns(mergeRequest);
-
-            var result = _mergeSessionService.GetPrimaryEpao();
-
-            result.Id.Should().Be(mergeRequest.PrimaryEpao.Id);
-            result.Name.Should().Be(mergeRequest.PrimaryEpao.Name);
-        }
     }
 }

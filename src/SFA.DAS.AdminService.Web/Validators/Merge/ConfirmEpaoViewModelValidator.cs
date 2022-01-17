@@ -14,9 +14,11 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
 
             RuleFor(vm => vm).Custom((vm, context) =>
             {
+                var mergeRequest = _mergeSessionService.GetMergeRequest();
+
                 if (vm.OrganisationType == "primary")
                 {
-                    var secondaryEpao = _mergeSessionService.GetSecondaryEpao();
+                    var secondaryEpao = mergeRequest.SecondaryEpao;
 
                     if (secondaryEpao?.Id == vm.EpaoId)
                     {
@@ -25,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
                 }
                 else if (vm.OrganisationType == "secondary")
                 {
-                    var primaryEpao = _mergeSessionService.GetPrimaryEpao();
+                    var primaryEpao = mergeRequest.PrimaryEpao;
 
                     if (primaryEpao?.Id == vm.EpaoId)
                     {

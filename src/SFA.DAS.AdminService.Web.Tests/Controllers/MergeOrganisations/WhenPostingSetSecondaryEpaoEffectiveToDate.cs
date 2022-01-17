@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
 using System;
 
@@ -17,19 +18,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         }
 
         [Test]
-        public void And_ModelIsValid_Then_CallSessionServiceSetEffectiveToDate()
+        public void And_ModelIsValid_Then_CallUpdateWithNewEffectiveToDate()
         {
-            var date = DateTime.Now;
+            var dateTime = DateTime.Now;
 
-            var expectedDay = date.Day;
-            var expectedMonth = date.Month;
-            var expectedYear = date.Year;
+            var expectedDay = dateTime.Day;
+            var expectedMonth = dateTime.Month;
+            var expectedYear = dateTime.Year;
 
-            var viewModel = SetUpViewModel(date);
+            var viewModel = SetUpViewModel(dateTime);
 
             var result = MergeController.SetSecondaryEpaoEffectiveToDate(viewModel);
 
-            _mockMergeSessionService.Verify(ms => ms.SetSecondaryEpaoEffectiveToDate(expectedDay, expectedMonth, expectedYear), Times.Once());
+            _mockMergeSessionService.Verify(ms => ms.UpdateMergeRequest(It.Is<MergeRequest>(
+                r => r.SecondaryEpaoEffectiveTo.Value == dateTime.Date)), Times.Once());
         }
 
         [Test]
