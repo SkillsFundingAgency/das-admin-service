@@ -56,5 +56,17 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
 
             _sessionService.Set(_mergeOrganisationsSessionKey, request);
         }
+
+        public IPagingState MergeOrganisationPagingState
+        {
+            get
+            {
+                return new PagingState(_sessionService, "Merge_Organisations_PagingState");
+            }
+            set
+            {
+                _sessionService.Set("Merge_Organisations_PagingState", value);
+            }
+        }
     }
 }

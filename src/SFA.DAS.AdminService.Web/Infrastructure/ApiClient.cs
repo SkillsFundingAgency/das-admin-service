@@ -355,11 +355,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post("api/v1/schedule/updatelaststatus", request);
         }
 
-        public async Task<PaginatedList<MergeLogEntry>> GetMergeLogs(int pageSize, int pageIndex)
+        public async Task<PaginatedList<MergeLogEntry>> GetMergeLog(int pageSize, int pageIndex)
         {
             var request = $"api/v1/mergeorganisations/log?pageSize={pageSize}&pageIndex={pageIndex}";
 
             return await Get<PaginatedList<MergeLogEntry>>(request);
+        }
+
+        public async Task<MergeLogEntry> GetMergeLogEntry(int mergeId)
+        {
+            return await Get<MergeLogEntry>($"api/v1/mergeorganisations?id={mergeId}");
         }
 
         #region Reports

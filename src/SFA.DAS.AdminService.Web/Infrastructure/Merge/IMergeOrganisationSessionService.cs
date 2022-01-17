@@ -12,5 +12,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
         void MarkComplete();
         void DeleteLastCommand();
         void AddSearchEpaoCommand(string type, string searchString);
+
+        IPagingState MergeOrganisationPagingState { get; }
     }
 }

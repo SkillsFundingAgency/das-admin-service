@@ -16,16 +16,35 @@
 
             <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="Start"> Start a new merge </a>
 
-            @if (Model.IsEmpty)
+            
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            @if (Model.MergeLogResults.PaginatedList.TotalRecordCount == 0)
             {
                 <div class="govuk-inset-text">
-                    You currently have no complete merges. <br />
-                    Once you start and complete at least one merge it will be dislayed on this page.
+                    <p> You currently have no complete merges. </p>
+                    <p> Once you start and complete at least one merge it will be dislayed on this page. </p>
                 </div>
             }
             else
             {
-                //Merge log table partial
+                <div class="govuk-tabs" data-module="govuk-tabs">
+                    <ul class="govuk-tabs__list">
+                        <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                            <a class="govuk-tabs__tab govuk-tabs__tab--selected" href="#complete">
+                                Complete (@(Model.MergeLogResults?.PaginatedList.TotalRecordCount ?? 0))
+                            </a>
+                        </li>
+                    </ul>
+                    <section class="govuk-tabs__panel" id="new">
+                        <div id="complete-merges">
+                            @{await Html.RenderPartialAsync("_completeMergesPartial", @Model.MergeLogResults);}
+                        </div>
+                    </section>
+                </div>
             }
         </div>
     </div>

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Attributes;
+using SFA.DAS.AdminService.Web.Domain.Merge;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
+using SFA.DAS.AdminService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,32 +18,131 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IApiClient _apiClient;
         private readonly IMergeOrganisationSessionService _mergeSessionService;
 
+        private const int DefaultPageIndex = 1;
+        private const int DefaultMergesPerPage = 1;
+
+        private const string DefaultSortColumn = MergeOrganisationSortColumn.CompletionDate;
+
         public MergeOrganisationsController(IApiClient apiClient, IMergeOrganisationSessionService sessionService)
         {
             _apiClient = apiClient;
             _mergeSessionService = sessionService;
         }
 
-        [HttpGet("merge-organisations/log")]
-        public async Task<IActionResult> MergeLog(int? pageSize = 10, int? pageIndex = 1)
+        [HttpGet("merge-organisations")]
+        public IActionResult Index()
         {
-            var response = await _apiClient.GetMergeLogs(pageSize.Value, pageIndex.Value);
-            
-            var viewModel = new MergeLogViewModel()
-            {
-                PageIndex = pageIndex.Value,
-                PageSize = pageSize.Value,
-                MergeLogs = response
-            };
+            ResetPageIndex();
+            ResetItemsPerPage();
+
+            return RedirectToAction("MergeLog");
+        }
+
+        [HttpGet("merge-organisations/log")]
+        public async Task<IActionResult> MergeLog()
+        {
+            var viewModel = await GetMergeLogViewModel();
 
             return View(viewModel);
         }
 
-        [HttpGet("merge-organisations/log/{logId}")]
-        public async Task<IActionResult> ViewMergeLogEntry(int logId)
+        private async Task<MergeLogViewModel> GetMergeLogViewModel()
         {
+            var pagingState = _mergeSessionService.MergeOrganisationPagingState;
 
-            return View();
+            return new MergeLogViewModel
+            {
+                ControllerName = "MergeOrganisations",
+                MergeLogResults = await GetMergeLogEntries(pagingState)
+            };
+        }
+
+        private async Task<PaginationViewModel<MergeLogEntry>> GetMergeLogEntries(IPagingState pagingState)
+        {
+            var paginationViewModel = new PaginationViewModel<MergeLogEntry>
+            {
+                ChangePageAction = nameof(ChangeMergeLogEntriesPageIndex),
+                ChangeItemsPerPageAction = nameof(ChangeMergeEntriesPerPage),
+                ItemsPerPage = pagingState.ItemsPerPage,
+                PaginatedList = await _apiClient.GetMergeLog(pagingState.ItemsPerPage, pagingState.PageIndex)
+            };
+
+            return paginationViewModel;
+        }
+
+        [HttpGet("merge-organisations/log/change-entries-per-page")]
+        public async Task<IActionResult> ChangeMergeEntriesPerPage(int itemsPerPage = DefaultMergesPerPage)
+        {
+            var pagingState = _mergeSessionService.MergeOrganisationPagingState;
+            pagingState.ItemsPerPage = itemsPerPage;
+
+            var viewModel = await GetMergeLogViewModel();
+
+            return View(nameof(MergeLog), viewModel);
+        }
+
+        [HttpGet("merge-organisations/log/change-page")]
+        public async Task<IActionResult> ChangeMergeLogEntriesPageIndex(int pageIndex = DefaultPageIndex)
+        {
+            var pagingState = _mergeSessionService.MergeOrganisationPagingState; 
+            pagingState.PageIndex = pageIndex;
+
+            var viewModel = await GetMergeLogViewModel();
+
+            return View(nameof(MergeLog), viewModel);
+        }
+
+        //[HttpGet]
+        //public async Task<IActionResult> SortMergeLogEntries(string sortColumn, string sortDirection)
+        //{
+        //    var pagingState = _mergeSessionService.MergeOrganisationPagingState;
+
+        //    if (pagingState.SortColumn == sortColumn)
+        //    {
+        //        pagingState.SortDirection = sortDirection;
+        //    }
+        //    else
+        //    {
+        //        pagingState.SortColumn = sortColumn;
+        //        pagingState.SortDirection = SortOrder.Asc;
+        //    }
+
+        //}
+
+        private void ResetPageIndex()
+        {
+            _mergeSessionService.MergeOrganisationPagingState.PageIndex = DefaultPageIndex;
+        }
+
+        private void ResetItemsPerPage()
+        {
+            _mergeSessionService.MergeOrganisationPagingState.ItemsPerPage = DefaultMergesPerPage;
+        }
+
+        private void ResetSortOrder()
+        {
+            _mergeSessionService.MergeOrganisationPagingState.SortDirection = "ASC";
+        }
+
+        private void ResetSortColumn()
+        {
+            _mergeSessionService.MergeOrganisationPagingState.SortColumn = DefaultSortColumn;
+        }
+
+        [HttpGet("merge-organisations/log/{logId}")]
+        public async Task<IActionResult> CompletedMergeOverview(int logId)
+        {
+            var response = await _apiClient.GetMergeLogEntry(logId);
+
+            var viewModel = new CompletedMergeOverviewViewModel
+            {
+                PrimaryEpaoName = response.PrimaryEndPointAssessorOrganisationName,
+                SecondaryEpaoName = response.SecondaryEndPointAssessorOrganisationName,
+                SecondaryEpaoEffectiveToDate = response.SecondaryEpaoEffectiveTo,
+                CompletionDate = response.CompletedAt
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet("merge-organisations/start")]
@@ -149,6 +251,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             mergeRequest.UpdateEpao(viewModel.OrganisationType, viewModel.EpaoId, viewModel.Name, viewModel.Ukprn);
 
+            _mergeSessionService.UpdateMergeRequest(mergeRequest);
+
             return RedirectToAction(nameof(MergeOverview));
         }
 
@@ -217,7 +321,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            var result = await _apiClient.GetMergeLogs(1,1);
+            var result = await _apiClient.GetMergeLog(1,1);
     
             mergeRequest.MarkComplete();
 
@@ -238,5 +342,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             return View(viewModel);
         }
+        //private async Task<IActionResult> ChangeSortOrder()
+        //{
+
+        //    return PartialView("_completeMergesPartial", viewModel);
+        //}
     }
 }

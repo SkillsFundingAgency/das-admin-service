@@ -72,6 +72,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<StandardVersion> GetStandardVersion(string standardUId);
         Task<StandardOptions> GetStandardOptions(string standardId);
 
-        Task<PaginatedList<MergeLogEntry>> GetMergeLogs(int pageSize, int pageIndex);
+        Task<PaginatedList<MergeLogEntry>> GetMergeLog(int pageSize, int pageIndex);
+        Task<MergeLogEntry> GetMergeLogEntry(int mergeId);
     }
 }
