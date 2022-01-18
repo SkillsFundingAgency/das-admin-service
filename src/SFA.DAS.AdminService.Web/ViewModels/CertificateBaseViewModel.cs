@@ -24,7 +24,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             Version = CertificateData.Version;
         }
         public string PrivatelyFundedStatus { get; set; }
-        public bool FromApproval { get; set; }
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
         public string GivenNames { get; set; }

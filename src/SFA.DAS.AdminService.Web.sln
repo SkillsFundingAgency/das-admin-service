@@ -7,13 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB54D000
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Domain", "SFA.DAS.AssessorService.Domain\SFA.DAS.AssessorService.Domain.csproj", "{2B72C3EF-C8DB-4402-9A7C-5C76F1E87299}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApi", "ExternalApi", "{EFD6034B-FA26-4A09-8FDA-D03C3326560C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Settings", "SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj", "{7597DE7D-2942-4E5C-B64E-4F2BA69FDE26}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Application.Api.Client", "SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj", "{7EAE500B-B327-431A-BE62-436463A61207}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ExternalApis", "SFA.DAS.AssessorService.ExternalApis\SFA.DAS.AssessorService.ExternalApis.csproj", "{F7EA7D1E-8248-45F6-81CF-3C7556146DA0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.Api.Types", "SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj", "{02712A8F-3689-4481-8157-D36BA26509D7}"
 EndProject
@@ -51,10 +47,6 @@ Global
 		{7EAE500B-B327-431A-BE62-436463A61207}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EAE500B-B327-431A-BE62-436463A61207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EAE500B-B327-431A-BE62-436463A61207}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7EA7D1E-8248-45F6-81CF-3C7556146DA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7EA7D1E-8248-45F6-81CF-3C7556146DA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7EA7D1E-8248-45F6-81CF-3C7556146DA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7EA7D1E-8248-45F6-81CF-3C7556146DA0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02712A8F-3689-4481-8157-D36BA26509D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02712A8F-3689-4481-8157-D36BA26509D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02712A8F-3689-4481-8157-D36BA26509D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -96,7 +88,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F7EA7D1E-8248-45F6-81CF-3C7556146DA0} = {EFD6034B-FA26-4A09-8FDA-D03C3326560C}
 		{F07B3326-5CF7-4CFC-90FE-38606A7425B8} = {EB54D000-867F-48CA-AE28-BDBE0CCE1322}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

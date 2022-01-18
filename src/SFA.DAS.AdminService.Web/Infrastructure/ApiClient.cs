@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Validation;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -92,11 +91,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             {
                 return await response.Content.ReadAsAsync<T>();
             }
-        }
-
-        public async Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex, string status, string privatelyFundedStatus)
-        {
-            return await Get<PaginatedList<CertificateSummaryResponse>>($"/api/v1/certificates/approvals/?pageSize={pageSize}&pageIndex={pageIndex}&status={status}&privatelyFundedStatus={privatelyFundedStatus}");
         }
 
         public async Task<StaffSearchResult> Search(string searchString, int page)
@@ -332,13 +326,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Get<StandardOptions>($"/api/v1/standard-version/standard-options/{standardId}");
         }
-
-        public async Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel)
-        {
-            await Post<CertificatePostApprovalViewModel>("api/v1/certificates/approvals",
-                certificatePostApprovalViewModel);
-        }
-
+        
         public async Task<List<DeliveryArea>> GetDeliveryAreas()
         {
             return await Get<List<DeliveryArea>>("/api/ao/delivery-areas");
