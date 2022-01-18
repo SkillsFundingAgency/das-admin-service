@@ -251,13 +251,13 @@ namespace SFA.DAS.AdminService.Web
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
             app.UseSession();
             app.UseRequestLocalization();
             app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseSecurityHeaders();
+            app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
