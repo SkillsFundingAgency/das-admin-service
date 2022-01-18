@@ -35,7 +35,6 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
 using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
-using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace SFA.DAS.AdminService.Web
 {
