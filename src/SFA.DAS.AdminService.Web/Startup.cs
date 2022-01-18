@@ -10,31 +10,31 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
+using SFA.DAS.AdminService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces.Validation;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Common.Settings;
+using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Helpers;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Infrastructure.Apply;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.ModelBinders;
+using SFA.DAS.AdminService.Web.Services;
+using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AdminService.Settings;
-using SFA.DAS.AdminService.Web.Helpers;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Validators;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
 using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
-using SFA.DAS.AdminService.Application.Interfaces;
-using SFA.DAS.AdminService.Application.Interfaces.Validation;
-using SFA.DAS.AdminService.Web.Services;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.Infrastructure.Apply;
-using Microsoft.AspNetCore.Mvc.Razor;
-using SFA.DAS.AdminService.Common.Extensions;
-using SFA.DAS.AdminService.Common.Settings;
-using SFA.DAS.AdminService.Web.ModelBinders;
-using SFA.DAS.AdminService.Web.Extensions;
 
 namespace SFA.DAS.AdminService.Web
 {
@@ -171,12 +171,6 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<CompaniesHouseApiClient>>(),
                 x.GetService<IRoatpApplyTokenService>()));
 
-
-            services.AddTransient<ICharityCommissionApiClient>(x => new CharityCommissionApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<CharityCommissionApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
@@ -218,7 +212,6 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<IWebConfiguration>(),
                 x.GetService<IOrganisationsApiClient>(),
                 x.GetService<IContactsApiClient>()));
-                       
             services.AddTransient<ICsvExportService, CsvExportService>();
 
             Common.DependencyInjection.ConfigureDependencyInjection(services);
