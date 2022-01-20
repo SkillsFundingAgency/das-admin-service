@@ -19,24 +19,6 @@ namespace SFA.DAS.AdminService.Web.Attributes
             {
                 context.Result = new RedirectToActionResult("MergeComplete", "MergeOrganisations", new { });
             }
-            else
-            {
-                var actionName = context.ActionDescriptor.RouteValues["action"];
-                var type = context.RouteData.Values.ContainsKey("type") ? context.RouteData.Values["type"].ToString() : "";
-
-                var back = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
-
-                var lastCommand = mergeRequest.PreviousCommand;
-
-                if (back == true &&
-                    (actionName == "EpaoSearchResults" && type == "primary" && lastCommand.CommandName == SessionCommands.SearchPrimaryEpao
-                    || actionName == "EpaoSearchResults" && type == "secondary" && lastCommand.CommandName == SessionCommands.SearchSecondaryEpao
-                    || actionName == "ConfirmEpao" && type == "primary" && lastCommand.CommandName == SessionCommands.ConfirmPrimaryEpao
-                    || actionName == "ConfirmEpao" && type == "secondary" && lastCommand.CommandName == SessionCommands.ConfirmSecondaryEpao))
-                {
-                    sessionService.DeleteLastCommand();
-                }
-            }
         }
 
         public void OnActionExecuted(ActionExecutedContext context)
@@ -46,14 +28,20 @@ namespace SFA.DAS.AdminService.Web.Attributes
             var mergeRequest = sessionService.GetMergeRequest();
 
             var actionName = context.ActionDescriptor.RouteValues["action"];
+            var type = context.RouteData.Values.ContainsKey("type") ? context.RouteData.Values["type"].ToString() : "";
 
             var back = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
             
             var lastCommand = mergeRequest.PreviousCommand;
 
             if (back == true &&
-                (actionName == "SetSecondaryEpaoEffectiveToDate" && lastCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo))
+                (actionName == "EpaoSearchResults" && type == "primary" && lastCommand.CommandName == SessionCommands.SearchPrimaryEpao
+                || actionName == "EpaoSearchResults" && type == "secondary" && lastCommand.CommandName == SessionCommands.SearchSecondaryEpao
+                || actionName == "ConfirmEpao" && type == "primary" && lastCommand.CommandName == SessionCommands.ConfirmPrimaryEpao
+                || actionName == "ConfirmEpao" && type == "secondary" && lastCommand.CommandName == SessionCommands.ConfirmSecondaryEpao
+                || actionName == "SetSecondaryEpaoEffectiveToDate" && lastCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo))
             {
+                //delete from mergerequest then resave
                 sessionService.DeleteLastCommand();
             }
         }

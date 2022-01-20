@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             get => Actions.OrderByDescending(c => c.Order).FirstOrDefault(); 
         }
 
-        public MergeRequest()
+        public void StartNewRequest()
         {
             Actions = new List<SessionCommand>();
 
@@ -36,15 +36,15 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             }
         }
 
-        public void UpdateEpao(string type, string epaoId, string name, long ukprn)
+        public void UpdateEpao(string type, string epaoId, string name, long ukprn, string searchString)
         {
             if (type == "primary")
             {
-                SetPrimaryEpao(epaoId, name, ukprn);
+                SetPrimaryEpao(epaoId, name, ukprn, searchString);
             }
             else if (type == "secondary")
             {
-                SetSecondaryEpao(epaoId, name, ukprn);
+                SetSecondaryEpao(epaoId, name, ukprn, searchString);
             }
         }
 
@@ -82,18 +82,18 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             Actions.Remove(lastCommand);
         } 
 
-        private void SetPrimaryEpao(string id, string name, long ukprn)
+        private void SetPrimaryEpao(string id, string name, long ukprn, string searchString)
         {
             PrimaryEpao = new Epao(id, name, ukprn);
 
-            PushCommand(new SessionCommand(SessionCommands.ConfirmPrimaryEpao, null, id));
+            PushCommand(new SessionCommand(SessionCommands.ConfirmPrimaryEpao, searchString, id));
         }
 
-        private void SetSecondaryEpao(string id, string name, long ukprn)
+        private void SetSecondaryEpao(string id, string name, long ukprn, string searchString)
         {
             SecondaryEpao = new Epao(id, name, ukprn);
 
-            PushCommand(new SessionCommand(SessionCommands.ConfirmSecondaryEpao, null, id));
+            PushCommand(new SessionCommand(SessionCommands.ConfirmSecondaryEpao, searchString, id));
         }
 
         private void PushCommand(SessionCommand command)
@@ -101,20 +101,6 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             command.Order = Actions.Count + 1;
 
             Actions.Add(command);
-        }
-    }
-
-    public class Epao
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public long? Ukprn { get; set; }
-
-        public Epao(string id, string name, long? ukprn)
-        {
-            Id = id;
-            Name = name;
-            Ukprn = ukprn;
         }
     }
 }

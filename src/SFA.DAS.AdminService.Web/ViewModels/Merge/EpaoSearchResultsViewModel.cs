@@ -8,6 +8,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string OrganisationType { get; set; }
         public string SearchString { get; set; }
         public List<Epao> Results { get; set; }
-        public SessionCommand PreviousCommand { get; set; }
     }
 }

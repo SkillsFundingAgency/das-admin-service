@@ -17,6 +17,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
         {
             var mergeRequest = new MergeRequest();
 
+            mergeRequest.StartNewRequest();
+
             _sessionService.Set(_mergeOrganisationsSessionKey, mergeRequest);
         }
 

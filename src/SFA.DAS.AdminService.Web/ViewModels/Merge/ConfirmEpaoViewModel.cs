@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 
         public ConfirmEpaoViewModel() { }
 
-        public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType, SessionCommand previousCommand)
+        public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType, string searchString)
         {
             Name = epao.Name;
             EpaoId = epao.OrganisationId;
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             Postcode = epao.OrganisationData.Postcode;
 
             OrganisationType = organisationType.ToLower();
-            BackRouteSearchString = previousCommand.SearchString;
+            BackRouteSearchString = searchString;
         }
     }
 }

@@ -7,14 +7,9 @@
     Layout = "_Layout";
 }
 
-@if (Model.PreviousCommand.CommandName == SessionCommands.SearchPrimaryEpao)
-{
-    <a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="primary" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
-}
-else if (Model.PreviousCommand.CommandName == SessionCommands.SearchSecondaryEpao)
-{
-    <a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="secondary" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
-}
+
+<a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="@Model.OrganisationType" asp-route-searchString="@Model.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -39,7 +34,7 @@ else if (Model.PreviousCommand.CommandName == SessionCommands.SearchSecondaryEpa
                     </ul>
                 </span>
 
-                <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="@Model.OrganisationType" asp-route-searchString="@Model.PreviousCommand.SearchString" asp-route-back="True"> Return to @Model.OrganisationType EPAO search </a>
+                <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="@Model.OrganisationType" asp-route-searchString="@Model.SearchString" asp-route-back="True"> Return to @Model.OrganisationType EPAO search </a>
             }
             else
             {
@@ -55,14 +50,13 @@ else if (Model.PreviousCommand.CommandName == SessionCommands.SearchSecondaryEpa
                         @foreach (var result in Model.Results.OrderBy(x => x.Name))
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" asp-controller="MergeOrganisations" asp-action="ConfirmEpao" asp-route-type="@Model.OrganisationType" asp-route-epaoId="@result.Id">@result.Name</a></td>
+                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" asp-controller="MergeOrganisations" asp-action="ConfirmEpao" asp-route-type="@Model.OrganisationType" asp-route-epaoId="@result.Id" asp-route-searchString="@Model.SearchString">@result.Name</a></td>
                                 <td class="govuk-table__cell" data-label="ID">@result.Id</td>
-                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">UKPRN TBC</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">@result.Ukprn</td>
                             </tr>
                         }
                     </tbody>
                 </table>
-
             }
         </div>
     </div>
