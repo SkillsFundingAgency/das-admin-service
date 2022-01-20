@@ -6,7 +6,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 {
     public class MergeRequest
     {
-        private List<SessionCommand> _actions;
+        public List<SessionCommand> Actions;
 
         public Epao PrimaryEpao { get; set; }
         public Epao SecondaryEpao { get; set; }
@@ -14,12 +14,12 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
         public bool Completed { get; set; }
         public SessionCommand PreviousCommand 
         { 
-            get => _actions.OrderByDescending(c => c.Order).FirstOrDefault(); 
+            get => Actions.OrderByDescending(c => c.Order).FirstOrDefault(); 
         }
 
         public MergeRequest()
         {
-            _actions = new List<SessionCommand>();
+            Actions = new List<SessionCommand>();
 
             PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));
         }
@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         public void DeleteLastCommand()
         {
-            var lastCommand = _actions.OrderByDescending(c => c.Order).FirstOrDefault();
+            var lastCommand = Actions.OrderByDescending(c => c.Order).FirstOrDefault();
 
             switch (lastCommand.CommandName) 
             {
@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
                     break;
             }
 
-            _actions.Remove(lastCommand);
+            Actions.Remove(lastCommand);
         } 
 
         private void SetPrimaryEpao(string id, string name, long ukprn)
@@ -98,9 +98,9 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         private void PushCommand(SessionCommand command)
         {
-            command.Order = _actions.Count + 1;
+            command.Order = Actions.Count + 1;
 
-            _actions.Add(command);
+            Actions.Add(command);
         }
     }
 

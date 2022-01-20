@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
@@ -17,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
+    [Authorize]
     public class MergeOrganisationsController : Controller
     {
         private readonly IApiClient _apiClient;

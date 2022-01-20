@@ -8,8 +8,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
         MergeRequest GetMergeRequest();
         void UpdateMergeRequest(MergeRequest mergeRequest);
 
-
-        void MarkComplete();
         void DeleteLastCommand();
         void AddSearchEpaoCommand(string type, string searchString);
 

@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         }
 
         [Test]
-        public void And_SessionIsSet_Then_MapViewModel_And_ReturnView()
+        public void And_SessionIsSet_Then_MapViewModel()
         {
             var mergeRquest = _autoFixture.Build<MergeRequest>().Create();
 
@@ -37,8 +37,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
                 .Returns(mergeRquest);
 
             var viewResult = MergeController.MergeOverview() as ViewResult;
-
-            viewResult.ViewName.Should().Be("");
 
             var viewModel = viewResult.Model as MergeOverviewViewModel;
 

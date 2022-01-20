@@ -43,52 +43,52 @@ else
                 <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Primary EPAO
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <span class="govuk-error-message" asp-validation-for="PrimaryEpaoId"></span>
-                                @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet confirmed" : Model.PrimaryEpaoName)
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="primary">
-                                    Change
-                                </a>
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Secondary EPAO
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <span class="govuk-error-message" asp-validation-for="SecondaryEpaoId"> </span>
-                                @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet confirmed" : Model.SecondaryEpaoName)
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="secondary">
-                                    Change
-                                </a>
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Secondary EPAO effective to
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <span class="govuk-error-message" asp-validation-for="SecondaryEpaoEffectiveTo"></span>
-                                @(Model.SecondaryEpaoEffectiveTo.HasValue ? Model.SecondaryEpaoEffectiveTo.Value.ToString("dd MMMM yyyy") : "Not yet confirmed")
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate">
-                                    Change
-                                </a>
-                            </dd>
-                        </div>
-                    </dl>
+                        <dt class="govuk-summary-list__key">
+                            Primary EPAO
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-error-message" asp-validation-for="PrimaryEpaoId"></span>
+                            @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet confirmed" : Model.PrimaryEpaoName)
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="primary">
+                                Change
+                            </a>
+                        </dd>
                 </div>
-                
-                <button class="govuk-button" type="submit"> Continue </button>
-            </form>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Secondary EPAO
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span class="govuk-error-message" asp-validation-for="SecondaryEpaoId"> </span>
+                        @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet confirmed" : Model.SecondaryEpaoName)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="secondary">
+                            Change
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Secondary EPAO effective to
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span class="govuk-error-message" asp-validation-for="SecondaryEpaoEffectiveTo"></span>
+                        @(Model.SecondaryEpaoEffectiveTo.HasValue ? Model.SecondaryEpaoEffectiveTo.Value.ToString("dd MMMM yyyy") : "Not yet confirmed")
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate">
+                            Change
+                        </a>
+                    </dd>
+                </div>
+                </dl>
         </div>
+
+        <button class="govuk-button" type="submit"> Continue </button>
+        </form>
+    </div>
     </div>
 </main>

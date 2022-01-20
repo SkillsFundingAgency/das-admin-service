@@ -18,8 +18,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         public void Arrange()
         {
             BaseArrange();
-
-            
         }
 
         [Test]

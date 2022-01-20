@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [Test]
         public void Then_StartNewRequest()
         {
-            MergeController.Start();
+            MergeController.StartNow();
 
             _mockMergeSessionService.Verify(ms => ms.StartNewMergeRequest(), Times.Once);
         }
@@ -24,9 +24,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [Test]
         public void Then_ReturnRedirectToMergeOverview()
         {
-            var result = MergeController.Start() as RedirectToActionResult;
+            var result = MergeController.StartNow() as RedirectToActionResult;
 
-            result.ActionName.Should().Be("MergeOverview");
+            result.ActionName.Should().Be(nameof(MergeController.MergeOverview));
         }
     }
 }
