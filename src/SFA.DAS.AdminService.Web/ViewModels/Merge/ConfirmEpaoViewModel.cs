@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Models.Merge;
+﻿using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Merge
@@ -10,7 +9,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string EpaoId { get; set; }
         public string PrimaryContactName { get; set; }
         public string PrimaryContactEmail { get; set; }
-        public long Ukprn { get; set; }
+        public long? Ukprn { get; set; }
         public string EpaoOrganisationType { get; set; } // Rename to OrganisationType once I have renamed my flag
         public string LegalName { get; set; }
         public string TradingName { get; set; }
@@ -28,8 +27,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 
         // my flag - need to change as OrganisationType exists on EpaOrganisation object
         public string OrganisationType { get; set; }
+        public string BackRouteSearchString { get; set; }
 
-        public SessionCommand PreviousCommand { get; set; }
         public ConfirmEpaoViewModel() { }
 
         public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType, SessionCommand previousCommand)
@@ -38,9 +37,23 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             EpaoId = epao.OrganisationId;
             PrimaryContactName = epao.PrimaryContactName;
             PrimaryContactEmail = epao.PrimaryContact;
+            Ukprn = epao.Ukprn;
+            LegalName = epao.OrganisationData.LegalName;
+            EpaoOrganisationType = epao.OrganisationData.OrganisationReferenceType;
+            TradingName = epao.OrganisationData.TradingName;
+            CompanyNumber = epao.OrganisationData.CompanyNumber;
+            Email = epao.OrganisationData.Email;
+            PhoneNumber = epao.OrganisationData.PhoneNumber;
+            Website = epao.OrganisationData.WebsiteLink;
+            Address1 = epao.OrganisationData.Address1;
+            Address2 = epao.OrganisationData.Address2;
+            Address3 = epao.OrganisationData.Address3;
+            Address4 = epao.OrganisationData.Address4;
+            City = epao.OrganisationData.City;
+            Postcode = epao.OrganisationData.Postcode;
 
             OrganisationType = organisationType.ToLower();
-            PreviousCommand = previousCommand;
+            BackRouteSearchString = previousCommand.SearchString;
         }
     }
 }

@@ -22,8 +22,7 @@
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@MergeOrganisationSortColumn.PrimaryEpaoName"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
-                                            asp-fragment="@Model.Fragment"
+                                            asp-controller="MergeOrganisations"
                                             sfa-sort-column="@MergeOrganisationSortColumn.PrimaryEpaoName"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Primary EPAO</sfa-sortable-column-header>
@@ -32,8 +31,7 @@
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
                                             data-sortColumn="@MergeOrganisationSortColumn.SecondaryEpaoName"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
-                                            asp-fragment="@Model.Fragment"
+                                            asp-controller="MergeOrganisations"
                                             sfa-sort-column="@MergeOrganisationSortColumn.SecondaryEpaoName"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection"> Secondary EPAO</sfa-sortable-column-header>
@@ -41,11 +39,10 @@
 
             <th scope="col" class="govuk-table__header">
                 <sfa-sortable-column-header class=@(Model.Fragment + "-sort govuk-link" + " das-no-wrap")
-                                            data-sortColumn="@MergeOrganisationSortColumn.CompletionDate"
+                                            data-sortColumn="@MergeOrganisationSortColumn.CompletedAt"
                                             asp-action="@Model.SortColumnAction"
-                                            asp-controller="OrganisationApplication"
-                                            asp-fragment="@Model.Fragment"
-                                            sfa-sort-column="@MergeOrganisationSortColumn.CompletionDate"
+                                            asp-controller="MergeOrganisations"
+                                            sfa-sort-column="@MergeOrganisationSortColumn.CompletedAt"
                                             sfa-table-sort-column="@Model.SortColumn"
                                             sfa-sort-direction="@Model.SortDirection">Completion date </sfa-sortable-column-header>
             </th>

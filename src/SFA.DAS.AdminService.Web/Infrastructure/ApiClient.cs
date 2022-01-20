@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -355,11 +356,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             await Post("api/v1/schedule/updatelaststatus", request);
         }
 
-        public async Task<PaginatedList<MergeLogEntry>> GetMergeLog(int pageSize, int pageIndex)
+        public async Task<object> MergeOrganisations(MergeOrganisationsCommand command)
         {
-            var request = $"api/v1/mergeorganisations/log?pageSize={pageSize}&pageIndex={pageIndex}";
+            return await Post<MergeOrganisationsCommand, object>("api/v1/mergeorganisations", command);
+        }
 
-            return await Get<PaginatedList<MergeLogEntry>>(request);
+        public async Task<PaginatedList<MergeLogEntry>> GetMergeLog(GetMergeLogRequest request)
+        {
+            var getMergeLogRequest = $"api/v1/mergeorganisations/log?pageSize={request.PageSize.Value}&pageIndex={request.PageIndex.Value}&orderBy={request.SortColumn}&orderDirection={request.SortDirection}";
+
+            if (!string.IsNullOrEmpty(request.SecondaryEPAOId))
+            {
+                getMergeLogRequest += $"&secondaryEPAOId={request.SecondaryEPAOId}";
+            }
+                
+            return await Get<PaginatedList<MergeLogEntry>>(getMergeLogRequest);
         }
 
         public async Task<MergeLogEntry> GetMergeLogEntry(int mergeId)

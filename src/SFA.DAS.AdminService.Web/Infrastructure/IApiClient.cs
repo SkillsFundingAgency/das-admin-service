@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.ViewModels.Private;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -72,7 +73,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<StandardVersion> GetStandardVersion(string standardUId);
         Task<StandardOptions> GetStandardOptions(string standardId);
 
-        Task<PaginatedList<MergeLogEntry>> GetMergeLog(int pageSize, int pageIndex);
+        Task<object> MergeOrganisations(MergeOrganisationsCommand command);
+        Task<PaginatedList<MergeLogEntry>> GetMergeLog(GetMergeLogRequest request);
         Task<MergeLogEntry> GetMergeLogEntry(int mergeId);
     }
 }

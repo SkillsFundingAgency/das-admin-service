@@ -110,7 +110,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
         public string Name { get; set; }
         public long? Ukprn { get; set; }
 
-        public Epao(string id, string name, long? ukprn )
+        public Epao(string id, string name, long? ukprn)
         {
             Id = id;
             Name = name;
