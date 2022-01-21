@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             MergeController = new MergeOrganisationsController(_mockApiClient.Object, _mockMergeSessionService.Object, _mockContextAccessor.Object);
 
-            _mergeRequest = _autoFixture.Build<MergeRequest>().Create();
+            _mergeRequest = _autoFixture.Create<MergeRequest>();
 
             _mockMergeSessionService.Setup(ms => ms.GetMergeRequest())
                 .Returns(_mergeRequest);

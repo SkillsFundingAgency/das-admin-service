@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             var epaoId = _autoFixture.Create<string>();
 
-            await MergeController.ConfirmEpao(type, epaoId);
+            await MergeController.ConfirmEpao(type, epaoId, null);
 
             _mockApiClient.Verify(c => c.GetEpaOrganisation(epaoId), Times.Once());
         }

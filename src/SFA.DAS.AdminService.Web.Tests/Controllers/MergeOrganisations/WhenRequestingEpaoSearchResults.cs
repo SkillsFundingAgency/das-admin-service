@@ -22,15 +22,28 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
         [TestCase("primary")]
         [TestCase("secondary")]
-        public async Task Then_SearchCommandIsAdded(string type)
+        public async Task And_UserIsNavigatingBackwards_Then_SearchCommandIsAdded(string type)
         {
             SetUpApiResponse();
 
             var viewModel = _autoFixture.Create<SearchOrganisationViewModel>();
 
-            await MergeController.EpaoSearchResults(type, viewModel);
+            await MergeController.EpaoSearchResults(type, true, viewModel);
 
-            _mockMergeSessionService.Verify(ms => ms.AddSearchEpaoCommand(type, viewModel.SearchString));
+            _mockMergeSessionService.Verify(ms => ms.AddSearchEpaoCommand(type, viewModel.SearchString), Times.Never());
+        }
+
+        [TestCase("primary")]
+        [TestCase("secondary")]
+        public async Task And_UserIsNavigatingForwards_Then_SearchCommandIsAdded(string type)
+        {
+            SetUpApiResponse();
+
+            var viewModel = _autoFixture.Create<SearchOrganisationViewModel>();
+
+            await MergeController.EpaoSearchResults(type, null, viewModel);
+
+            _mockMergeSessionService.Verify(ms => ms.AddSearchEpaoCommand(type, viewModel.SearchString), Times.Once());
         }
 
         [TestCase("primary")]
@@ -41,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             var searchViewModel = _autoFixture.Create<SearchOrganisationViewModel>();
 
-            var result = await MergeController.EpaoSearchResults(type, searchViewModel) as ViewResult;
+            var result = await MergeController.EpaoSearchResults(type, true, searchViewModel) as ViewResult;
 
             var model = result.Model as EpaoSearchResultsViewModel;
 
@@ -56,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             var viewModel = _autoFixture.Create<SearchOrganisationViewModel>();
 
-            var result = await MergeController.EpaoSearchResults(type, viewModel) as ViewResult;
+            var result = await MergeController.EpaoSearchResults(type, null, viewModel) as ViewResult;
 
             result.Model.Should().BeEquivalentTo(viewModel);
         }

@@ -19,6 +19,10 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         public void StartNewRequest()
         {
+            PrimaryEpao = null;
+            SecondaryEpao = null;
+            SecondaryEpaoEffectiveTo = null;
+            Completed = false;
             Actions = new List<SessionCommand>();
 
             PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));

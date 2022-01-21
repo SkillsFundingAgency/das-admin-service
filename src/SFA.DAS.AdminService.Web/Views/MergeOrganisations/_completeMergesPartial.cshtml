@@ -62,7 +62,7 @@
 
                     <td class="govuk-table__cell"> @mergeLogEntry.SecondaryEndPointAssessorOrganisationName </td>
 
-                    <td class="govuk-table__cell"> @mergeLogEntry.CompletedAt </td>
+                    <td class="govuk-table__cell"> @mergeLogEntry.CompletedAt.ToString("dd MMMM yyyy") </td>
 
                     <td class="govuk-table__cell govuk-table__cell--numeric"> <a class="govuk-link" asp-controller="MergeOrganisations" asp-action="CompletedMergeOverview" asp-route-logId="@mergeLogEntry.Id"> View </a> </td>
                 </tr>

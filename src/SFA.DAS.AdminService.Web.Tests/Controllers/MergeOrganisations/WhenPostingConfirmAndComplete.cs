@@ -1,12 +1,14 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
 using SFA.DAS.AssessorService.Api.Types.Commands;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
@@ -19,6 +21,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
             BaseArrange();
 
             SetupContextAccessor();
+            SetupApiResponse();
         }
 
         [Test]
@@ -28,16 +31,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             await MergeController.ConfirmAndComplete(viewModel);
 
-            // Verify executed
-           // _mockApiClient.Verify()
+            _mockApiClient.Verify(client => client.MergeOrganisations(It.Is<MergeOrganisationsCommand>(
+                c => c.ActionedByUser == "user@test.com"
+                    && c.PrimaryEndPointAssessorOrganisationId == _mergeRequest.PrimaryEpao.Id
+                    && c.SecondaryEndPointAssessorOrganisationId == _mergeRequest.SecondaryEpao.Id
+                    && c.SecondaryStandardsEffectiveTo == _mergeRequest.SecondaryEpaoEffectiveTo.Value)), Times.Once());
         }
 
         [Test]
         public async Task And_ExecuteMergeRequestSuccessful_Then_MarkMergeRequestComplete()
         {
-            SetupApiResponse();
-            //SetupMergeRequest();
-
             var viewModel = SetupViewModel();
 
             await MergeController.ConfirmAndComplete(viewModel);
@@ -50,10 +53,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             var viewModel = SetupViewModel();
 
-            await MergeController.ConfirmAndComplete(viewModel);
+            var result = await MergeController.ConfirmAndComplete(viewModel) as RedirectToActionResult;
 
-            // Verify executed
-            // _mockApiClient.Verify()
+            result.ActionName.Should().Be(nameof(MergeController.MergeComplete));
         }
 
         [Test]
@@ -79,15 +81,30 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             await MergeController.ConfirmAndComplete(viewModel);
 
-            _mockMergeSessionService.Verify(ms => ms.UpdateMergeRequest(It.Is<MergeRequest>(r => r.Completed == true)), Times.Never()); ;
+            _mockMergeSessionService.Verify(ms => ms.UpdateMergeRequest(It.IsAny<MergeRequest>()), Times.Never()); 
+        }
+
+        [Test]
+        public async Task And_WarningIsNotAccepted_Then_ReturnView()
+        {
+            MergeController.ModelState.AddModelError("Error", "Error message");
+
+            var viewModel = _autoFixture.Build<ConfirmAndCompleteViewModel>()
+                .With(c => c.AcceptWarning, false)
+                .Create();
+
+            var result = await MergeController.ConfirmAndComplete(viewModel) as ViewResult;
+
+            var model = result.Model as ConfirmAndCompleteViewModel;
+
+            model.Should().BeEquivalentTo(viewModel);
         }
 
         private ConfirmAndCompleteViewModel SetupViewModel()
         {
-            return new ConfirmAndCompleteViewModel
-            {
-                AcceptWarning = true
-            };
+            return _autoFixture.Build<ConfirmAndCompleteViewModel>()
+                .With(c => c.AcceptWarning, true)
+                .Create();
         }
 
         private void SetupApiResponse()
@@ -100,8 +117,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
         private void SetupContextAccessor()
         {
-            _mockContextAccessor.Setup(a => a.HttpContext.User.UserId())
-                .Returns("user@test.com");
+            var claims = new List<Claim>
+            {
+                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn", "user@test.com")
+            };
+
+            var identity = new ClaimsIdentity(claims);
+
+            var user = new ClaimsPrincipal(identity);
+
+            _mockContextAccessor.Setup(a => a.HttpContext.User)
+                .Returns(user);
         }
     }
 }

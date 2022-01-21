@@ -41,8 +41,10 @@ namespace SFA.DAS.AdminService.Web.Attributes
                 || actionName == "ConfirmEpao" && type == "secondary" && lastCommand.CommandName == SessionCommands.ConfirmSecondaryEpao
                 || actionName == "SetSecondaryEpaoEffectiveToDate" && lastCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo))
             {
-                //delete from mergerequest then resave
-                sessionService.DeleteLastCommand();
+                
+                mergeRequest.DeleteLastCommand();
+
+                sessionService.UpdateMergeRequest(mergeRequest);
             }
         }
 

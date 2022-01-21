@@ -32,14 +32,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Merge
             _sessionService.Set(_mergeOrganisationsSessionKey, mergeRequest);
         }
 
-        public void DeleteLastCommand()
-        {
-            var request = _sessionService.Get<MergeRequest>(_mergeOrganisationsSessionKey);
-
-            request.DeleteLastCommand();
-
-            _sessionService.Set(_mergeOrganisationsSessionKey, request);
-        }
 
         public void AddSearchEpaoCommand(string type, string searchString)
         {

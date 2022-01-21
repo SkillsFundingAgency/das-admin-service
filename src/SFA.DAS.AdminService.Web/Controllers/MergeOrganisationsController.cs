@@ -201,11 +201,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(nameof(SearchEpao), searchViewModel);
             }
 
-            if (back == null)
-            {
-                _mergeSessionService.AddSearchEpaoCommand(type, searchViewModel.SearchString);
-            }
-
             var searchstring = searchViewModel.SearchString?.Trim().ToLower();
             searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
@@ -214,6 +209,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var searchResults = await _apiClient.SearchOrganisations(searchstring);
 
             var results = searchResults.Select(result => new Epao(result.Id, result.Name, result.Ukprn)).ToList();
+
+            if (back == null)
+            {
+                _mergeSessionService.AddSearchEpaoCommand(type, searchViewModel.SearchString);
+            }
 
             var viewModel = new EpaoSearchResultsViewModel
             {
