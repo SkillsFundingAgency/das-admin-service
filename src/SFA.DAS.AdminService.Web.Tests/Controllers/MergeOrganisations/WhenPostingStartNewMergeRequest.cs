@@ -7,12 +7,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
     public class WhenPostingStartNewMergeRequest : MergeControllerTestBase
     {
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [Test]
         public void Then_StartNewRequest()
         {

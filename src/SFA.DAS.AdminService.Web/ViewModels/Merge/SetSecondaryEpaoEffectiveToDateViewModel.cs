@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string Month { get; set; }
         public string Year { get; set; }
 
-        public SetSecondaryEpaoEffectiveToDateViewModel(){ }
+        public SetSecondaryEpaoEffectiveToDateViewModel() { }
 
         public SetSecondaryEpaoEffectiveToDateViewModel(Epao secondaryEpao, DateTime? effectiveTo)
         {

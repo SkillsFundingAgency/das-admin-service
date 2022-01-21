@@ -5,7 +5,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 {
     public class EpaoSearchResultsViewModel
     {
-        public string OrganisationType { get; set; }
+        public string MergeOrganisationType { get; set; }
         public string SearchString { get; set; }
         public List<Epao> Results { get; set; }
     }

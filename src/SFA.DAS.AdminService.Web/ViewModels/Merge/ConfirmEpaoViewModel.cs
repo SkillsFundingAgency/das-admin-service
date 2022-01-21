@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string PrimaryContactName { get; set; }
         public string PrimaryContactEmail { get; set; }
         public long? Ukprn { get; set; }
-        public string EpaoOrganisationType { get; set; } // Rename to OrganisationType once I have renamed my flag
+        public string OrganisationType { get; set; } 
         public string LegalName { get; set; }
         public string TradingName { get; set; }
         public string CompanyNumber { get; set; }
@@ -25,13 +25,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string City { get; set; }
         public string Postcode { get; set; }
 
-        // my flag - need to change as OrganisationType exists on EpaOrganisation object
-        public string OrganisationType { get; set; }
+        public string MergeOrganisationType { get; set; }
         public string BackRouteSearchString { get; set; }
 
         public ConfirmEpaoViewModel() { }
 
-        public ConfirmEpaoViewModel(EpaOrganisation epao, string organisationType, string searchString)
+        public ConfirmEpaoViewModel(EpaOrganisation epao, string mergeOrganisationType, string searchString)
         {
             Name = epao.Name;
             EpaoId = epao.OrganisationId;
@@ -39,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             PrimaryContactEmail = epao.PrimaryContact;
             Ukprn = epao.Ukprn;
             LegalName = epao.OrganisationData.LegalName;
-            EpaoOrganisationType = epao.OrganisationData.OrganisationReferenceType;
+            OrganisationType = epao.OrganisationData.OrganisationReferenceType;
             TradingName = epao.OrganisationData.TradingName;
             CompanyNumber = epao.OrganisationData.CompanyNumber;
             Email = epao.OrganisationData.Email;
@@ -52,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             City = epao.OrganisationData.City;
             Postcode = epao.OrganisationData.Postcode;
 
-            OrganisationType = organisationType.ToLower();
+            MergeOrganisationType = mergeOrganisationType.ToLower();
             BackRouteSearchString = searchString;
         }
     }

@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
             {
                 var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-                if (vm.OrganisationType == "primary")
+                if (vm.MergeOrganisationType == "primary")
                 {
                     var secondaryEpao = mergeRequest.SecondaryEpao;
 
@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
                         context.AddFailure("Epao", "The primary EPAO cannot be the same as the secondary EPAO.");
                     }
                 }
-                else if (vm.OrganisationType == "secondary")
+                else if (vm.MergeOrganisationType == "secondary")
                 {
                     var primaryEpao = mergeRequest.PrimaryEpao;
 

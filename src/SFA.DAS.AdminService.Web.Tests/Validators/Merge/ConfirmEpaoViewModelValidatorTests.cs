@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
             _mockSessionService.Setup(ms => ms.GetMergeRequest())
                 .Returns(mergeRequest);
 
-            _viewModel.OrganisationType = "primary";
+            _viewModel.MergeOrganisationType = "primary";
 
             var result = Validator.Validate(_viewModel);
 
@@ -66,7 +66,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
             _mockSessionService.Setup(ms => ms.GetMergeRequest())
                 .Returns(mergeRequest);
 
-            _viewModel.OrganisationType = "secondary";
+            _viewModel.MergeOrganisationType = "secondary";
 
             var result = Validator.Validate(_viewModel);
 
@@ -92,7 +92,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
             _mockApiClient.Setup(c => c.GetMergeLog(It.IsAny<GetMergeLogRequest>()))
                 .ReturnsAsync(mockResponse);
 
-            _viewModel.OrganisationType = "secondary";
+            _viewModel.MergeOrganisationType = "secondary";
 
             var result = Validator.Validate(_viewModel);
 

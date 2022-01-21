@@ -108,7 +108,7 @@
             <input type="hidden" asp-for="PrimaryContactName" />
             <input type="hidden" asp-for="PrimaryContactEmail" />
             <input type="hidden" asp-for="Ukprn" />
-            <input type="hidden" asp-for="EpaoOrganisationType" />
+            <input type="hidden" asp-for="OrganisationType" />
             <input type="hidden" asp-for="LegalName" />
             <input type="hidden" asp-for="TradingName" />
             <input type="hidden" asp-for="CompanyNumber" />
@@ -123,10 +123,10 @@
             <input type="hidden" asp-for="City" />
             <input type="hidden" asp-for="Postcode" />
 
-            <input type="hidden" asp-for="OrganisationType" />
+            <input type="hidden" asp-for="MergeOrganisationType" />
             <input type="hidden" asp-for="BackRouteSearchString" />
 
-            <button class="govuk-button" type="submit"> Confirm @Model.OrganisationType EPAO</button>
+            <button class="govuk-button" type="submit"> Confirm @Model.MergeOrganisationType EPAO</button>
         </form>
     </div>
     </div>

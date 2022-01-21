@@ -16,14 +16,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Models
         public void Arrange()
         {
             _autoFixture = new Fixture();
-            _mergeRequest = _autoFixture.Create<MergeRequest>();
+
+            _mergeRequest = new MergeRequest();
+            _mergeRequest.StartNewRequest();
         }
 
         [Test]
         public void When_StartingNewRequest_Then_MergeRequestResetAndStartCommandAdded()
         {
-           _mergeRequest.StartNewRequest();
-
             var command = _mergeRequest.Actions.Single();
 
             command.CommandName.Should().Be(SessionCommands.StartSession);

@@ -8,7 +8,7 @@
 
 @if (Model.BackLinkAction != null)
 {
-    <a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="@Model.BackLinkAction" asp-route-type="@Model.BackLinkType" asp-route-epaoId="@Model.BackLinkEpaoId"  asp-route-back="True"> Back </a>
+    <a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="@Model.BackLinkAction" asp-route-mergeOrganisationType="@Model.BackLinkType" asp-route-epaoId="@Model.BackLinkEpaoId"  asp-route-back="True"> Back </a>
 }
 else
 {
@@ -43,7 +43,7 @@ else
                             @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet confirmed" : Model.PrimaryEpaoName)
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="primary">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="primary">
                                 Change
                             </a>
                         </dd>
@@ -57,7 +57,7 @@ else
                         @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet confirmed" : Model.SecondaryEpaoName)
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-type="secondary">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="secondary">
                             Change
                         </a>
                     </dd>

@@ -7,12 +7,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
     public class WhenRequestingEpaoSearchPage : MergeControllerTestBase
     {
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [TestCase("primary")]
         [TestCase("secondary")]
         public void Then_SearchTypeIsMapped(string type)

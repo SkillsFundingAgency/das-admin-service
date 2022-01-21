@@ -12,6 +12,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
         public Epao SecondaryEpao { get; set; }
         public DateTime? SecondaryEpaoEffectiveTo { get; set; }
         public bool Completed { get; set; }
+
         public SessionCommand PreviousCommand 
         { 
             get => Actions.OrderByDescending(c => c.Order).FirstOrDefault(); 

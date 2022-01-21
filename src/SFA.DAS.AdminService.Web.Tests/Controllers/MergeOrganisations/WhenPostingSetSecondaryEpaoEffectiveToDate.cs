@@ -11,12 +11,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
     public class WhenPostingSetSecondaryEpaoEffectiveToDate : MergeControllerTestBase
     {
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [Test]
         public void And_ModelIsValid_Then_CallUpdateWithNewEffectiveToDate()
         {

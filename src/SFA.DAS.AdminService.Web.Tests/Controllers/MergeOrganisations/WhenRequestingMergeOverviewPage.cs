@@ -1,25 +1,14 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
     public class WhenRequestingMergeOverviewPage : MergeControllerTestBase
     {
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [Test]
         public void Then_GetMergeRequestFromSession()
         {
@@ -50,10 +39,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [Test]
         public void And_SessionIsNull_ThenMapViewModel()
         {
-            var mergeRquest = new MergeRequest();
+            var mergeRequest = new MergeRequest();
+            mergeRequest.StartNewRequest();
 
             _mockMergeSessionService.Setup(ms => ms.GetMergeRequest())
-                .Returns(mergeRquest);
+                .Returns(mergeRequest);
 
             var viewResult = MergeController.MergeOverview() as ViewResult;
 

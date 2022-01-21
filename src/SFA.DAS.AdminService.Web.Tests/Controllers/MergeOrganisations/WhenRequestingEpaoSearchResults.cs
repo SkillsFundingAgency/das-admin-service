@@ -14,12 +14,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
     {
         private List<AssessmentOrganisationSummary> _response;
 
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [TestCase("primary")]
         [TestCase("secondary")]
         public async Task And_UserIsNavigatingBackwards_Then_SearchCommandIsAdded(string type)

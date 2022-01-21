@@ -10,12 +10,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
     public class WhenPostingConfirmEpao : MergeControllerTestBase
     {
-        [SetUp]
-        public void Arrange()
-        {
-            BaseArrange();
-        }
-
         [TestCase("primary")]
         [TestCase("secondary")]
         public void And_ModelIsValid_Then_UpdateMergeRequest(string type)
@@ -23,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
             SetUpGetMergeRequest();
 
             var viewModel = _autoFixture.Build<ConfirmEpaoViewModel>()
-                .With(vm => vm.OrganisationType, type)
+                .With(vm => vm.MergeOrganisationType, type)
                 .Create();
 
             MergeController.ConfirmEpao(type, viewModel);

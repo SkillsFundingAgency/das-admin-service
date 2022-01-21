@@ -172,12 +172,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [MergeRequestFilter]
-        [HttpGet("merge-organisations/search/{type}")]
-        public IActionResult SearchEpao(string type, string searchString = null)
+        [HttpGet("merge-organisations/search/{mergeOrganisationType}")]
+        public IActionResult SearchEpao(string mergeOrganisationType, string searchString = null)
         {
             var viewModel = new SearchOrganisationViewModel
             {
-                OrganisationType = type.ToLower(),
+                OrganisationType = mergeOrganisationType.ToLower(),
                 SearchString = searchString
             };
 
@@ -185,8 +185,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [MergeRequestFilter]
-        [HttpGet("merge-organisations/results/{type}")]
-        public async Task<IActionResult> EpaoSearchResults(string type, bool? back, SearchOrganisationViewModel searchViewModel)
+        [HttpGet("merge-organisations/results/{mergeOrganisationType}")]
+        public async Task<IActionResult> EpaoSearchResults(string mergeOrganisationType, bool? back, SearchOrganisationViewModel searchViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -204,12 +204,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (back == null)
             {
-                _mergeSessionService.AddSearchEpaoCommand(type, searchViewModel.SearchString);
+                _mergeSessionService.AddSearchEpaoCommand(mergeOrganisationType, searchViewModel.SearchString);
             }
 
             var viewModel = new EpaoSearchResultsViewModel
             {
-                OrganisationType = type.ToLower(),
+                MergeOrganisationType = mergeOrganisationType.ToLower(),
                 Results = results,
                 SearchString = searchViewModel.SearchString
             };
@@ -218,8 +218,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [MergeRequestFilter]
-        [HttpGet("merge-organisations/confirm/{type}/{epaoId}")]
-        public async Task<IActionResult> ConfirmEpao(string type, string epaoId, string searchString)
+        [HttpGet("merge-organisations/confirm/{mergeOrganisationType}/{epaoId}")]
+        public async Task<IActionResult> ConfirmEpao(string mergeOrganisationType, string epaoId, string searchString)
         {
             if (searchString == null)
             {
@@ -230,22 +230,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var epao = await _apiClient.GetEpaOrganisation(epaoId);
 
-            var viewModel = new ConfirmEpaoViewModel(epao, type, searchString);
+            var viewModel = new ConfirmEpaoViewModel(epao, mergeOrganisationType, searchString);
 
             return View(viewModel);
         }
 
-        [HttpPost("merge-organisations/confirm/{type}/{epaoId}")]
-        public IActionResult ConfirmEpao(string type, ConfirmEpaoViewModel viewModel)
+        [HttpPost("merge-organisations/confirm/{mergeOrganisationType}/{epaoId}")]
+        public IActionResult ConfirmEpao(string mergeOrganisationType, ConfirmEpaoViewModel viewModel)
         {
-            if (ModelState.IsValid == false)
+            if (!ModelState.IsValid)
             {
                 return View(viewModel);
             }
 
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            mergeRequest.UpdateEpao(viewModel.OrganisationType, viewModel.EpaoId, viewModel.Name, viewModel.Ukprn.Value, viewModel.BackRouteSearchString);
+            mergeRequest.UpdateEpao(viewModel.MergeOrganisationType, viewModel.EpaoId, viewModel.Name, viewModel.Ukprn.Value, viewModel.BackRouteSearchString);
 
             _mergeSessionService.UpdateMergeRequest(mergeRequest);
 

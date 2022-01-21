@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AdminService.Web.Domain.Merge;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
@@ -18,6 +20,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         protected Mock<IHttpContextAccessor> _mockContextAccessor;
 
         protected MergeOrganisationsController MergeController;
+
+        protected const int DefaultPageIndex = 1;
+        protected const int DefaultMergesPerPage = 10;
+        protected const string DefaultSortOrder = SortOrder.Desc;
+        protected const string DefaultSortColumn = MergeOrganisationSortColumn.CompletedAt;
 
         [SetUp]
         public void BaseArrange()

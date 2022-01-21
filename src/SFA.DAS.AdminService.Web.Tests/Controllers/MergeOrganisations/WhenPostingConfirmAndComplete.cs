@@ -18,8 +18,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [SetUp]
         public void Arrange()
         {
-            BaseArrange();
-
             SetupContextAccessor();
             SetupApiResponse();
         }
