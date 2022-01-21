@@ -1,12 +1,11 @@
-﻿@using SFA.DAS.AdminService.Web.Models.Merge;
-@model SFA.DAS.AdminService.Web.ViewModels.Merge.ConfirmEpaoViewModel
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.ConfirmEpaoViewModel
 
 @{
     ViewBag.Title = $"Confirm {Model.OrganisationType} EPAO";
     Layout = "_Layout";
 }
 
-<a asp-controller="MergeOrganisations" asp-action="EpaoSearchResults" asp-route-type="@Model.OrganisationType" asp-route-searchString="@Model.BackRouteSearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+<a asp-controller="MergeOrganisations" asp-action="EpaoSearchResults" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-searchString="@Model.BackRouteSearchString" asp-route-back="True" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -15,7 +14,7 @@
             <partial name="_ValidationSummaryPartial" />
 
             <h1 class="govuk-heading-xl">
-                Confirm @Model.OrganisationType EPAO
+                Confirm @Model.MergeOrganisationType EPAO
             </h1>
             <span class="govuk-caption-xl"> Organisation details</span>
 

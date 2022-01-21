@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Attributes
             var mergeRequest = sessionService.GetMergeRequest();
 
             var actionName = context.ActionDescriptor.RouteValues["action"];
-            var type = context.RouteData.Values.ContainsKey("type") ? context.RouteData.Values["type"].ToString() : "";
+            var type = context.RouteData.Values.ContainsKey("mergeOrganisationType") ? context.RouteData.Values["mergeOrganisationType"].ToString() : "";
 
             var navigatingBack = context.HttpContext.Request.Query.ContainsKey("back") ? bool.Parse(context.HttpContext.Request.Query["back"]) : false;
             
