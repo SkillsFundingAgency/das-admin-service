@@ -17,6 +17,33 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string BackLinkType { get; set; }
         public string BackLinkEpaoId { get; set; }
 
-        public SessionCommand PreviousCommand { get; set; }
+        public MergeOverviewViewModel() { }
+        public MergeOverviewViewModel(MergeRequest mergeRequest)
+        {
+            PrimaryEpaoId = mergeRequest?.PrimaryEpao?.Id;
+            PrimaryEpaoName = mergeRequest?.PrimaryEpao?.Name;
+            SecondaryEpaoId = mergeRequest?.SecondaryEpao?.Id;
+            SecondaryEpaoName = mergeRequest?.SecondaryEpao?.Name;
+            SecondaryEpaoEffectiveTo = mergeRequest?.SecondaryEpaoEffectiveTo;
+
+            var previousCommand = mergeRequest?.PreviousCommand;
+
+            if (previousCommand.CommandName == SessionCommands.ConfirmPrimaryEpao)
+            {
+                BackLinkType = "primary";
+                BackLinkAction = "ConfirmEpao";
+                BackLinkEpaoId = previousCommand.EpaoId;
+            }
+            else if (previousCommand.CommandName == SessionCommands.ConfirmSecondaryEpao)
+            {
+                BackLinkType = "secondary";
+                BackLinkAction = "ConfirmEpao";
+                BackLinkEpaoId = previousCommand.EpaoId;
+            }
+            else if (previousCommand.CommandName == SessionCommands.SetSecondaryEpaoEffectiveTo)
+            {
+                BackLinkAction = "SetSecondaryEpaoEffectiveToDate";
+            }
+        }
     }
 }

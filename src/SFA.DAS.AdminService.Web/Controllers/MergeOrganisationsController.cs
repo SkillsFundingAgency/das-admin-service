@@ -166,15 +166,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            var viewModel = new MergeOverviewViewModel
-            {
-                PrimaryEpaoId = mergeRequest?.PrimaryEpao?.Id,
-                PrimaryEpaoName = mergeRequest?.PrimaryEpao?.Name,
-                SecondaryEpaoId = mergeRequest?.SecondaryEpao?.Id,
-                SecondaryEpaoName = mergeRequest?.SecondaryEpao?.Name,
-                SecondaryEpaoEffectiveTo = mergeRequest?.SecondaryEpaoEffectiveTo,
-                PreviousCommand = mergeRequest?.PreviousCommand
-            };
+            var viewModel = new MergeOverviewViewModel(mergeRequest);
 
             return View(viewModel);
         }
@@ -293,8 +285,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.PreviousCommand = _mergeSessionService.GetMergeRequest().PreviousCommand;
-
                 return View(viewModel);
             }
 

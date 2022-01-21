@@ -25,7 +25,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Filters
         private Mock<IServiceProvider> _mockServiceProvider;
         private Mock<HttpContext> _mockHttpContext;
 
-
         [SetUp]
         public void Arrange()
         {
