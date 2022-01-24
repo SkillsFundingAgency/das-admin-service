@@ -6,7 +6,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 {
     public class MergeRequest
     {
-        public List<SessionCommand> Actions;
+        public List<SessionCommand> Commands;
 
         public Epao PrimaryEpao { get; set; }
         public Epao SecondaryEpao { get; set; }
@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         public SessionCommand PreviousCommand 
         { 
-            get => Actions.OrderByDescending(c => c.Order).FirstOrDefault(); 
+            get => Commands.OrderByDescending(c => c.Order).FirstOrDefault(); 
         }
 
         public void StartNewRequest()
@@ -24,30 +24,30 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             SecondaryEpao = null;
             SecondaryEpaoEffectiveTo = null;
             Completed = false;
-            Actions = new List<SessionCommand>();
+            Commands = new List<SessionCommand>();
 
             PushCommand(new SessionCommand(SessionCommands.StartSession, null, null));
         }
 
-        public void AddSearchEpaoCommand(string type, string searchString)
+        public void AddSearchEpaoCommand(string mergeOrganisationType, string searchString)
         {
-            if (type == "primary")
+            if (mergeOrganisationType == MergeOrganisationType.Primary)
             {
                 PushCommand(new SessionCommand(SessionCommands.SearchPrimaryEpao, searchString, null));
             }
-            else if (type == "secondary")
+            else if (mergeOrganisationType == MergeOrganisationType.Secondary)
             {
                 PushCommand(new SessionCommand(SessionCommands.SearchSecondaryEpao, searchString, null));
             }
         }
 
-        public void UpdateEpao(string type, string epaoId, string name, long ukprn, string searchString)
+        public void UpdateEpao(string mergeOrganisationType, string epaoId, string name, long ukprn, string searchString)
         {
-            if (type == "primary")
+            if (mergeOrganisationType == MergeOrganisationType.Primary)
             {
                 SetPrimaryEpao(epaoId, name, ukprn, searchString);
             }
-            else if (type == "secondary")
+            else if (mergeOrganisationType == MergeOrganisationType.Secondary)
             {
                 SetSecondaryEpao(epaoId, name, ukprn, searchString);
             }
@@ -67,7 +67,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         public void DeleteLastCommand()
         {
-            var lastCommand = Actions.OrderByDescending(c => c.Order).FirstOrDefault();
+            var lastCommand = Commands.OrderByDescending(c => c.Order).FirstOrDefault();
 
             switch (lastCommand.CommandName) 
             {
@@ -84,7 +84,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
                     break;
             }
 
-            Actions.Remove(lastCommand);
+            Commands.Remove(lastCommand);
         } 
 
         private void SetPrimaryEpao(string id, string name, long ukprn, string searchString)
@@ -103,9 +103,9 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 
         private void PushCommand(SessionCommand command)
         {
-            command.Order = Actions.Count + 1;
+            command.Order = Commands.Count + 1;
 
-            Actions.Add(command);
+            Commands.Add(command);
         }
     }
 }

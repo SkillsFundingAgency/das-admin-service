@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Models
         [Test]
         public void When_StartingNewRequest_Then_MergeRequestResetAndStartCommandAdded()
         {
-            var command = _mergeRequest.Actions.Single();
+            var command = _mergeRequest.Commands.Single();
 
             command.CommandName.Should().Be(SessionCommands.StartSession);
         }
@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Models
 
             _mergeRequest.AddSearchEpaoCommand(type, searchString);
 
-            var command = _mergeRequest.Actions.OrderByDescending(a => a.Order).FirstOrDefault();
+            var command = _mergeRequest.Commands.OrderByDescending(a => a.Order).FirstOrDefault();
 
             command.SearchString.Should().Be(searchString);
             command.CommandName.Should().Be(expectedCommandName);
