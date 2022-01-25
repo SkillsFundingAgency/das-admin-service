@@ -6,7 +6,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class DuplicateRequestViewModel
     {
         public Guid CertificateId { get; set; }
-        public bool IsConfirmed { get; set; }
         public string NextBatchDate { get; set; }
         public string SearchString { get; set; }
         public int Page { get; set; }
@@ -18,6 +17,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public string PrivatelyFundedStatus { get; set; }
         public string FullName { get; set; }
 
-        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
+        public bool CanRequestReprint => CertificateStatus.CanRequestReprintCertificate(Status);
     }
 }

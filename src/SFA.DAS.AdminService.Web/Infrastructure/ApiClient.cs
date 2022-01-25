@@ -266,6 +266,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
 
+        public async Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command)
+        {
+            await Post("api/v1/certificates/update-with-amend-reason", command);
+        }
+
+        public async Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command)
+        {
+            await Post("api/v1/certificates/update-with-reprint-reason", command);
+        }
+
         public async Task<ScheduleRun> GetNextScheduleToRunNow()
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");

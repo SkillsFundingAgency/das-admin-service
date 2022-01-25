@@ -1,13 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AdminService.Web.Infrastructure;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -25,45 +25,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(
-            Guid certificateId,
-            int stdCode,
-            long uln,
-            string searchString,
-            int page = 1,
-            bool? redirectToCheck = false)
-        {
-            var certificate = await _apiClient.GetCertificate(certificateId);
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
-            var vm = new DuplicateRequestViewModel
-            {
-                CertificateId = certificateId,
-                IsConfirmed = false,
-                NextBatchDate = "Fake Date",
-                SearchString = searchString,
-                CertificateReference = certificate.CertificateReference,
-                StdCode = stdCode,
-                Uln = uln,
-                FullName = certificateData.FullName,
-                Status = certificate.Status,
-                BackToCheckPage = redirectToCheck.Value,
-                Page = page
-            };
-
-            return View(vm);
-        }
-
-        [HttpPost(Name = "Index")]
-        public async Task<IActionResult> Index(DuplicateRequestViewModel duplicateRequestViewModel)
-        {
-            var vm = await ReprintCertificate(duplicateRequestViewModel.CertificateId, duplicateRequestViewModel.SearchString,
-                duplicateRequestViewModel.StdCode, duplicateRequestViewModel.Uln, duplicateRequestViewModel.Page);
-
-            return View(vm);
-        }
-
-        [HttpGet]
         public async Task<IActionResult> ConfirmReprint(Guid certificateId,
             int stdCode,
             long uln,
@@ -71,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             int page = 1)
         {
             var vm = await ReprintCertificate(certificateId, searchString, stdCode, uln, page);
-            return View("Index", vm);
+            return View(vm);
         }
 
         private async Task<DuplicateRequestViewModel> ReprintCertificate(Guid certificateId, string searchString, int larsCode, long uln, int page)
@@ -89,7 +50,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var vm = new DuplicateRequestViewModel
             {
                 CertificateId = certificate.Id,
-                IsConfirmed = true,
                 NextBatchDate = nextScheduledRun?.RunTime.ToString("dd/MM/yyyy"),
                 CertificateReference = certificate.CertificateReference,
                 SearchString = searchString,

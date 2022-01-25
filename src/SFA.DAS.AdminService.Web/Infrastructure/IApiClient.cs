@@ -57,6 +57,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString);
         Task<List<StandardVersion>> SearchStandards(string searchString);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest);
+        Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command);
+        Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command);
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);
         Task<string> UpdateEpaOrganisation(UpdateEpaOrganisationRequest request);
         Task<string> UpdateEpaOrganisationStandard(UpdateEpaOrganisationStandardRequest request);

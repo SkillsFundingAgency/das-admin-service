@@ -69,6 +69,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             return certificate;
         }
 
-        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
+        public bool CanRequestDuplicate => CertificateStatus.CanRequestReprintCertificate(Status);
     }
 }

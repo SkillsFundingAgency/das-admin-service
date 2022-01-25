@@ -39,7 +39,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var vm = new DuplicateRequestViewModel
             {
                 CertificateId = certificateId,
-                IsConfirmed = false,
                 NextBatchDate = "Fake Date",
                 SearchString = searchString,
                 CertificateReference = certificate.CertificateReference,
