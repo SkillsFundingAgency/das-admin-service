@@ -20,14 +20,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Option(Guid certificateId, bool fromApproval)
+        public async Task<IActionResult> Option(Guid certificateId)
         {
-            var viewModel =  await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
+            var viewModel = await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
             if (viewModel is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
             {
                 var standardOption = await ApiClient.GetStandardOptions(certificateOptionViewModel.GetStandardId());
 
-                certificateOptionViewModel.FromApproval = fromApproval;
                 certificateOptionViewModel.Options = standardOption != null ? standardOption.CourseOption : new List<string>();
                 certificateOptionViewModel.SelectedOption = certificateOptionViewModel.Option;
             }
@@ -40,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             return await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/Option.cshtml",
-                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id, fromapproval = vm.FromApproval }), action: CertificateActions.Option);
+                nextAction: RedirectToAction("Check", "CertificateAmend", new { certificateId = vm.Id }), action: CertificateActions.Option);
         }
     }
 }

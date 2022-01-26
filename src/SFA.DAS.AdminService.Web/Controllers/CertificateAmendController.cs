@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Controllers
@@ -22,16 +21,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page, bool fromApproval)
+        public async Task<IActionResult> Check(Guid certificateId, string searchString, int page)
         {
-            var (actionResult,_) = await GetCheckViewModel(certificateId, searchString, page, fromApproval);
+            var (actionResult, _) = await GetCheckViewModel(certificateId, searchString, page);
             return actionResult;
         }
 
         [HttpPost(Name = "Check")]
         public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel vm)
         {
-            var (actionResult, model) = await GetCheckViewModel(vm.Id, vm.SearchString, vm.Page, vm.FromApproval);
+            var (actionResult, model) = await GetCheckViewModel(vm.Id, vm.SearchString, vm.Page);
             var options = await ApiClient.GetStandardOptions(vm.GetStandardId());
             var isDueCertificate = vm.SelectedGrade != null & vm.SelectedGrade != CertificateGrade.Fail;
             var isMissingOptions = options != null && options.HasOptions() && string.IsNullOrWhiteSpace(model.Option);
@@ -45,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 if (isDueCertificate & string.IsNullOrWhiteSpace(model.Name))
                 {
-                    ModelState.AddModelError("Name", "You need to give a name of who will receive the certificate"); 
+                    ModelState.AddModelError("Name", "You need to give a name of who will receive the certificate");
                 }
                 if (isDueCertificate & string.IsNullOrWhiteSpace(model.AddressLine1))
                 {
@@ -68,42 +67,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     });
             }
 
-            if (vm.Status == CertificateStatus.Draft &&
-                vm.PrivatelyFundedStatus == CertificateStatus.Rejected && vm.FromApproval)
-            {
-                var certificate = await ApiClient.GetCertificate(vm.Id);
-                var approvalResults = new ApprovalResult[1];
-                approvalResults[0] = new ApprovalResult
+            return RedirectToAction("Index", "Comment",
+                new
                 {
-                    IsApproved = CertificateStatus.Submitted,
-                    CertificateReference = certificate.CertificateReference,
-                    PrivatelyFundedStatus = CertificateStatus.Approved
-                };
-
-                await ApiClient.ApproveCertificates(new CertificatePostApprovalViewModel
-                {
-                    UserName = ContextAccessor.HttpContext.User
-                    .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value,
-                    ApprovalResults = approvalResults
+                    certificateId = vm.Id,
+                    redirectToCheck = vm.RedirectToCheck,
+                    Uln = vm.Uln,
+                    StdCode = vm.StandardCode,
+                    Page = vm.Page,
+                    SearchString = vm.SearchString
                 });
-                return RedirectToAction("Approved", "CertificateApprovals");
-            }
-            else
-            {
-                return RedirectToAction("Index", "Comment",
-                    new
-                    {
-                        certificateId = vm.Id,
-                        redirectToCheck = vm.RedirectToCheck,
-                        Uln = vm.Uln,
-                        StdCode = vm.StandardCode,
-                        Page = vm.Page,
-                        SearchString = vm.SearchString
-                    });
-            }
         }
 
-        private async Task<(IActionResult, CertificateCheckViewModel)> GetCheckViewModel(Guid certificateId, string searchString, int page, bool fromApproval)
+        private async Task<(IActionResult, CertificateCheckViewModel)> GetCheckViewModel(Guid certificateId, string searchString, int page)
         {
             var actionResult = await LoadViewModel<CertificateCheckViewModel>(certificateId, "~/Views/CertificateAmend/Check.cshtml");
             var viewResult = (actionResult as ViewResult);
@@ -111,8 +87,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             certificateCheckViewModel.Page = page;
             certificateCheckViewModel.SearchString = searchString;
-            certificateCheckViewModel.FromApproval = fromApproval;
-
+            
             var standards = await ApiClient.GetStandardVersions(certificateCheckViewModel.StandardCode);
             certificateCheckViewModel.StandardHasMultipleVersions = standards.Count() > 1;
 

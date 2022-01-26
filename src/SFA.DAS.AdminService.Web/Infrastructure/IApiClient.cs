@@ -1,6 +1,4 @@
 ﻿using SFA.DAS.AdminService.Common.Validation;
-using SFA.DAS.AdminService.Web.ViewModels.Private;
-using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -19,7 +17,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public interface IApiClient
     {
-        Task ApproveCertificates(CertificatePostApprovalViewModel certificatePostApprovalViewModel);
         Task<PaginatedList<StaffBatchLogResult>> BatchLog(int page);
         Task<StaffBatchSearchResponse> BatchSearch(int batchNumber, int page);
         Task<ValidationResponse> CreateEpaContactValidate(CreateEpaContactValidationRequest request);
@@ -35,8 +32,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task GatherAndCollateStandards();
         Task<IList<ScheduleRun>> GetAllScheduledRun(int scheduleType);
         Task<Certificate> GetCertificate(Guid certificateId, bool includeLogs=false);
-        Task<PaginatedList<CertificateSummaryResponse>> GetCertificatesToBeApproved(int pageSize, int pageIndex,
-            string status, string privatelyFundedStatus);
         Task<IEnumerable<IDictionary<string, object>>> GetDataFromStoredProcedure(string storedProcedure);
         Task<List<DeliveryArea>> GetDeliveryAreas();
         Task<AssessmentOrganisationContact> GetEpaContact(string contactId);

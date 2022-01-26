@@ -205,37 +205,6 @@
     @:</div>
     @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
 }
-    
-        @{
-            var privatelyFundedcertificateApprovalsRoles = string.Join(",", Roles.OperationsTeam, Roles.CertificationTeam);
-            if (roleTagHelper.ShowForRoles(privatelyFundedcertificateApprovalsRoles)) { sectionsShown++; }
-        }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@privatelyFundedcertificateApprovalsRoles" id="privately-funded-certificate-approvals">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                Privately funded certificate approvals
-            </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">A table of privately funded certificates with options to approve, send for approval or reject.</p>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="New">New</a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="SentForApproval">Sent for approval</a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="Approved">Approved</a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="CertificateApprovals" asp-action="Rejected">Rejected</a>
-                </li>
-            </ul>
-        </div>
-
-@if (sectionsShown % 2 == 0)
-{
-    @:</div>
-    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
-}
 
         @{
             var organisationApplicationsRoles = string.Join(",", Roles.AssessmentDeliveryTeam, Roles.CertificationTeam);
@@ -326,7 +295,7 @@
         @if (sectionsShown % 2 == 0)
         {
         @:</div>
-        @:<div class="govuk-grid-row">
+        @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
         }
         @{
             var financialHealthAssessmentRoles = string.Join(",", Roles.ProviderRiskAssuranceTeam, Roles.CertificationTeam);
