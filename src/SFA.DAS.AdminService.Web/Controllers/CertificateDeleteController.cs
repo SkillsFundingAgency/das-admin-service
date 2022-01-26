@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private ICertificateApiClient _certificateApiClient;
         public CertificateDeleteController(ILogger<CertificateDeleteController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient, ICertificateApiClient certificateApiClient) : base(logger, contextAccessor, apiClient)
+            IApiClient apiClient, ICertificateApiClient certificateApiClient) : base(logger, contextAccessor, apiClient)
         {
             _logger = logger;
             _certificateApiClient = certificateApiClient;

@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateVersionController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient)
+            IApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
         { }
 

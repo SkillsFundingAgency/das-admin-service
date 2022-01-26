@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateAmendController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient) : base(logger, contextAccessor, apiClient)
+            IApiClient apiClient) : base(logger, contextAccessor, apiClient)
         {
         }
 

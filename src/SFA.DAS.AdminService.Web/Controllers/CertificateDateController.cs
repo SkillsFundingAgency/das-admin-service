@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         public CertificateDateController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient,
+            IApiClient apiClient,
             CertificateDateViewModelValidator validator) : base(logger, contextAccessor, apiClient)
         {
             _validator = validator;

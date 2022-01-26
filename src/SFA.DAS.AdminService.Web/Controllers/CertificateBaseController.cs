@@ -19,11 +19,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         protected readonly ILogger<CertificateBaseController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
-        protected readonly ApiClient ApiClient;     
+        protected readonly IApiClient ApiClient;
 
         public CertificateBaseController(ILogger<CertificateBaseController> logger, 
             IHttpContextAccessor contextAccessor, 
-            ApiClient apiClient)
+            IApiClient apiClient)
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
