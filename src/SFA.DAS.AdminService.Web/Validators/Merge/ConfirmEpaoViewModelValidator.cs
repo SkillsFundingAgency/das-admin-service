@@ -8,8 +8,8 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
 {
     public class ConfirmEpaoViewModelValidator : AbstractValidator<ConfirmEpaoViewModel>
     {
-        private IMergeOrganisationSessionService _mergeSessionService;
-        private IApiClient _apiClient;
+        private readonly IMergeOrganisationSessionService _mergeSessionService;
+        private readonly IApiClient _apiClient;
 
         public ConfirmEpaoViewModelValidator(IMergeOrganisationSessionService mergeSessionService, IApiClient apiClient)
         {

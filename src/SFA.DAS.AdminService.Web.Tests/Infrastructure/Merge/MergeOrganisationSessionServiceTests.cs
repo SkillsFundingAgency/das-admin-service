@@ -14,7 +14,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.Merge
 
         private Fixture _autoFixture;
 
-        private Mock<IApiClient> _mockApiClient;
         private Mock<ISessionService> _mockSessionService;
 
         private MergeOrganisationSessionService _mergeSessionService;

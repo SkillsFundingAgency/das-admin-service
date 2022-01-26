@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AdminService.Web.Domain.Merge
 {
-    public class MergeOrganisationSortColumn
+    public static class MergeOrganisationSortColumn
     {
         public const string PrimaryEpaoName = "PrimaryEndPointAssessorOrganisationName";
         public const string SecondaryEpaoName = "SecondaryEndPointAssessorOrganisationName";

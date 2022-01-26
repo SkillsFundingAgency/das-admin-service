@@ -6,7 +6,7 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
 {
     public class MergeRequest
     {
-        public List<SessionCommand> Commands;
+        public List<SessionCommand> Commands { get; set; }
 
         public Epao PrimaryEpao { get; set; }
         public Epao SecondaryEpao { get; set; }

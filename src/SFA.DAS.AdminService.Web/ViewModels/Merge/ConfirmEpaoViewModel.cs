@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Models.Merge;
-using SFA.DAS.AssessorService.Api.Types.Models.AO;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.AO;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Merge
 {

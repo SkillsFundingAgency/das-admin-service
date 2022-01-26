@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Attributes
             
             var lastCommand = mergeRequest.PreviousCommand;
 
-            if (navigatingBack == true &&
+            if (navigatingBack &&
                 (actionName == "EpaoSearchResults" && type == "primary" && lastCommand.CommandName == SessionCommands.SearchPrimaryEpao
                 || actionName == "EpaoSearchResults" && type == "secondary" && lastCommand.CommandName == SessionCommands.SearchSecondaryEpao
                 || actionName == "ConfirmEpao" && type == "primary" && lastCommand.CommandName == SessionCommands.ConfirmPrimaryEpao

@@ -327,7 +327,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             
             try
             {
-                var result = await _apiClient.MergeOrganisations(mergeCommand);
+                await _apiClient.MergeOrganisations(mergeCommand);
                 
                 mergeRequest.MarkComplete();
 
