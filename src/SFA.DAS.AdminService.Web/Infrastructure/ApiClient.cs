@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
