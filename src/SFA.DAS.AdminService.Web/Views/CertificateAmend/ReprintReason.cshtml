@@ -18,13 +18,13 @@
 
             @if (Model.ShowWarning)
             {
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                    Do not request reprints with a status of 'sent to printer', 'printed' or 'reprint requested'; you will need to wait until the status changes to 'delivered' or 'not delivered'.
-                </strong>
-            </div>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        Do not request reprints with a status of 'sent to printer', 'printed' or 'reprint requested'; you will need to wait until the status changes to 'delivered' or 'not delivered'.
+                    </strong>
+                </div>
             }
 
             @if (!ViewData.ModelState.IsValid)
@@ -43,104 +43,8 @@
                 </div>
             }
 
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Certificate number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Learner.CertificateReference
-                    </dd>
-                </div>
+            @{await Html.RenderPartialAsync("_LearnerSummaryPartial", Model);}
 
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Apprentice name
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Learner.GivenNames @Model.Learner.FamilyName
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        <abbr title="Unique learner number">ULN</abbr>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Learner.Uln
-                    </dd>
-                </div>
-            
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Status
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @CertificateStatus.GetDisplayName(Model.Learner.CertificateStatus)
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        @Model.CertificateStatusDateTitle
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.CertificateStatusDateValue
-                    </dd>
-                    <dd class="govuk-summary-list__actions">
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Certificate Receiver
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.Learner.CertificateSendTo
-                    </dd>
-                </div>
-            
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Delivery address
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactName))
-                        {
-                            @Model.Learner.ContactName<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactDept))
-                        {
-                            @Model.Learner.ContactDept<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactOrganisation))
-                        {
-                            @Model.Learner.ContactOrganisation<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine1))
-                        {
-                            @Model.Learner.ContactAddLine1<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine2))
-                        {
-                            @Model.Learner.ContactAddLine2<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine3))
-                        {
-                            @Model.Learner.ContactAddLine3<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine4))
-                        {
-                            @Model.Learner.ContactAddLine4<br />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactPostCode))
-                        {
-                            @Model.Learner.ContactPostCode
-                        }
-                    </dd>
-                </div>
-            </dl>
-            
             <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ReprintReason">
                 @Html.HiddenFor(model => model.Learner.CertificateId)
                 @Html.HiddenFor(model => model.Learner.CertificateReference)
@@ -152,8 +56,8 @@
                         Enter the ticket reference number
                     </label>
                     <span class="govuk-error-message" asp-validation-for="IncidentNumber"></span>
-                    <input class="govuk-input" id="IncidentNumber" name="IncidentNumber" 
-                           sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error" 
+                    <input class="govuk-input" id="IncidentNumber" name="IncidentNumber"
+                           sfa-validation-for="IncidentNumber" sfa-validationerror-class="govuk-input--error"
                            asp-for="IncidentNumber" maxlength="20" />
                 </div>
 
