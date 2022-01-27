@@ -11,6 +11,7 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
@@ -237,28 +238,37 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var standard = await MapCommandToOrganisationStandardRequest(command);
 
+            //if a withdrawal exists - then versions must exist - update rather than insert in the assessor service
+            var withdrawal = await _applyApiClient.GetWithdrawnApplications(command.OrganisationId, command.StandardCode);
+            if (withdrawal.Count != 0)
+                standard.ApplyFollowingWithdrawal = true;
+
+
             // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
             {
                 var validationResponse = await _assessorValidationService.ValidateNewOrganisationStandardRequest(standard);
 
-                if (!validationResponse.IsValid)
+                if (standard.ApplyFollowingWithdrawal && validationResponse.Errors.Count == 1 && 
+                    validationResponse.Errors[0].Field == "OrganisationId" && 
+                    validationResponse.Errors[0].StatusCode == ValidationStatusCode.AlreadyExists.ToString())
                 {
-                    var validationResponseErrors = validationResponse.Errors.Select(err => err.ErrorMessage);
-                    warningMessages.AddRange(validationResponseErrors);
-                    _logger.LogInformation($"Inject standard failed on Validation Service. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", validationResponseErrors)}");
+                    _logger.LogInformation($"Inject standard on Validation Service - versions must exist so bypass warnings. OrganisationId: {command.OrganisationId})");
+                }
+                else
+                { 
+                    if (!validationResponse.IsValid)
+                    {
+                        var validationResponseErrors = validationResponse.Errors.Select(err => err.ErrorMessage);
+                        warningMessages.AddRange(validationResponseErrors);
+                        _logger.LogInformation($"Inject standard failed on Validation Service. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", validationResponseErrors)}");
+                    }
                 }
             }
             else
             {
                 _logger.LogInformation($"Inject standard failed at pre-check. OrganisationId: {command.OrganisationId} - Warnings:  {string.Join(",", warningMessages)}");
             }
-
-            
-            //if a withdrawal exists - then versions must exist - update rather than insert in the assessor service
-            var withdrawal = await _applyApiClient.GetWithdrawnApplications(command.OrganisationId, command.StandardCode);
-            if (withdrawal.Count != 0)
-                standard.ApplyFollowingWithdrawal = true;
 
             // If everything has checked out; approve the standard
             if (warningMessages.Count == 0)
