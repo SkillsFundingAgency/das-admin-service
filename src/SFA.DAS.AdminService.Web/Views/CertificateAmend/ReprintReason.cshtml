@@ -132,15 +132,12 @@
                             <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-other">
                                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="200">
                                     <div class="govuk-form-group" sfa-validation-for="OtherReason" sfa-validationerror-class="govuk-form-group--error">
-                                        <label class="govuk-label" for="other-reason">
+                                        <label class="govuk-label" asp-for="OtherReason">
                                             Give details
                                         </label>
                                         <span class="govuk-error-message" asp-validation-for="OtherReason"></span>
-                                        <textarea class="govuk-textarea govuk-js-character-count" id="OtherReason" name="OtherReason" asp-for="OtherReason"
-                                                  rows="5" maxlength="200" aria-describedby="reason-other-info">
-                                            @Model.OtherReason
-                                        </textarea>
-                                        <div id="reason-other-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                        <textarea class="govuk-textarea govuk-js-character-count" id="OtherReason" name="OtherReason" asp-for="OtherReason" rows="5" maxlength="200" aria-describedby="OtherReason-info">@Model.OtherReason</textarea>
+                                        <div id="OtherReason-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
                                             You can enter up to 200 characters
                                         </div>
                                     </div>
