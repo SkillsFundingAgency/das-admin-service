@@ -40,11 +40,11 @@ else
                         </dt>
                         <dd class="govuk-summary-list__value">
                             <span class="govuk-error-message" asp-validation-for="PrimaryEpaoId"></span>
-                            @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet confirmed" : Model.PrimaryEpaoName)
+                            @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet selected" : Model.PrimaryEpaoName)
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="primary">
-                                Change
+                                @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Select" : "Change")
                             </a>
                         </dd>
                 </div>
@@ -54,11 +54,11 @@ else
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <span class="govuk-error-message" asp-validation-for="SecondaryEpaoId"> </span>
-                        @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet confirmed" : Model.SecondaryEpaoName)
+                        @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet selected" : Model.SecondaryEpaoName)
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="secondary">
-                            Change
+                            @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Select" : "Change")
                         </a>
                     </dd>
                 </div>
@@ -68,11 +68,11 @@ else
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <span class="govuk-error-message" asp-validation-for="SecondaryEpaoEffectiveTo"></span>
-                        @(Model.SecondaryEpaoEffectiveTo.HasValue ? Model.SecondaryEpaoEffectiveTo.Value.ToString("dd MMMM yyyy") : "Not yet confirmed")
+                        @(Model.SecondaryEpaoEffectiveTo.HasValue ? Model.SecondaryEpaoEffectiveTo.Value.ToString("dd MMMM yyyy") : "Not yet selected")
                     </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate">
-                            Change
+                            @(Model.SecondaryEpaoEffectiveTo.HasValue ? "Change" : "Select")
                         </a>
                     </dd>
                 </div>
