@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -22,8 +22,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Option(Guid certificateId)
         {
-            var viewModel = await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
-            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
+            var actionResult = await LoadViewModel<CertificateOptionViewModel>(certificateId, "~/Views/CertificateAmend/Option.cshtml");
+            if (actionResult is ViewResult viewResult && viewResult.Model is CertificateOptionViewModel certificateOptionViewModel)
             {
                 var standardOption = await ApiClient.GetStandardOptions(certificateOptionViewModel.GetStandardId());
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 certificateOptionViewModel.SelectedOption = certificateOptionViewModel.Option;
             }
 
-            return viewModel;
+            return actionResult;
         }
 
         [HttpPost(Name = "Option")]

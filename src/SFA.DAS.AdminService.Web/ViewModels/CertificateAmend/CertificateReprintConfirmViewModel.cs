@@ -1,9 +1,9 @@
 ﻿using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 
-namespace SFA.DAS.AdminService.Web.Controllers
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
-    public class DuplicateRequestViewModel
+    public class CertificateReprintConfirmViewModel
     {
         public Guid CertificateId { get; set; }
         public string NextBatchDate { get; set; }

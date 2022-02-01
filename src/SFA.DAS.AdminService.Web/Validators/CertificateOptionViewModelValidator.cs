@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.Localization;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {

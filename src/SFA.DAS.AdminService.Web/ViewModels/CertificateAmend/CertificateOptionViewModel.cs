@@ -3,7 +3,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AdminService.Web.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
     public class CertificateOptionViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
@@ -11,14 +11,15 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public string Option { get; set; }
         public string SelectedOption { get; set; }
         public IEnumerable<string> Options { get; set; }
-        public void FromCertificate(Certificate cert)
+        
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
             Option = CertificateData.CourseOption;
             HasAdditionalLearningOption = !string.IsNullOrWhiteSpace(Option);
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certData.CourseOption = SelectedOption;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);

@@ -111,9 +111,6 @@
     <Content Update="Views\CertificateAmend\Date.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\CertificateAmend\Recipient.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\CertificateAmend\Grade.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

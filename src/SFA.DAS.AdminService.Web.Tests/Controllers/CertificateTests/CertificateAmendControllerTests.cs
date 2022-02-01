@@ -133,7 +133,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
         [Test]
         [MoqAutoData]
-        public async Task WhenConfirmAndSubmitIsInvoked_AndStandardUIdNotInModel_ButHasOptions_ReturnsOptionError(
+        public void WhenCheckIsInvoked_AndHasModelError_RedirectsToGetCheckAction(
             CertificateCheckViewModel vm,
             StandardOptions options)
         {
@@ -142,37 +142,58 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             vm.Option = null;
 
             var fixture = new CertificateAmendControllerTestsFixture()
-                .WithOrganisation()
-                .WithCertificate(vm.Id, vm.StandardCode, vm.StandardUId, vm.Option)
-                .WithStandardVersions()
-                .WithStandardOptions(options);
+                .WithModelError();
 
             // Act
-            var result = await fixture.ConfirmAndSubmit(vm);
+            var result = fixture.Check(vm);
 
             // Assert
-            fixture.VerifyModelError(result, "Option", "Add an option");
+            fixture.VerifyRedirectToAction(result, "Check", null, new 
+            { 
+                CertificateId = vm.Id, 
+                vm.SearchString, 
+                vm.Page 
+            });
         }
 
         [Test]
         [MoqAutoData]
-        public async Task WhenConfirmAndSubmitIsInvoked_AndStandardUIdIsInModel_ButHasOptions_ReturnsRedirect(
-            CertificateCheckViewModel vm,
-            StandardOptions options)
+        public void WhenCheckIsInvoked_AndStatusIsSubmitted_RedirectsToConfirmAmend(
+            CertificateCheckViewModel vm)
         {
             // Arrange
             vm.Status = CertificateStatus.Submitted;
-            var fixture = new CertificateAmendControllerTestsFixture()
-                .WithOrganisation()
-                .WithCertificate(vm.Id, vm.StandardCode, vm.StandardUId, vm.Option)
-                .WithStandardVersions()
-                .WithStandardOptions(options);
+            var fixture = new CertificateAmendControllerTestsFixture();
 
             // Act
-            var result = await fixture.ConfirmAndSubmit(vm);
+            var result = fixture.Check(vm);
 
             // Assert
-            fixture.VerifyRedirectToAction(result, "Index", "Comment", new
+            fixture.VerifyRedirectToAction(result, "ConfirmAmend", null, new
+            {
+                certificateId = vm.Id,
+                redirectToCheck = vm.RedirectToCheck,
+                Uln = vm.Uln,
+                StdCode = vm.StandardCode,
+                Page = vm.Page,
+                SearchString = vm.SearchString
+            });
+        }
+
+        [Test]
+        [MoqAutoData]
+        public void WhenCheckIsInvoked_AndStatusIsPrinted_RedirectsToConfirmReprint(
+            CertificateCheckViewModel vm)
+        {
+            // Arrange
+            vm.Status = CertificateStatus.Printed;
+            var fixture = new CertificateAmendControllerTestsFixture();
+
+            // Act
+            var result = fixture.Check(vm);
+
+            // Assert
+            fixture.VerifyRedirectToAction(result, "ConfirmReprint", null, new
             {
                 certificateId = vm.Id,
                 redirectToCheck = vm.RedirectToCheck,
@@ -209,55 +230,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 };
             }
 
-            public CertificateAmendControllerTestsFixture WithOrganisation()
-            {
-                _organisation = _fixture.Create<Organisation>();
-
-                _apiClient.Setup(p => p.GetOrganisation(_organisation.Id)).ReturnsAsync(_organisation);
-
-                return this;
-            }
-
-            public CertificateAmendControllerTestsFixture WithCertificate(Guid id, int standardCode, string standardUId, string option)
-            {
-                _certificate = _fixture.Create<Certificate>();
-                _certificate.Id = id;
-                _certificate.StandardCode = standardCode;
-                _certificate.StandardUId = standardUId;
-                var certificateData = _fixture.Create<CertificateData>();
-                certificateData.CourseOption = option;
-                _certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
-                _certificate.OrganisationId = _organisation.Id;
-
-                _apiClient.Setup(p => p.GetCertificate(_certificate.Id, It.IsAny<bool>())).ReturnsAsync(_certificate);
-
-                return this;
-            }
-
-            public CertificateAmendControllerTestsFixture WithStandardVersions()
-            {
-                _standardVersions = _fixture.CreateMany<StandardVersion>().ToList();
-
-                _apiClient.Setup(p => p.GetStandardVersions(_certificate.StandardCode)).ReturnsAsync(_standardVersions);
-
-                return this;
-            }
-
-            public CertificateAmendControllerTestsFixture WithStandardOptions(StandardOptions standardOptions)
-            {
-                // when the StandardUid is missing the StandardId used to return options is the StandardCode instead
-                if (!string.IsNullOrWhiteSpace(_certificate.StandardUId))
-                {
-                    _apiClient.Setup(p => p.GetStandardOptions(_certificate.StandardUId)).ReturnsAsync(standardOptions);
-                }
-                else
-                {
-                    _apiClient.Setup(p => p.GetStandardOptions(_certificate.StandardCode.ToString())).ReturnsAsync(standardOptions);
-                }
-                
-                return this;
-            }
-
             public CertificateAmendControllerTestsFixture WithLearner(LearnerDetailResult learnerDetailResult)
             {
                 _apiClient.Setup(p => p.GetLearner(learnerDetailResult.StandardCode, learnerDetailResult.Uln, It.IsAny<bool>())).ReturnsAsync(learnerDetailResult);
@@ -271,9 +243,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 return this;
             }
 
-            public async Task<IActionResult> ConfirmAndSubmit(CertificateCheckViewModel viewModel)
+            public IActionResult Check(CertificateCheckViewModel viewModel)
             {
-                return await _sut.ConfirmAndSubmit(viewModel);
+                return _sut.Check(viewModel);
             }
 
             public async Task<IActionResult> AmendReason(CertificateAmendReasonViewModel viewModel)

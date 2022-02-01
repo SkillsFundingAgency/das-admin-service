@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Entities;
 
-namespace SFA.DAS.AdminService.Web.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
     public class CertificateDateViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
@@ -14,9 +14,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public DateTime? StartDate { get; set; }
         public string WarningShown { get; set; }
 
-        public void FromCertificate(Certificate cert)
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Day = CertificateData.AchievementDate?.Day.ToString();
             Month = CertificateData.AchievementDate?.Month.ToString();
             Year = CertificateData.AchievementDate?.Year.ToString();
@@ -25,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             WarningShown = "false";
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
