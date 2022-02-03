@@ -1,7 +1,9 @@
 ﻿using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -66,5 +68,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<IEnumerable<StandardVersion>> GetStandardVersions(int larsCode);
         Task<StandardVersion> GetStandardVersion(string standardUId);
         Task<StandardOptions> GetStandardOptions(string standardId);
+
+        Task<object> MergeOrganisations(MergeOrganisationsCommand command);
+        Task<PaginatedList<MergeLogEntry>> GetMergeLog(GetMergeLogRequest request);
+        Task<MergeLogEntry> GetMergeLogEntry(int mergeId);
     }
 }

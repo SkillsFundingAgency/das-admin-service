@@ -1,0 +1,86 @@
+﻿@using SFA.DAS.AdminService.Web.Models.Merge
+@model SFA.DAS.AdminService.Web.ViewModels.Merge.MergeOverviewViewModel
+
+@{
+    ViewBag.Title = "Merge overview";
+    Layout = "_Layout";
+}
+
+@if (Model.BackLinkAction != null)
+{
+    <a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="@Model.BackLinkAction" asp-route-mergeOrganisationType="@Model.BackLinkType" asp-route-epaoId="@Model.BackLinkEpaoId"  asp-route-back="True"> Back </a>
+}
+else
+{
+    <a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="Start"> Back </a>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <partial name="_ValidationSummaryPartial" />
+
+            <h1 class="govuk-heading-xl">
+                Merge organisations
+            </h1>
+
+            <form asp-controller="MergeOrganisations" asp-action="MergeOverview">
+                <input type="hidden" asp-for="PrimaryEpaoId" />
+                <input type="hidden" asp-for="PrimaryEpaoName" />
+                <input type="hidden" asp-for="SecondaryEpaoId" />
+                <input type="hidden" asp-for="SecondaryEpaoName" />
+                <input type="hidden" asp-for="SecondaryEpaoEffectiveTo" />
+
+                <div class="govuk-form-group" sfa-anyvalidationerror-class="govuk-form-group--error">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Primary EPAO
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-error-message" asp-validation-for="PrimaryEpaoId"></span>
+                            @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Not yet selected" : Model.PrimaryEpaoName)
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="primary">
+                                @(string.IsNullOrEmpty(Model.PrimaryEpaoName) ? "Select" : "Change")
+                            </a>
+                        </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Secondary EPAO
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span class="govuk-error-message" asp-validation-for="SecondaryEpaoId"> </span>
+                        @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Not yet selected" : Model.SecondaryEpaoName)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="secondary">
+                            @(string.IsNullOrEmpty(Model.SecondaryEpaoName) ? "Select" : "Change")
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Secondary EPAO effective to
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <span class="govuk-error-message" asp-validation-for="SecondaryEpaoEffectiveTo"></span>
+                        @(Model.SecondaryEpaoEffectiveTo.HasValue ? Model.SecondaryEpaoEffectiveTo.Value.ToString("dd MMMM yyyy") : "Not yet selected")
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="SetSecondaryEpaoEffectiveToDate">
+                            @(Model.SecondaryEpaoEffectiveTo.HasValue ? "Change" : "Select")
+                        </a>
+                    </dd>
+                </div>
+                </dl>
+        </div>
+
+        <button class="govuk-button" type="submit"> Continue </button>
+        </form>
+    </div>
+    </div>
+</main>
