@@ -182,7 +182,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
         [TestCase(CertificateSendTo.Employer)]
         [TestCase(CertificateSendTo.Apprentice)]
-        public void WhenAddress1NotIsEmpty_ErrorIsDisplay(CertificateSendTo sendTo)
+        public void WhenAddress1IsNotEmpty_ErrorIsNotDisplayed(CertificateSendTo sendTo)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
                 .WithCertificateCheckViewModel(new Builder()
@@ -217,7 +217,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
         [TestCase(CertificateSendTo.Employer)]
         [TestCase(CertificateSendTo.Apprentice)]
-        public void WhenCityIsNotEmpty_ErrorIsDisplay(CertificateSendTo sendTo)
+        public void WhenCityIsNotEmpty_ErrorIsNotDisplayed(CertificateSendTo sendTo)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
                 .WithCertificateCheckViewModel(new Builder()
@@ -251,7 +251,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
         [TestCase(CertificateSendTo.Employer)]
         [TestCase(CertificateSendTo.Apprentice)]
-        public void WhenPostcodeIsNotEmpty_ErrorIsDisplay(CertificateSendTo sendTo)
+        public void WhenPostcodeIsNotEmpty_ErrorIsNotDisplayed(CertificateSendTo sendTo)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
                 .WithCertificateCheckViewModel(new Builder()
