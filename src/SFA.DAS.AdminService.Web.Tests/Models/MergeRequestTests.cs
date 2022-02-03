@@ -66,9 +66,26 @@ namespace SFA.DAS.AdminService.Web.Tests.Models
         {
             var dateTime = _autoFixture.Build<DateTime>().Create();
 
-            _mergeRequest.SetSecondaryEpaoEffectiveToDate(dateTime.Day, dateTime.Month, dateTime.Year);
+            var day = dateTime.Day.ToString();
+            var month = dateTime.Month.ToString();
+            var year = dateTime.Year.ToString();
 
+            var result = _mergeRequest.SetSecondaryEpaoEffectiveToDate(day, month, year);
+
+            result.Should().BeTrue();
             _mergeRequest.SecondaryEpaoEffectiveTo.Value.Should().Be(dateTime.Date);
+        }
+
+        [Test]
+        public void When_SettingSecondaryEpaoEffectiveToDate_And_DateIsInvalid_Then_ReturnFalse()
+        {
+            var day = "1";
+            var month = "13";
+            var year = "2022";
+
+            var result = _mergeRequest.SetSecondaryEpaoEffectiveToDate(day, month, year);
+
+            result.Should().BeFalse();
         }
 
         [TestCase("primary", SessionCommands.SearchPrimaryEpao)]

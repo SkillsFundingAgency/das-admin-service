@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Attributes;
@@ -24,17 +25,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IApiClient _apiClient;
         private readonly IMergeOrganisationSessionService _mergeSessionService;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ILogger<MergeOrganisationsController> _logger;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultMergesPerPage = 10;
         private const string DefaultSortOrder = SortOrder.Desc;
         private const string DefaultSortColumn = MergeOrganisationSortColumn.CompletedAt;
 
-        public MergeOrganisationsController(IApiClient apiClient, IMergeOrganisationSessionService sessionService, IHttpContextAccessor httpContextAccessor)
+        public MergeOrganisationsController(IApiClient apiClient, IMergeOrganisationSessionService sessionService, IHttpContextAccessor httpContextAccessor, ILogger<MergeOrganisationsController> logger)
         {
             _apiClient = apiClient;
             _mergeSessionService = sessionService;
             _contextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         [HttpGet("merge-organisations")]
@@ -45,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             ResetSortOrder();
             ResetSortColumn();
 
-            return RedirectToAction("MergeLog");
+            return RedirectToAction(nameof(MergeLog));
         }
 
         [HttpGet("merge-organisations/log")]
@@ -273,7 +276,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            mergeRequest.SetSecondaryEpaoEffectiveToDate(int.Parse(viewModel.Day), int.Parse(viewModel.Month), int.Parse(viewModel.Year));
+            var updated = mergeRequest.SetSecondaryEpaoEffectiveToDate(viewModel.Day, viewModel.Month, viewModel.Year);
+
+            if (!updated)
+            {
+                return View(viewModel);
+            }
 
             _mergeSessionService.UpdateMergeRequest(mergeRequest);
 
@@ -335,6 +343,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Merge organisations failed for primary epao: {mergeRequest.PrimaryEpao.Id} and secondary epao: {mergeRequest.SecondaryEpao.Id}");
                 return RedirectToAction(nameof(MergeError));
             }
 

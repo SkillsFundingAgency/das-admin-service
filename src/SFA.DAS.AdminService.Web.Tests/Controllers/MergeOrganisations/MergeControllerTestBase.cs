@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
@@ -35,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
             _mockMergeSessionService = new Mock<IMergeOrganisationSessionService>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
 
-            MergeController = new MergeOrganisationsController(_mockApiClient.Object, _mockMergeSessionService.Object, _mockContextAccessor.Object);
+            MergeController = new MergeOrganisationsController(_mockApiClient.Object, _mockMergeSessionService.Object, _mockContextAccessor.Object, Mock.Of<ILogger<MergeOrganisationsController>>());
 
             _mergeRequest = _autoFixture.Create<MergeRequest>();
 

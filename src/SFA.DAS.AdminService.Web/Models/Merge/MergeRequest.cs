@@ -53,11 +53,26 @@ namespace SFA.DAS.AdminService.Web.Models.Merge
             }
         }
 
-        public void SetSecondaryEpaoEffectiveToDate(int day, int month, int year)
+        public bool SetSecondaryEpaoEffectiveToDate(string dayString, string monthString, string yearString)
         {
-            SecondaryEpaoEffectiveTo = new DateTime(year, month, day);
+            try
+            {
+                var day = int.Parse(dayString);
+                var month = int.Parse(monthString);
+                var year = int.Parse(yearString);
 
-            PushCommand(new SessionCommand(SessionCommands.SetSecondaryEpaoEffectiveTo, null, null));
+                var dateTime = new DateTime(year, month, day);
+
+                SecondaryEpaoEffectiveTo = dateTime;
+
+                PushCommand(new SessionCommand(SessionCommands.SetSecondaryEpaoEffectiveTo, null, null));
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void MarkComplete()

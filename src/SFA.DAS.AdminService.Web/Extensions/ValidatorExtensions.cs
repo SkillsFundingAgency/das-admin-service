@@ -6,7 +6,6 @@ namespace SFA.DAS.AdminService.Web.Extensions
     {
         public static DateTime? ConstructDate(string dayString, string monthString, string yearString)
         {
-
             if (!int.TryParse(dayString, out var day) || !int.TryParse(monthString, out var month) ||
                 !int.TryParse(yearString, out var year)) return null;
 
