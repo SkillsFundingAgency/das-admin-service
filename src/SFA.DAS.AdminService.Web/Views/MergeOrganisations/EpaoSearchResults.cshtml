@@ -1,0 +1,63 @@
+﻿@using SFA.DAS.AdminService.Web.Models.Merge;
+@using SFA.DAS.AdminService.Web.Extensions;
+
+@model SFA.DAS.AdminService.Web.ViewModels.Merge.EpaoSearchResultsViewModel
+@{
+    ViewBag.Title = $"{Model.MergeOrganisationType.CapitaliseFirstLetter()} EPAO search results";
+    Layout = "_Layout";
+}
+
+
+<a asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-searchString="@Model.SearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                @Model.MergeOrganisationType.CapitaliseFirstLetter() EPAO search
+            </h1>
+            <span class="govuk-caption-xl">Number of results: @Model.Results.Count</span>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (@Model.Results.Count == 0)
+            {
+                <span class="govuk-hint">
+                    <p class="govuk-body govuk-body--hint">Search using either the:</p>
+
+                    <ul class="govuk-list govuk-list--bullet govuk-list--hint">
+                        <li>UKPRN</li>
+                        <li>organisation ID (EPAXXXX)</li>
+                        <li>name</li>
+                    </ul>
+                </span>
+
+                <a class="govuk-button" asp-controller="MergeOrganisations" asp-action="SearchEpao" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-searchString="@Model.SearchString" asp-route-back="True"> Return to @Model.MergeOrganisationType EPAO search </a>
+            }
+            else
+            {
+                <table class="govuk-table govuk-table--s das-table--responsive">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">ID</th>
+                            <th class="govuk-table__header govuk-table__header--numeric" scope="col">UKPRN</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Results.OrderBy(x => x.Name))
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Name"><a class="govuk-link" asp-controller="MergeOrganisations" asp-action="ConfirmEpao" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-epaoId="@result.Id" asp-route-searchString="@Model.SearchString">@result.Name</a></td>
+                                <td class="govuk-table__cell" data-label="ID">@result.Id</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="UKPRN">@result.Ukprn</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</main>

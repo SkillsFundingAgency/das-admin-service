@@ -1,0 +1,30 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.MergeCompleteViewModel
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Merge complete
+                </h1>
+            </div>
+
+            <p class="govuk-body"> You've completed the merge between @Model.PrimaryEpaoName and @Model.SecondaryEpaoName.</p>
+
+            <p class="govuk-body"> @Model.PrimaryEpaoName will become the EPAO for those standards and versions previously approved for @Model.SecondaryEpaoName.</p>
+
+            <h2 class="govuk-heading-m"> What happens next </h2>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li> We've sent an email to both organisations confirming this merge. </li>
+                <li> @Model.SecondaryEpaoName will be removed from the register on @Model.SecondaryEpaoEffectiveTo.ToString("dd MMMM yyyy")</li>
+            </ul>
+
+            <p class="govuk-body">
+                <a asp-controller="MergeOrganisations" asp-action="MergeLog" class="govuk-link"> Return to merge log </a> <br />
+                or <br />
+                <a asp-controller="Dashboard" asp-action="Index" class="govuk-link"> Return to main dashboard</a>
+            </p>
+        </div>
+    </div>
+</main>

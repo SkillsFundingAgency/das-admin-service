@@ -15,6 +15,7 @@ namespace SFA.DAS.AdminService.Web.Models.Roatp
             Map(x => x.Ukprn).Name("UKPRN");
             Map(x => x.OrganisationName).Name("Legal name");
             Map(x => x.ProviderRoute).Name("Application provider route");
+            Map(x => x.LegalAddress).Name("Legal address");
             Map(x => x.IsOnRegister).Name("On RoATP").TypeConverter<BooleanConverter>();
             Map(x => x.ProviderRouteNameOnRegister).Name("Route on RoATP");
             Map(x => x.CompanyNumber).Name("Company No.");

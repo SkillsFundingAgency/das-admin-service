@@ -1,0 +1,59 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.CompletedMergeOverviewViewModel
+
+@{
+    ViewBag.Title = "Merge overview";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="MergeLog"> Back </a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">
+                Merge overview
+            </h1>
+
+            <div class="govuk-form-group">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Primary EPAO
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.PrimaryEpaoName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Secondary EPAO
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.SecondaryEpaoName
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Secondary EPAO effective to
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.SecondaryEpaoEffectiveToDate.ToString("dd MMMM yyyy")
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Completion date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.CompletionDate.ToString("dd MMMM yyyy") 
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+            <p class="govuk-body">
+                <a class="govuk-link govuk-link--no-visited-state" asp-controller="MergeOrganisations" asp-action="MergeLog"> Return to merge log </a>
+            </p>
+        </div>
+    </div>
+</main>

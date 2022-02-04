@@ -1,8 +1,10 @@
 using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Api.Types.Models.Merge;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
@@ -116,7 +118,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 return res.Status;
             }
         }
-
 
         public async Task<List<OrganisationType>> GetOrganisationTypes()
         {
@@ -341,6 +342,28 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             var request = new UpdateLastRunStatusRequest { ScheduleRunId = id, LastRunStatus = LastRunStatus.Restarting };
             await Post("api/v1/schedule/updatelaststatus", request);
+        }
+
+        public async Task<object> MergeOrganisations(MergeOrganisationsCommand command)
+        {
+            return await Post<MergeOrganisationsCommand, object>("api/v1/mergeorganisations", command);
+        }
+
+        public async Task<PaginatedList<MergeLogEntry>> GetMergeLog(GetMergeLogRequest request)
+        {
+            var getMergeLogRequest = $"api/v1/mergeorganisations/log?pageSize={request.PageSize.Value}&pageIndex={request.PageIndex.Value}&orderBy={request.SortColumn}&orderDirection={request.SortDirection}";
+
+            if (!string.IsNullOrEmpty(request.SecondaryEPAOId))
+            {
+                getMergeLogRequest += $"&secondaryEPAOId={request.SecondaryEPAOId}";
+            }
+                
+            return await Get<PaginatedList<MergeLogEntry>>(getMergeLogRequest);
+        }
+
+        public async Task<MergeLogEntry> GetMergeLogEntry(int mergeId)
+        {
+            return await Get<MergeLogEntry>($"api/v1/mergeorganisations?id={mergeId}");
         }
 
         #region Reports
