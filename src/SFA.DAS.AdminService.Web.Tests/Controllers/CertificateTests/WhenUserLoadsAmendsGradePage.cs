@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {

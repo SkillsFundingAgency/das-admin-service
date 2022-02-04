@@ -1,4 +1,4 @@
-@model SFA.DAS.AdminService.Web.Controllers.DuplicateRequestViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateReprintConfirmViewModel
 
 @{
     ViewBag.Title = "Re-print certificate";
@@ -20,7 +20,7 @@
             else
             {
                 <p class="govuk-body-l">Certificate reprint requested.</p>
-                <p class="govuk-body">The reprint will be processed in the next print run scheduled for @Model.NextBatchDate</p>
+                <p class="govuk-body">The reprint will be processed in the next print run@(string.IsNullOrWhiteSpace(Model.NextBatchDate) ? string.Empty : " scheduled for @Model.NextBatchDate").</p>
             }
         </div>
     </div>

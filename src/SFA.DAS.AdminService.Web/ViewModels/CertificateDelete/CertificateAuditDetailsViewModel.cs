@@ -9,22 +9,23 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
     {
         public long Uln { get; set; }
         public string CertificateReference { get; set; }
-        public int StandardCode { get; set; }
         public string IncidentNumber { get; set; }
         public bool? IsDeleteConfirmed { get; set; }
 
-        public void FromCertificate(Certificate cert)
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+
             Uln = cert.Uln;
             CertificateReference = cert.CertificateReference;
             StandardCode = cert.StandardCode;
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             certificate.Status = CertificateStatus.Submitted;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
+            
             return certificate;
         }
     }

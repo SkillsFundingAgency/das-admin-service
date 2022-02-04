@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateAddressViewModel
+﻿@using SFA.DAS.AssessorService.Domain.JsonData;
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateAddressViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Certificate destination";
@@ -15,15 +16,6 @@
                   asp-action="Address">
                 @Html.HiddenFor(c => c.Id)
 
-                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
-                    </div>
-                </div>
-
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -32,6 +24,7 @@
                         </h2>
                         <div class="govuk-error-summary__body">
                             <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="Name"></a></li>
                                 <li><a sfa-validation-for="Employer"></a></li>
                                 <li><a sfa-validation-for="AddressLine1"></a></li>
                                 <li><a sfa-validation-for="City"></a></li>
@@ -43,20 +36,70 @@
                 }
 
                 <h1 class="govuk-heading-xl">
-                    Where will the certificate be sent?
+                    @if(Model.EditForm)
+                    {
+                        <text>Edit </text>
+                    }
+                    else
+                    {
+                        <text>Add </text>
+                    }
+                    the address that you'd like us to send the certificate to
                 </h1>
 
-                <div id="address-details">
-                    <div class="govuk-form-group" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">
-                        <label class="govuk-label" for="Employer">
-                            Organisation
-                        </label>
-                        @if (!ViewData.ModelState.IsValid)
-                        {
-                            <span class="govuk-error-message" asp-validation-for="Employer"></span>
-                        }
-                        <input class="govuk-input govuk-!-width-two-thirds" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />
+                @if (Model.SendTo == CertificateSendTo.Employer)
+                {
+                    <div id="recipient-details">
+                        <div class="govuk-form-group" sfa-validation-for="Name" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Name">
+                                Recipient's name
+                            </label>
+                            <span class="govuk-hint">
+                                For example, Joanna Smith
+                            </span>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="Name"></span>
+                            }
+                            <input class="govuk-input" name="Name" sfa-validation-for="Name" sfa-validationerror-class="govuk-input--error" asp-for="Name" type="text" />
+                        </div>
+
+                        <div class="govuk-form-group" sfa-validation-for="Dept" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Dept">
+                                Department name (optional)
+                            </label>
+                            <span class="govuk-hint">
+                                For example, human resources
+                            </span>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="Dept"></span>
+                            }
+                            <input class="govuk-input" name="Dept" sfa-validation-for="Dept" sfa-validationerror-class="govuk-input--error" asp-for="Dept" type="text" />
+                        </div>
                     </div>
+                }
+                else
+                {
+                    <div class="govuk-inset-text">
+                        The recipient's name will be the apprentice.
+                    </div>
+                }
+
+                <div id="address-details">
+                    @if (Model.SendTo == CertificateSendTo.Employer)
+                    {
+                        <div class="govuk-form-group" sfa-validation-for="Employer" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label" for="Employer">
+                                Employer name
+                            </label>
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <span class="govuk-error-message" asp-validation-for="Employer"></span>
+                            }
+                            <input class="govuk-input govuk-!-width-two-thirds" name="Employer" sfa-validation-for="Employer" sfa-validationerror-class="govuk-input--error" asp-for="Employer" type="text" />
+                        </div>
+                    }
 
                     <div class="govuk-form-group address-item govuk-!-margin-bottom-3" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="AddressLine1">

@@ -51,12 +51,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<ReportType> GetReportTypeFromId(Guid reportId);
         Task<ScheduleRun> GetScheduleRun(Guid scheduleRunId);
         Task<string> ImportOrganisations();
-        Task<Certificate> PostReprintRequest(StaffCertificateDuplicateRequest staffCertificateDuplicateRequest);
         Task<object> RunNowScheduledRun(int scheduleType);
         Task<StaffSearchResult> Search(string searchString, int page);
         Task<List<AssessmentOrganisationSummary>> SearchOrganisations(string searchString);
         Task<List<StandardVersion>> SearchStandards(string searchString);
         Task<Certificate> UpdateCertificate(UpdateCertificateRequest certificateRequest);
+        Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command);
         Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command);
         Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command);
         Task<string> UpdateEpaContact(UpdateEpaOrganisationContactRequest request);

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
@@ -59,7 +60,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var certificate = await ApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            if(string.IsNullOrEmpty(vm.ReasonForChange))
+            if(vm.RequiresReasonForChange && string.IsNullOrEmpty(vm.ReasonForChange))
             {
                 ModelState.AddModelError(nameof(vm.ReasonForChange), "Please enter a reason");
             }
@@ -89,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
-            return nextAction;           
+            return nextAction;
         }
 
         private string GetModelValues<T>(T viewModel)
