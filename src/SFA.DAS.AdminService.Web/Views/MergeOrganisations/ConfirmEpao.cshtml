@@ -1,0 +1,136 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.ConfirmEpaoViewModel
+
+@{
+    ViewBag.Title = $"Confirm {Model.OrganisationType} EPAO";
+    Layout = "_Layout";
+}
+
+<a asp-controller="MergeOrganisations" asp-action="EpaoSearchResults" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-searchString="@Model.BackRouteSearchString" asp-route-back="True" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-6">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+
+            <h1 class="govuk-heading-xl">
+                Confirm @Model.MergeOrganisationType EPAO
+            </h1>
+            <span class="govuk-caption-xl"> Organisation details</span>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Name</dt>
+                    <dd class="govuk-summary-list__value"> @Model.Name</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Organisation ID </dt>
+                    <dd class="govuk-summary-list__value"> @Model.EpaoId </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Primary contact </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PrimaryContactName <br />
+                        @Model.PrimaryContactEmail
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Organisation status </dt>
+                    <dd class="govuk-summary-list__value"> </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> UKPRN </dt>
+                    <dd class="govuk-summary-list__value"> @Model.Ukprn </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Legal name </dt>
+                    <dd class="govuk-summary-list__value"> @Model.LegalName </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Trading name </dt>
+                    <dd class="govuk-summary-list__value"> @Model.TradingName </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Company number </dt>
+                    <dd class="govuk-summary-list__value"> @Model.CompanyNumber </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Charity number </dt>
+                    <dd class="govuk-summary-list__value"> @Model.CharityNumber </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Email </dt>
+                    <dd class="govuk-summary-list__value"> @Model.Email</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Phone number </dt>
+                    <dd class="govuk-summary-list__value"> @Model.PhoneNumber</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Website </dt>
+                    <dd class="govuk-summary-list__value"> @Model.Website</dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key"> Address </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (!string.IsNullOrEmpty(Model.Address1))
+                        {
+                            <span> @Model.Address1 </span> <br />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Address2))
+                        {
+                            <span> @Model.Address2 </span> <br />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Address3))
+                        {
+                            <span> @Model.Address3 </span> <br />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Address4))
+                        {
+                            <span> @Model.Address4 </span> <br />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.City))
+                        {
+                            <span> @Model.City </span> <br />
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Postcode))
+                        {
+                            <span> @Model.Postcode </span>
+                        }
+                    </dd>
+                </div>
+            </dl>
+
+            <form asp-controller="MergeOrganisations" asp-action="ConfirmEpao" method="post">
+                <input type="hidden" asp-for="Name" />
+                <input type="hidden" asp-for="EpaoId" />
+                <input type="hidden" asp-for="PrimaryContactName" />
+                <input type="hidden" asp-for="PrimaryContactEmail" />
+                <input type="hidden" asp-for="Ukprn" />
+                <input type="hidden" asp-for="OrganisationType" />
+                <input type="hidden" asp-for="LegalName" />
+                <input type="hidden" asp-for="TradingName" />
+                <input type="hidden" asp-for="CompanyNumber" />
+                <input type="hidden" asp-for="CharityNumber" />
+                <input type="hidden" asp-for="Email" />
+                <input type="hidden" asp-for="PhoneNumber" />
+                <input type="hidden" asp-for="Website" />
+                <input type="hidden" asp-for="Address1" />
+                <input type="hidden" asp-for="Address2" />
+                <input type="hidden" asp-for="Address3" />
+                <input type="hidden" asp-for="Address4" />
+                <input type="hidden" asp-for="City" />
+                <input type="hidden" asp-for="Postcode" />
+
+                <input type="hidden" asp-for="MergeOrganisationType" />
+                <input type="hidden" asp-for="BackRouteSearchString" />
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button" type="submit"> Confirm @Model.MergeOrganisationType EPAO</button>
+                    
+                    <a asp-controller="MergeOrganisations" asp-action="EpaoSearchResults" asp-route-mergeOrganisationType="@Model.MergeOrganisationType" asp-route-searchString="@Model.BackRouteSearchString" asp-route-back="True" class="govuk-link das-inline-button-link">Return to @Model.MergeOrganisationType search results</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
