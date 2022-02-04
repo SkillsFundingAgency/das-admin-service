@@ -71,11 +71,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Shared
 
                 switch (Learner?.CertificateStatus)
                 {
-                    case "Delivered":
+                    case nameof(CertificateStatus.Submitted):
+                    case nameof(CertificateStatus.SentToPrinter):
+                    case nameof(CertificateStatus.Printed):
+                    case nameof(CertificateStatus.Reprint):
+                        title = "Delivery address";
+                        break;
+                    
+                    case nameof(CertificateStatus.Delivered):
                         title = "Delivered to";
                         break;
 
-                    case "NotDelivered":
+                    case nameof(CertificateStatus.NotDelivered):
                         title = "Delivery attempted to";
                         break;
                 }
