@@ -305,7 +305,7 @@
             </dl>
     }
 
-            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ConfirmAndSubmit">
+            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="Check">
                 @Html.HiddenFor(c => c.Id)
                 @Html.HiddenFor(m => m.Uln)
                 @Html.HiddenFor(m => m.StandardCode)
