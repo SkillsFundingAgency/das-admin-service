@@ -1,0 +1,48 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Merge.ConfirmAndCompleteViewModel
+
+@{ 
+    ViewBag.Title = "Confirm and complete merge";
+    Layout = "_Layout"; 
+}
+
+<a class="govuk-back-link" asp-controller="MergeOrganisations" asp-action="MergeOverview"> Back </a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <partial name="_ValidationSummaryPartial" />
+
+            <h1 class="govuk-heading-xl">
+                Confirm and complete merge
+            </h1>
+
+            <p class="govuk-body"> You are about to complete the merge between <strong>@Model.PrimaryEpaoName</strong> and <strong>@Model.SecondaryEpaoName</strong>.</p>
+
+            <p class="govuk-body"> You understand that <strong>@Model.PrimaryEpaoName</strong> will incorporate all new standards and versions of <strong>@Model.SecondaryEpaoName</strong>.</p>
+
+            <p class="govuk-body"> The merge will be effective immediately.</p>
+
+            <form asp-controller="MergeOrganisations" asp-action="ConfirmAndComplete" method="post">
+                <input type="hidden" asp-for="PrimaryEpaoName" />
+                <input type="hidden" asp-for="SecondaryEpaoName" />
+
+                <div class="govuk-form-group" sfa-validation-for="AcceptWarning" sfa-validationerror-class="govuk-form-group--error">
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" asp-for="AcceptWarning" type="checkbox">
+                            <label class="govuk-label govuk-checkboxes__label" for="accept-warning">
+                                I understand that any outstanding applications to assess or withdraw from standards and versions from the secondary EPAO will be deleted once the merge is complete.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" type="submit"> Confirm and complete </button>
+                   
+                    <a class="govuk-link das-inline-button-link" asp-action="MergeOverview" asp-controller="MergeOrganisations"> Return to merge overview</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
