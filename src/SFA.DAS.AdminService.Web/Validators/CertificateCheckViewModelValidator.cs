@@ -3,7 +3,6 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -11,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.Validators
     {
         public CertificateCheckViewModelValidator(IApiClient apiClient)
         {
-            When(vm => vm.CanRequestReprint, () =>
+            When(vm => vm.Status != CertificateStatus.Draft, () => 
             {
                 RuleFor(vm => vm).Custom((vm, context) =>
                 {

@@ -22,7 +22,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
     public class CertificateCheckViewModelValidatorTests
     {
         [TestCase(CertificateStatus.Draft)]
-        [TestCase(CertificateStatus.Submitted)]
         public void WhenCertificateIsNotPrintStatus_ErrorsAreNotDisplayed(string certificateStatus)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
