@@ -11,7 +11,16 @@ namespace SFA.DAS.AdminService.Web.Validators
 
             RuleFor(vm => vm.Reasons).NotEmpty().WithMessage("Select reason(s) for amending certificate information");
 
-            RuleFor(vm => vm.OtherReason).NotEmpty().When(vm => vm.Reasons != null && vm.Reasons.Contains("Other")).WithMessage("Give details");
+            When(vm => vm.Reasons != null && vm.Reasons.Contains("Other"), () =>
+            {
+                RuleFor(vm => vm.OtherReason).
+                    NotEmpty().
+                    WithMessage("Give details");
+
+                RuleFor(vm => vm.OtherReason)
+                    .MaximumLength(200)
+                    .WithMessage("Details must be 200 characters or fewer");
+            });
         } 
     }
 }
