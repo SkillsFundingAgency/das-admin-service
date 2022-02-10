@@ -291,7 +291,7 @@ else
                             <th class="govuk-table__header" scope="col">
                                 @if (Model.Learner.CertificateLogs.Count() > 1)
                                 {
-                                    @Html.Raw("Changes");
+                                    <span>Changes</span>
                                 }
                             </th>
                         </tr>
@@ -312,13 +312,25 @@ else
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
-                                            foreach (var change in log.DifferencesToPrevious)
+                                            foreach (var difference in log.DifferencesToPrevious)
                                             {
                                                 <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
-                                                    @(change.Key)
+                                                    @(difference.Key)
                                                 </p>
                                                 <p class="govuk-body-s govuk-!-margin-bottom-3">
-                                                    @Html.Raw(change.Value)
+                                                    @if(difference.IsList)
+                                                    {
+                                                        <ul class="govuk-list govuk-list--bullet">
+                                                            @foreach (string value in difference.Values)
+                                                            {
+                                                                <li>@value</li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@difference.Values[0]</span>
+                                                    }
                                                 </p>
                                             }
                                             if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
