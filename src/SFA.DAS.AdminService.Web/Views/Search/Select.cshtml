@@ -222,7 +222,9 @@ else
                             </dd>
                         </div>
                     }
-                    <div class="govuk-summary-list__row">
+                    @if (Model.Learner.OverallGrade != CertificateGrade.Fail)
+                    {
+                        <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 Certificate receiver
                             </dt>
@@ -230,8 +232,9 @@ else
                                 @Model.Learner.CertificateSendTo
                             </dd>
                         </div>
-                    @if (Model.ShowToAdress)
-                    {
+
+                        @if (Model.ShowToAdress)
+                        {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 @Model.CertificateStatusDeliveryTitle
@@ -271,6 +274,7 @@ else
                                 }
                             </dd>
                         </div>
+                        }
                     }
                 </dl>
             </div>
