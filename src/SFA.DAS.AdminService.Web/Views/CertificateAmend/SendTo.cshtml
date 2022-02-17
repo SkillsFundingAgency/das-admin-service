@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using SFA.DAS.AssessorService.Domain.JsonData;
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateSendToViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Send the certificate to";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateid="@Model.Id">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form class="apprentice-date-form js-disable-on-submit" method="post" autocomplete="off">
+                @Html.HiddenFor(c => c.Id)
+
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="SendTo"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <div>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                        <h1 class="govuk-fieldset__heading">
+                            Who would you like us to send the certificate to?
+                        </h1>
+                    </legend>
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="SendTo" sfa-validationerror-class="govuk-form-group--error">
+                    <span class="govuk-error-message" asp-validation-for="SendTo"></span>
+                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo_Apprentice">
+                        <input class="govuk-radios__input"
+                               sfa-validation-for="SendTo" sfa-validationerror-class="govuk-input--error"
+                               asp-for="SendTo" id="SendTo_Apprentice_Radio" type="radio" value="@CertificateSendTo.Apprentice" name="SendTo" />
+                        <label class="govuk-label govuk-radios__label" for="SendTo_Apprentice_Radio">
+                            Apprentice
+                        </label>
+                    </div>
+                    <div class="govuk-radios__item" data-target="sendto-input" id="SendTo_Employer">
+                        <input class="govuk-radios__input"
+                               sfa-validation-for="SendTo" sfa-validationerror-class="govuk-input--error"
+                               asp-for="SendTo" id="SendTo_Employer_Radio" type="radio" value="@CertificateSendTo.Employer" name="SendTo" />
+                        <label class="govuk-label govuk-radios__label" for="SendTo_Employer_Radio">
+                            Employer
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

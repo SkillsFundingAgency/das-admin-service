@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -54,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
             
-            var vm = new LearnerDetailForStaffViewModel
+            var vm = new SelectViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
@@ -62,7 +62,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ShowDetail = !allLogs,
                 BatchNumber = batchNumber
             };
-        return View(vm);
+        
+            return View(vm);
         }
     }
 

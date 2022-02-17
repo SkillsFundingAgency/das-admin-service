@@ -4,21 +4,23 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
 
-namespace SFA.DAS.AdminService.Web.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
     public class CertificateVersionViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public IEnumerable<StandardVersion> Standards { get; set; }
-        public void FromCertificate(Certificate cert)
+        
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certificate.StandardUId = StandardUId;
             certData.Version = Version;
             certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            
             return certificate;
         }
     }

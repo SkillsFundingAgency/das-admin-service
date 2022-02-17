@@ -1,15 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
-using SFA.DAS.AssessorService.Domain.JsonData;
+using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -18,11 +20,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         protected readonly ILogger<CertificateBaseController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
-        protected readonly ApiClient ApiClient;     
+        protected readonly IApiClient ApiClient;
 
         public CertificateBaseController(ILogger<CertificateBaseController> logger, 
             IHttpContextAccessor contextAccessor, 
-            ApiClient apiClient)
+            IApiClient apiClient)
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
@@ -31,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User.UserId();
 
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
@@ -51,14 +53,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         protected async Task<IActionResult> SaveViewModel<T>(T vm, string returnToIfModelNotValid, RedirectToActionResult nextAction, string action) where T : ICertificateViewModel
         {
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
-           
+            var username = ContextAccessor.HttpContext.User.UserId();
+
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await ApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            if(string.IsNullOrEmpty(vm.ReasonForChange))
+            if(vm.RequiresReasonForChange && string.IsNullOrEmpty(vm.ReasonForChange))
             {
                 ModelState.AddModelError(nameof(vm.ReasonForChange), "Please enter a reason");
             }
@@ -88,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} redirecting to {nextAction.ControllerName} {nextAction.ActionName}");
-            return nextAction;           
+            return nextAction;
         }
 
         private string GetModelValues<T>(T viewModel)

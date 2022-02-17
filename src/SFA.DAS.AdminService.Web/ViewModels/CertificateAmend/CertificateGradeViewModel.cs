@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System.Collections.Generic;
 
-namespace SFA.DAS.AdminService.Web.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
     public class CertificateGradeViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public string SelectedGrade { get; set; }
+
         public List<SelectListItem> Grades = new List<SelectListItem>
         {
             new SelectListItem {Text = "Pass", Value = "Pass"},
@@ -19,16 +20,19 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             new SelectListItem {Text = "Outstanding", Value = "Outstanding"},
             new SelectListItem {Text = "No grade awarded", Value = "No grade awarded"}
         };
-        public void FromCertificate(Certificate cert)
+        
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
+            
             SelectedGrade = CertificateData.OverallGrade;
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.OverallGrade = SelectedGrade;
             certificate.CertificateData = JsonConvert.SerializeObject(data);
+            
             return certificate;
         }
     }

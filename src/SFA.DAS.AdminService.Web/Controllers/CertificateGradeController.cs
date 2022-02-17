@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -13,15 +13,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateGradeController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient)
+            IApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
         { }
 
         [HttpGet]
         public async Task<IActionResult> Grade(Guid certificateId)
         {
-            var viewModel = await LoadViewModel<CertificateGradeViewModel>(certificateId, "~/Views/CertificateAmend/Grade.cshtml");
-            return viewModel;
+            var actionResult = await LoadViewModel<CertificateGradeViewModel>(certificateId, "~/Views/CertificateAmend/Grade.cshtml");
+            return actionResult;
         }
 
         [HttpPost(Name = "Grade")]
