@@ -72,6 +72,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
 
+            var previousWithdrawals = await _applyApiClient.GetWithdrawnApplications(application.OrganisationId, application.StandardCode);
+
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
             var sequence = await _qnaApiClient.GetSequence(application.ApplicationId, applySequence.SequenceId);
@@ -79,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var sequenceVm = new SequenceViewModel(application, organisation, sequence, sections,
                 applySequence.Sections, backViewModel.BackAction, backViewModel.BackController,
-                backViewModel.BackOrganisationId);
+                backViewModel.BackOrganisationId, previousWithdrawals);
 
             var activeApplicationStatuses = new List<string> { ApplicationStatus.Submitted, ApplicationStatus.Resubmitted };
             var activeSequenceStatuses = new List<string> { ApplicationSequenceStatus.Submitted, ApplicationSequenceStatus.Resubmitted };
@@ -450,6 +452,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             var warningMessages = new List<string>();
+            
             if (sequenceNo == ApplyConst.STANDARD_SEQUENCE_NO && returnType == ReturnTypes.Approve)
             {
                 var sequenceOne = application.ApplyData?.Sequences.FirstOrDefault(seq => seq.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO);
@@ -488,7 +491,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             {
                 await _applyApiClient.ReturnApplicationSequence(application.Id, sequenceNo, returnType, _contextAccessor.HttpContext.User.UserDisplayName());
             }
-
+            
             var standardDescription = application.ApplyData?.Apply?.StandardWithReference;
             var versions = application.ApplyData?.Apply?.Versions;
             if (sequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO && versions != null && versions.Any())
