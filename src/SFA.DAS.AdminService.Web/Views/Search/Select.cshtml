@@ -1,7 +1,7 @@
 ﻿@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
 
-@model SFA.DAS.AdminService.Web.Models.Search.LearnerDetailForStaffViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Search.SelectViewModel
 
 @{
     ViewBag.Title = "Certificate details";
@@ -92,7 +92,7 @@ else
     </div>
 
     @if (Model.Learner.CertificateReference != null)
-    {
+            {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-l">Certificate details</h2>
@@ -215,47 +215,66 @@ else
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                @Model.DateStatusTitle
+                                @Model.CertificateStatusDateTitle
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.UpdatedStatusDate.UtcToTimeZoneTime()
+                                @Model.CertificateStatusDateValue.UtcToTimeZoneTime()
                             </dd>
                         </div>
                     }
-                    @if (Model.ShowToAdress)
+                    @if (Model.Learner.OverallGrade != CertificateGrade.Fail)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                @Model.RecipientTitle
+                                Certificate receiver
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.Learner.ContactName<br />
-                                @if (Model.Learner.ContactOrganisation != null)
+                                @Model.Learner.CertificateSendTo
+                            </dd>
+                        </div>
+
+                        @if (Model.ShowToAdress)
+                        {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @Model.CertificateStatusDeliveryTitle
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactName))
+                                {
+                                    @Model.Learner.ContactName<br />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactDept))
+                                {
+                                    @Model.Learner.ContactDept<br />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactOrganisation))
                                 {
                                     @Model.Learner.ContactOrganisation<br />
                                 }
-                                @if (Model.Learner.ContactAddLine1 != null)
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine1))
                                 {
                                     @Model.Learner.ContactAddLine1<br />
                                 }
-                                @if (Model.Learner.ContactAddLine2 != null)
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine2))
                                 {
                                     @Model.Learner.ContactAddLine2<br />
                                 }
-                                @if (Model.Learner.ContactAddLine3 != null)
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine3))
                                 {
                                     @Model.Learner.ContactAddLine3<br />
                                 }
-                                @if (Model.Learner.ContactAddLine4 != null)
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactAddLine4))
                                 {
                                     @Model.Learner.ContactAddLine4<br />
                                 }
-                                @if (Model.Learner.ContactPostCode != null)
+                                @if (!string.IsNullOrWhiteSpace(Model.Learner.ContactPostCode))
                                 {
                                     @Model.Learner.ContactPostCode<br />
                                 }
                             </dd>
                         </div>
+                        }
                     }
                 </dl>
             </div>
@@ -276,7 +295,7 @@ else
                             <th class="govuk-table__header" scope="col">
                                 @if (Model.Learner.CertificateLogs.Count() > 1)
                                 {
-                                    @Html.Raw("Changes");
+                                    <span>Changes</span>
                                 }
                             </th>
                         </tr>
@@ -297,34 +316,49 @@ else
                                     @{
                                         if (Model.Learner.CertificateLogs.Count() > 1)
                                         {
-                                            foreach (var change in log.DifferencesToPrevious)
+                                            foreach (var difference in log.DifferencesToPrevious)
                                             {
                                                 <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
-                                                    @(change.Key)
+                                                    @(difference.Key)
                                                 </p>
                                                 <p class="govuk-body-s govuk-!-margin-bottom-3">
-                                                    @change.Value
+                                                    @if(difference.IsList)
+                                                    {
+                                                        <ul class="govuk-list govuk-list--bullet">
+                                                            @foreach (string value in difference.Values)
+                                                            {
+                                                                <li>@value</li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@difference.Values[0]</span>
+                                                    }
                                                 </p>
                                             }
-                                            if (log.ReasonForChange != null)
+                                            if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
                                             {
                                                 <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
                                                     <i class="arrow arrow-closed">►</i>
-                                                    <span>Show reason for change</span>
+                                                    <span>@Model.GetReasonLink(log)</span>
                                                 </div>
                                             }
                                         }
                                     }
                                 </td>
                             </tr>
-                            <tr class="govuk-table__row js-expandble-cell expandble-cell--hidden expandble-cell" aria-hidden="true">
-                                <td class="govuk-table__cell" data-label="Reason for change" colspan="6">
-                                    <div class="expandble-cell-content">
-                                        <h3 class="govuk-heading-s expandble-cell-content--first-heading">Reason for change</h3>
-                                        @log.ReasonForChange
-                                    </div>
-                                </td>
-                            </tr>
+                            if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
+                            {
+                                <tr class="govuk-table__row js-expandble-cell expandble-cell--hidden expandble-cell" aria-hidden="true">
+                                    <td class="govuk-table__cell" data-label="Reason for change" colspan="6">
+                                        <div class="expandble-cell-content">
+                                            <h3 class="govuk-heading-s expandble-cell-content--first-heading">@Model.GetReasonHeading(log)</h3>
+                                            @log.ReasonForChange
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -386,16 +420,16 @@ else
         <div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m">What do you want to do next?</h2>
             <ul class="govuk-list">
-                @if (Model.CanRequestDuplicate)
+                @if (Model.CanRequestReprint)
                 {
                     <li>
-                        <a class="govuk-link" asp-action="Index" asp-controller="DuplicateRequest" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Request certificate reprint</a>
+                        <a class="govuk-link" asp-action="ReprintReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Request certificate reprint</a>
                     </li>
                 }
                 else if (Model.CanAmendCertificate)
                 {
                     <li>
-                        <a class="govuk-link" asp-action="Check" asp-controller="CertificateAmend" asp-route-certificateId="@Model.Learner.CertificateId" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString">Amend certificate information</a>
+                        <a class="govuk-link" asp-action="AmendReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Amend certificate information</a>
                     </li>
                 }
                 @if (Model.CanDeleteCertificate)

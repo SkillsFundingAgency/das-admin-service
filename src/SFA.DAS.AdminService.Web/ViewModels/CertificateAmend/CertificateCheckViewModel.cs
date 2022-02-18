@@ -4,19 +4,23 @@ using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
-namespace SFA.DAS.AdminService.Web.ViewModels
+namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
     public class CertificateCheckViewModel : CertificateBaseViewModel, ICertificateViewModel
     {
         public long Uln { get; set; }
-        public string CertificateReference { get; set; }
         public int? Ukprn { get; set; }
+
+        public string Status { get; set; }
+        public string CertificateReference { get; set; }
+        
+        
         public string Option { get; set; }
         public string SelectedGrade { get; set; }
         public DateTime? AchievementDate { get; set; }
         public DateTime? LearnerStartDate { get; set; }
 
-        public string FirstName { get; set; }
+        public CertificateSendTo SendTo { get; set; }
         public string Name { get; set; }
         public string Dept { get; set; }
         public string Employer { get; set; }
@@ -25,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public string AddressLine3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
-        public string Status { get; set; }
+        
         public bool RedirectToCheck { get; set; }
 
         public string SearchString { get; set; }
@@ -33,9 +37,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 
         public bool StandardHasMultipleVersions { get; set; }
 
-        public void FromCertificate(Certificate cert)
+        public bool ShowOptionsChangeLink { get; set; }
+
+        public override void FromCertificate(Certificate cert)
         {
-            BaseFromCertificate(cert);
+            base.FromCertificate(cert);
 
             Uln = cert.Uln;
             Ukprn = cert.ProviderUkPrn;
@@ -50,8 +56,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             AchievementDate = CertificateData.AchievementDate;
             LearnerStartDate = CertificateData.LearningStartDate;
 
-            FirstName = CertificateData.LearnerGivenNames;
-
+            SendTo = CertificateData.SendTo;
             Name = CertificateData.ContactName;
             Dept = CertificateData.Department;
             Employer = CertificateData.ContactOrganisation;
@@ -62,13 +67,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             Postcode = CertificateData.ContactPostCode;
         }
 
-        public Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
-        {
-            certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
-            return certificate;
-        }
-
-        public bool CanRequestDuplicate => CertificateStatus.CanRequestDuplicateCertificate(Status);
+        public bool CanRequestReprint => CertificateStatus.CanRequestReprintCertificate(Status);
     }
 }

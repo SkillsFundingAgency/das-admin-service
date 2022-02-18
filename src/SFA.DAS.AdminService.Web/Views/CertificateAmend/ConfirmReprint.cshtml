@@ -1,0 +1,27 @@
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateReprintConfirmViewModel
+
+@{
+    ViewBag.Title = "Re-print certificate";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-action="Index" asp-controller="Search">Search again</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Reprint certificate</h1>
+
+            @if (!Model.CanRequestReprint)
+            {
+                <p class="govuk-body-l">Certificate is in an invalid status to request a reprint.</p>
+            }
+            else
+            {
+                <p class="govuk-body-l">Certificate reprint requested.</p>
+                <p class="govuk-body">The reprint will be processed in the next print run@(string.IsNullOrWhiteSpace(Model.NextBatchDate) ? string.Empty : $" scheduled for {@Model.NextBatchDate}").</p>
+            }
+        </div>
+    </div>
+</main>

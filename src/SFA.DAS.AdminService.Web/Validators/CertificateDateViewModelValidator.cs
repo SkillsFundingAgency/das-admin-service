@@ -1,7 +1,7 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using System;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {

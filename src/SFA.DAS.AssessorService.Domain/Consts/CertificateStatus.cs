@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Domain.Consts
             return PrintNotificationStatus.Contains(certificateStatus);
         }
 
-        public static bool CanRequestDuplicateCertificate(string status)
+        public static bool CanRequestReprintCertificate(string status)
         {
             var allowed = PrintProcessStatus;
             return allowed.Contains(status);

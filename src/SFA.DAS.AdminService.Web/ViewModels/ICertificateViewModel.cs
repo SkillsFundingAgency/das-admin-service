@@ -12,6 +12,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         void FromCertificate(Certificate cert);
         bool BackToCheckPage { get; set; }
         string ReasonForChange { get; set; }
+        bool RequiresReasonForChange { get; set; }
+
         Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData);
     }
 }
