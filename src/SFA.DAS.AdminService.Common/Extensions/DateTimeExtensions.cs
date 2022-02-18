@@ -30,6 +30,13 @@ namespace SFA.DAS.AdminService.Common.Extensions
                 string.Empty : time.Value.ToString("dd MMM yy");
         }
 
+        public static string ToShortNumericFormatString(this DateTime? time)
+        {
+            return time == null ?
+                string.Empty : time.Value.ToString("dd.MM.yyyy");
+        }
+
+
         public static string ToSfaShortMonthDateString(this DateTime? time)
         {
             return time?.ToString("dd MMM yyyy");

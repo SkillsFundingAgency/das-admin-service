@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -13,20 +13,20 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateVersionController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient)
+            IApiClient apiClient)
             : base(logger, contextAccessor, apiClient)
         { }
 
         [HttpGet]
         public async Task<IActionResult> Version(Guid certificateId)
         {
-            var viewModel = await LoadViewModel<CertificateVersionViewModel>(certificateId, "~/Views/CertificateAmend/Version.cshtml");
-            if (viewModel is ViewResult viewResult && viewResult.Model is CertificateVersionViewModel certificateVersionViewModel)
+            var actionResult = await LoadViewModel<CertificateVersionViewModel>(certificateId, "~/Views/CertificateAmend/Version.cshtml");
+            if (actionResult is ViewResult viewResult && viewResult.Model is CertificateVersionViewModel certificateVersionViewModel)
             {
                 certificateVersionViewModel.Standards = await ApiClient.GetStandardVersions(certificateVersionViewModel.StandardCode);
             }
 
-            return viewModel;
+            return actionResult;
         }
 
         [HttpPost(Name = "Version")]

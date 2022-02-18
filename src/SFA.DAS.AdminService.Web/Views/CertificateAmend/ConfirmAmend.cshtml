@@ -1,17 +1,17 @@
-@model SFA.DAS.AdminService.Web.Controllers.DuplicateRequestViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateAmendConfirmViewModel
 
 @{
-    ViewBag.Title = "Comment";
+    ViewBag.Title = "Certificate changes confirmed";
     Layout = "_Layout";
 }
 
 @if (Model.BackToCheckPage)
 {
-    <a class="link-back" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
+    <a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId="@Model.CertificateId" asp-route-uln=@Model.Uln asp-route-stdcode=@Model.StdCode asp-route-page=@Model.Page asp-route-searchstring=@Model.SearchString>Back</a>
 }
 else
 {
-    <a class="link-back" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+    <a class="govuk-back-link" asp-controller="Search" asp-action="Select" asp-route-stdcode="@Model.StdCode" asp-route-uln="@Model.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -21,7 +21,7 @@ else
             <h1 class="govuk-heading-xl">Confirmation</h1>
 
             <p class="govuk-body-l">
-                Thank you for confirming the certificate changes for certificate for:
+                Thank you for confirming the certificate changes for:
             </p>
 
             <dl class="govuk-summary-list">

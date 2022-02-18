@@ -5,6 +5,7 @@ using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
@@ -12,7 +13,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     public class SequenceViewModel : BackViewModel
     {
         public SequenceViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence, 
-            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId)
+            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId,
+            List<ApplicationResponse> previousWithdrawal = null)
             : base (backAction, backController, backOrganisationId)
         {
             ApplicationId = application.Id;
@@ -41,6 +43,35 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             ContactName = application.ContactName;
             ContactEmail = application.ContactEmail;
+
+            PreviousWithdrawal = GetPreviousWithdrawal(previousWithdrawal, application);
+        }
+
+        private ApplicationResponse GetPreviousWithdrawal(List<ApplicationResponse> previousWithdrawals, ApplicationResponse application)
+        {
+            if (previousWithdrawals != null)
+            {
+                //Version applications
+                if (application.StandardApplicationType == StandardApplicationTypes.Version)
+                {
+                    foreach (var withdrawal in previousWithdrawals)
+                    {
+                        bool VersionPreviouslyWithdrawn = withdrawal.ApplyData.Apply.Versions
+                                        .Intersect(application.ApplyData.Apply.Versions).Any();
+
+                        if (VersionPreviouslyWithdrawn)
+                            return withdrawal;
+                    }                
+                }
+                else //Standard applications
+                {
+                    return previousWithdrawals
+                        .Where(x => x.ApplicationType == StandardApplicationTypes.StandardWithdrawalApp)
+                        .FirstOrDefault();
+                }
+            }
+            
+            return null;
         }
 
         private List<ApplySection> GetRequiredApplySections(List<ApplySection> applySections)
@@ -79,6 +110,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
         public List<ApplySection> ApplySections { get; }
         public Guid ApplicationId { get; }
         public int SequenceNo { get; }
+
+        ApplicationResponse PreviousWithdrawal { get; set; }
+
+        public string PreviousWithdrawalType => PreviousWithdrawal?.StandardApplicationType.Replace("Withdrawal","");
+        public DateTime? PreviousWithdrawalDate => PreviousWithdrawal?.ApplyData.Sequences.Where(x => x.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO).Select(y => y.ApprovedDate).FirstOrDefault();
+        public bool? IsPreviousWithdrawalOlderThanTwelveMonths => PreviousWithdrawalDate != null && PreviousWithdrawalDate < DateTime.UtcNow.AddMonths(-12);
+
 
         public bool IsWithdrawal => SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO ||
                                     SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;        

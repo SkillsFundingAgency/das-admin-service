@@ -8,8 +8,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels
     public class CertificateBaseViewModel
     {
         protected CertificateData CertificateData;
-        
-        protected void BaseFromCertificate(Certificate cert)
+
+        public virtual void FromCertificate(Certificate cert)
         {
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
             Id = cert.Id;
@@ -23,6 +23,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             StandardCode = cert.StandardCode;
             Version = CertificateData.Version;
         }
+
+        public virtual Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        {
+            return certificate;
+        }
+
         public string PrivatelyFundedStatus { get; set; }
         public Guid Id { get; set; }
         public string FamilyName { get; set; }
@@ -37,6 +43,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         public bool IsPrivatelyFunded { get; set; }
         public bool BackToCheckPage { get; set; }
         public string ReasonForChange { get; set; }
+        public bool RequiresReasonForChange { get; set; } = true;
 
         public string GetStandardId() => string.IsNullOrWhiteSpace(StandardUId) ? StandardCode.ToString() : StandardUId;
     }

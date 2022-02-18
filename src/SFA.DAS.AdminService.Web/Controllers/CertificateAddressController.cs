@@ -1,14 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
-{   
+{
     public class CertificateAddressController : CertificateBaseController
     {
         public CertificateAddressController(ILogger<CertificateAmendController> logger,
@@ -18,10 +18,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
         { }
 
         [HttpGet]
-        public async Task<IActionResult> Address(Guid certificateId)
+        public async Task<IActionResult> Address(Guid certificateId, bool editForm = true)
         {
-            var viewModel = await LoadViewModel<CertificateAddressViewModel>(certificateId, "~/Views/CertificateAmend/Address.cshtml");
-            return viewModel;
+            var actionResult = await LoadViewModel<CertificateAddressViewModel>(certificateId, "~/Views/CertificateAmend/Address.cshtml");
+
+            var viewResult = (actionResult as ViewResult);
+            var viewModel = viewResult.Model as CertificateAddressViewModel;
+            viewModel.EditForm = editForm;
+
+            return actionResult;
         }
 
         [HttpPost(Name = "Grade")]

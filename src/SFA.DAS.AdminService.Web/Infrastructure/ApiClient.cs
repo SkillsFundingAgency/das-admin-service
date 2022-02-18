@@ -267,6 +267,21 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Put<UpdateCertificateRequest, Certificate>("api/v1/certificates/update", certificateRequest);
         }
 
+        public async Task<Certificate> UpdateCertificateRequestReprint(UpdateCertificateRequestReprintCommand command)
+        {
+            return await Post<UpdateCertificateRequestReprintCommand, Certificate>("api/v1/certificates/request-reprint", command);
+        }
+
+        public async Task UpdateCertificateWithAmendReason(UpdateCertificateWithAmendReasonCommand command)
+        {
+            await Post("api/v1/certificates/update-with-amend-reason", command);
+        }
+
+        public async Task UpdateCertificateWithReprintReason(UpdateCertificateWithReprintReasonCommand command)
+        {
+            await Post("api/v1/certificates/update-with-reprint-reason", command);
+        }
+
         public async Task<ScheduleRun> GetNextScheduleToRunNow()
         {
             return await Get<ScheduleRun>($"api/v1/schedule?scheduleType=1");
@@ -301,13 +316,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             return await Delete<object>($"api/v1/schedule?scheduleRunId={scheduleRunId}");
         }
-
-        public async Task<Certificate> PostReprintRequest(
-            StaffCertificateDuplicateRequest staffCertificateDuplicateRequest)
-        {
-            return await Post<StaffCertificateDuplicateRequest, Certificate>("api/v1/staffcertificatereprint",
-                staffCertificateDuplicateRequest);
-                }
 
         public async Task<List<StandardVersion>> SearchStandards(string searchString)
         {

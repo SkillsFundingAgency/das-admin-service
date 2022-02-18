@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Validators;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
