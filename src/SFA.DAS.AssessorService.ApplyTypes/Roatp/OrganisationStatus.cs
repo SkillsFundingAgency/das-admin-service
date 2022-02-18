@@ -2,6 +2,6 @@
 {
     public static class OrganisationStatus
     {
-        public const string Removed = "Removed";
+        public const int Removed = 0;
     }
 }
