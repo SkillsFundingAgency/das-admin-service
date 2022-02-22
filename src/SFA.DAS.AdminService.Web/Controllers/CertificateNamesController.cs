@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return viewModel;
         }
 
-        [HttpPost(Name = "GivenNames")]
+        [HttpPost]
         [Route("certificate/givennames")]
         public async Task<IActionResult> FirstName(CertificateGivenNamesViewModel vm)
         {
@@ -45,7 +45,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return viewModel;
         }
 
-        [HttpPost(Name = "FamilyName")]
+        [HttpPost]
         [Route("certificate/familyname")]
         public async Task<IActionResult> FamilyName(CertificateFamilyNameViewModel vm)
         {

@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateFamilyNameViewModel
+﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateFamilyNameViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's last name";
@@ -54,7 +54,7 @@
                     {
                         <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                     }
-                    <input class="govuk-input" name="LastName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" asp-for="FamilyName" type="text" maxlength="100" />
+                    <input class="govuk-input" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" asp-for="FamilyName" type="text" maxlength="100" />
                 </div>
 
                 <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
