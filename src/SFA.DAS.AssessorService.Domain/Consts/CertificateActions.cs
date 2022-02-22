@@ -8,8 +8,8 @@
         public const string ConfirmAddress = "ConfirmAddress";
         public const string Date = "Date";
         public const string SendTo = "SendTo";
-        public const string FirstName = "FirstName";
-        public const string LastName = "LastName";
+        public const string GivenNames = "GivenNames";
+        public const string FamilyName = "FamilyName";
         public const string LearnerStartDate = "LearnerStartDate";
         public const string Grade = "Grade";
         public const string Version = "Version";
