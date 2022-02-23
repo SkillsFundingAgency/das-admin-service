@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [Route("certificate/givennames")]
-        public async Task<IActionResult> FirstName(CertificateGivenNamesViewModel vm)
+        public async Task<IActionResult> GivenNames(CertificateGivenNamesViewModel vm)
         {
             var actionResult = await SaveViewModel(vm,
                 returnToIfModelNotValid: "~/Views/CertificateAmend/GivenNames.cshtml",
