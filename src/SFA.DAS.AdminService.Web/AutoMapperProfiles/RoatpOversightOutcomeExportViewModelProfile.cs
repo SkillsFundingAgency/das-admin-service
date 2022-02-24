@@ -14,8 +14,8 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.ApplicationReferenceNumber, opt => opt.MapFrom(source => source.ApplicationReferenceNumber))
                 .ForMember(dest => dest.ApplicationSubmittedDate, opt => opt.MapFrom(source => source.ApplicationSubmittedDate))
                 .ForMember(dest => dest.OrganisationName, opt => opt.MapFrom(source => source.OrganisationName))
-                .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister)))
-                .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => source.ProviderRouteNameOnRegister))
+                .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed))
+                .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => (!string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed) ? source.ProviderRouteNameOnRegister : string.Empty))
                 .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber));
         }
