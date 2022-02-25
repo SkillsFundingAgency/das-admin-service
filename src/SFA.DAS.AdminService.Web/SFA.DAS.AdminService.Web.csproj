@@ -232,6 +232,12 @@
       <LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Roatp\Applications\" />
+    <Folder Include="ViewModels\Roatp\Financial\" />
+    <Folder Include="Views\Roatp\Apply\Financial\" />
+  </ItemGroup>
   <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>
       <ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">

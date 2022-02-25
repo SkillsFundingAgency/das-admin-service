@@ -21,46 +21,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
-        public async Task<RoatpApply> GetApplication(Guid applicationId)
-        {
-            return await Get<RoatpApply>($"/Application/{applicationId}");
-        }
-
-        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
-        {
-            return await Get<FinancialReviewDetails>($"/Application/{applicationId}/FinancialReviewDetails");
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");            
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
-        }
-
-        public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
-        {
-            return await Get<List<RoatpFinancialSummaryDownloadItem>>($"/Financial/OpenApplicationsForDownload");
-        }
-
-        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm)
-        {
-            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts?searchTerm={searchTerm}");
-        }
-
-        public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails)
-        {
-            await Post<FinancialReviewDetails>($"/Financial/{applicationId}/Grade", financialReviewDetails);
-        }
-
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
         {
             await Post($"/Application/{applicationId}/StartAssessorSectionReview", 

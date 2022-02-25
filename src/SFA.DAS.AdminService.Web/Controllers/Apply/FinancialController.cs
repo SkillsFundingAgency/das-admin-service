@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
@@ -15,7 +14,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
@@ -72,36 +70,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View("~/Views/Apply/Financial/ClosedApplications.cshtml", viewmodel);
         }
 
-        [HttpGet("/Financial/{Id}")]
-        public async Task<IActionResult> ViewApplication(Guid Id)
-        {
-            var application = await _applyApiClient.GetApplication(Id);
-            if (application is null)
-            {
-                return RedirectToAction(nameof(OpenApplications));
-            }
-
-            await _applyApiClient.StartFinancialReview(application.Id, _contextAccessor.HttpContext.User.UserDisplayName());
-
-            var vm = await CreateFinancialApplicationViewModel(application, null);
-
-            return View("~/Views/Apply/Financial/Application.cshtml", vm);
-        }
-
-        [HttpGet("/Financial/{Id}/Graded")]
-        public async Task<IActionResult> ViewGradedApplication(Guid Id)
-        {
-            var application = await _applyApiClient.GetApplication(Id);
-            if (application is null)
-            {
-                return RedirectToAction(nameof(OpenApplications));
-            }
-
-            var vm = await CreateFinancialApplicationViewModel(application, null);
-
-            return View("~/Views/Apply/Financial/Application_ReadOnly.cshtml", vm);
-        }
-
         [HttpGet("/Financial/Download/Organisation/{OrgId}/Application/{ApplicationId}")]
         public async Task<IActionResult> DownloadFiles(Guid orgId, Guid applicationId)
         {
@@ -151,40 +119,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return new NotFoundResult();
         }
 
-        [HttpPost("/Financial")]
-        public async Task<IActionResult> Grade(FinancialApplicationViewModel vm)
-        {
-            var application = await _applyApiClient.GetApplication(vm.Id);
-            if (application is null)
-            {
-                return RedirectToAction(nameof(OpenApplications));
-            }
-
-            if (ModelState.IsValid)
-            {
-                var financialSequence = await _qnaApiClient.GetSequenceBySequenceNo(application.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO);
-                var financialSection = await _qnaApiClient.GetSectionBySectionNo(application.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
-
-                var grade = new FinancialGrade
-                {
-                    ApplicationReference = application.ApplyData.Apply.ReferenceNumber,
-                    GradedBy = _contextAccessor.HttpContext.User.UserDisplayName(),
-                    GradedDateTime = DateTime.UtcNow,
-                    SelectedGrade = vm.Grade.SelectedGrade,
-                    FinancialDueDate = GetFinancialDueDate(vm),
-                    FinancialEvidences = GetFinancialEvidence(financialSequence, financialSection),
-                    InadequateMoreInformation = vm.Grade.InadequateMoreInformation
-                };
-
-                await _applyApiClient.ReturnFinancialReview(vm.Id, grade);
-                return RedirectToAction(nameof(Evaluated), new { vm.Id });
-            }
-            else
-            {
-                var newvm = await CreateFinancialApplicationViewModel(application, vm.Grade);
-                return View("~/Views/Apply/Financial/Application.cshtml", newvm);
-            }
-        }
 
         [HttpGet("/Financial/{Id}/Evaluated")]
         public async Task<IActionResult> Evaluated(Guid Id)
@@ -198,35 +132,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return View("~/Views/Apply/Financial/Graded.cshtml", application.FinancialGrade);
         }
 
-        private async Task<FinancialApplicationViewModel> CreateFinancialApplicationViewModel(ApplicationResponse applicationFromAssessor, FinancialGrade grade)
-        {
-            if (applicationFromAssessor is null)
-            {
-                return new FinancialApplicationViewModel();
-            }
-            else if (grade is null)
-            {
-                grade = applicationFromAssessor.FinancialGrade;
-            }
-
-            var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
-
-            var orgId = applicationFromAssessor.OrganisationId;
-            var organisation = await _apiClient.GetOrganisation(orgId);
-
-            var application = new AssessorService.ApplyTypes.Application
-            {
-                ApplicationData = new ApplicationData
-                {
-                    ReferenceNumber = applicationFromAssessor.ApplyData.Apply.ReferenceNumber
-                },
-                ApplyingOrganisation = organisation,
-                ApplyingOrganisationId = orgId,
-                ApplicationStatus = applicationFromAssessor.ApplicationStatus
-            };
-
-            return new FinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
-        }
 
         private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
         {
@@ -250,28 +155,6 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             }
 
             return listOfEvidence;
-        }
-
-        private static DateTime? GetFinancialDueDate(FinancialApplicationViewModel vm)
-        {
-            if(vm is null)
-            {
-                return null;
-            }
-
-            switch (vm?.Grade?.SelectedGrade)
-            {
-                case FinancialApplicationSelectedGrade.Outstanding:
-                    return vm.OutstandingFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Good:
-                    return vm.GoodFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Satisfactory:
-                    return vm.SatisfactoryFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Monitoring:
-                    return vm.MonitoringFinancialDueDate?.ToDateTime();
-                default:
-                    return null;
-            }
         }
     }
 }
