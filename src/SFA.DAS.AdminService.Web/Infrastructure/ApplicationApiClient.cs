@@ -90,106 +90,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                 return await response.Content.ReadAsAsync<T>();
             }
         }
-
-        public async Task<ApplicationResponse> GetApplication(Guid Id)
-        {
-            return await Get<ApplicationResponse>($"/api/v1/Applications/{Id}/application");
-        }
-
-        public async Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? standardCode)
-        {
-            return await Get<List<ApplicationResponse>>($"/api/v1/Applications/{orgId}/application/withdrawn/{standardCode}");
-        }
-
-
         #region Application
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()
         {
             return await Get<ApplicationReviewStatusCounts>($"/Review/ApplicationReviewStatusCounts");
-        }
-
-        public async Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest)
-        {
-            return await Post<OrganisationApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
-                $"/Review/OrganisationApplications", organisationApplicationsRequest);
-        }
-        
-        public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
-        {
-            return await Post<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
-                $"/Review/StandardApplications", standardApplicationsRequest);
-        }
-
-        public async Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest withdrawalApplicationsRequest)
-        {
-            return await Post<WithdrawalApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
-                $"/Review/WithdrawalApplications", withdrawalApplicationsRequest);
-        }
-
-        public async Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer)
-        {
-            await Post($"/Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/StartReview", new { reviewer });
-        }
-
-        public async Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy)
-        {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Sections/{sectionNo}/Evaluate",
-                new { isSectionComplete, evaluatedBy });
-        }
-
-        public async Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy)
-        {
-            await Post($"Review/Applications/{applicationId}/Sequences/{sequenceNo}/Return", new { returnType, returnedBy });
-        }
-        #endregion
-
-        #region Financial
-        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
-        {
-            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/OpenApplications");
-        }
-
-        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
-        {
-            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/FeedbackAddedApplications");
-        }
-
-        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
-        {
-            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/ClosedApplications");
-        }
-
-        public async Task StartFinancialReview(Guid applicationId, string reviewer)
-        {
-            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });
-        }
-
-        public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)
-        {
-            await Post($"/Financial/{applicationId}/Return", grade);
-        }
-        #endregion
-
-        #region Feedback
-        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
-        {
-            await Post(
-                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
-                feedback);
-        }
-
-        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
-        {
-            await Post(
-                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback",
-                feedbackId);
-        }
-        #endregion
-
-        #region Answer Injection Service
-        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
-        {
-            await Post("api/ao/assessment-organisations/update-financials", updateFinancialsRequest);
         }
         #endregion
     }

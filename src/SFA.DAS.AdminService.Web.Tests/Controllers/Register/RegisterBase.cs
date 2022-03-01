@@ -161,7 +161,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ApiClient.Setup(p => p.GetDeliveryAreas()).ReturnsAsync(deliveryAreas);
 
             ApplyApiClient = new Mock<IApplicationApiClient>();
-            ApplyApiClient.Setup(p => p.GetStandardApplications(It.IsAny<StandardApplicationsRequest>())).ReturnsAsync(standardApplicationPaginatedList);
 
             ContactsApiClient = new Mock<IContactsApiClient>();
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisation(OrganisationOneOrganisationId, null)).ReturnsAsync(contacts);            

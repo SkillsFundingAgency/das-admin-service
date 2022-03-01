@@ -530,10 +530,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel = await GatherOrganisationStandards(viewAndEditModel.OrganisationId, paged);
                 
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.OrganisationId = viewAndEditModel.OrganisationId;
-                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.InProgress);
 
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.OrganisationId = viewAndEditModel.OrganisationId;
-                viewAndEditModel.RegisterViewOrganisationStandardsViewModel.FeedbackApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.HasFeedback);
             }
         }
 
@@ -568,34 +566,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             return null;
-        }
-
-        private async Task<PaginationViewModel<ApplicationSummaryItem>> GatherOrganisationStandardApplications(string organisationId, string reviewStatus)
-        {
-            var standardApplicationsRequest = new StandardApplicationsRequest
-            (
-                organisationId,
-                reviewStatus,
-                StandardApplicationsSortColumn.StandardName,
-                1,
-                short.MaxValue,
-                DefaultPageIndex,
-                DefaultPageSetSize
-            );
-
-            var standardApplications = await _applyApiClient.GetStandardApplications(standardApplicationsRequest);
-
-            return new PaginationViewModel<ApplicationSummaryItem>
-            {
-                PaginatedList = standardApplications,
-                ItemsPerPage = short.MaxValue,
-                Fragment = reviewStatus == ApplicationReviewStatus.InProgress ? "in-progress" : "feedback",
-                SortColumn = StandardApplicationsSortColumn.StandardName,
-                SortDirection = SortOrder.Asc,
-                ChangePageAction = string.Empty,
-                ChangeItemsPerPageAction = string.Empty,
-                SortColumnAction = string.Empty
-            };
         }
 
         private void UpdateSortDirection(string sortColumn, string sortDirection, IPagingState pagingState)
