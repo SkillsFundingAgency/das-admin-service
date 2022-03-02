@@ -68,7 +68,7 @@ stages:
     - publish: $(build.artifactstagingdirectory)/NugetPackages
       artifact: NugetPackages
 
-  - stage: NugetPublish
+- stage: NugetPublish
   displayName: 'Publish Nuget Package'
   pool:
     name: DAS - Continuous Deployment Agents
