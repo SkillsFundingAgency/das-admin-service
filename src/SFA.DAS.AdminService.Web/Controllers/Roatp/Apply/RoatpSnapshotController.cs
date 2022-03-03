@@ -40,5 +40,70 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             var viewmodel = new SnapshotViewModel();
             return View("~/Views/Roatp/Apply/Snapshot/Index.cshtml", viewmodel);
         }
+
+        //TODO: Will be removed as part of snapshot code cleanup APR-2975
+        [HttpPost("/Roatp/Snapshot")]
+        public async Task<IActionResult> PerformSnapshot(SnapshotViewModel vm)
+        {
+            if (_configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            var application = await _applyApiClient.GetApplication(vm.ApplicationId ?? Guid.NewGuid());
+
+            if (vm.ApplicationId is null)
+            {
+                ModelState.AddModelError("ApplicationId", "Please enter Application Id");
+            }
+            else if (application is null)
+            {
+                ModelState.AddModelError("ApplicationId", "Application not found");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var snapshotResponse = await _qnaApiClient.SnapshotApplication(application.ApplicationId);
+
+                var allSnapshotSequences = await _qnaApiClient.GetAllApplicationSequences(snapshotResponse.ApplicationId);
+                var allSnapshotSections = await _qnaApiClient.GetAllApplicationSections(snapshotResponse.ApplicationId);
+
+                var applySequences = application.ApplyData.Sequences;
+
+                // must update all ids!
+                foreach (var sequence in applySequences)
+                {
+                    var snapshotSequence = allSnapshotSequences.FirstOrDefault(seq => seq.SequenceNo == sequence.SequenceNo);
+                    if (snapshotSequence != null)
+                    {
+                        sequence.SequenceId = snapshotSequence.Id;
+
+                        foreach (var section in sequence.Sections)
+                        {
+                            var snapshotSection = allSnapshotSections.FirstOrDefault(sec => sec.SequenceNo == sequence.SequenceNo && sec.SectionNo == section.SectionNo);
+
+                            if (snapshotSection != null)
+                            {
+                                section.SectionId = snapshotSection.Id;
+                            }
+                        }
+                    }
+                }
+
+                var applySnapshotResponse = await _applyApiClient.SnapshotApplication(application.ApplicationId, snapshotResponse.ApplicationId, applySequences);
+
+                if (applySnapshotResponse != Guid.Empty)
+                {
+                    vm.SnapshotApplicationId = applySnapshotResponse;
+                    vm.SnapshotSuccessful = true;
+                }
+                else
+                {
+                    vm.SnapshotSuccessful = false;
+                }
+            }
+
+            return View("~/Views/Roatp/Apply/Snapshot/Index.cshtml", vm);
+        }
     }
 }

@@ -4,6 +4,49 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
+    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    public class RoatpApply
+    {
+        public Guid ApplicationId { get; set; }
+        public Guid OrganisationId { get; set; }
+
+        public string ApplicationStatus { get; set; }
+        public string AssessorReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
+
+        public RoatpApplyData ApplyData { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string UpdatedBy { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public string DeletedBy { get; set; }
+
+        public string Comments { get; set; }
+        public string ExternalComments { get; set; }
+    }
+
+    //TODO: Tweak after Roatp FHA migration (APR-1823)
+    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    public class RoatpApplyData
+    {
+        public List<RoatpApplySequence> Sequences { get; set; }
+        public RoatpApplyDetails ApplyDetails { get; set; }
+        public RoatpApplyGatewayDetails GatewayReviewDetails { get; set; }
+    }
+
+    //TODO: Remove after Roatp FHA migration (APR-1823)
+    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    public class RoatpApplyGatewayDetails
+    {
+        public DateTime? SourcesCheckedOn { get; set; }
+        public string Comments { get; set; }
+        public DateTime? OutcomeDateTime { get; set; }
+        public string GatewaySubcontractorDeclarationClarificationUpload { get; set; }
+    }
+
     public class RoatpApplyDetails
     {
         public string ReferenceNumber { get; set; }

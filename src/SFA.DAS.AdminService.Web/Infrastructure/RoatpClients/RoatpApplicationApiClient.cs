@@ -21,6 +21,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
+        //TODO: Will be removed as part of snapshot code cleanup APR-2975
+        public async Task<RoatpApply> GetApplication(Guid applicationId)
+        {
+            return await Get<RoatpApply>($"/Application/{applicationId}");
+        }
+
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
         {
             await Post($"/Application/{applicationId}/StartAssessorSectionReview", 
@@ -30,11 +36,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
             await Post($"/Financial/{applicationId}/StartReview", new { reviewer });            
-        }
-
-        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
-        {
-            
         }
 
         public async  Task<Contact> GetContactForApplication(Guid applicationId)

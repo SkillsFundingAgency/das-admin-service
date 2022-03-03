@@ -13,10 +13,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {
     public interface IRoatpApplicationApiClient
     {
+        Task<RoatpApply> GetApplication(Guid applicationId);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
-
-        Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
 
         Task<Contact> GetContactForApplication(Guid applicationId);
 
