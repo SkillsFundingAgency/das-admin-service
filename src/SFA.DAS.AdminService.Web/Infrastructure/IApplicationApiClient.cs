@@ -12,7 +12,18 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
+        Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
+        Task<ApplicationResponse> GetApplication(Guid Id);
+        Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? StandardCode);
         Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts();
+        Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest);
+        Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest organisationApplicationsRequest);
+        Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest);
+
+        Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
+
+        Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
+        Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
     }
 
     public class ApplicationResponse

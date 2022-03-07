@@ -24,7 +24,4 @@
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\Apply\" />
-  </ItemGroup>
 </Project>

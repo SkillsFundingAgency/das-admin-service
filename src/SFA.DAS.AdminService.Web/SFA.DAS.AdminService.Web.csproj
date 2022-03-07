@@ -10,15 +10,19 @@
   <ItemGroup>
     <Compile Remove="ViewModels\Roatp\Applications\**" />
     <Compile Remove="ViewModels\Roatp\Financial\**" />
+    <Compile Remove="Views\Apply\**" />
     <Compile Remove="Views\Roatp\Apply\Financial\**" />
     <Content Remove="ViewModels\Roatp\Applications\**" />
     <Content Remove="ViewModels\Roatp\Financial\**" />
+    <Content Remove="Views\Apply\**" />
     <Content Remove="Views\Roatp\Apply\Financial\**" />
     <EmbeddedResource Remove="ViewModels\Roatp\Applications\**" />
     <EmbeddedResource Remove="ViewModels\Roatp\Financial\**" />
+    <EmbeddedResource Remove="Views\Apply\**" />
     <EmbeddedResource Remove="Views\Roatp\Apply\Financial\**" />
     <None Remove="ViewModels\Roatp\Applications\**" />
     <None Remove="ViewModels\Roatp\Financial\**" />
+    <None Remove="Views\Apply\**" />
     <None Remove="Views\Roatp\Apply\Financial\**" />
   </ItemGroup>
 
@@ -246,10 +250,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Apply\" />
   </ItemGroup>
   <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>
