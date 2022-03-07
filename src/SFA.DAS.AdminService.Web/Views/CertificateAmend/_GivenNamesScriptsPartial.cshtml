@@ -1,0 +1,23 @@
+﻿<script>
+var epaoGivenNamesFormElement = $('.apprentice-givennames-form ');
+var epaoGivenNamesValidationRulesObject = {
+    rules: {
+        GivenNames: {
+            required: true
+        },
+        ReasonForChange: {
+            required: true
+        }
+    },
+    messages: {
+        GivenNames: {
+            required: 'Enter the apprentice\'s given name'
+        },
+        ReasonForChange: {
+            required: 'Enter a reason'
+        }
+    }
+};
+GOVUK.epaoValidate(epaoGivenNamesFormElement, epaoGivenNamesValidationRulesObject);
+</script> 
+	

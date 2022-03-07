@@ -1,0 +1,23 @@
+﻿<script>
+var epaoFamilyNameFormElement = $('.apprentice-givennames-form ');
+var epaoFamilyNameValidationRulesObject = {
+    rules: {
+        FamilyName: {
+            required: true
+        },
+        ReasonForChange: {
+            required: true
+        }
+    },
+    messages: {
+        FamilyName: {
+            required: 'Enter the apprentice\'s family name'
+        },
+        ReasonForChange: {
+            required: 'Enter a reason'
+        }
+    }
+};
+GOVUK.epaoValidate(epaoFamilyNameFormElement, epaoFamilyNameValidationRulesObject);
+</script> 
+	

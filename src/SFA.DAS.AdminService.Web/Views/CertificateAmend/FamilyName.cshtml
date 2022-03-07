@@ -1,0 +1,84 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateFamilyNameViewModel
+
+@{
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Apprentice's last name";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="CertificateAmend" asp-action="Check" asp-route-certificateId=@Model.Id>Back</a>
+
+
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form class="apprentice-familyname-form js-disable-on-submit" method="post" asp-action="FamilyName" asp-controller="CertificateNames">
+                @Html.HiddenFor(c => c.Id)
+                
+                <div class="js-error-summary govuk-error-summary" role="alert" aria-labelledby="error-summary-title" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="js-error-summary-list govuk-list govuk-error-summary__list"></ul>
+                    </div>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="FamilyName"></a></li>
+                                <li><a sfa-validation-for="ReasonForChange"></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                <h1 class="govuk-heading-xl">
+                    What's the apprentice's family name?
+                </h1>
+
+                <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="FamilyName">
+                        Family name
+                    </label>
+                    <span class="govuk-hint">
+                        For example, Hawkins
+                    </span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
+                    }
+                    <input class="govuk-input" name="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" asp-for="FamilyName" type="text" maxlength="100" />
+                </div>
+
+                <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+                <div class="govuk-form-group" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" for="ReasonForChange">
+                        Reason for change
+                    </label>
+                    <span class="govuk-hint">Provide more detail as to why this change is required.</span>
+                    @if (!ViewData.ModelState.IsValid)
+                    {                        
+                        <span class="govuk-error-message" asp-validation-for="ReasonForChange"></span>
+                    }
+                    <textarea class="govuk-textarea" rows="5" name="ReasonForChange" sfa-validation-for="ReasonForChange" sfa-validationerror-class="govuk-textarea--error-override" asp-for="ReasonForChange"></textarea>
+                </div>
+
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_FamilyNameScriptsPartial.cshtml"); }
+} 
+	
