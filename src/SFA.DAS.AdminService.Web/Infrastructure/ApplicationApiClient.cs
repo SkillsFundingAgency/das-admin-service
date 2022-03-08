@@ -143,6 +143,49 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
         #endregion
 
+        #region Financial
+        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
+        {
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/OpenApplications");
+        }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        {
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/FeedbackAddedApplications");
+        }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        {
+            return await Get<List<FinancialApplicationSummaryItem>>($"/Financial/ClosedApplications");
+        }
+
+        public async Task StartFinancialReview(Guid applicationId, string reviewer)
+        {
+            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });
+        }
+
+        public async Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade)
+        {
+            await Post($"/Financial/{applicationId}/Return", grade);
+        }
+        #endregion
+
+        #region Feedback
+        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
+        {
+            await Post(
+                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
+                feedback);
+        }
+
+        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
+        {
+            await Post(
+                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback",
+                feedbackId);
+        }
+        #endregion
+
         #region Answer Injection Service
         public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
         {
