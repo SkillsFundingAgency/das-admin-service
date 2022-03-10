@@ -4,8 +4,7 @@ using System.Linq;
 
 namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
 {
-    //TODO: Tweak after Roatp FHA migration (APR-1823)
-    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    //@ should be removed as part of snapshot code cleanup APR-2975
     public class RoatpApply
     {
         public Guid ApplicationId { get; set; }
@@ -28,8 +27,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public string ExternalComments { get; set; }
     }
 
-    //TODO: Tweak after Roatp FHA migration (APR-1823)
-    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    //@ should be removed as part of snapshot code cleanup APR-2975
     public class RoatpApplyData
     {
         public List<RoatpApplySequence> Sequences { get; set; }
@@ -37,8 +35,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply
         public RoatpApplyGatewayDetails GatewayReviewDetails { get; set; }
     }
 
-    //TODO: Remove after Roatp FHA migration (APR-1823)
-    //TODO: Will be removed as part of snapshot code cleanup APR-2975
+    //@ should be removed as part of snapshot code cleanup APR-2975
     public class RoatpApplyGatewayDetails
     {
         public DateTime? SourcesCheckedOn { get; set; }

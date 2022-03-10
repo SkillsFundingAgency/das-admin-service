@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
             return View("~/Views/Roatp/Apply/Snapshot/Index.cshtml", viewmodel);
         }
 
-        //TODO: Will be removed as part of snapshot code cleanup APR-2975
+        //@ should be removed as part of snapshot code cleanup APR-2975
         [HttpPost("/Roatp/Snapshot")]
         public async Task<IActionResult> PerformSnapshot(SnapshotViewModel vm)
         {

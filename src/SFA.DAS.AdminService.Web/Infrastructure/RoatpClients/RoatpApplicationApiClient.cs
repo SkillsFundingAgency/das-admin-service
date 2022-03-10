@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
-        //TODO: Will be removed as part of snapshot code cleanup APR-2975
+        //@ should be removed as part of snapshot code cleanup APR-2975
         public async Task<RoatpApply> GetApplication(Guid applicationId)
         {
             return await Get<RoatpApply>($"/Application/{applicationId}");
