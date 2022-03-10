@@ -8,21 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ViewModels\Roatp\Applications\**" />
-    <Compile Remove="ViewModels\Roatp\Financial\**" />
-    <Compile Remove="Views\Roatp\Apply\Financial\**" />
-    <Content Remove="ViewModels\Roatp\Applications\**" />
-    <Content Remove="ViewModels\Roatp\Financial\**" />
-    <Content Remove="Views\Roatp\Apply\Financial\**" />
-    <EmbeddedResource Remove="ViewModels\Roatp\Applications\**" />
-    <EmbeddedResource Remove="ViewModels\Roatp\Financial\**" />
-    <EmbeddedResource Remove="Views\Roatp\Apply\Financial\**" />
-    <None Remove="ViewModels\Roatp\Applications\**" />
-    <None Remove="ViewModels\Roatp\Financial\**" />
-    <None Remove="Views\Roatp\Apply\Financial\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Controllers\RoatpController.cs" />
   </ItemGroup>
 
