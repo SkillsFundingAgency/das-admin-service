@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
 
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
-        
+
         Task StartFinancialReview(Guid applicationId, string reviewer);
         Task ReturnFinancialReview(Guid applicationId, FinancialGrade grade);
 

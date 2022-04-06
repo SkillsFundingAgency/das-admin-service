@@ -70,12 +70,12 @@ namespace SFA.DAS.AdminService.Web.Services
             RaiseWarningIfEmailIsMissingOrInvalid(command.ContactEmail, warningMessages);
             RaiseWarningIfContactGivenNameIsMissingOrTooShort(command.ContactGivenNames, warningMessages);
             RaiseWarningIfContactFamilyNameIsMissingOrTooShort(command.ContactFamilyName, warningMessages);
-            
+
             var request = MapCommandToOrganisationRequest(command, organisationName, ukprn, organisationTypeId);
 
             // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
-            {    
+            {
                 var validationResponse = await _assessorValidationService.ValidateUpdateOrganisationRequest(request);
 
                 if (!validationResponse.IsValid)
@@ -249,14 +249,14 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 var validationResponse = await _assessorValidationService.ValidateNewOrganisationStandardRequest(standard);
 
-                if (standard.ApplyFollowingWithdrawal && validationResponse.Errors.Count == 1 && 
-                    validationResponse.Errors[0].Field == "OrganisationId" && 
+                if (standard.ApplyFollowingWithdrawal && validationResponse.Errors.Count == 1 &&
+                    validationResponse.Errors[0].Field == "OrganisationId" &&
                     validationResponse.Errors[0].StatusCode == ValidationStatusCode.AlreadyExists.ToString())
                 {
                     _logger.LogInformation($"Inject standard on Validation Service - versions must exist so bypass warnings. OrganisationId: {command.OrganisationId})");
                 }
                 else
-                { 
+                {
                     if (!validationResponse.IsValid)
                     {
                         var validationResponseErrors = validationResponse.Errors.Select(err => err.ErrorMessage);
@@ -321,11 +321,11 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 ukprnAsInt = organisationUkprn;
             }
-            else if(int.TryParse(companyUkprn, out var ukprn))
+            else if (int.TryParse(companyUkprn, out var ukprn))
             {
                 ukprnAsInt = ukprn;
             }
-            
+
             return ukprnAsInt;
         }
 
@@ -447,7 +447,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 OrganisationId = organisationId,
                 OrganisationTypeId = organisationTypeId,
                 Ukprn = ukprn,
-                Status = null, 
+                Status = null,
                 LegalName = legalName,
                 TradingName = tradingName,
                 Email = email,
@@ -456,7 +456,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 Address1 = address1,
                 Address2 = address2,
                 Address3 = address3,
-                Address4 = address4,   
+                Address4 = address4,
                 Postcode = postcode,
                 CompanyNumber = companyNumber,
                 CharityNumber = charityNumber,

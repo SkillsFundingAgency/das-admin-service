@@ -525,10 +525,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
             if (organisationStandards != null)
             {
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel = new RegisterViewOrganisationStandardsViewModel(nameof(RegisterController).RemoveController());
-                
+
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.OrganisationId = viewAndEditModel.OrganisationId;
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.OrganisationStandards.PaginationViewModel = await GatherOrganisationStandards(viewAndEditModel.OrganisationId, paged);
-                
+
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.OrganisationId = viewAndEditModel.OrganisationId;
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel.InProgressApplications.PaginationViewModel = await GatherOrganisationStandardApplications(viewAndEditModel.OrganisationId, ApplicationReviewStatus.InProgress);
 

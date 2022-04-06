@@ -113,7 +113,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Post<OrganisationApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(
                 $"/Review/OrganisationApplications", organisationApplicationsRequest);
         }
-        
+
         public async Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest)
         {
             return await Post<StandardApplicationsRequest, PaginatedList<ApplicationSummaryItem>>(

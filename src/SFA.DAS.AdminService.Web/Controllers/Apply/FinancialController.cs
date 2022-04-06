@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
@@ -254,7 +254,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
         private static DateTime? GetFinancialDueDate(FinancialApplicationViewModel vm)
         {
-            if(vm is null)
+            if (vm is null)
             {
                 return null;
             }

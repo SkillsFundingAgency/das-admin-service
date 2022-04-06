@@ -96,9 +96,9 @@ namespace SFA.DAS.AdminService.Web.Services
             }
 
             var standardWebsite = GetAnswer(applicationData, "standard_website");
-          
+
             var command = new CreateOrganisationContactCommand
-            (   organisation.Id,
+            (organisation.Id,
                 organisation.EndPointAssessorName,
                 organisation.OrganisationType.Type,
                 organisation.EndPointAssessorUkprn,
@@ -142,15 +142,15 @@ namespace SFA.DAS.AdminService.Web.Services
             if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();
 
             var effectiveFrom = DateTime.UtcNow.Date;
-            if(DateTime.TryParse(GetAnswer(applicationData, "effective_from"), out var effectiveFromDate))
+            if (DateTime.TryParse(GetAnswer(applicationData, "effective_from"), out var effectiveFromDate))
             {
                 effectiveFrom = effectiveFromDate.Date;
             }
-                
+
             var deliveryAreas = GetAnswer(applicationData, "delivery_areas");
-                
+
             var command = new CreateOrganisationStandardCommand
-            (   
+            (
                 organisation.Id,
                 organisation.EndPointAssessorOrganisationId,
                 application.StandardCode ?? 0,
@@ -183,4 +183,3 @@ namespace SFA.DAS.AdminService.Web.Services
         }
     }
 }
-

@@ -14,18 +14,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
     public interface IRoatpApplicationApiClient
     {
         Task<RoatpApply> GetApplication(Guid applicationId);
-        Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId);
-        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
-        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
-        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder);
-        Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload();
-        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm);
-
-        Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails);
         Task StartApplicationSectionReview(Guid applicationId, int sequenceNo, int sectionNo, string reviewer);
         Task StartFinancialReview(Guid applicationId, string reviewer);
-
-        Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest);
 
         Task<Contact> GetContactForApplication(Guid applicationId);
 

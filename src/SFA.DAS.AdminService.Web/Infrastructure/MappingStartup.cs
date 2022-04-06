@@ -11,7 +11,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             Mapper.Initialize(cfg =>
             {
                 cfg.AddProfile<RegisterViewAndEditUserViewModelProfile>();
-                cfg.AddProfile<RoatpFinancialSummaryExportViewModelProfile>();
                 cfg.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
             });
         }

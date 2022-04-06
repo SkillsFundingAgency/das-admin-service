@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.WithdrawalApplications
         public async Task When_RequestingWithdrawalApplicationsPage_Then_WithdrawalApplicationsViewIsReturned()
         {
             ViewResult viewResult = await _controller.WithdrawalApplications() as ViewResult;
-            
+
             Assert.AreEqual("WithdrawalApplications", viewResult.ViewName);
         }
 
@@ -106,15 +106,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.WithdrawalApplications
             _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_NewApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_NewApplications}_SortColumn")).Returns(DefaultSortColumn);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_NewApplications}_SortDirection")).Returns(DefaultSortDirection);
-            
+
             _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_InProgressApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_InProgressApplications}_SortColumn")).Returns(DefaultSortColumn);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_InProgressApplications}_SortDirection")).Returns(DefaultSortDirection);
-            
+
             _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_FeedbackApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_FeedbackApplications}_SortColumn")).Returns(DefaultSortColumn);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_FeedbackApplications}_SortDirection")).Returns(DefaultSortDirection);
-           
+
             _sessionService.Setup(x => x.Get<int>($"{WithdrawalApplication_ApprovedApplications}_ItemsPerPage")).Returns(DefaultItemsPerPage);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_ApprovedApplications}_SortColumn")).Returns(DefaultSortColumn);
             _sessionService.Setup(x => x.Get($"{WithdrawalApplication_ApprovedApplications}_SortDirection")).Returns(DefaultSortDirection);

@@ -21,44 +21,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
         }
 
+        //@ should be removed as part of snapshot code cleanup APR-2975
         public async Task<RoatpApply> GetApplication(Guid applicationId)
         {
             return await Get<RoatpApply>($"/Application/{applicationId}");
-        }
-
-        public async Task<FinancialReviewDetails> GetFinancialReviewDetails(Guid applicationId)
-        {
-            return await Get<FinancialReviewDetails>($"/Application/{applicationId}/FinancialReviewDetails");
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClosedApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");            
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/ClarificationApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
-        }
-
-        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications(string searchTerm, string sortColumn, string sortOrder)
-        {
-            return await Get<List<RoatpFinancialSummaryItem>>($"/Financial/OpenApplications?searchTerm={searchTerm}&sortColumn={sortColumn}&sortOrder={sortOrder}");
-        }
-
-        public async Task<List<RoatpFinancialSummaryDownloadItem>> GetOpenFinancialApplicationsForDownload()
-        {
-            return await Get<List<RoatpFinancialSummaryDownloadItem>>($"/Financial/OpenApplicationsForDownload");
-        }
-
-        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts(string searchTerm)
-        {
-            return await Get<RoatpFinancialApplicationsStatusCounts>($"/Financial/StatusCounts?searchTerm={searchTerm}");
-        }
-
-        public async Task ReturnFinancialReview(Guid applicationId, FinancialReviewDetails financialReviewDetails)
-        {
-            await Post<FinancialReviewDetails>($"/Financial/{applicationId}/Grade", financialReviewDetails);
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
@@ -70,11 +36,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
             await Post($"/Financial/{applicationId}/StartReview", new { reviewer });            
-        }
-
-        public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
-        {
-            
         }
 
         public async  Task<Contact> GetContactForApplication(Guid applicationId)

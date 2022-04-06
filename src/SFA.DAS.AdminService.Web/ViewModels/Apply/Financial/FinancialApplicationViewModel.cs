@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 
@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public FinancialDueDate GoodFinancialDueDate { get; set; }
         public FinancialDueDate SatisfactoryFinancialDueDate { get; set; }
         public FinancialDueDate MonitoringFinancialDueDate { get; set; }
-        
+
         public FinancialApplicationViewModel() { }
 
         public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)

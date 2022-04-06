@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -369,7 +369,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private void SetDefaultSession()
         {
             _controllerSession.StandardApplication_SessionValid = true;
-            
+
             ResetPageIndex();
             ResetItemsPerPage();
             ResetSortColumn();
