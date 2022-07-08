@@ -166,7 +166,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private string GetAnswer(Dictionary<string, object> applicationData, string questionTag)
         {
-            return applicationData.ContainsKey(questionTag) ? applicationData[questionTag].ToString() : null;
+            return applicationData.ContainsKey(questionTag) ? applicationData[questionTag]?.ToString() : null;
         }
 
         private JObject GetJsonAnswer(Dictionary<string, object> applicationData, string questionTag)
