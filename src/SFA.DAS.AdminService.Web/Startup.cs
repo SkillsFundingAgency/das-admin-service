@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+using System.Text.Json.Serialization;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.AdminService.Application.Interfaces;
@@ -99,12 +101,14 @@ namespace SFA.DAS.AdminService.Web
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new StringTrimmingModelBinderProvider());
+                    options.EnableEndpointRouting = false;
                 })
                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
+                //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
             services.Configure<RazorViewEngineOptions>(o =>

@@ -49,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Validators
             });
         }
 
-        private void ProcessDate(FinancialDueDate dueDate, string propertyName, CustomContext context)
+        private void ProcessDate(FinancialDueDate dueDate, string propertyName, ValidationContext<FinancialApplicationViewModel> context) //CustomContext context)
         {
             if (string.IsNullOrWhiteSpace(dueDate.Day) || string.IsNullOrWhiteSpace(dueDate.Month) || string.IsNullOrWhiteSpace(dueDate.Year))
             {

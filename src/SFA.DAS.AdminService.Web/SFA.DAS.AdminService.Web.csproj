@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
@@ -20,8 +20,8 @@
     <PackageReference Include="CsvHelper" Version="18.0.0" />
     <PackageReference Include="Enums.NET" Version="4.0.0" />
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
-    <PackageReference Include="FluentValidation" Version="8.4.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
+    <PackageReference Include="FluentValidation" Version="11.2.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
     <PackageReference Include="Humanizer.Core" Version="2.4.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
@@ -45,8 +45,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
+
+    <PackageReference Include="NuGet.CommandLine" Version="6.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
     <PackageReference Include="Scrutor" Version="3.1.0" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
