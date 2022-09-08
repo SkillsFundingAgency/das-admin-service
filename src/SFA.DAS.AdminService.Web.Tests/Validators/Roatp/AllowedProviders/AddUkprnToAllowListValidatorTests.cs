@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -37,9 +38,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
         }
 
         [Test]
-        public void Validator_passes_when_viewmodel_is_valid()
+        public async Task Validator_passes_when_viewmodel_is_valid()
         {
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             Assert.IsTrue(validationResponse.IsValid);
             CollectionAssert.IsEmpty(validationResponse.Errors);
@@ -57,80 +58,80 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
         }
 
         [Test]
-        public void Validator_rejects_incorrect_formatted_Ukprn()
+        public async Task Validator_rejects_incorrect_formatted_Ukprn()
         {
             _viewModel.Ukprn = "invalid format";
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Ukprn");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_Ukprn_below_10000000()
+        public async Task Validator_rejects_Ukprn_below_10000000()
         {
             _viewModel.Ukprn = (10000000 - 1).ToString();
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Ukprn");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_Ukprn_above_19999999()
+        public async Task Validator_rejects_Ukprn_above_19999999()
         {
             _viewModel.Ukprn = (19999999 + 1).ToString();
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Ukprn");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_Ukprn_if_already_in_allow_list()
+        public async Task Validator_rejects_Ukprn_if_already_in_allow_list()
         {
             int.TryParse(_viewModel.Ukprn, out var ukprn);
             var allowedUkprnEntry = new AllowedProvider { Ukprn = ukprn };
             _applicationApplyApiClient.Setup(x => x.GetAllowedProviderDetails(ukprn)).ReturnsAsync(new AllowedProvider());
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "Ukprn");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_missing_StartDate()
+        public async Task Validator_rejects_missing_StartDate()
         {
             _viewModel.StartDate = null;
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "StartDate");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_StartDate_later_than_EndDate()
+        public async Task Validator_rejects_StartDate_later_than_EndDate()
         {
             _viewModel.StartDate = DateTime.MaxValue;
             _viewModel.EndDate = DateTime.MinValue;
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "StartDate");
             error.Should().NotBeNull();
         }
 
         [Test]
-        public void Validator_rejects_missing_EndDate()
+        public async Task Validator_rejects_missing_EndDate()
         {
             _viewModel.EndDate = null;
 
-            var validationResponse = _validator.Validate(_viewModel);
+            var validationResponse = await _validator.ValidateAsync(_viewModel);
 
             var error = validationResponse.Errors.FirstOrDefault(x => x.PropertyName == "EndDate");
             error.Should().NotBeNull();

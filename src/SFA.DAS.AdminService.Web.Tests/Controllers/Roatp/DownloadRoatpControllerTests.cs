@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Controllers.Roatp;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
@@ -22,6 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         private DownloadRoatpController _controller;
         private Mock<IRoatpApplicationApiClient> _applicationApplyApiClient;
         private Mock<ICsvExportService> _csvExportService;
+        private IMapper _mapper;
 
         [SetUp]
         public void SetUp()
@@ -29,11 +32,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             _applicationApplyApiClient = new Mock<IRoatpApplicationApiClient>();
             _csvExportService = new Mock<ICsvExportService>();
 
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile<RegisterViewAndEditUserViewModelProfile>();
+                mc.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            _mapper = mapper;
+
             _controller = new DownloadRoatpController(Mock.Of<IRoatpApiClient>(), 
                 Mock.Of<IDataTableHelper>(), 
                 Mock.Of<ILogger<DownloadRoatpController>>(),
                 _csvExportService.Object, 
-                _applicationApplyApiClient.Object
+                _applicationApplyApiClient.Object,
+                _mapper
             );
         }
 

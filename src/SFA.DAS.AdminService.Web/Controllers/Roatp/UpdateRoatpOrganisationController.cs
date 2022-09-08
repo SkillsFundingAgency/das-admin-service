@@ -20,13 +20,15 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
         private ILogger<UpdateRoatpOrganisationController> _logger;
+        private IMapper _mapper;
 
         public UpdateRoatpOrganisationController(ILogger<UpdateRoatpOrganisationController> logger, IRoatpApiClient apiClient,
-            IRoatpSessionService sessionService)
+            IRoatpSessionService sessionService, IMapper mapper)
         {
             _logger = logger;
             _apiClient = apiClient;
             _sessionService = sessionService;
+            _mapper = mapper;
         }
 
         [Route("change-legal-name")]
@@ -54,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
 
-            var request = Mapper.Map<UpdateOrganisationLegalNameRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationLegalNameRequest>(model);
             request.LegalName = request.LegalName.ToUpper();
 
             var result = await _apiClient.UpdateOrganisationLegalName(request);
@@ -91,7 +93,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationUkprnRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationUkprnRequest>(model);
             var result = await _apiClient.UpdateOrganisationUkprn(request);
 			
             if (result)
@@ -170,7 +172,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationCompanyNumberRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationCompanyNumberRequest>(model);
             var result = await _apiClient.UpdateOrganisationCompanyNumber(request);
 
             if (result)
@@ -193,7 +195,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationStatusRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationStatusRequest>(model);
             if (model.OrganisationStatusId == 0) // Removed
             {
                 request.RemovedReasonId = model.RemovedReasonId;
@@ -226,7 +228,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationTypeRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationTypeRequest>(model);
 
             var result = await _apiClient.UpdateOrganisationType(request);
 
@@ -263,7 +265,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
 
-            var request = Mapper.Map<UpdateOrganisationTradingNameRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationTradingNameRequest>(model);
             var result = await _apiClient.UpdateOrganisationTradingName(request);
 
             if (result)
@@ -299,7 +301,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
 
-            var request = Mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationParentCompanyGuaranteeRequest>(model);
             var result = await _apiClient.UpdateOrganisationParentCompanyGuarantee(request);
 
             if (result)
@@ -354,7 +356,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
 
-            var request = Mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationFinancialTrackRecordRequest>(model);
             var result = await _apiClient.UpdateOrganisationFinancialTrackRecord(request);
 
             if (result)
@@ -427,7 +429,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 model.OrganisationTypeId = previousOrganisationTypeId;
             }
 
-            var request = Mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
             var result = await _apiClient.UpdateOrganisationProviderType(request);
 
             if (result)
@@ -463,7 +465,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationCharityNumberRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationCharityNumberRequest>(model);
             var result = await _apiClient.UpdateOrganisationCharityNumber(request);
 
             if (result)
@@ -485,7 +487,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             }
 
             model.UpdatedBy = HttpContext.User.UserDisplayName();
-            var request = Mapper.Map<UpdateOrganisationApplicationDeterminedDateRequest>(model);
+            var request = _mapper.Map<UpdateOrganisationApplicationDeterminedDateRequest>(model);
 
             var result = await _apiClient.UpdateApplicationDeterminedDate(request);
 

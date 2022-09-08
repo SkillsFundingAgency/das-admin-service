@@ -18,11 +18,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
+        private readonly IMapper _mapper;
 
-        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient)
+        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, IMapper mapper)
         {
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;
+            _mapper = mapper;
         }
 
         [HttpGet("register/view-user/{contactId}", Name = "RegisterUserController_Details")]
@@ -47,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var contact = await _contactsApiClient.GetById(contactId);
             var organisation = await _organisationsApiClient.Get(contact.OrganisationId.Value);
 
-            var vm = Mapper.Map<RegisterViewAndEditUserViewModel>(contact);
+            var vm = _mapper.Map<RegisterViewAndEditUserViewModel>(contact);
             vm.EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId;
             vm.AssignedPrivileges = await _contactsApiClient.GetContactPrivileges(contact.Id);
             vm.AllPrivilegeTypes = await _contactsApiClient.GetPrivileges();

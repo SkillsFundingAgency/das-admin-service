@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -15,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Polly;
 using Polly.Extensions.Http;
 using SFA.DAS.AdminService.Application.Interfaces;
@@ -23,6 +18,7 @@ using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Settings;
+using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -34,6 +30,11 @@ using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Net.Http;
+using System.Text.Json.Serialization;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
 using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
@@ -105,7 +106,6 @@ namespace SFA.DAS.AdminService.Web
                 })
                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                //.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -127,8 +127,12 @@ namespace SFA.DAS.AdminService.Web
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
             services.AddHealthChecks();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            MappingStartup.AddMappings();
-
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile<RegisterViewAndEditUserViewModelProfile>();
+                config.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
+            });
+            
             ConfigureDependencyInjection(services);
         }
 
@@ -173,7 +177,8 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<CompaniesHouseApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
+                x.GetService<IRoatpApplyTokenService>(),
+                x.GetService<IMapper>()));
 
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,

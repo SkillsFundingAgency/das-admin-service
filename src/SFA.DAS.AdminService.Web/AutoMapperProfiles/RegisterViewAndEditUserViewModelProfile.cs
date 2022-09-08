@@ -9,14 +9,14 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
         public RegisterViewAndEditUserViewModelProfile()
         {
             CreateMap<ContactResponse, RegisterViewAndEditUserViewModel>()
+                .IgnoreAllUnmapped()
                 .ForMember(dest => dest.ContactId, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(source => source.Title))
                 .ForMember(dest => dest.GivenNames, opt => opt.MapFrom(source => source.GivenNames))
                 .ForMember(dest => dest.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(source => source.PhoneNumber))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
-                .ForAllOtherMembers(dest => dest.Ignore());
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status));
         }
     }
 }
