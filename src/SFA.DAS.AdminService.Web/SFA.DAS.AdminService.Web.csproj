@@ -64,7 +64,6 @@
     <ProjectReference Include="..\SFA.DAS.AdminService.Application.Interfaces\SFA.DAS.AdminService.Application.Interfaces.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Common\SFA.DAS.AdminService.Common.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.Application.Api.Client\SFA.DAS.AssessorService.Application.Api.Client.csproj" />
     <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
