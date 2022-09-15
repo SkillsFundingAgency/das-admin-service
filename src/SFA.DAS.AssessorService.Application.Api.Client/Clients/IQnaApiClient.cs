@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
-using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;

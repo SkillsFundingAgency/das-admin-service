@@ -132,7 +132,7 @@ namespace SFA.DAS.AdminService.Web
                 config.AddProfile<RegisterViewAndEditUserViewModelProfile>();
                 config.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
             });
-            
+            services.AddApplicationInsightsTelemetry();
             ConfigureDependencyInjection(services);
         }
 
