@@ -16,6 +16,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
     using SFA.DAS.AdminService.Common.Extensions;
     using SFA.DAS.AdminService.Common.Validation;
 
+
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class UpdateRoatpOrganisationController : RoatpSearchResultsControllerBase
     {
@@ -429,8 +430,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 model.OrganisationTypeId = previousOrganisationTypeId;
             }
 
-            var request = _mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
-            var result = await _apiClient.UpdateOrganisationProviderType(request);
+            var result = await _apiClient.UpdateOrganisationProviderType(new UpdateOrganisationProviderTypeRequest()
+            {
+                OrganisationId = model.OrganisationId,
+                OrganisationTypeId = model.OrganisationTypeId,
+                ProviderTypeId = model.ProviderTypeId,
+                UpdatedBy = model.UpdatedBy
+            });
 
             if (result)
             {
