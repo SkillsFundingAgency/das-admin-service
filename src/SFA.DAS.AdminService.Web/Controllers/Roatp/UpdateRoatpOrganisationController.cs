@@ -430,13 +430,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 model.OrganisationTypeId = previousOrganisationTypeId;
             }
 
-            var result = await _apiClient.UpdateOrganisationProviderType(new UpdateOrganisationProviderTypeRequest()
-            {
-                OrganisationId = model.OrganisationId,
-                OrganisationTypeId = model.OrganisationTypeId,
-                ProviderTypeId = model.ProviderTypeId,
-                UpdatedBy = model.UpdatedBy
-            });
+            var request = _mapper.Map<UpdateOrganisationProviderTypeRequest>(model);
+
+            var result = await _apiClient.UpdateOrganisationProviderType(request);
 
             if (result)
             {

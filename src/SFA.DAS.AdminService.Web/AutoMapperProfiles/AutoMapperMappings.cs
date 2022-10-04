@@ -33,7 +33,6 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(source => source.PhoneNumber))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status));
 
-            CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<AddOrganisationViewModel, AddOrganisationProviderTypeViewModel>();
             CreateMap<AddOrganisationViewModel, AddOrganisationTypeViewModel>();
             CreateMap<RoatpApplicationOversightDownloadItem, RoatpOversightOutcomeExportViewModel>();
