@@ -14,14 +14,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         private ILogger<CompaniesHouseApiClient> _logger;
         private readonly IRoatpApplyTokenService _tokenService;
         private static  HttpClient _httpClient = new HttpClient();
-        private readonly IMapper _mapper;
-
+        
         public CompaniesHouseApiClient(string baseUri,
-            ILogger<CompaniesHouseApiClient> logger, IRoatpApplyTokenService tokenService, IMapper mapper)
+            ILogger<CompaniesHouseApiClient> logger, IRoatpApplyTokenService tokenService)
         {
             _tokenService = tokenService;
             _logger = logger;
-            _mapper = mapper;
 
             _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
@@ -35,8 +33,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (requestMessage.IsSuccessStatusCode)
             {
                 var companyDetails = await requestMessage.Content.ReadAsAsync<CompaniesHouseSummary>();
-
-                return _mapper.Map<CompaniesHouseSummary>(companyDetails);
+                return companyDetails;
             }
 
             if (requestMessage.StatusCode == HttpStatusCode.ServiceUnavailable || requestMessage.StatusCode == HttpStatusCode.InternalServerError)

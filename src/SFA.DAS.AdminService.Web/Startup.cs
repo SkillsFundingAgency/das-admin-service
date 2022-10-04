@@ -129,8 +129,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddAutoMapper(config =>
             {
-                config.AddProfile<RegisterViewAndEditUserViewModelProfile>();
-                config.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
+                config.AddProfile<AutoMapperMappings>();
             });
             services.AddApplicationInsightsTelemetry();
             ConfigureDependencyInjection(services);
