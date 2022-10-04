@@ -5,6 +5,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
 using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using OrganisationStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {

@@ -176,8 +176,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
                 x.GetService<ILogger<CompaniesHouseApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>(),
-                x.GetService<IMapper>()));
+                x.GetService<IRoatpApplyTokenService>()));
 
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,

@@ -34,8 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile<RegisterViewAndEditUserViewModelProfile>();
-                mc.AddProfile<RoatpOversightOutcomeExportViewModelProfile>();
+                mc.AddProfile<AutoMapperMappings>();
             });
             IMapper mapper = mappingConfig.CreateMapper();
             _mapper = mapper;
