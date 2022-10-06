@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <ProjectGuid>7597DE7D-2942-4E5C-B64E-4F2BA69FDE26</ProjectGuid>
-    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.json" Version="11.0.2" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.json" Version="13.0.1" />
+    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
   <ItemGroup>

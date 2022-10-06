@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders
             RuleFor(x => x.Ukprn).NotEmpty().WithMessage("Enter a UKPRN")
                 .DependentRules(() =>
                 {
-                    RuleFor(x => x.Ukprn).CustomAsync(async (ukprnInput, context, cancellationToken) =>
+                    RuleFor(x => x.Ukprn).Custom((ukprnInput, context) =>
                     {
                         if (!int.TryParse(ukprnInput, out var ukprn))
                         {
@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders
                         {
                             context.AddFailure("Enter a valid UKPRN using 8 numbers");
                         }
-                        else if (await _applyApiClient.GetAllowedProviderDetails(ukprn) != null)
+                        else if (_applyApiClient.GetAllowedProviderDetails(ukprn).Result != null)
                         {
                             context.AddFailure($"UKPRN {ukprn} exists in the allow list");
                         }

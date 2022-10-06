@@ -27,6 +27,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         private ILogger<DownloadRoatpController> _logger;
         private ICsvExportService _csvExportService;
         private readonly IRoatpApplicationApiClient _applyApiClient;
+        private readonly IMapper _mapper;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
@@ -35,13 +36,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         private const string FatWorksheetName = "RoATP";
 
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
-            ILogger<DownloadRoatpController> logger, ICsvExportService csvExportService, IRoatpApplicationApiClient applyApiClient)
+            ILogger<DownloadRoatpController> logger, ICsvExportService csvExportService, IRoatpApplicationApiClient applyApiClient, IMapper mapper)
         {
             _apiClient = apiClient;
             _dataTableHelper = dataTableHelper;
             _logger = logger;
             _csvExportService = csvExportService;
             _applyApiClient = applyApiClient;
+            _mapper = mapper;
         }
 
         [Route("download-register")]
@@ -92,7 +94,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             var applications = await _applyApiClient.GetApplicationOversightDetailsForDownload(viewModel.FromDate.Value, viewModel.ToDate.Value);
 
-            var exportModel = Mapper.Map<List<RoatpOversightOutcomeExportViewModel>>(applications);
+            var exportModel = _mapper.Map<List<RoatpOversightOutcomeExportViewModel>>(applications);
 
             var bytearray = _csvExportService
                 .WriteCsvToByteArray<RoatpOversightOutcomeExportViewModel, RoatpOversightOutcomeExportCsvMap>(exportModel);

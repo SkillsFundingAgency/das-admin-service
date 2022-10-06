@@ -3,6 +3,7 @@ using FluentValidation.Validators;
 using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
+using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.Validators
             });
         }
 
-        private static void CreateFailuresInContext(IEnumerable<ValidationErrorDetail> errs, CustomContext context)
+        private static void CreateFailuresInContext(IEnumerable<ValidationErrorDetail> errs, ValidationContext<RegisterEditOrganisationStandardVersionViewModel> context) //CustomContext context)
         {
             foreach (var error in errs)
             {

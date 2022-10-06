@@ -10,9 +10,9 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions
     [Serializable]
     public class RoatpApiClientException : ApplicationException
     {
-        public string HttpMethod { get; }
-        public HttpStatusCode StatusCode { get; }
-        public Uri RequestUri { get; }
+        public string HttpMethod { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+        public Uri RequestUri { get; set; }
 
         public RoatpApiClientException()
         {

@@ -28,14 +28,16 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
         private readonly IRoatpSessionService _sessionService;
         private readonly ILogger<AddRoatpOrganisationController> _logger;
         private readonly IUkrlpProcessingService _ukrlpProcessingService;
+        private readonly IMapper _mapper;
 
         public AddRoatpOrganisationController(IRoatpApiClient apiClient, IRoatpSessionService sessionService,
-             ILogger<AddRoatpOrganisationController> logger, IUkrlpProcessingService ukrlpProcessingService)
+             ILogger<AddRoatpOrganisationController> logger, IUkrlpProcessingService ukrlpProcessingService, IMapper mapper)
         {
             _apiClient = apiClient;
             _sessionService = sessionService;
             _logger = logger;
             _ukrlpProcessingService = ukrlpProcessingService;
+            _mapper = mapper;
         }
 
 
@@ -127,7 +129,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 return Redirect("organisations-details");
             }
 
-            var model = Mapper.Map<AddOrganisationProviderTypeViewModel>(addOrganisationModel);
+            var model = _mapper.Map<AddOrganisationProviderTypeViewModel>(addOrganisationModel);
 
 
             model.ProviderTypes = await _apiClient.GetProviderTypes();
@@ -175,7 +177,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             ModelState.Clear();
 
-            var vm = Mapper.Map<AddOrganisationTypeViewModel>(addOrganisationModel);
+            var vm = _mapper.Map<AddOrganisationTypeViewModel>(addOrganisationModel);
 
             return View("~/Views/Roatp/AddOrganisationType.cshtml", vm);
 
@@ -215,7 +217,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             var vm = MapOrganisationVmToApplicationDeterminedDateVm(organisationVm);
             if (!IsRedirectFromConfirmationPage() && !ModelState.IsValid)
             {
-                var redirectModel = Mapper.Map<AddOrganisationTypeViewModel>(organisationVm);
+                var redirectModel = _mapper.Map<AddOrganisationTypeViewModel>(organisationVm);
                 return View("~/Views/Roatp/AddOrganisationType.cshtml", redirectModel);
             }
 

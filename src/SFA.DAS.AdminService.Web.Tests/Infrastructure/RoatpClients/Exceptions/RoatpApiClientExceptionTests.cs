@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
 namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.RoatpClients.Exceptions
 {
@@ -24,13 +25,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.RoatpClients.Exceptions
             Assert.AreEqual(HttpStatusCode, ex.StatusCode, "StatusCode");
             Assert.AreEqual(RequestUri, ex.RequestUri, "RequestUri");
 
-            // Round-trip the exception: Serialize and de-serialize with a BinaryFormatter
-            BinaryFormatter bf = new BinaryFormatter();
+            // Round-trip the exception: Serialize and de-serialize with a JsonSerializer
+            var jsonConfig = new JsonSerializerOptions 
+            { 
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreReadOnlyProperties = false
+            };
             using (MemoryStream ms = new MemoryStream())
             {
-                bf.Serialize(ms, ex);
+                JsonSerializer.Serialize(ms, ex, jsonConfig);
                 ms.Seek(0, 0);
-                ex = bf.Deserialize(ms) as RoatpApiClientException;
+                ex = JsonSerializer.Deserialize<RoatpApiClientException>(ms, jsonConfig);
             }
 
             // Make sure custom properties are preserved after serialization

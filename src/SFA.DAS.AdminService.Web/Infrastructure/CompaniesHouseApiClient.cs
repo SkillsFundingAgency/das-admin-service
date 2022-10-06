@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoMapper;
+using global::System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using AutoMapper;
-using global::System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Api.Client;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -17,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         private ILogger<CompaniesHouseApiClient> _logger;
         private readonly IRoatpApplyTokenService _tokenService;
         private static  HttpClient _httpClient = new HttpClient();
-
+        
         public CompaniesHouseApiClient(string baseUri,
             ILogger<CompaniesHouseApiClient> logger, IRoatpApplyTokenService tokenService)
         {
@@ -36,8 +33,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (requestMessage.IsSuccessStatusCode)
             {
                 var companyDetails = await requestMessage.Content.ReadAsAsync<CompaniesHouseSummary>();
-
-                return Mapper.Map<CompaniesHouseSummary>(companyDetails);
+                return companyDetails;
             }
 
             if (requestMessage.StatusCode == HttpStatusCode.ServiceUnavailable || requestMessage.StatusCode == HttpStatusCode.InternalServerError)

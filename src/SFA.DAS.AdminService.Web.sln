@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB54D000-867F-48CA-AE28-BDBE0CCE1322}"
 EndProject
@@ -18,8 +18,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Web", "SFA.DAS.AdminService.Web\SFA.DAS.AdminService.Web.csproj", "{027ED1F2-884B-4BA9-8131-4CE16F9675AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Web.Tests", "SFA.DAS.AdminService.Web.Tests\SFA.DAS.AdminService.Web.Tests.csproj", "{F07B3326-5CF7-4CFC-90FE-38606A7425B8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Web.Extensions", "SFA.DAS.AdminService.Web.Extensions\SFA.DAS.AdminService.Web.Extensions.csproj", "{CE695DD2-8BA2-4329-88E7-B8227D6DA128}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AssessorService.ApplyTypes", "SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj", "{83078990-F41B-4938-99C9-94A3BC50DDBA}"
 EndProject
@@ -63,10 +61,6 @@ Global
 		{F07B3326-5CF7-4CFC-90FE-38606A7425B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F07B3326-5CF7-4CFC-90FE-38606A7425B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F07B3326-5CF7-4CFC-90FE-38606A7425B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE695DD2-8BA2-4329-88E7-B8227D6DA128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE695DD2-8BA2-4329-88E7-B8227D6DA128}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE695DD2-8BA2-4329-88E7-B8227D6DA128}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE695DD2-8BA2-4329-88E7-B8227D6DA128}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83078990-F41B-4938-99C9-94A3BC50DDBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83078990-F41B-4938-99C9-94A3BC50DDBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83078990-F41B-4938-99C9-94A3BC50DDBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
