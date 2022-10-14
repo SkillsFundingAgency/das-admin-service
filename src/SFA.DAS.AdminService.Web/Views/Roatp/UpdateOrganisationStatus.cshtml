@@ -74,7 +74,7 @@
                                     Select a reason
                                 </label>
                                 <select class="govuk-select" id="RemovedReasonId" name="RemovedReasonId" asp-for="RemovedReasonId">
-                                    @foreach (var reason in Model.RemovedReasons)
+                                    @foreach (var reason in Model.RemovedReasons.OrderBy(a=>a.Reason))
                                     {
                                         @if (reason.Id == Model.RemovedReasonId)
                                             {
