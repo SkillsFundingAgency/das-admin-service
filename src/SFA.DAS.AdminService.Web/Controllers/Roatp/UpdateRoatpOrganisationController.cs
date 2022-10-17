@@ -112,7 +112,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             var searchModel = _sessionService.GetSearchResults();
 
             var organisationStatuses = _apiClient.GetOrganisationStatuses(searchModel.SelectedResult?.ProviderType?.Id).Result.OrderBy(x => x.Status);
-            var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Id);
+            var removedReasons = _apiClient.GetRemovedReasons().Result.OrderBy(x => x.Description);
             
             var model = new UpdateOrganisationStatusViewModel
             {
