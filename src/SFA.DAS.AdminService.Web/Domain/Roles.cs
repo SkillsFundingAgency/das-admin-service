@@ -17,6 +17,7 @@ namespace SFA.DAS.AdminService.Web.Domain
         public const string RoatpApplicationOversightTeam = "AOV";
         public const string RoatpAssessorTeam = "AAC";
         public const string EpaoReportsOnlyTeam = "EPX";
+        public const string TribalTeam = "TAD";
 
         public static bool HasValidRole(this ClaimsPrincipal user)
         {
@@ -30,7 +31,8 @@ namespace SFA.DAS.AdminService.Web.Domain
                    || user.IsInRole(RoatpFinancialAssessorTeam)
                    || user.IsInRole(RoatpAssessorTeam)
                    || user.IsInRole(RoatpApplicationOversightTeam)
-                   || user.IsInRole(EpaoReportsOnlyTeam);
+                   || user.IsInRole(EpaoReportsOnlyTeam)
+                   || user.IsInRole(TribalTeam);
         }
     }
 }

@@ -434,6 +434,28 @@
                 </li>
             </ul>
         </div>
-    </div>
+
+@if (sectionsShown % 2 == 0)
+{
+    @:</div>
+    @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+}
+
+       @{
+            if (roleTagHelper.ShowForRoles(Roles.TribalTeam)) { sectionsShown++; }
+        }
+        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.TribalTeam">
+            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                Manage the provider description
+            </h2>
+            <ul class="govuk-list govuk-!-margin-bottom-0">
+                <li>
+                    <a class="govuk-link govuk-link--no-visited-state" href="#">
+                        Search for an apprenticeship training provider
+                    </a>
+                </li>
+            </ul>
+        </div>
+     </div>
 
 </main>
