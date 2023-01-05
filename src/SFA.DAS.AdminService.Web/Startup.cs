@@ -1,4 +1,3 @@
-using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -30,9 +29,13 @@ using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Azure;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.Configuration.AzureTableStorage;
+using SFA.DAS.DfESignIn.Auth.AppStart;
+using SFA.DAS.DfESignIn.Auth.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
@@ -49,12 +52,38 @@ namespace SFA.DAS.AdminService.Web
         private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
+
         public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
-            Configuration = configuration;
+
+            var config = new ConfigurationBuilder()
+                .AddConfiguration(configuration)
+                .SetBasePath(Directory.GetCurrentDirectory());
+#if DEBUG
+            if (!configuration.IsDev())
+            {
+                config.AddJsonFile("appsettings.json", false)
+                    .AddJsonFile("appsettings.Development.json", true);
+            }
+#endif
+
+            config.AddEnvironmentVariables();
+            if (!configuration.IsDev())
+            {
+                config.AddAzureTableStorage(options =>
+                    {
+                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                        options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                        options.EnvironmentName = configuration["EnvironmentName"];
+                        options.PreFixConfigurationKeys = false;
+                    }
+                );
+            }
+            Configuration = config.Build();
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -65,7 +94,11 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig(Configuration["EnvironmentName"], Configuration["ConfigurationStorageConnectionString"], Version, ServiceName).Result;
+            ApplicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
+                Configuration["EnvironmentName"], 
+                Configuration["ConfigurationStorageConnectionString"], 
+                Version, 
+                ServiceName).Result;
 
             services
                 .AddHttpClient<ApiClient>("ApiClient", config =>
@@ -230,6 +263,27 @@ namespace SFA.DAS.AdminService.Web
         }
 
         private void AddAuthentication(IServiceCollection services)
+        {
+            if (ApplicationConfiguration.UseDfeSignIn)
+                UseDfeSignInAuthentication(services);
+            else 
+                UseWsFederationAuthentication(services);
+        }
+
+        /// <summary>
+        /// Method to register the DfeSignIn Authentication services with AspNetCore Authentication Options.
+        /// </summary>
+        /// <param name="services">IServiceCollection.</param>
+        private void UseDfeSignInAuthentication(IServiceCollection services)
+        {
+            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth");
+        }
+
+        /// <summary>
+        /// Method to register the WsFederation Authentication services with AspNetCore Authentication Options.
+        /// </summary>
+        /// <param name="services">IServiceCollection.</param>
+        private void UseWsFederationAuthentication(IServiceCollection services)
         {
             services.AddAuthentication(sharedOptions =>
             {

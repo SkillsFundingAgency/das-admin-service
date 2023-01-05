@@ -25,5 +25,10 @@ namespace SFA.DAS.AdminService.Settings
 
         [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
         [JsonRequired] public RedisCacheSettings RedisCacheSettings { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the UseDfeSignIn property.
+        /// </summary>
+        [JsonRequired] public bool UseDfeSignIn { get; set; } = false;
     }
 }

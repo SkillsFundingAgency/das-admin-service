@@ -23,5 +23,10 @@ namespace SFA.DAS.AdminService.Settings
 
         FeatureToggles FeatureToggles { get; set; }
         RedisCacheSettings RedisCacheSettings { get; }
+
+        /// <summary>
+        /// Gets or Sets the UseDfeSignIn property.
+        /// </summary>
+        bool UseDfeSignIn { get; }
     }
 }

@@ -8,7 +8,7 @@ namespace SFA.DAS.AdminService.Settings
 {
     public static class ConfigurationService
     {
-        public static async Task<IWebConfiguration> GetConfig(string environment, string storageConnectionString, string version, string serviceName)
+        public static async Task<T> GetConfig<T>(string environment, string storageConnectionString, string version, string serviceName) where T : class
         {
             if (environment == null) throw new ArgumentNullException(nameof(environment));
             if (storageConnectionString == null) throw new ArgumentNullException(nameof(storageConnectionString));
@@ -31,9 +31,7 @@ namespace SFA.DAS.AdminService.Settings
             var dynResult = result.Result as DynamicTableEntity;
             var data = dynResult.Properties["Data"].StringValue;
 
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
-
-            return webConfig;
+            return JsonConvert.DeserializeObject<T>(data);
         }
     }
 }
