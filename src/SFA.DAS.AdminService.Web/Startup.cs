@@ -72,6 +72,7 @@ namespace SFA.DAS.AdminService.Web
             config.AddEnvironmentVariables();
             if (!configuration.IsDev())
             {
+                // read the DfeSignIn Configurations from Application settings.
                 config.AddAzureTableStorage(options =>
                     {
                         options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
@@ -276,7 +277,7 @@ namespace SFA.DAS.AdminService.Web
         /// <param name="services">IServiceCollection.</param>
         private void UseDfeSignInAuthentication(IServiceCollection services)
         {
-            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth");
+            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole));
         }
 
         /// <summary>
