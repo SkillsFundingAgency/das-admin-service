@@ -1,35 +1,30 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.AdminService.Settings;
+using Azure.Identity;
+using Azure.Core;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public class RoatpTokenService : IRoatpTokenService
     {
         private readonly IWebConfiguration _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        public RoatpTokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        private readonly IHostEnvironment _hostEnvironment;
+        public RoatpTokenService(IWebConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
             _configuration = configuration;
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostingEnvironment;
         }
-
-        public string GetToken()
+        public async Task<string> GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
+            if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tenantId = _configuration.RoatpApiAuthentication.TenantId;
-            var clientId = _configuration.RoatpApiAuthentication.ClientId;
-            var appKey = _configuration.RoatpApiAuthentication.ClientSecret;
-            var resourceId = _configuration.RoatpApiAuthentication.ResourceId;
+            var tokenProvider = new DefaultAzureCredential();
+            var tokenTask = await tokenProvider.GetTokenAsync(
+                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { });
 
-            var authority = $"https://login.microsoftonline.com/{tenantId}";
-            var clientCredential = new ClientCredential(clientId, appKey);
-            var context = new AuthenticationContext(authority, true);
-            var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
-
-            return result.AccessToken;
+            return tokenTask.Token;
         }
     }
 }

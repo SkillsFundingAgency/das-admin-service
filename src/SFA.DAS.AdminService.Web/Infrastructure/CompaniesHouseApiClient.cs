@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
-    public class CompaniesHouseApiClient:ICompaniesHouseApiClient
+    public class CompaniesHouseApiClient : ICompaniesHouseApiClient
     {
         private ILogger<CompaniesHouseApiClient> _logger;
         private readonly IRoatpApplyTokenService _tokenService;
@@ -22,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             _logger = logger;
 
             _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken().GetAwaiter().GetResult());
         }
 
         public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)

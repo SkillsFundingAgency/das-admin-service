@@ -1,28 +1,29 @@
 ﻿using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.Extensions.Hosting;
 using SFA.DAS.AdminService.Settings;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
     public class RoatpApplyTokenService : IRoatpApplyTokenService
     {
         private readonly IWebConfiguration _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        public RoatpApplyTokenService(IWebConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        private readonly IHostEnvironment _hostEnvironment;
+        public RoatpApplyTokenService(IWebConfiguration configuration, IHostEnvironment hostingEnvironment)
         {
             _configuration = configuration;
-            _hostingEnvironment = hostingEnvironment;
+            _hostEnvironment = hostingEnvironment;
         }
 
-        public string GetToken()
+        public async Task<string> GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
+            if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
             var azureServiceTokenProvider = new AzureServiceTokenProvider();
-            var generateTokenTask = azureServiceTokenProvider.GetAccessTokenAsync(_configuration.ApplyApiAuthentication.Identifier);
+            var generateTokenTask = await azureServiceTokenProvider.GetAccessTokenAsync(_configuration.ApplyApiAuthentication.Identifier);
 
-            return generateTokenTask.GetAwaiter().GetResult();
+            return generateTokenTask;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<T> Get<T>(string uri) where T : new()
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             try
             {
@@ -61,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<string> Get(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             try
             {
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<HttpResponseMessage> GetResponse(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             try
             {
@@ -115,7 +115,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             var serializeObject = JsonConvert.SerializeObject(model);
 
@@ -147,7 +147,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<U> Post<T, U>(string uri, T model) where U : new()
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             var serializeObject = JsonConvert.SerializeObject(model);
 
@@ -178,7 +178,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<HttpStatusCode> Put<T>(string uri, T model)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             var serializeObject = JsonConvert.SerializeObject(model);
 
@@ -210,7 +210,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<U> Put<T, U>(string uri, T model) where U : new()
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             var serializeObject = JsonConvert.SerializeObject(model);
 
@@ -240,7 +240,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         protected async Task<HttpStatusCode> Delete(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             try
             {

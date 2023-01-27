@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
@@ -96,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.Apply
         private async Task<string> GetString(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", await _tokenService.GetToken());
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
