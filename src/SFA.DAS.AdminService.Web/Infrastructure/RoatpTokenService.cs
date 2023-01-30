@@ -10,10 +10,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
-        public RoatpTokenService(IWebConfiguration configuration, IHostEnvironment hostingEnvironment)
+        public RoatpTokenService(IWebConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             _configuration = configuration;
-            _hostEnvironment = hostingEnvironment;
+            _hostEnvironment = hostEnvironment;
         }
         public async Task<string> GetToken()
         {
