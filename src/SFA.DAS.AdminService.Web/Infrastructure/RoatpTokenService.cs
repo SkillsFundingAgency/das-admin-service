@@ -2,7 +2,6 @@
 using SFA.DAS.AdminService.Settings;
 using Azure.Identity;
 using Azure.Core;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
