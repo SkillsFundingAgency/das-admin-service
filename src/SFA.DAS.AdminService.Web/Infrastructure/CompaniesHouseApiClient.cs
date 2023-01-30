@@ -22,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             _logger = logger;
 
             _httpClient = new HttpClient { BaseAddress = new Uri(baseUri) };
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken().GetAwaiter().GetResult());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
         public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
