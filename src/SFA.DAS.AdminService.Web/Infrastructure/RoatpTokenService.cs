@@ -15,16 +15,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             _configuration = configuration;
             _hostEnvironment = hostEnvironment;
         }
-        public async Task<string> GetToken()
+        public string GetToken()
         {
             if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
             var tokenProvider = new DefaultAzureCredential();
-            var tokenTask = await tokenProvider.GetTokenAsync(
-                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { });
+            var token = tokenProvider.GetTokenAsync(
+                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { }).Result;
 
-            return tokenTask.Token;
+            return token.Token;
         }
     }
 }
