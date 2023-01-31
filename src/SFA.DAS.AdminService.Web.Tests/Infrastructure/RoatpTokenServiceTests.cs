@@ -11,14 +11,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
     public class RoatpTokenServiceTests
     {
         [Test]
-        public void GetToken_Returns_Jwt_Token()
+        public void GetToken_Returns_Valid_Jwt_Token()
         {
             const string resource = @"https://citizenazuresfabisgov.onmicrosoft.com/das-at-roatpapi-as-ar";
-
             var sut = CreateSut(resource);
 
             var token = sut.GetToken();
-
             var tokenHandler = new JwtSecurityTokenHandler();
 
             Assert.That(tokenHandler.CanReadToken(token), Is.True);
