@@ -5,6 +5,7 @@ using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
 {
@@ -19,8 +20,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
 
             var token = sut.GetToken();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            Assert.That(tokenHandler.CanReadToken(token), Is.True);
+            var tokenAudience = new JwtSecurityTokenHandler().ReadJwtToken(token)
+                                                             .Claims
+                                                             .First()  // "aud" or audience - who or what the token is intended for
+                                                             .Value;
+
+            Assert.That(tokenAudience, Is.EqualTo(roAtpApiV1Resource));
         }
 
         private static RoatpTokenService CreateSut()

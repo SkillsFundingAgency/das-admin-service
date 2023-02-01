@@ -19,11 +19,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var tokenProvider = new DefaultAzureCredential();
-            var token = tokenProvider.GetTokenAsync(
+            var result = new DefaultAzureCredential().GetTokenAsync(
                 new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { }).Result;
 
-            return token.Token;
+            return result.Token;
         }
     }
 }
