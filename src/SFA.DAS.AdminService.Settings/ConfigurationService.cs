@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SFA.DAS.AdminService.Settings
 {
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Settings
             var dynResult = result.Result as DynamicTableEntity;
             var data = dynResult.Properties["Data"].StringValue;
 
-            var webConfig = JsonConvert.DeserializeObject<WebConfiguration>(data);
+            var webConfig = JsonSerializer.Deserialize<WebConfiguration>(data);
 
             return webConfig;
         }

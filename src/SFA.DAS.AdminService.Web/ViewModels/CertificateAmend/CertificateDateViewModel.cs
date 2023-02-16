@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AssessorService.Domain.Entities;
 
@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         {
             data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonSerializer.Serialize(data);
 
             return certificate;
         }

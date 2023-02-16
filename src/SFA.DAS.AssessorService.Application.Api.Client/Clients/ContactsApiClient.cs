@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -164,7 +164,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         public async Task MigrateSingleContactToApply(System.Guid signinId)
         {
             var signinIdWrapper = new SigninIdWrapper(signinId);
-            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonConvert.SerializeObject(signinIdWrapper)}");
+            _logger.LogInformation($"MigrateSingleContactToApply json being POSTed: {JsonSerializer.Serialize(signinIdWrapper)}");
             using (var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/contacts/MigrateSingleContactToApply"))
             {
                 await PostPutRequest(request, signinIdWrapper);

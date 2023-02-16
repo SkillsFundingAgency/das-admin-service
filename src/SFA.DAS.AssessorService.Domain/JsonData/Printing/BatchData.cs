@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
 {
@@ -9,12 +9,14 @@ namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
         public DateTime BatchDate { get; set; }
         public int PostalContactCount { get; set; }
         public int TotalCertificateCount { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? PrintedDate { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? PostedDate { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? DateOfResponse { get; set; }
     }
 
@@ -25,12 +27,14 @@ namespace SFA.DAS.AssessorService.Domain.JsonData.Printing
         public DateTime BatchDate { get; set; }
         public int PostalContactCount { get; set; }
         public int TotalCertificateCount { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? PrintedDate { get; set; }
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? PostedDate { get; set; }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? DateOfResponse { get; set; }
     }
 }

@@ -4,9 +4,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using SFA.DAS.AssessorService.Application.Api.Client.Exceptions;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
@@ -17,10 +16,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
         protected readonly IAzureTokenService _azureTokenService;
         protected readonly HttpClient HttpClient;
 
-        protected readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings
+        protected readonly JsonSerializerOptions _jsonSettings = new()
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
         protected AzureApiClientBase(string baseUri, IAzureTokenService tokenService, ILogger<AzureApiClientBase> logger)
@@ -67,7 +66,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                 if (result.StatusCode == HttpStatusCode.OK)
                 {
                     var json = await result.Content.ReadAsStringAsync();
-                    return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, _jsonSettings));
+                    return await Task.Factory.StartNew<T>(() => JsonSerializer.Deserialize<T>(json, _jsonSettings));
                 }
                 if (result.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -87,7 +86,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
             requestMessage.Content = new StringContent(serializeObject,
                 System.Text.Encoding.UTF8, "application/json");
 
@@ -101,7 +100,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
                     || response.StatusCode == HttpStatusCode.Created
                     || response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, _jsonSettings));
+                    return await Task.Factory.StartNew<U>(() => JsonSerializer.Deserialize<U>(json, _jsonSettings));
                 }
                 else
                 {
@@ -113,7 +112,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Azure
 
         protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
             requestMessage.Content = new StringContent(serializeObject,
                 System.Text.Encoding.UTF8, "application/json");
 

@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;

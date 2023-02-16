@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -119,7 +119,7 @@ namespace SFA.DAS.NLog.Targets.Redis.DotNetCore
 
         private string CreateRedisJsonValue(IDictionary<object, object> properties)
         {
-            return JsonConvert.SerializeObject(properties);
+            return JsonSerializer.Serialize(properties);
         }
 
     }

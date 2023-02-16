@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -149,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -180,7 +180,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -212,7 +212,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -286,7 +286,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             try
             {
-                result = JsonConvert.DeserializeObject<T>(json);
+                result = JsonSerializer.Deserialize<T>(json);
                 return true;
             }
             catch (JsonException)

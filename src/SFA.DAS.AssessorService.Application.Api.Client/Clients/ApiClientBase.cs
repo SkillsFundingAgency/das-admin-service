@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
@@ -22,10 +22,10 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
 
-        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        protected readonly JsonSerializerOptions JsonSettings = new()
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
         protected ApiClientBase(string baseUri, ITokenService tokenService, ILogger<ApiClientBase> logger)
@@ -102,7 +102,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             {
                 // NOTE: Struct values are valid JSON. For example: 'True'
                 var json = await result.Content.ReadAsStringAsync();
-                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
+                return await Task.Factory.StartNew(() => JsonSerializer.Deserialize<T>(json, JsonSettings));
             }
 
             if (result.StatusCode == HttpStatusCode.NotFound)
@@ -125,7 +125,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
           
             HttpRequestMessage clonedRequest = null;
             var response = await _retryPolicy.ExecuteAsync(async () =>
@@ -146,7 +146,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 || response.StatusCode == HttpStatusCode.Created
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, JsonSettings));
+                return await Task.Factory.StartNew<U>(() => JsonSerializer.Deserialize<U>(json, JsonSettings));
             }
             else
             {
@@ -157,7 +157,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         protected async Task PostPutRequest<T>(HttpRequestMessage requestMessage, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);                     
+            var serializeObject = JsonSerializer.Serialize(model);                     
             HttpRequestMessage clonedRequest = null;
             var response = await _retryPolicy.ExecuteAsync(async () =>
             {
@@ -213,7 +213,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        protected async Task<U> PostRequestWithFileAndResponse<U>(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent, JsonSerializerSettings setting)
+        protected async Task<U> PostRequestWithFileAndResponse<U>(HttpRequestMessage requestMessage, MultipartFormDataContent formDataContent, JsonSerializerOptions options)
         {
             HttpRequestMessage clonedRequest = null;
 
@@ -234,7 +234,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
 
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, setting));
+                return await Task.Factory.StartNew<U>(() => JsonSerializer.Deserialize<U>(json, options));
             }
             else
             {
@@ -243,9 +243,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model, JsonSerializerSettings setting)
+        protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model, JsonSerializerOptions options)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             HttpRequestMessage clonedRequest = null;
             var response = await _retryPolicy.ExecuteAsync(async () =>
@@ -267,7 +267,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
 
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json, setting));
+                return await Task.Factory.StartNew<U>(() => JsonSerializer.Deserialize<U>(json, options));
             }
             else
             {
@@ -294,7 +294,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 || response.StatusCode == HttpStatusCode.NoContent)
             {
 
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
+                return await Task.Factory.StartNew<U>(() => JsonSerializer.Deserialize<U>(json));
             }
             else
             {

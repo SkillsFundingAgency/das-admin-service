@@ -3,7 +3,7 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.NLog.Targets.Redis.DotNetCore;
 namespace SFA.DAS.AssessorService.NLog.Targets.Redis
 {
@@ -43,7 +43,7 @@ namespace SFA.DAS.AssessorService.NLog.Targets.Redis
                 case "System.Int64":
                     return Convert.ToInt64(field, formatProvider);
                 case "System.Object":
-                    return JsonConvert.DeserializeObject<ExpandoObject>(field).ReplaceDotInKeys();
+                    return JsonSerializer.Deserialize<ExpandoObject>(field).ReplaceDotInKeys();
                 default:
                     return field;
             }

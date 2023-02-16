@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Diagnostics.CodeAnalysis;
 
 namespace SFA.DAS.AdminService.Common.Infrastructure.Firewall
@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure.Firewall
 
         public string StatusDescription { get; private set; }
 
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Message { get; private set; }
 
         public ApiError()

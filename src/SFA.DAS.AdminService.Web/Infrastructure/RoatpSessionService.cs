@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AdminService.Web.Infrastructure
 {
-    using Newtonsoft.Json;
+    using System.Text.Json;
     using ViewModels.Roatp;
 
     public class RoatpSessionService : IRoatpSessionService
@@ -24,14 +24,14 @@
             {
                 return null;
             }
-            var model = JsonConvert.DeserializeObject<AddOrganisationViewModel>(modelJson);
+            var model = JsonSerializer.Deserialize<AddOrganisationViewModel>(modelJson);
 
             return model;
         }
 
         public void SetAddOrganisationDetails(AddOrganisationViewModel model)
         {
-            var modelJson = JsonConvert.SerializeObject(model);
+            var modelJson = JsonSerializer.Serialize(model);
 
             _sessionService.Set(_addOrganisationSessionKey, modelJson);
         }
@@ -43,7 +43,7 @@
 
         public void SetSearchResults(OrganisationSearchResultsViewModel model)
         {
-            var modelJson = JsonConvert.SerializeObject(model);
+            var modelJson = JsonSerializer.Serialize(model);
             _sessionService.Set(_searchResultsSessionKey, modelJson);
         }
 
@@ -55,7 +55,7 @@
             {
                 return null;
             }
-            var model = JsonConvert.DeserializeObject<OrganisationSearchResultsViewModel>(modelJson);
+            var model = JsonSerializer.Deserialize<OrganisationSearchResultsViewModel>(modelJson);
 
             return model;
         }

@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Azure
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
     using System;
     using System.Collections.Generic;
 
@@ -8,7 +8,7 @@
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-user-entity
     public class AzureUser
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string AzureId { get; set; }
         [JsonIgnore]
         public string Id => AzureId?.Replace("/users/", string.Empty);

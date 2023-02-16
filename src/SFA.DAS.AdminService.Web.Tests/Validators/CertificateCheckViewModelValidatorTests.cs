@@ -3,7 +3,7 @@ using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation.Results;
 using Moq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
@@ -307,7 +307,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 _certificate.StandardUId = standardUId;
                 var certificateData = _fixture.Create<CertificateData>();
                 certificateData.CourseOption = option;
-                _certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                _certificate.CertificateData = JsonSerializer.Serialize(certificateData);
                 _certificate.OrganisationId = _organisation.Id;
 
                 _apiClient.Setup(p => p.GetCertificate(_certificate.Id, It.IsAny<bool>())).ReturnsAsync(_certificate);

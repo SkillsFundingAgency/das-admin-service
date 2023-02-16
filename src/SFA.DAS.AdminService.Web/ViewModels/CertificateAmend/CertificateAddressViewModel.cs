@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             certData.ContactAddLine4 = City;
             certData.ContactPostCode = Postcode;
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = JsonSerializer.Serialize(certData);
 
             return certificate;
         }

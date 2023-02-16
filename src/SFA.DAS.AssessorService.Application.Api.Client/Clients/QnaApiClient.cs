@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
@@ -12,6 +11,9 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Answer = SFA.DAS.QnA.Api.Types.Page.Answer;
 using Page = SFA.DAS.QnA.Api.Types.Page.Page;
+using System.Text.Json.Serialization;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
@@ -144,9 +146,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple"))
             {
-                JsonSerializerSettings settings = new JsonSerializerSettings();
-                settings.Converters.Add(new AddResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse> (request, answer, settings);
+                JsonSerializerOptions options = new();
+                options.Converters.Add(new AddResultConverter());
+                return await PostPutRequestWithResponse<List<Answer>, AddPageAnswerResponse> (request, answer, options);
             }
         }
 
@@ -162,9 +164,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         {
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}"))
             {
-                JsonSerializerSettings settings = new JsonSerializerSettings();
-                settings.Converters.Add(new SetResultConverter());
-                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,settings);
+                JsonSerializerOptions options = new();
+                options.Converters.Add(new SetResultConverter());
+                return await PostPutRequestWithResponse<List<Answer>, SetPageAnswersResponse>(request, answer,options);
             }
         }
 
@@ -179,9 +181,9 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                     { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
                     formDataContent.Add(fileContent, file.Name, file.FileName);
                 }
-                JsonSerializerSettings settings = new JsonSerializerSettings();
-                settings.Converters.Add(new SetResultConverter());
-                return await PostRequestWithFileAndResponse<SetPageAnswersResponse>(request, formDataContent, settings);
+                JsonSerializerOptions options = new();
+                options.Converters.Add(new SetResultConverter());
+                return await PostRequestWithFileAndResponse<SetPageAnswersResponse>(request, formDataContent, options);
             }
         }
 
@@ -218,64 +220,36 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        private class SetResultConverter : JsonConverter
+        private class SetResultConverter : JsonConverter<SetPageAnswersResponse>
         {
-            public override bool CanConvert(Type objectType)
+            public override SetPageAnswersResponse Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                return (objectType == typeof(SetPageAnswersResponse));
-            }
-
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                JObject jo = JObject.Load(reader);
+                var jo = JsonNode.Parse(ref reader).AsObject();
                 string nextAction = (string)jo["nextAction"];
                 string nextActionId = (string)jo["nextActionId"];
-                List<KeyValuePair<string, string>> errors = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString(Formatting.None));
-                SetPageAnswersResponse result;
-                if (errors == null)
-                    result = new SetPageAnswersResponse(nextAction, nextActionId);
-                else
-                    result = new SetPageAnswersResponse(errors);
-                return result;
+                var errors = JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString());
+                
+                return errors == null ? new SetPageAnswersResponse(nextAction, nextActionId) : new SetPageAnswersResponse(errors);
             }
 
-            public override bool CanWrite
-            {
-                get { return false; }
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            public override void Write(Utf8JsonWriter writer, SetPageAnswersResponse value, JsonSerializerOptions options)
             {
                 throw new NotImplementedException();
             }
         }
 
-        private class AddResultConverter : JsonConverter
+        private class AddResultConverter : JsonConverter<AddPageAnswerResponse>
         {
-            public override bool CanConvert(Type objectType)
+            public override AddPageAnswerResponse Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                return (objectType == typeof(AddPageAnswerResponse));
+                var jo = JsonNode.Parse(ref reader).AsObject();
+                Page page = JsonSerializer.Deserialize<Page>(jo["page"].ToString());
+                var errors = JsonSerializer.Deserialize<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString());
+
+                return errors == null ? new AddPageAnswerResponse(page) : new AddPageAnswerResponse(errors);
             }
 
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                JObject jo = JObject.Load(reader);
-                Page page = JsonConvert.DeserializeObject<Page>(jo["page"].ToString(Formatting.None));
-                List<KeyValuePair<string, string>> errors = JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(jo["validationErrors"]?.ToString(Formatting.None));
-                AddPageAnswerResponse result;
-                if (errors == null)
-                    result = new AddPageAnswerResponse(page);
-                else
-                    result = new AddPageAnswerResponse(errors);
-                return result;
-            }
-
-            public override bool CanWrite
-            {
-                get { return false; }
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            public override void Write(Utf8JsonWriter writer, AddPageAnswerResponse value, JsonSerializerOptions options)
             {
                 throw new NotImplementedException();
             }

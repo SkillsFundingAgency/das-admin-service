@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
@@ -207,7 +207,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             int page = 1)
         {
             var certificate = await ApiClient.GetCertificate(certificateId);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = JsonSerializer.Deserialize<CertificateData>(certificate.CertificateData);
 
             return View(new CertificateAmendConfirmViewModel 
             { 
@@ -232,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Username = username
             });
 
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = JsonSerializer.Deserialize<CertificateData>(certificate.CertificateData);
 
             var nextScheduledRun = await ApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
 

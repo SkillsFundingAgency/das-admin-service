@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SFA.DAS.AssessorService.Domain.JsonData
 {
@@ -34,7 +34,7 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         public string IncidentNumber { get; set; }
         public EpaDetails EpaDetails { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public CertificateSendTo SendTo { get; set; }
         public List<string> ReprintReasons { get; set; }
         public List<string> AmendReasons { get; set; }
@@ -61,16 +61,5 @@ namespace SFA.DAS.AssessorService.Domain.JsonData
         None,
         Apprentice,
         Employer
-    }
-
-    public class CertificateSendToEnumConverter : StringEnumConverter
-    {
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (string.IsNullOrEmpty(reader.Value.ToString()))
-                return CertificateSendTo.None;
-
-            return base.ReadJson(reader, objectType, existingValue, serializer);
-        }
     }
 }

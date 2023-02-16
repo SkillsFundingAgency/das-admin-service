@@ -1,4 +1,4 @@
-﻿@using Newtonsoft.Json;
+﻿@using System.Text.Json;
 @using SFA.DAS.AdminService.Web.ViewModels.Register;
 @using SFA.DAS.AdminService.Web.ViewModels.Shared;
 @using SFA.DAS.AdminService.Web.Domain.Apply;
@@ -22,7 +22,7 @@
             <th scope="col" class="govuk-table__header govuk-!-width-one-half">
                 <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
                                             data-sortColumn="@OrganisationStandardSortColumn.StandardName"
-                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            data-all-route-data="@JsonSerializer.Serialize(new { organisationId = Model.OrganisationId})"
                                             asp-action="@Model.PaginationViewModel.SortColumnAction"
                                             asp-controller="Register"
                                             asp-route-organisationId="@Model.OrganisationId"
@@ -34,7 +34,7 @@
             <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
                                             data-sortColumn="@OrganisationStandardSortColumn.StandardCode"
-                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            data-all-route-data="@JsonSerializer.Serialize(new { organisationId = Model.OrganisationId})"
                                             asp-action="@Model.PaginationViewModel.SortColumnAction"
                                             asp-controller="Register"
                                             asp-route-organisationId="@Model.OrganisationId"
@@ -46,7 +46,7 @@
             <th scope="col" class="govuk-table__header govuk-table__header--numeric govuk-!-width-one-quarter">
                 <sfa-sortable-column-header class=@(Model.PaginationViewModel.Fragment + "-sort govuk-link")
                                             data-sortColumn="@OrganisationStandardSortColumn.DateApproved"
-                                            data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                                            data-all-route-data="@JsonSerializer.Serialize(new { organisationId = Model.OrganisationId})"
                                             asp-action="@Model.PaginationViewModel.SortColumnAction"
                                             asp-controller="Register"
                                             asp-route-organisationId="@Model.OrganisationId"
@@ -89,7 +89,7 @@
             <div>
                 @Html.HiddenFor(m => m.OrganisationId)
                 <select class=@(Model.PaginationViewModel.Fragment + "-per-page govuk-select govuk-!-margin-right-2")
-                        data-all-route-data="@JsonConvert.SerializeObject(new { organisationId = Model.OrganisationId})"
+                        data-all-route-data="@JsonSerializer.Serialize(new { organisationId = Model.OrganisationId})"
                         name="ItemsPerPage"
                         asp-for="PaginationViewModel.ItemsPerPage"
                         asp-items="Model.PaginationViewModel.ItemsPerPageList">

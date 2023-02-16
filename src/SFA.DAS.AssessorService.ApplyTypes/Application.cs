@@ -1,4 +1,5 @@
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.AssessorService.ApplyTypes.CharityCommission;
 using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
@@ -142,7 +143,7 @@ namespace SFA.DAS.AssessorService.ApplyTypes
             set { JsonValue = value; }
         }
 
-        [JsonProperty(PropertyName = "Value")]
+        [JsonPropertyName("Value")]
         public dynamic JsonValue { get; set; }
 
         public override string ToString()

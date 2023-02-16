@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.OverallGrade = SelectedGrade;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonSerializer.Serialize(data);
             
             return certificate;
         }

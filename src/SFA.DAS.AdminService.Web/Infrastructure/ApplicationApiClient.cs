@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Apply.Review;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -48,7 +48,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
@@ -61,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) { }
@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             using (var response = await _client.PutAsync(new Uri(uri, UriKind.Relative),
                 new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))

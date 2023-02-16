@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> SendTo(CertificateSendToViewModel vm)
         {
             var certificate = await ApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = JsonSerializer.Deserialize<CertificateData>(certificate.CertificateData);
 
             if (certData.SendTo != vm.SendTo)
             {

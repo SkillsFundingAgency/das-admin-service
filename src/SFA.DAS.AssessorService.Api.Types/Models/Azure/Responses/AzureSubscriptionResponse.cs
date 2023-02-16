@@ -1,13 +1,13 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Azure
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
     using System.Collections.Generic;
 
     public class AzureSubscriptionResponse
     {
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         public IEnumerable<AzureSubscription> Subscriptions { get; set; }
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public int TotalCount { get; set; }
         public string NextLink { get; set; }
     }

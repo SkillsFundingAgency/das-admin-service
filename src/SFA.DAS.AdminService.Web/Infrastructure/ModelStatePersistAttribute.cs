@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -91,12 +91,12 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
                     ErrorMessages = kvp.Value.Errors.Select(err => err.ErrorMessage).ToList(),
                 });
 
-            return JsonConvert.SerializeObject(serializableModelState);
+            return JsonSerializer.Serialize(serializableModelState);
         }
 
         private ModelStateDictionary DeserializeModelState(string serializedModelState)
         {
-            var deserializedModelState = JsonConvert.DeserializeObject<List<ModelStateTransferValue>>(serializedModelState);
+            var deserializedModelState = JsonSerializer.Deserialize<List<ModelStateTransferValue>>(serializedModelState);
             var modelState = new ModelStateDictionary();
 
             foreach (var item in deserializedModelState)

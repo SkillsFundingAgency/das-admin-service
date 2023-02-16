@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.ApplyTypes;
@@ -70,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                         var question = pg.Questions.SingleOrDefault(q => q.QuestionId == answer.QuestionId);
                         if (question != null && question.Input.Type == "Address")
                         {
-                            Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value));
+                            Addresses.Add(answer.QuestionId, JsonSerializer.Deserialize<AddressViewModel>(answer.Value));
                         }
                     }
                 }

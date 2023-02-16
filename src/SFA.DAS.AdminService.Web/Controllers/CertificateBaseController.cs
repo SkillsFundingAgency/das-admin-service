@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await ApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = JsonSerializer.Deserialize<CertificateData>(certificate.CertificateData);
 
             if(vm.RequiresReasonForChange && string.IsNullOrEmpty(vm.ReasonForChange))
             {

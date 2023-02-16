@@ -44,7 +44,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.8" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
 
@@ -58,6 +57,7 @@
     <PackageReference Include="Scrutor" Version="4.2.0" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.290" />
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>

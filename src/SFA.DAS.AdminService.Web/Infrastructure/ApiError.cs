@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
         public string StatusDescription { get; private set; }
 
-        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Message { get; private set; }
 
         public ApiError()

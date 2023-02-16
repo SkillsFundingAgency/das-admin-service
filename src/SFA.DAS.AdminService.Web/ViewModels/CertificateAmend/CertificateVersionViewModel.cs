@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         {
             certificate.StandardUId = StandardUId;
             certData.Version = Version;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = JsonSerializer.Serialize(certData);
             
             return certificate;
         }
