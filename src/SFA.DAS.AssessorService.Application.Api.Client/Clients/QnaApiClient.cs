@@ -1,19 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
-using SFA.DAS.QnA.Api.Types.Page;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Answer = SFA.DAS.QnA.Api.Types.Page.Answer;
 using Page = SFA.DAS.QnA.Api.Types.Page.Page;
-using System.Text.Json.Serialization;
-using System.Text.Json.Nodes;
-using Newtonsoft.Json.Linq;
 
 namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 {
