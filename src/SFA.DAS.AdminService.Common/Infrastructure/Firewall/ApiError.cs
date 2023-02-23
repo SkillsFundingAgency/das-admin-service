@@ -7,7 +7,6 @@ namespace SFA.DAS.AdminService.Common.Infrastructure.Firewall
     /// This is raised when the WAF (Web Application Firewall) intercepts what it thinks is a suspicious request
     /// or there is an internal network issue.
     /// </summary>
-    [ExcludeFromCodeCoverage]
     public class ApiError
     {
         [JsonInclude]
@@ -16,6 +15,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure.Firewall
         [JsonInclude]
         public string StatusDescription { get; private set; }
 
+        [JsonInclude]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string Message { get; private set; }
 

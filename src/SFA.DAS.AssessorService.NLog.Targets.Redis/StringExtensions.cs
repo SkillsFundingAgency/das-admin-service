@@ -12,7 +12,7 @@ namespace SFA.DAS.AssessorService.NLog.Targets.Redis
     {
         private static IConfiguration _configuration;
 
-        static  StringExtensions()
+        static StringExtensions()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
