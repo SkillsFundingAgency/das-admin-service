@@ -10,8 +10,10 @@ namespace SFA.DAS.AdminService.Common.Infrastructure.Firewall
     [ExcludeFromCodeCoverage]
     public class ApiError
     {
+        [JsonInclude]
         public int StatusCode { get; private set; }
 
+        [JsonInclude]
         public string StatusDescription { get; private set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
