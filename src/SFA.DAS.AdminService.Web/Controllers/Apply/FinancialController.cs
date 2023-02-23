@@ -213,19 +213,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             var orgId = applicationFromAssessor.OrganisationId;
             var organisation = await _apiClient.GetOrganisation(orgId);
+            var organisationData = organisation.OrganisationData;
+            var referenceNumber = applicationFromAssessor.ApplyData.Apply.ReferenceNumber;
 
-            var application = new AssessorService.ApplyTypes.Application
-            {
-                ApplicationData = new ApplicationData
-                {
-                    ReferenceNumber = applicationFromAssessor.ApplyData.Apply.ReferenceNumber
-                },
-                ApplyingOrganisation = organisation,
-                ApplyingOrganisationId = orgId,
-                ApplicationStatus = applicationFromAssessor.ApplicationStatus
-            };
-
-            return new FinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
+            return new FinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, 
+                referenceNumber, organisation.Id, organisation.EndPointAssessorUkprn, 
+                organisationData.LegalName, organisationData.TradingName, organisationData.ProviderName, organisationData.CompanyNumber,
+                financialSection, grade);
         }
 
         private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)

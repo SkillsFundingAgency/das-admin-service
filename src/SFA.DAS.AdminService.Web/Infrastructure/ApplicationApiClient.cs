@@ -170,22 +170,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         }
         #endregion
 
-        #region Feedback
-        public async Task AddFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Feedback feedback)
-        {
-            await Post(
-                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/AddFeedback",
-                feedback);
-        }
-
-        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid feedbackId)
-        {
-            await Post(
-                $"Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback",
-                feedbackId);
-        }
-        #endregion
-
         #region Answer Injection Service
         public async Task UpdateFinancials(UpdateFinancialsRequest updateFinancialsRequest)
         {
