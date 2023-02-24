@@ -4,7 +4,7 @@ using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
             ApiClient = SetupApiClient(mockedApiClientLogger);
 
-            CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
+            CertificateData = JsonSerializer.Deserialize<CertificateData>(Certificate.CertificateData);
         }
 
         private static Mock<IHttpContextAccessor> SetupMockedHttpContextAccessor()
@@ -62,17 +62,17 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             client.BaseAddress = new Uri("http://localhost:59022/");
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/{Certificate.Id}")
-                .Respond("application/json", JsonConvert.SerializeObject(Certificate));
+                .Respond("application/json", JsonSerializer.Serialize(Certificate));
 
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
-                .Respond("application/json", JsonConvert.SerializeObject(Certificate));
+                .Respond("application/json", JsonSerializer.Serialize(Certificate));
 
             var options = SetupOptions();
             mockHttp.When($"http://localhost:59022/api/v1/standard-version/standard-options/StandardUId1")
-                .Respond("application/json", JsonConvert.SerializeObject(options));
+                .Respond("application/json", JsonSerializer.Serialize(options));
 
             mockHttp.When($"http://localhost:59022/api/v1/certificates/update")
-                .Respond("application/json", JsonConvert.SerializeObject(Certificate));
+                .Respond("application/json", JsonSerializer.Serialize(Certificate));
 
             var apiClient = new ApiClient(client, tokenServiceMock.Object);
             return apiClient;
@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         {
             var certificateId = Guid.NewGuid();
             var certificate = new Builder().CreateNew<Certificate>()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
+                .With(q => q.CertificateData = JsonSerializer.Serialize(new Builder()
                     .CreateNew<CertificateData>()
                     .With(x => x.AchievementDate = DateTime.Now)
                     .Build()))

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = JsonSerializer.Serialize(data);
             
             return certificate;
         }

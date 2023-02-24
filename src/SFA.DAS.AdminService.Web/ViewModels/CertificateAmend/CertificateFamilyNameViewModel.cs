@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             certData.LearnerFamilyName = FamilyName;
             certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = JsonSerializer.Serialize(certData);
             return certificate;
         }
     }

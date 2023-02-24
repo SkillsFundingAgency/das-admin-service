@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -28,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         public void Set(string key, object value)
         {
             _httpContextAccessor.HttpContext.Session.SetString(_environment + "_" + key,
-                JsonConvert.SerializeObject(value));
+                JsonSerializer.Serialize(value));
         }
 
         public void Set(string key, string stringValue)
@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
 
             var value = session.GetString(key);
 
-            return string.IsNullOrWhiteSpace(value) ? default(T): JsonConvert.DeserializeObject<T>(value);
+            return string.IsNullOrWhiteSpace(value) ? default(T): JsonSerializer.Deserialize<T>(value);
         }
 
         public bool Exists(string key)

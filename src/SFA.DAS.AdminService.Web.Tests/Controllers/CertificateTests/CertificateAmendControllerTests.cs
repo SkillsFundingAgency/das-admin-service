@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -276,7 +276,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
                 if (routeValues != null)
                 {
-                    ExpandoObject eoRouteValues = JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(routeValues));
+                    ExpandoObject eoRouteValues = JsonSerializer.Deserialize<ExpandoObject>(JsonSerializer.Serialize(routeValues));
                     foreach (var kvp in eoRouteValues)
                     {
                         redirectResult.RouteValues.TryGetValue(kvp.Key, out object value);

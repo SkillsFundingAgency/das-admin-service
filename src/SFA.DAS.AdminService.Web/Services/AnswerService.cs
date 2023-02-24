@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -164,21 +164,21 @@ namespace SFA.DAS.AdminService.Web.Services
             return command;
         }
 
-        private string GetAnswer(Dictionary<string, object> applicationData, string questionTag)
+        private static string GetAnswer(Dictionary<string, object> applicationData, string questionTag)
         {
             return applicationData.ContainsKey(questionTag) ? applicationData[questionTag]?.ToString() : null;
         }
 
-        private JObject GetJsonAnswer(Dictionary<string, object> applicationData, string questionTag)
+        private static JsonObject GetJsonAnswer(Dictionary<string, object> applicationData, string questionTag)
         {
             try
             {
                 var json = GetAnswer(applicationData, questionTag);
-                return JObject.Parse(json);
+                return JsonNode.Parse(json).AsObject();
             }
             catch
             {
-                return default(JObject);
+                return null;
             }
         }
     }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AdminService.Web.Controllers;
@@ -68,10 +68,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             client.BaseAddress = new Uri("http://localhost:59022/");
 
             mockHttp.When($"/api/v1/staffsearch/batchlog?page=1")
-              .Respond("application/json", JsonConvert.SerializeObject(_staffBatchLogResult));
+              .Respond("application/json", JsonSerializer.Serialize(_staffBatchLogResult));
 
             mockHttp.When($"/api/v1/staffsearch/batch?batchNumber=1&page=1")
-               .Respond("application/json", JsonConvert.SerializeObject(_staffBatchSearchResponse));
+               .Respond("application/json", JsonSerializer.Serialize(_staffBatchSearchResponse));
 
             var apiClient = new ApiClient(client, Mock.Of<ITokenService>());
             return apiClient;

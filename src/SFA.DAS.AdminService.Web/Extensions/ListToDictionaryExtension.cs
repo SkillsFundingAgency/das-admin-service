@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 
 namespace SFA.DAS.AdminService.Web.Extensions
@@ -16,8 +16,8 @@ namespace SFA.DAS.AdminService.Web.Extensions
 
         private static Dictionary<string, object> ToDictionary<TValue>(object obj, string excelAttributeMapping, string[] datesToFormatToShortString)
         {
-            var json = JsonConvert.SerializeObject(obj);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, TValue>>(json);
+            var json = JsonSerializer.Serialize(obj);
+            var dictionary = JsonSerializer.Deserialize<Dictionary<string, TValue>>(json);
             var destDictionary = new Dictionary<string, object>();
             MatchAndCreateNewMapping(excelAttributeMapping, dictionary, destDictionary, datesToFormatToShortString);
             return destDictionary;
@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Extensions
 
         private static void MatchAndCreateNewMapping(string mappingJson, dynamic sourceJson, IDictionary<string, object> destinationDictionary, string[] datesToFormatToShortString)
         {
-            var mappings = JsonConvert.DeserializeObject<Dictionary<string, object>>(mappingJson);
+            var mappings = JsonSerializer.Deserialize<Dictionary<string, object>>(mappingJson);
             foreach (var mapping in mappings)
             {
                 foreach (KeyValuePair<string, object> source in sourceJson)

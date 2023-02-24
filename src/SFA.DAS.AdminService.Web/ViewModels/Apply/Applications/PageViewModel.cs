@@ -1,5 +1,5 @@
 ﻿
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.QnA.Api.Types;
 using SFA.DAS.QnA.Api.Types.Page;
 using System;
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
                             if (question != null)
                             {
                                 if(question.Input.Type == "Address")
-                                    Addresses.Add(answer.QuestionId, JsonConvert.DeserializeObject<AddressViewModel>(answer.Value));
+                                    Addresses.Add(answer.QuestionId, JsonSerializer.Deserialize<AddressViewModel>(answer.Value));
                             }
                         }
                     }

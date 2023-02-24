@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Post<T, U>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -144,7 +144,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpResponseMessage> PostResponse<T>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -170,7 +170,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpStatusCode> Put<T>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -198,7 +198,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Put<T, U>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -225,7 +225,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpResponseMessage> PutResponse<T>(string uri, T model)
         {
-            var serializeObject = JsonConvert.SerializeObject(model);
+            var serializeObject = JsonSerializer.Serialize(model);
 
             try
             {
@@ -312,7 +312,7 @@ namespace SFA.DAS.AdminService.Common.Infrastructure
         {
             try
             {
-                result = JsonConvert.DeserializeObject<T>(json);
+                result = JsonSerializer.Deserialize<T>(json);
                 return true;
             }
             catch (JsonException)

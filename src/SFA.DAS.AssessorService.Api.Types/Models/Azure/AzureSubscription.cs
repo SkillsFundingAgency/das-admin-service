@@ -1,17 +1,17 @@
 ﻿namespace SFA.DAS.AssessorService.Api.Types.Models.Azure
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
     using System;
 
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-contract-reference#Subscription
     // https://docs.microsoft.com/en-us/rest/api/apimanagement/apimanagementrest/azure-api-management-rest-api-subscription-entity
     public class AzureSubscription
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string AzureId { get; set; }
-        [JsonProperty("userId")]
+        [JsonPropertyName("userId")]
         public string AzureUserId { get; set; }
-        [JsonProperty("productId")]
+        [JsonPropertyName("productId")]
         public string AzureProductId { get; set; }
 
         [JsonIgnore]

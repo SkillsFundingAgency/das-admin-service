@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
         {
             certData.CourseOption = SelectedOption;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = JsonSerializer.Serialize(certData);
 
             return certificate;
         }

@@ -2,7 +2,7 @@
 using System.Globalization;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.AdminService.Web.Controllers;

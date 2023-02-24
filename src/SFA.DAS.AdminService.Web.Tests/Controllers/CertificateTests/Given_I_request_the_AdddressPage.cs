@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         public void ThenShouldReturnValidAdddressLine1()
         {         
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
+            var certificateData = JsonSerializer.Deserialize<CertificateData>(Certificate.CertificateData);
 
             _viewModelResponse.Id.Should().Be(Certificate.Id);
             _viewModelResponse.AddressLine1.Should().Be(certificateData.ContactAddLine1);           

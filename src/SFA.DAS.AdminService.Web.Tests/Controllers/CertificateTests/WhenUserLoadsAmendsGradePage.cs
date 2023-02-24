@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             var result = _result as ViewResult;
             var model = result.Model as CertificateGradeViewModel;
 
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
+            var certificateData = JsonSerializer.Deserialize<CertificateData>(Certificate.CertificateData);
 
             model.Id.Should().Be(Certificate.Id);
             model.SelectedGrade.Should().Be(certificateData.OverallGrade);            

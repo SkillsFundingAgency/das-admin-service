@@ -4,7 +4,6 @@ using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 {
-    //TODO: Remove after Roatp FHA migration (APR-1823)
     public class FinancialApplicationViewModel
     {
         public string ApplicationReference { get; }
@@ -27,7 +26,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public FinancialApplicationViewModel() { }
 
-        public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)
+        public FinancialApplicationViewModel(Guid id, Guid applicationId, string applicationReferenceNumber, Guid applyingOrganisationId,
+            int? applyingOrganisationEndPointAssessorUkprn, string applyingOrganisationLegalName, string applyingOrganisationTradingName, 
+            string applyingOrganisationProviderName, string applyingOrganisationCompanyNumber, Section section, FinancialGrade grade)
         {
             Id = id;
             if (section != null)
@@ -41,22 +42,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
 
             SetupGradeAndFinancialDueDate(grade);
-            OrgId = application.ApplyingOrganisationId;
-
-            if (application.ApplicationData != null)
-            {
-                ApplicationReference = application.ApplicationData.ReferenceNumber;
-            }
-
-
-            if (application.ApplyingOrganisation?.OrganisationData != null)
-            {
-                Ukprn = application.ApplyingOrganisation.EndPointAssessorUkprn;
-                LegalName = application.ApplyingOrganisation.OrganisationData.LegalName;
-                TradingName = application.ApplyingOrganisation.OrganisationData.TradingName;
-                ProviderName = application.ApplyingOrganisation.OrganisationData.ProviderName;
-                CompanyNumber = application.ApplyingOrganisation.OrganisationData.CompanyNumber;
-            }
+            
+            OrgId = applyingOrganisationId;
+            ApplicationReference = applicationReferenceNumber;
+            Ukprn = applyingOrganisationEndPointAssessorUkprn;
+            LegalName = applyingOrganisationLegalName;
+            TradingName = applyingOrganisationTradingName;
+            ProviderName = applyingOrganisationProviderName;
+            CompanyNumber = applyingOrganisationCompanyNumber;
         }
 
         private void SetupGradeAndFinancialDueDate(FinancialGrade grade)
