@@ -4,6 +4,6 @@ namespace SFA.DAS.AdminService.Common.Settings
 {
     public class FeatureToggles : IFeatureToggles
     {
-        [JsonInclude] public bool EnableRoatpSnapshot { get; set; }
+        [JsonRequired] public bool EnableRoatpSnapshot { get; set; }
     }
 }

@@ -4,9 +4,9 @@ namespace SFA.DAS.AdminService.Common.Settings
 {
     public class RedisCacheSettings
     {
-        [JsonInclude] public string RedisConnectionString { get; set; }
-        [JsonInclude] public string DataProtectionKeysDatabase { get; set; }
-        [JsonInclude] public string SessionCachingDatabase { get; set; }
+        [JsonRequired] public string RedisConnectionString { get; set; }
+        [JsonRequired] public string DataProtectionKeysDatabase { get; set; }
+        [JsonRequired] public string SessionCachingDatabase { get; set; }
 
     }
 }

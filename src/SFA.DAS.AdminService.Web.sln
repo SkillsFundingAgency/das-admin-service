@@ -25,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Common.Testing", "SFA.DAS.AdminService.Common.Testing\SFA.DAS.AdminService.Common.Testing.csproj", "{B4469D4F-9C9A-4F0B-B8AF-55E93A4A308B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.AdminService.Common.UnitTests", "SFA.DAS.AdminService.Common.UnitTests\SFA.DAS.AdminService.Common.UnitTests.csproj", "{E4B49E7F-5C86-48EF-B15D-8C30A9982ED0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Common.UnitTests", "SFA.DAS.AdminService.Common.UnitTests\SFA.DAS.AdminService.Common.UnitTests.csproj", "{E4B49E7F-5C86-48EF-B15D-8C30A9982ED0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Web.UnitTests", "SFA.DAS.AdminService.Web.UnitTests\SFA.DAS.AdminService.Web.UnitTests.csproj", "{F07B3326-5CF7-4CFC-90FE-38606A7425B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.AdminService.Web.Tests", "SFA.DAS.AdminService.Web.Tests\SFA.DAS.AdminService.Web.Tests.csproj", "{F07B3326-5CF7-4CFC-90FE-38606A7425B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

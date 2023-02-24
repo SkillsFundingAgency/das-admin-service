@@ -4,8 +4,8 @@ namespace SFA.DAS.AdminService.Common.Settings
 {
     public class ManagedIdentityApiAuthentication : IManagedIdentityApiAuthentication
     {
-        [JsonInclude] public string Identifier { get; set; }
+        [JsonRequired] public string Identifier { get; set; }
 
-        [JsonInclude] public string ApiBaseAddress { get; set; }
+        [JsonRequired] public string ApiBaseAddress { get; set; }
     }
 }
