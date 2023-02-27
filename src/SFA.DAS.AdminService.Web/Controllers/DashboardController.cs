@@ -71,7 +71,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 RoatpOversightBaseUrl = _configuration.RoatpOversightBaseUrl,
                 RoatpAssessorBaseUrl = _configuration.RoatpAssessorBaseUrl,
                 RoatpGatewayBaseUrl = _configuration.RoatpGatewayBaseUrl,
-                RoatpFinanceBaseUrl = _configuration.RoatpFinanceBaseUrl
+                RoatpFinanceBaseUrl = _configuration.RoatpFinanceBaseUrl,
+                RoatpProviderModerationBaseUrl = _configuration.RoatpProviderModerationBaseUrl
             };
 
             return View(viewModel);
