@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             var validator = new AddOrganisationViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);
 
-            Assert.AreEqual(0, validationResult.Errors.Count);
+            Assert.That(validationResult.Errors, Is.Empty);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             var validator = new AddOrganisationViaUkprnViewModelValidator(_roatpOrganisationValidator.Object, _apiClient.Object);
             var validationResult = validator.Validate(_viewModel);
 
-            Assert.AreEqual(1, validationResult.Errors.Count);
+            Assert.That(validationResult.Errors.Count, Is.EqualTo(1));
         }
     }
 }

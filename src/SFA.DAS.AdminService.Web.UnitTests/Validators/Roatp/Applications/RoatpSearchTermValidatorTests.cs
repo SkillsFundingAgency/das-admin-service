@@ -15,9 +15,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
         {
             var response = _validator.Validate(null);
 
-            Assert.IsFalse(response.IsValid);
-            Assert.AreEqual($"Enter an organisation name or UKPRN", response.Errors.First().ErrorMessage);
-            Assert.AreEqual("SearchTerm", response.Errors.First().Field);
+            Assert.That(response.IsValid, Is.False);
+            Assert.That(response.Errors.First().ErrorMessage, Is.EqualTo($"Enter an organisation name or UKPRN"));
+            Assert.That(response.Errors.First().Field, Is.EqualTo("SearchTerm"));
         }
 
         [Test]
@@ -26,9 +26,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var searchTerm = string.Empty;
             var response = _validator.Validate(searchTerm);
 
-            Assert.IsFalse(response.IsValid);
-            Assert.AreEqual($"Enter an organisation name or UKPRN", response.Errors.First().ErrorMessage);
-            Assert.AreEqual("SearchTerm", response.Errors.First().Field);
+            Assert.That(response.IsValid, Is.False);
+            Assert.That(response.Errors.First().ErrorMessage, Is.EqualTo($"Enter an organisation name or UKPRN"));
+            Assert.That(response.Errors.First().Field, Is.EqualTo("SearchTerm"));
         }
 
         [Test]
@@ -37,9 +37,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var searchTerm = string.Concat(Enumerable.Repeat(" ", MinimumLength)); ;
             var response = _validator.Validate(searchTerm);
 
-            Assert.IsFalse(response.IsValid);
-            Assert.AreEqual($"Enter an organisation name or UKPRN", response.Errors.First().ErrorMessage);
-            Assert.AreEqual("SearchTerm", response.Errors.First().Field);
+            Assert.That(response.IsValid, Is.False);
+            Assert.That(response.Errors.First().ErrorMessage, Is.EqualTo($"Enter an organisation name or UKPRN"));
+            Assert.That(response.Errors.First().Field, Is.EqualTo("SearchTerm"));
         }
 
         [Test]
@@ -48,9 +48,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.Applications
             var searchTerm = string.Concat(Enumerable.Repeat("a", MinimumLength - 1));
             var response = _validator.Validate(searchTerm);
 
-            Assert.IsFalse(response.IsValid);
-            Assert.AreEqual($"Enter a UKPRN or an organisation name using {MinimumLength} or more characters", response.Errors.First().ErrorMessage);
-            Assert.AreEqual("SearchTerm", response.Errors.First().Field);
+            Assert.That(response.IsValid, Is.False);
+            Assert.That(response.Errors.First().ErrorMessage, Is.EqualTo($"Enter a UKPRN or an organisation name using {MinimumLength} or more characters"));
+            Assert.That(response.Errors.First().Field, Is.EqualTo("SearchTerm"));
         }
 
         [Test]

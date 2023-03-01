@@ -52,13 +52,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var viewResult = result as ViewResult;
             var viewModel = viewResult?.Model as AddUkprnToAllowedProvidersListViewModel;
 
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(expectedViewModel.SortColumn, viewModel.SortColumn);
-            Assert.AreEqual(expectedViewModel.SortOrder, viewModel.SortOrder);
-            Assert.AreEqual(expectedViewModel.Ukprn, viewModel.Ukprn);
-            Assert.AreEqual(expectedViewModel.StartDate, viewModel.StartDate);
-            Assert.AreEqual(expectedViewModel.EndDate, viewModel.EndDate);
-            CollectionAssert.AreEquivalent(expectedViewModel.AllowedProviders, viewModel.AllowedProviders);
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModel, Is.Not.Null);
+                Assert.That(viewModel.SortColumn, Is.EqualTo(expectedViewModel.SortColumn));
+                Assert.That(viewModel.SortOrder, Is.EqualTo(expectedViewModel.SortOrder));
+                Assert.That(viewModel.Ukprn, Is.EqualTo(expectedViewModel.Ukprn));
+                Assert.That(viewModel.StartDate, Is.EqualTo(expectedViewModel.StartDate));
+                Assert.That(viewModel.EndDate, Is.EqualTo(expectedViewModel.EndDate));
+                Assert.That(viewModel.AllowedProviders, Is.EquivalentTo(expectedViewModel.AllowedProviders));
+            });
         }
 
         [TestCase(null, null, null, null)]
@@ -74,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
         public async Task AddUkprn_when_valid_ModelState_calls_AddToAllowUkprns_with_expected_parameters(int ukprn, DateTime startDate, DateTime endDate)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
             var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
@@ -87,21 +90,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase("12345678", "2021-01-01", "2021-01-31")]
         public async Task AddUkprn_when_valid_ModelState_redirects_to_Index(string ukprn, DateTime startDate, DateTime endDate)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
             var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn, StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.Index)));
         }
 
         [TestCase(12345678, "2021-01-01", "2021-01-31")]
         public async Task AddUkprn_when_invalid_ModelState_does_not_call_AddToAllowUkprns(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
-            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.False, "Test requires invalid ModelState");
 
             var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
@@ -114,14 +117,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         public async Task AddUkprn_when_invalid_ModelState_PRG_redirects_to_Index(int ukprn, DateTime startDate, DateTime endDate)
         {
             _controller.ModelState.AddModelError("Ukprn", "Forced ModelState error");
-            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.False, "Test requires invalid ModelState");
 
             var request = new AddUkprnToAllowedProvidersListViewModel { Ukprn = ukprn.ToString(), StartDate = startDate, EndDate = endDate };
 
             var result = await _controller.AddUkprn(request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.Index)));
         }
 
         [Test]
@@ -130,7 +133,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.ConfirmRemoveUkprn(null);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.Index)));
 
             _applicationApplyApiClient.Verify(x => x.GetAllowedProviderDetails(It.IsAny<int>()), Times.Never);
         }
@@ -150,19 +153,22 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var viewResult = result as ViewResult;
             var viewModel = viewResult?.Model as RemoveUkprnFromAllowedProvidersListViewModel;
 
-            Assert.IsNotNull(viewModel);
-            Assert.IsNotNull(viewModel.AllowedProvider);
-            Assert.AreEqual(expectedViewModel.AllowedProvider.Ukprn, viewModel.AllowedProvider.Ukprn);
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModel, Is.Not.Null);
+                Assert.That(viewModel.AllowedProvider, Is.Not.Null);
+                Assert.That(viewModel.AllowedProvider.Ukprn, Is.EqualTo(expectedViewModel.AllowedProvider.Ukprn));
+            });
         }
 
         [TestCase(12345678)]
         public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_True_calls_RemoveFromAllowedProviders_with_expected_parameters(int ukprn)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
-            var request = new RemoveUkprnFromAllowedProvidersListViewModel 
-            { 
-                Confirm = true 
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel
+            {
+                Confirm = true
             };
 
             var result = await _controller.RemoveUkprn(ukprn, request);
@@ -173,7 +179,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase(12345678)]
         public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_True_redirects_to_UkprnRemoved(int ukprn)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
             var request = new RemoveUkprnFromAllowedProvidersListViewModel
             {
@@ -183,13 +189,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.UkprnRemoved), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.UkprnRemoved)));
         }
 
         [TestCase(12345678)]
         public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_does_not_call_RemoveFromAllowedProviders(int ukprn)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
             var request = new RemoveUkprnFromAllowedProvidersListViewModel
             {
@@ -204,7 +210,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         [TestCase(12345678)]
         public async Task RemoveUkprn_when_valid_ModelState_and_Confirm_False_redirects_to_Index(int ukprn)
         {
-            Assert.IsTrue(_controller.ModelState.IsValid, "Test requires valid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.True, "Test requires valid ModelState");
 
             var request = new RemoveUkprnFromAllowedProvidersListViewModel
             {
@@ -214,14 +220,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.Index), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.Index)));
         }
 
         [TestCase(12345678)]
         public async Task RemoveUkprn_when_invalid_ModelState_does_not_call_RemoveFromAllowedUkprns(int ukprn)
         {
             _controller.ModelState.AddModelError("Confirm", "Forced ModelState error");
-            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.False, "Test requires invalid ModelState");
 
             var request = new RemoveUkprnFromAllowedProvidersListViewModel();
 
@@ -234,14 +240,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
         public async Task RemoveUkprn_when_invalid_ModelState_PRG_redirects_to_ConfirmRemoveUkprn(int ukprn)
         {
             _controller.ModelState.AddModelError("Confirm", "Forced ModelState error");
-            Assert.IsFalse(_controller.ModelState.IsValid, "Test requires invalid ModelState");
+            Assert.That(_controller.ModelState.IsValid, Is.False, "Test requires invalid ModelState");
 
-            var request = new RemoveUkprnFromAllowedProvidersListViewModel ();
+            var request = new RemoveUkprnFromAllowedProvidersListViewModel();
 
             var result = await _controller.RemoveUkprn(ukprn, request);
 
             var redirectResult = result as RedirectToActionResult;
-            Assert.AreEqual(nameof(_controller.ConfirmRemoveUkprn), redirectResult.ActionName);
+            Assert.That(redirectResult.ActionName, Is.EqualTo(nameof(_controller.ConfirmRemoveUkprn)));
         }
 
         [TestCase(12345678)]
@@ -257,8 +263,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
             var viewResult = result as ViewResult;
             var viewModel = viewResult?.Model as UkprnRemovedFromAllowedProvidersListViewModel;
 
-            Assert.IsNotNull(viewModel);
-            Assert.AreEqual(expectedViewModel.Ukprn, viewModel.Ukprn);
+            Assert.That(viewModel, Is.Not.Null);
+            Assert.That(viewModel.Ukprn, Is.EqualTo(expectedViewModel.Ukprn));
         }
     }
 }

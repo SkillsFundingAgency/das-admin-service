@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 
             var viewModel = result.Model as ExternalApisUnavailableViewModel;
 
-            Assert.AreEqual(viewModel.RoatpGatewayBaseUrl, _gatewayUrl);
+            Assert.That(_gatewayUrl, Is.EqualTo(viewModel.RoatpGatewayBaseUrl));
             
         }
     }

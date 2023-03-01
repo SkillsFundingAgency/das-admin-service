@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp
 
             var result = _validator.Validate(model);
 
-            Assert.IsFalse(result.IsValid);
+            Assert.That(result.IsValid, Is.False);
             Assert.IsTrue(result.Errors.First().PropertyName == nameof(model.FromDate));
         }
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp
 
             var result = _validator.Validate(model);
 
-            Assert.IsFalse(result.IsValid);
+            Assert.That(result.IsValid, Is.False);
             Assert.IsTrue(result.Errors.First().PropertyName == nameof(model.ToDate));
         }
 
@@ -71,9 +71,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp
 
             var result = _validator.Validate(model);
 
-            Assert.IsFalse(result.IsValid);
-            Assert.IsNotNull(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.FromDate)));
-            Assert.IsNotNull(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.ToDate)));
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.FromDate)), Is.Not.Null);
+            Assert.That(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.ToDate)), Is.Not.Null);
         }
 
         [Test]
@@ -87,8 +87,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp
 
             var result = _validator.Validate(model);
 
-            Assert.IsFalse(result.IsValid);
-            Assert.IsNotNull(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.ToDate)));
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.Errors.FirstOrDefault(x => x.PropertyName == nameof(model.ToDate)), Is.Not.Null);
         }
     }
 }

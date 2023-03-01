@@ -21,9 +21,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.RoatpClients.Exceptions
             RoatpApiClientException ex = new RoatpApiClientException(HttpMethod, HttpStatusCode, RequestUri, null);
 
             // Sanity check: Make sure custom properties are set before serialization
-            Assert.AreEqual(HttpMethod, ex.HttpMethod, "HttpMethod");
-            Assert.AreEqual(HttpStatusCode, ex.StatusCode, "StatusCode");
-            Assert.AreEqual(RequestUri, ex.RequestUri, "RequestUri");
+            Assert.That(ex.HttpMethod, Is.EqualTo(HttpMethod), "HttpMethod");
+            Assert.That(ex.StatusCode, Is.EqualTo(HttpStatusCode), "StatusCode");
+            Assert.That(ex.RequestUri, Is.EqualTo(RequestUri), "RequestUri");
 
             // Round-trip the exception: Serialize and de-serialize with a JsonSerializer
             var jsonConfig = new JsonSerializerOptions 
@@ -39,9 +39,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.RoatpClients.Exceptions
             }
 
             // Make sure custom properties are preserved after serialization
-            Assert.AreEqual(HttpMethod, ex.HttpMethod, "HttpMethod");
-            Assert.AreEqual(HttpStatusCode, ex.StatusCode, "StatusCode");
-            Assert.AreEqual(RequestUri, ex.RequestUri, "RequestUri");
+            Assert.That(ex.HttpMethod, Is.EqualTo(HttpMethod), "HttpMethod");
+            Assert.That(ex.StatusCode, Is.EqualTo(HttpStatusCode), "StatusCode");
+            Assert.That(ex.RequestUri, Is.EqualTo(RequestUri), "RequestUri");
         }
     }
 }

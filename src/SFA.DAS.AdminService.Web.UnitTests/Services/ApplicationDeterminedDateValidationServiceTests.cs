@@ -44,8 +44,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Services
             var validationResult =
                 new ApplicationDeterminedDateValidationService().ValidateApplicationDeterminedDate(day, month, year);
 
-            Assert.AreEqual(numberOfErrors, validationResult.Errors.Count);
-            Assert.IsTrue(validationResult.Errors.Any(x => x.ErrorMessage == errorMessage));
+            Assert.That(validationResult.Errors.Count, Is.EqualTo(numberOfErrors));
+            Assert.That(validationResult.Errors.Any(x => x.ErrorMessage == errorMessage));
         }
     }
 }

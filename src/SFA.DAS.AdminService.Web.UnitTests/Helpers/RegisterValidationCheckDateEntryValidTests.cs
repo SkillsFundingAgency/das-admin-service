@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Helpers
             var result = _validator.CheckDateIsEmptyOrValid(day, month, year, "dayFieldName", "monthFieldName", "yearFieldName",
                 "dateFieldName", "Field Description");
             
-            Assert.AreEqual(IsValid,result.IsValid);
+            Assert.That(result.IsValid, Is.EqualTo(IsValid));
         }
     }
 }

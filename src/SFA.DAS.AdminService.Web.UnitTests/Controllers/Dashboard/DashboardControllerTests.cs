@@ -61,15 +61,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
 
             var viewModel = result.Model as DashboardViewModel;
 
-            Assert.AreEqual(viewModel.RoatpOversightBaseUrl, _dashboardUrl);
-            Assert.AreEqual(_statusCounts.OrganisationApplicationsNew, viewModel.OrganisationApplicationsNew);
-            Assert.AreEqual(_statusCounts.OrganisationApplicationsInProgress, viewModel.OrganisationApplicationsInProgress);
-            Assert.AreEqual(_statusCounts.OrganisationApplicationsHasFeedback, viewModel.OrganisationApplicationsHasFeedback);
-            Assert.AreEqual(_statusCounts.OrganisationApplicationsApproved, viewModel.OrganisationApplicationsApproved);
-            Assert.AreEqual(_statusCounts.StandardApplicationsNew, viewModel.StandardApplicationsNew);
-            Assert.AreEqual(_statusCounts.StandardApplicationsInProgress, viewModel.StandardApplicationsInProgress);
-            Assert.AreEqual(_statusCounts.StandardApplicationsHasFeedback, viewModel.StandardApplicationsHasFeedback);
-            Assert.AreEqual(_statusCounts.StandardApplicationsApproved, viewModel.StandardApplicationsApproved);
+            Assert.Multiple(() =>
+            {
+                Assert.That(viewModel.RoatpOversightBaseUrl, Is.EqualTo(_dashboardUrl));
+                Assert.That(viewModel.OrganisationApplicationsNew, Is.EqualTo(_statusCounts.OrganisationApplicationsNew));
+                Assert.That(viewModel.OrganisationApplicationsInProgress, Is.EqualTo(_statusCounts.OrganisationApplicationsInProgress));
+                Assert.That(viewModel.OrganisationApplicationsHasFeedback, Is.EqualTo(_statusCounts.OrganisationApplicationsHasFeedback));
+                Assert.That(viewModel.OrganisationApplicationsApproved, Is.EqualTo(_statusCounts.OrganisationApplicationsApproved));
+                Assert.That(viewModel.StandardApplicationsNew, Is.EqualTo(_statusCounts.StandardApplicationsNew));
+                Assert.That(viewModel.StandardApplicationsInProgress, Is.EqualTo(_statusCounts.StandardApplicationsInProgress));
+                Assert.That(viewModel.StandardApplicationsHasFeedback, Is.EqualTo(_statusCounts.StandardApplicationsHasFeedback));
+                Assert.That(viewModel.StandardApplicationsApproved, Is.EqualTo(_statusCounts.StandardApplicationsApproved));
+            });
         }
 
         [Test]
@@ -92,14 +95,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
 
             Assert.Multiple(() =>
             {
-                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsNew);
-                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsInProgress);
-                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsHasFeedback);
-                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsApproved);
-                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsNew);
-                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsInProgress);
-                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsHasFeedback);
-                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsApproved);
+                Assert.That(viewModel.OrganisationApplicationsNew, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.OrganisationApplicationsInProgress, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.OrganisationApplicationsHasFeedback, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.OrganisationApplicationsApproved, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.StandardApplicationsNew, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.StandardApplicationsInProgress, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.StandardApplicationsHasFeedback, Is.EqualTo(short.MinValue));
+                Assert.That(viewModel.StandardApplicationsApproved, Is.EqualTo(short.MinValue));
             });
         }
     }

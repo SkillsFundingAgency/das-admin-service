@@ -70,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.WithdrawalApplications
         {
             ViewResult viewResult = await _controller.WithdrawalApplications() as ViewResult;
 
-            Assert.AreEqual("WithdrawalApplications", viewResult.ViewName);
+            Assert.That(viewResult.ViewName, Is.EqualTo("WithdrawalApplications"));
         }
 
         [Test]
@@ -81,10 +81,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.WithdrawalApplications
             var result = await _controller.WithdrawalApplications() as ViewResult;
             var model = result.Model as ApplicationsDashboardViewModel;
 
-            Assert.AreEqual("New", model.NewApplications.Title);
-            Assert.AreEqual("In progress", model.InProgressApplications.Title);
-            Assert.AreEqual("Feedback", model.FeedbackApplications.Title);
-            Assert.AreEqual("Approved", model.ApprovedApplications.Title);
+            Assert.That(model.NewApplications.Title, Is.EqualTo("New"));
+            Assert.That(model.InProgressApplications.Title, Is.EqualTo("In progress"));
+            Assert.That(model.FeedbackApplications.Title, Is.EqualTo("Feedback"));
+            Assert.That(model.ApprovedApplications.Title, Is.EqualTo("Approved"));
         }
 
         [Test]
@@ -95,10 +95,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.WithdrawalApplications
             var result = await _controller.WithdrawalApplications() as ViewResult;
             var model = result.Model as ApplicationsDashboardViewModel;
 
-            Assert.AreEqual(1, model.NewApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(1, model.InProgressApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(1, model.FeedbackApplications.PaginatedList.Items.Count);
-            Assert.AreEqual(2, model.ApprovedApplications.PaginatedList.Items.Count);
+            Assert.That(model.NewApplications.PaginatedList.Items.Count, Is.EqualTo(1));
+            Assert.That(model.InProgressApplications.PaginatedList.Items.Count, Is.EqualTo(1));
+            Assert.That(model.FeedbackApplications.PaginatedList.Items.Count, Is.EqualTo(1));
+            Assert.That(model.ApprovedApplications.PaginatedList.Items.Count, Is.EqualTo(2));
         }
 
         private void SetupSessionServiceMock()

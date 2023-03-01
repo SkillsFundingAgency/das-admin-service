@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
                 ToDate = DateTime.UtcNow
             }) as FileContentResult;
 
-            Assert.AreEqual(expectedFileContents, result.FileContents);
+            Assert.That(result.FileContents, Is.EqualTo(expectedFileContents));
         }
     }
 }

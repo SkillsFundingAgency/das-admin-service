@@ -32,7 +32,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             var validator = new AddApplicationDeterminedDateViewModelValidator(new ApplicationDeterminedDateValidationService());
             var validationResult = validator.Validate(_viewModel);
 
-            Assert.AreEqual(0, validationResult.Errors.Count);
+            Assert.That(validationResult.Errors, Is.Empty);
         }
 
         [TestCase(null, null, null, 4, "noDetails")]
@@ -70,8 +70,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             var validator = new AddApplicationDeterminedDateViewModelValidator(new ApplicationDeterminedDateValidationService());
             var validationResult = validator.Validate(_viewModel);
 
-            Assert.AreEqual(numberOfErrors, validationResult.Errors.Count);
-            Assert.IsTrue(validationResult.Errors.Any(x => x.ErrorMessage == errorMessage));
+            Assert.That(validationResult.Errors.Count, Is.EqualTo(numberOfErrors));
+            Assert.That(validationResult.Errors.Any(x => x.ErrorMessage == errorMessage));
         }
     }
 }

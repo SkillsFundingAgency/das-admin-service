@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
 
             var result = dateTime.ToShortNumericFormatString();
 
-            Assert.AreEqual(expectedDateString, result);
+            Assert.That(result, Is.EqualTo(expectedDateString));
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
 
             var result = dateTime.ToShortNumericFormatString();
 
-            Assert.AreEqual(string.Empty, result);
+            Assert.That(result, Is.EqualTo(string.Empty));
         }
     }
 }
