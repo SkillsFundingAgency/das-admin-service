@@ -51,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             _configuration.Setup(c => c.RoatpGatewayBaseUrl).Returns(_dashboardUrl);
             _configuration.Setup(c => c.RoatpFinanceBaseUrl).Returns(_dashboardUrl);
 
-            _controller = new DashboardController(_logger.Object, _apiClient.Object,_configuration.Object);
+            _controller = new DashboardController(_logger.Object, _apiClient.Object, _configuration.Object);
         }
 
         [Test]
@@ -61,8 +61,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
 
             var viewModel = result.Model as DashboardViewModel;
 
-            Assert.AreEqual(viewModel.RoatpOversightBaseUrl,_dashboardUrl);
-            Assert.AreEqual(_statusCounts.OrganisationApplicationsNew,viewModel.OrganisationApplicationsNew);
+            Assert.AreEqual(viewModel.RoatpOversightBaseUrl, _dashboardUrl);
+            Assert.AreEqual(_statusCounts.OrganisationApplicationsNew, viewModel.OrganisationApplicationsNew);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsInProgress, viewModel.OrganisationApplicationsInProgress);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsHasFeedback, viewModel.OrganisationApplicationsHasFeedback);
             Assert.AreEqual(_statusCounts.OrganisationApplicationsApproved, viewModel.OrganisationApplicationsApproved);
@@ -82,18 +82,25 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard
             var result = await _controller.Index() as ViewResult;
             var viewModel = result.Model as DashboardViewModel;
 
-            _logger.Verify(
-                m => m.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<object>(), exception, It.IsAny<Func<object, Exception, string>>()),
-                Times.Once());
+            _logger.Verify(l => l.Log(
+                    It.Is<LogLevel>(level => level == LogLevel.Error),
+                    It.Is<EventId>(id => id.Id == 0),
+                    It.Is<It.IsAnyType>((obj, typ) => obj.ToString() == "Unable to GetApplicationReviewStatusCounts from EPAO Service" && typ.Name == "FormattedLogValues"),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
 
-            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsNew);
-            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsInProgress);
-            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsHasFeedback);
-            Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsApproved);
-            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsNew);
-            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsInProgress);
-            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsHasFeedback);
-            Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsApproved);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsNew);
+                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsInProgress);
+                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsHasFeedback);
+                Assert.AreEqual(short.MinValue, viewModel.OrganisationApplicationsApproved);
+                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsNew);
+                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsInProgress);
+                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsHasFeedback);
+                Assert.AreEqual(short.MinValue, viewModel.StandardApplicationsApproved);
+            });
         }
     }
 }
