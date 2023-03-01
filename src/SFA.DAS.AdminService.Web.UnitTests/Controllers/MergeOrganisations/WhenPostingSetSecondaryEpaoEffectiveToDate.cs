@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
             result.Model.Should().BeEquivalentTo(viewModel);
         }
 
-        private SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(DateTime? date)
+        private static SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(DateTime? date)
         {
             return new SetSecondaryEpaoEffectiveToDateViewModel
             {

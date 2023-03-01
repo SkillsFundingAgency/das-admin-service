@@ -17,7 +17,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         private OrganisationStandard _orgStandardResponse;
 
         [SetUp]
-        public async Task Arrange()
+        public void Arrange()
         {
             var fixture = new Fixture();
 
@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             _orgStandardResponse.Versions.First().Version = "1.0";
 
             ApiClient.Setup(c => c.GetOrganisationStandard(It.IsAny<int>()))
-                .ReturnsAsync(_orgStandardResponse);
+                     .ReturnsAsync(_orgStandardResponse);
 
             Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
         }

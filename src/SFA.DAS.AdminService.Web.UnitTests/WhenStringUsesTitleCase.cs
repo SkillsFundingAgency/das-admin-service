@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests
         {
             var result = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(testString.ToLower());
             
-            Assert.AreEqual(result, "Abram Aramot");
+            Assert.AreEqual("Abram Aramot", result);
             Console.WriteLine(result);
         }
 

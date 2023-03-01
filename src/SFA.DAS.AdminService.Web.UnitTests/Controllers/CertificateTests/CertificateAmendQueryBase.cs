@@ -78,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             return apiClient;
         }
 
-        private Certificate SetupCertificate()
+        private static Certificate SetupCertificate()
         {
             var certificateId = Guid.NewGuid();
             var certificate = new Builder().CreateNew<Certificate>()
@@ -99,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             return certificate;
         }
 
-        private StandardOptions SetupOptions()
+        private static StandardOptions SetupOptions()
         {
             var option = new StandardOptions
             {

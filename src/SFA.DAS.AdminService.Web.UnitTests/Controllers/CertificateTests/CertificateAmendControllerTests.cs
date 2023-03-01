@@ -9,19 +9,14 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
@@ -206,15 +201,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
         public class CertificateAmendControllerTestsFixture
         {
-            private Fixture _fixture;
-            private Certificate _certificate;
-            private Organisation _organisation;
-            private List<StandardVersion> _standardVersions;
+            private readonly Fixture _fixture;
 
-            private CertificateAmendController _sut;
+            private readonly CertificateAmendController _sut;
 
-            private Mock<IApiClient> _apiClient;
-            private Mock<ILogger<CertificateAmendController>> _logger;
+            private readonly Mock<IApiClient> _apiClient;
+            private readonly Mock<ILogger<CertificateAmendController>> _logger;
             
             public CertificateAmendControllerTestsFixture()
             {
@@ -300,7 +292,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 errorEnumerator.Current.Errors[0].ErrorMessage.Should().Be(errorMessage);
             }
 
-            private Mock<IHttpContextAccessor> SetupMockHttpAccessor()
+            private static Mock<IHttpContextAccessor> SetupMockHttpAccessor()
             {
                 var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
                 {

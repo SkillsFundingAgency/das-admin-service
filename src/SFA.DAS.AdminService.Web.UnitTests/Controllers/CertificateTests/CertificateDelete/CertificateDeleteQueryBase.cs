@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             return apiClient;
         }
 
-        private Certificate SetupCertificate()
+        private static Certificate SetupCertificate()
         {
             var certificateId = Guid.NewGuid();
             var certificate = new Builder().CreateNew<Certificate>()
