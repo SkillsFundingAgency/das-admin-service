@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
             result.Errors.Single().ErrorMessage.Should().Be("Enter an Effective to date");
         }
 
-        private SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(string day, string month, string year)
+        private static SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(string day, string month, string year)
         {
             return new SetSecondaryEpaoEffectiveToDateViewModel
             {
@@ -93,7 +93,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
             };
         }
 
-        private SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(DateTime date)
+        private static SetSecondaryEpaoEffectiveToDateViewModel SetUpViewModel(DateTime date)
         {
             return new SetSecondaryEpaoEffectiveToDateViewModel
             {

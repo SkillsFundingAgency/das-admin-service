@@ -39,25 +39,31 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             var result = await _controller.Index() as ViewResult;
 
             var viewModel = result.Model as BatchSearchViewModel<StaffBatchLogResult>;
-        
-            Assert.IsNull(viewModel.BatchNumber);
-            Assert.AreEqual(1, viewModel.Page);
-            Assert.AreEqual(_staffBatchSearchResponse.Results.Items.Count, viewModel.PaginatedList.Items.Count);
-            viewModel.PaginatedList.Items.ForEach(x => VerifyStaffBatchLogResult(_staffBatchLogResult.Items.First(y => y.BatchNumber == x.BatchNumber), x));
+
+            Assert.Multiple(() =>
+            {
+                Assert.IsNull(viewModel.BatchNumber);
+                Assert.AreEqual(1, viewModel.Page);
+                Assert.AreEqual(_staffBatchSearchResponse.Results.Items.Count, viewModel.PaginatedList.Items.Count);
+                viewModel.PaginatedList.Items.ForEach(x => VerifyStaffBatchLogResult(_staffBatchLogResult.Items.First(y => y.BatchNumber == x.BatchNumber), x));
+            });
         }
 
         [Test]
         public async Task staff_batch_result_view_model_is_correctly_populated_from_staff_batch_search_result()
         {
-            var result = await _controller.Results(1,1) as ViewResult;
+            var result = await _controller.Results(1, 1) as ViewResult;
 
             var viewModel = result.Model as BatchSearchViewModel<StaffBatchSearchResult>;
 
-            Assert.AreEqual(1, viewModel.BatchNumber);
-            Assert.AreEqual(1, viewModel.Page);
-            Assert.AreEqual(1, viewModel.BatchNumber);
-            Assert.AreEqual(_staffBatchSearchResponse.Results.Items.Count, viewModel.PaginatedList.Items.Count);
-            viewModel.PaginatedList.Items.ForEach(x => Verify(_staffBatchSearchResponse.Results.Items.First(y => y.BatchNumber == x.BatchNumber), x));
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(1, viewModel.BatchNumber);
+                Assert.AreEqual(1, viewModel.Page);
+                Assert.AreEqual(1, viewModel.BatchNumber);
+                Assert.AreEqual(_staffBatchSearchResponse.Results.Items.Count, viewModel.PaginatedList.Items.Count);
+                viewModel.PaginatedList.Items.ForEach(x => Verify(_staffBatchSearchResponse.Results.Items.First(y => y.BatchNumber == x.BatchNumber), x));
+            });
         }
 
         private ApiClient SetUpApiClient()
@@ -77,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             return apiClient;
         }
 
-        private StaffBatchSearchResponse SetUpBatchSearchResponse()
+        private static StaffBatchSearchResponse SetUpBatchSearchResponse()
         {
             int batchNumberGenerator = 1;
             var staffBatchSearchResult = Builder<StaffBatchSearchResult>.CreateListOfSize(4)
@@ -94,7 +100,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             };
         }
 
-        private PaginatedList<StaffBatchLogResult> SetupStaffBatchLogResult()
+        private static PaginatedList<StaffBatchLogResult> SetupStaffBatchLogResult()
         {
             int batchNumberGenerator = 1;
             var staffBatchLogResult = Builder<StaffBatchLogResult>.CreateListOfSize(4)
@@ -105,23 +111,29 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             return new PaginatedList<StaffBatchLogResult>(staffBatchLogResult, staffBatchLogResult.Count, 1, 10, 10);
         }
 
-        private void VerifyStaffBatchLogResult(StaffBatchLogResult expectedStaffBatchLogResult, StaffBatchLogResult actualStaffBatchLogResult)
+        private static void VerifyStaffBatchLogResult(StaffBatchLogResult expectedStaffBatchLogResult, StaffBatchLogResult actualStaffBatchLogResult)
         {
-            Assert.AreEqual(expectedStaffBatchLogResult.BatchNumber, actualStaffBatchLogResult.BatchNumber);
-            Assert.AreEqual(expectedStaffBatchLogResult.NumberOfCertificatesPrinted, actualStaffBatchLogResult.NumberOfCertificatesPrinted);
-            Assert.AreEqual(expectedStaffBatchLogResult.NumberOfCertificatesSent, actualStaffBatchLogResult.NumberOfCertificatesSent);
-            Assert.AreEqual(expectedStaffBatchLogResult.PrintedDate, actualStaffBatchLogResult.PrintedDate);
-            Assert.AreEqual(expectedStaffBatchLogResult.ScheduledDate, actualStaffBatchLogResult.ScheduledDate);
-            Assert.AreEqual(expectedStaffBatchLogResult.SentToPrinterDate, actualStaffBatchLogResult.SentToPrinterDate);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedStaffBatchLogResult.BatchNumber, actualStaffBatchLogResult.BatchNumber);
+                Assert.AreEqual(expectedStaffBatchLogResult.NumberOfCertificatesPrinted, actualStaffBatchLogResult.NumberOfCertificatesPrinted);
+                Assert.AreEqual(expectedStaffBatchLogResult.NumberOfCertificatesSent, actualStaffBatchLogResult.NumberOfCertificatesSent);
+                Assert.AreEqual(expectedStaffBatchLogResult.PrintedDate, actualStaffBatchLogResult.PrintedDate);
+                Assert.AreEqual(expectedStaffBatchLogResult.ScheduledDate, actualStaffBatchLogResult.ScheduledDate);
+                Assert.AreEqual(expectedStaffBatchLogResult.SentToPrinterDate, actualStaffBatchLogResult.SentToPrinterDate);
+            });
         }
 
-        private void Verify(StaffBatchSearchResult expectedStaffBatchLogResult, StaffBatchSearchResult actualStaffBatchLogResult)
+        private static void Verify(StaffBatchSearchResult expectedStaffBatchLogResult, StaffBatchSearchResult actualStaffBatchLogResult)
         {
-            Assert.AreEqual(expectedStaffBatchLogResult.BatchNumber, actualStaffBatchLogResult.BatchNumber);
-            Assert.AreEqual(expectedStaffBatchLogResult.StatusAt, actualStaffBatchLogResult.StatusAt);
-            Assert.AreEqual(expectedStaffBatchLogResult.CertificateReference, actualStaffBatchLogResult.CertificateReference);
-            Assert.AreEqual(expectedStaffBatchLogResult.Uln, actualStaffBatchLogResult.Uln);
-            Assert.AreEqual(expectedStaffBatchLogResult.StandardCode, actualStaffBatchLogResult.StandardCode);
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedStaffBatchLogResult.BatchNumber, actualStaffBatchLogResult.BatchNumber);
+                Assert.AreEqual(expectedStaffBatchLogResult.StatusAt, actualStaffBatchLogResult.StatusAt);
+                Assert.AreEqual(expectedStaffBatchLogResult.CertificateReference, actualStaffBatchLogResult.CertificateReference);
+                Assert.AreEqual(expectedStaffBatchLogResult.Uln, actualStaffBatchLogResult.Uln);
+                Assert.AreEqual(expectedStaffBatchLogResult.StandardCode, actualStaffBatchLogResult.StandardCode);
+            });
         }
     }
 }
