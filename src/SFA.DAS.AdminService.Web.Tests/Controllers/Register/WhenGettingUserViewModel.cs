@@ -72,19 +72,21 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
             var actual = result.Model as RegisterViewAndEditUserViewModel;
 
-            actual.EditPrivilegesViewModel.Should().BeNull();
-
-            Assert.AreEqual(contactResponse.Id, actual.ContactId);
-            Assert.AreEqual(contactResponse.Title, actual.Title);
-            Assert.AreEqual(contactResponse.GivenNames, actual.GivenNames);
-            Assert.AreEqual(contactResponse.FamilyName, actual.FamilyName);
-            Assert.AreEqual(contactResponse.Email, actual.Email);
-            Assert.AreEqual(contactResponse.PhoneNumber, actual.PhoneNumber);
-            Assert.AreEqual(contactResponse.Status, actual.Status);
-            Assert.IsNull(actual.AllPrivilegeTypes);
-            Assert.IsEmpty(actual.ActionRequired);
-            Assert.IsNull(actual.AssignedPrivileges);
-            Assert.IsNull(actual.EndPointAssessorOrganisationId);
+            Assert.Multiple(() =>
+            {
+                Assert.That(() => actual.EditPrivilegesViewModel, Throws.ArgumentNullException);
+                Assert.AreEqual(contactResponse.Id, actual.ContactId);
+                Assert.AreEqual(contactResponse.Title, actual.Title);
+                Assert.AreEqual(contactResponse.GivenNames, actual.GivenNames);
+                Assert.AreEqual(contactResponse.FamilyName, actual.FamilyName);
+                Assert.AreEqual(contactResponse.Email, actual.Email);
+                Assert.AreEqual(contactResponse.PhoneNumber, actual.PhoneNumber);
+                Assert.AreEqual(contactResponse.Status, actual.Status);
+                Assert.IsNull(actual.AllPrivilegeTypes);
+                Assert.IsEmpty(actual.ActionRequired);
+                Assert.IsNull(actual.AssignedPrivileges);
+                Assert.IsNull(actual.EndPointAssessorOrganisationId);
+            });
         }
     }
 }
