@@ -25,14 +25,18 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber));
 
             CreateMap<ContactResponse, RegisterViewAndEditUserViewModel>()
-                .IgnoreAllUnmapped()
                 .ForMember(dest => dest.ContactId, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(source => source.Title))
                 .ForMember(dest => dest.GivenNames, opt => opt.MapFrom(source => source.GivenNames))
                 .ForMember(dest => dest.FamilyName, opt => opt.MapFrom(source => source.FamilyName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(source => source.PhoneNumber))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .ForMember(dest => dest.EditPrivilegesViewModel, opt => opt.Ignore())
+                .ForMember(dest => dest.AssignedPrivileges, opt => opt.Ignore())
+                .ForMember(dest => dest.ActionRequired, opt => opt.Ignore())
+                .ForMember(dest => dest.AllPrivilegeTypes, opt => opt.Ignore())
+                .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.Ignore());
 
             CreateMap<AddOrganisationViewModel, AddOrganisationProviderTypeViewModel>();
             CreateMap<AddOrganisationViewModel, AddOrganisationTypeViewModel>();
