@@ -173,11 +173,6 @@ namespace SFA.DAS.AdminService.Web
                 x.GetService<ILogger<ApplicationApiClient>>(),
                 x.GetService<ITokenService>()));
 
-            services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<CompaniesHouseApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
             services.AddTransient<IContactsApiClient>(x => new ContactsApiClient(
                 ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress,
                 x.GetService<ITokenService>(),
