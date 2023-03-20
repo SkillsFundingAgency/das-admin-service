@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AdminService.Web.Orchestrators;
 using SFA.DAS.AssessorService.Api.Types.Models.UserManagement;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
@@ -18,21 +18,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
-        private readonly IMapper _mapper;
+        private readonly IUserViewModelOrchestrator _userViewModelOrchestrator;
 
-        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, IMapper mapper)
+        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, IUserViewModelOrchestrator userViewModelOrchestrator)
         {
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;
-            _mapper = mapper;
+            _userViewModelOrchestrator = userViewModelOrchestrator;
         }
 
         [HttpGet("register/view-user/{contactId}", Name = "RegisterUserController_Details")]
         public async Task<IActionResult> Details(Guid contactId)
         {
-            var userViewModelHelper = new UserViewModelHelper(_contactsApiClient, _organisationsApiClient, _mapper);
-
-            var vm = await userViewModelHelper.GetUserViewModel(contactId);
+            var vm = await _userViewModelOrchestrator.GetUserViewModel(contactId);
 
             return View("~/Views/Register/ViewUser.cshtml", vm);
         }
@@ -41,9 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/{contactId}/user-permissions", Name = "RegisterUser_EditPermissions")]
         public async Task<IActionResult> EditPermissions(Guid contactId)
         {
-            var userViewModelHelper = new UserViewModelHelper(_contactsApiClient, _organisationsApiClient, _mapper);
-
-            var vm = await userViewModelHelper.GetUserViewModel(contactId);
+            var vm = await _userViewModelOrchestrator.GetUserViewModel(contactId);
 
             return View("~/Views/Register/EditUserPermissions.cshtml", vm);
         }
@@ -72,9 +68,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     ModelState.AddModelError("permissions", response.ErrorMessage);
 
-                    var userViewModelHelper = new UserViewModelHelper(_contactsApiClient, _organisationsApiClient, _mapper);
-
-                    var editVm = await userViewModelHelper.GetUserViewModel(vm.ContactId);
+                    var editVm = await _userViewModelOrchestrator.GetUserViewModel(vm.ContactId);
 
                     return View("~/Views/Register/EditUserPermissions.cshtml", editVm);
                 }

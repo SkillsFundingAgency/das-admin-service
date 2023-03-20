@@ -8,17 +8,17 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System.Threading.Tasks;
 using System;
-using SFA.DAS.AdminService.Web.Helpers;
+using SFA.DAS.AdminService.Web.Orchestrators;
 
-namespace SFA.DAS.AdminService.Web.Tests.Helpers
+namespace SFA.DAS.AdminService.Web.Tests.Orchestrators
 {
-    public class UserViewModelHelperTests
+    public class UserViewModelOrchestratorTests
     {
         private readonly Mock<IOrganisationsApiClient> _organisationsApiClient;
         private readonly Mock<IContactsApiClient> _contactsApiClient;
         private readonly IMapper _mapper;
 
-        public UserViewModelHelperTests()
+        public UserViewModelOrchestratorTests()
         {
             _organisationsApiClient = new Mock<IOrganisationsApiClient>();
             _contactsApiClient = new Mock<IContactsApiClient>();
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Helpers
             _contactsApiClient.Setup(x => x.GetById(It.IsAny<Guid>())).ReturnsAsync(contactResponse);
             _organisationsApiClient.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(organisation);
 
-            var sut = new UserViewModelHelper(_contactsApiClient.Object, _organisationsApiClient.Object, _mapper);
+            var sut = new UserViewModelOrchestrator(_contactsApiClient.Object, _organisationsApiClient.Object, _mapper);
 
             //Act
 

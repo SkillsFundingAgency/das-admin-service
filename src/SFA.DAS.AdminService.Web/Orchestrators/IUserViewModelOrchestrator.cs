@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using System;
 
-namespace SFA.DAS.AdminService.Web.Helpers
+namespace SFA.DAS.AdminService.Web.Orchestrators
 {
-    public interface IUserViewModelHelper
+    public interface IUserViewModelOrchestrator
     {
         Task<RegisterViewAndEditUserViewModel> GetUserViewModel(Guid contactId);
     }
