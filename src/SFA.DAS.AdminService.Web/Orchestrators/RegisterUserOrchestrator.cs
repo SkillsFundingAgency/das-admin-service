@@ -7,13 +7,13 @@ using static StackExchange.Redis.Role;
 
 namespace SFA.DAS.AdminService.Web.Orchestrators
 {
-    public class UserViewModelOrchestrator : IUserViewModelOrchestrator
+    public class RegisterUserOrchestrator : IRegisterUserOrchestrator
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IMapper _mapper;
 
-        public UserViewModelOrchestrator(IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient, IMapper mapper)
+        public RegisterUserOrchestrator(IContactsApiClient contactsApiClient, IOrganisationsApiClient organisationsApiClient, IMapper mapper)
         {
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;

@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AdminService.Web.Orchestrators
 {
-    public interface IUserViewModelOrchestrator
+    public interface IRegisterUserOrchestrator
     {
         Task<RegisterViewAndEditUserViewModel> GetUserViewModel(Guid contactId);
     }

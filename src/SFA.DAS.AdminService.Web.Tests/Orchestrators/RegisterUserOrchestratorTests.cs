@@ -12,13 +12,13 @@ using SFA.DAS.AdminService.Web.Orchestrators;
 
 namespace SFA.DAS.AdminService.Web.Tests.Orchestrators
 {
-    public class UserViewModelOrchestratorTests
+    public class RegisterUserOrchestratorTests
     {
         private readonly Mock<IOrganisationsApiClient> _organisationsApiClient;
         private readonly Mock<IContactsApiClient> _contactsApiClient;
         private readonly IMapper _mapper;
 
-        public UserViewModelOrchestratorTests()
+        public RegisterUserOrchestratorTests()
         {
             _organisationsApiClient = new Mock<IOrganisationsApiClient>();
             _contactsApiClient = new Mock<IContactsApiClient>();
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Orchestrators
             _contactsApiClient.Setup(x => x.GetById(It.IsAny<Guid>())).ReturnsAsync(contactResponse);
             _organisationsApiClient.Setup(x => x.Get(It.IsAny<Guid>())).ReturnsAsync(organisation);
 
-            var sut = new UserViewModelOrchestrator(_contactsApiClient.Object, _organisationsApiClient.Object, _mapper);
+            var sut = new RegisterUserOrchestrator(_contactsApiClient.Object, _organisationsApiClient.Object, _mapper);
 
             //Act
 

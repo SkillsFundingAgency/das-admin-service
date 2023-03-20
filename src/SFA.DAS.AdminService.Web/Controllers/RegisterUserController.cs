@@ -18,19 +18,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
-        private readonly IUserViewModelOrchestrator _userViewModelOrchestrator;
+        private readonly IRegisterUserOrchestrator _registerUserOrchestrator;
 
-        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, IUserViewModelOrchestrator userViewModelOrchestrator)
+        public RegisterUserController(IContactsApiClient contactsApiClient, IHttpContextAccessor httpContextAccessor, IOrganisationsApiClient organisationsApiClient, IRegisterUserOrchestrator registerUserOrchestrator)
         {
             _contactsApiClient = contactsApiClient;
             _organisationsApiClient = organisationsApiClient;
-            _userViewModelOrchestrator = userViewModelOrchestrator;
+            _registerUserOrchestrator = registerUserOrchestrator;
         }
 
         [HttpGet("register/view-user/{contactId}", Name = "RegisterUserController_Details")]
         public async Task<IActionResult> Details(Guid contactId)
         {
-            var vm = await _userViewModelOrchestrator.GetUserViewModel(contactId);
+            var vm = await _registerUserOrchestrator.GetUserViewModel(contactId);
 
             return View("~/Views/Register/ViewUser.cshtml", vm);
         }
@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/{contactId}/user-permissions", Name = "RegisterUser_EditPermissions")]
         public async Task<IActionResult> EditPermissions(Guid contactId)
         {
-            var vm = await _userViewModelOrchestrator.GetUserViewModel(contactId);
+            var vm = await _registerUserOrchestrator.GetUserViewModel(contactId);
 
             return View("~/Views/Register/EditUserPermissions.cshtml", vm);
         }
@@ -68,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     ModelState.AddModelError("permissions", response.ErrorMessage);
 
-                    var editVm = await _userViewModelOrchestrator.GetUserViewModel(vm.ContactId);
+                    var editVm = await _registerUserOrchestrator.GetUserViewModel(vm.ContactId);
 
                     return View("~/Views/Register/EditUserPermissions.cshtml", editVm);
                 }
