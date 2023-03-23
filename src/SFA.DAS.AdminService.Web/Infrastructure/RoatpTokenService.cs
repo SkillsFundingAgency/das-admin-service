@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using SFA.DAS.AdminService.Settings;
-using Azure.Identity;
-using Azure.Core;
+//using Azure.Identity;
+//using Azure.Core;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
@@ -19,10 +19,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
-            var result = new DefaultAzureCredential().GetTokenAsync(
-                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { }).Result;
+            //var result = new DefaultAzureCredential().GetTokenAsync(
+            //    new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { }).Result;
 
-            return result.Token;
+            //return result.Token;
+            return string.Empty;
         }
     }
 }
