@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
-    public class CompaniesHouseApiClient:ICompaniesHouseApiClient
+    public class CompaniesHouseApiClient : ICompaniesHouseApiClient
     {
         private ILogger<CompaniesHouseApiClient> _logger;
         private readonly IRoatpApplyTokenService _tokenService;
