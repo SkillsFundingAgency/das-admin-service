@@ -149,6 +149,10 @@
                                 {
                                     "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
                                     "value": "200"
+                                },
+                                {
+                                  "name": "WEBSITE_SWAP_WARMUP_PING_INTERVAL",
+                                  "value": "20"
                                 }
                             ]
                         }
