@@ -22,7 +22,7 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public string RoatpFinanceBaseUrl { get; set; }
         [JsonRequired] public string RoatpProviderModerationBaseUrl { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        [JsonRequired] public ManagedIdentityApiAuthentication RoatpApiAuthentication { get; set; }
 
         [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
         [JsonRequired] public RedisCacheSettings RedisCacheSettings { get; set; }

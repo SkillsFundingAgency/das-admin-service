@@ -9,18 +9,20 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         private readonly IWebConfiguration _configuration;
         private readonly IHostEnvironment _hostEnvironment;
+
         public RoatpTokenService(IWebConfiguration configuration, IHostEnvironment hostEnvironment)
         {
             _configuration = configuration;
             _hostEnvironment = hostEnvironment;
         }
+
         public string GetToken()
         {
             if (_hostEnvironment.IsDevelopment())
                 return string.Empty;
 
             var result = new DefaultAzureCredential().GetTokenAsync(
-                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.ResourceId + "/.default" }) { }).Result;
+                new TokenRequestContext(scopes: new string[] { _configuration.RoatpApiAuthentication.Identifier + "/.default" }) { }).Result;
 
             return result.Token;
         }

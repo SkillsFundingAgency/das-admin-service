@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Settings
         string RoatpAssessorBaseUrl { get; set; }
         string RoatpProviderModerationBaseUrl { get; set; }
 
-        ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        ManagedIdentityApiAuthentication RoatpApiAuthentication { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }
         RedisCacheSettings RedisCacheSettings { get; }
