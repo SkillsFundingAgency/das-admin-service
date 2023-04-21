@@ -1,5 +1,5 @@
 .flatpickr-calendar {
-  background: transparent;
+  background: #fff;
   opacity: 0;
   display: none;
   text-align: center;
@@ -18,7 +18,6 @@
   box-sizing: border-box;
   -ms-touch-action: manipulation;
   touch-action: manipulation;
-  background: #fff;
   -webkit-box-shadow: 1px 0 0 #eee, -1px 0 0 #eee, 0 1px 0 #eee, 0 -1px 0 #eee,
     0 3px 13px rgba(0, 0, 0, 0.08);
   box-shadow: 1px 0 0 #eee, -1px 0 0 #eee, 0 1px 0 #eee, 0 -1px 0 #eee,
@@ -304,14 +303,13 @@
 }
 .flatpickr-current-month {
   font-size: 135%;
-  line-height: inherit;
+  line-height: 1;
   font-weight: 300;
   color: inherit;
   position: absolute;
   width: 75%;
   left: 12.5%;
   padding: 7.48px 0 0 0;
-  line-height: 1;
   height: 34px;
   display: inline-block;
   text-align: center;
@@ -674,9 +672,6 @@ span.flatpickr-weekday {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
 }
 .flatpickr-time:after {

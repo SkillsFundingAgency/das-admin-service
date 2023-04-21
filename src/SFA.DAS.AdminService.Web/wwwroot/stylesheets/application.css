@@ -1594,14 +1594,12 @@ TODO: change to 'das-page-navigation' and BEM
 
 .das-table__sort--asc:after,
 .das-table__sort--desc:after {
-	border-color: transparent;
-	border-width: 10px;
+	border-color: currentColor transparent transparent transparent;
+	border-width: 10px 5.77367px 0 5.77367px;
 	border-style: solid;
 	width: 0;
 	height: 0;
 	content: "";
-	border-width: 10px 5.77367px 0 5.77367px;
-	border-color: currentColor transparent transparent transparent;
 }
 
 .das-table__sort--asc:after {
