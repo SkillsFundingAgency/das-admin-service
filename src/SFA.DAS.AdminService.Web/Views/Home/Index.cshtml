@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "ESFA admin services";
+    ViewData["Title"] = "Apprenticeship service admin";
     Layout = "_Layout";
 }
 
@@ -7,14 +7,20 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">ESFA admin services</h1>
-            <p class="govuk-body-l">Use this service to:</p>
+            <h1 class="govuk-heading-l">Apprenticeship service admin</h1>
+            <div class="govuk-inset-text">
+                <span>
+                    This service was previously known as the ‘ESFA admin services’.
+                </span>
+            </div>
+            <p class="govuk-body">Use this service to:</p>
             <ul class="govuk-list govuk-list--bullet">
                 <li>evaluate applications</li>
                 <li>manage existing accounts</li>
                 <li>view and download reports</li>
                 <li>issue certificates</li>
             </ul>
+            <p class="govuk-body">You’ll need a DfE Sign-in account to use this service. If you don’t have a DfE Sign-in account, you can create one at the next step.</p>
             <div class="form-group">
                 <a asp-action="SignIn" asp-controller="Account" class="govuk-button govuk-button--start">Start now</a>
             </div>
