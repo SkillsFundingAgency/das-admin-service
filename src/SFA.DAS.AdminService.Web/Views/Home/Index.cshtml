@@ -1,4 +1,5 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Apprenticeship service admin";
     Layout = "_Layout";
 }
@@ -20,7 +21,10 @@
                 <li>view and download reports</li>
                 <li>issue certificates</li>
             </ul>
-            <p class="govuk-body">You’ll need a DfE Sign-in account to use this service. If you don’t have a DfE Sign-in account, you can create one at the next step.</p>
+            @if (Model.UseDfESignIn)
+            {
+                <p class="govuk-body">You’ll need a DfE Sign-in account to use this service. If you don’t have a DfE Sign-in account, you can create one at the next step.</p>    
+            }
             <div class="form-group">
                 <a asp-action="SignIn" asp-controller="Account" class="govuk-button govuk-button--start">Start now</a>
             </div>
