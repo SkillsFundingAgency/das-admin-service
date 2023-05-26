@@ -50,6 +50,7 @@ namespace SFA.DAS.AdminService.Web
         private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AdminService";
         private const string Version = "1.0";
+        private const string ClientName = "ServiceAdmin";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
@@ -277,7 +278,7 @@ namespace SFA.DAS.AdminService.Web
         /// <param name="services">IServiceCollection.</param>
         private void UseDfeSignInAuthentication(IServiceCollection services)
         {
-            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole));
+            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole), ClientName);
         }
 
         /// <summary>
