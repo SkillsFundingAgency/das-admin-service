@@ -278,7 +278,7 @@ namespace SFA.DAS.AdminService.Web
         /// <param name="services">IServiceCollection.</param>
         private void UseDfeSignInAuthentication(IServiceCollection services)
         {
-            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole), ClientName);
+            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole), ClientName, "/signout");
         }
 
         /// <summary>
