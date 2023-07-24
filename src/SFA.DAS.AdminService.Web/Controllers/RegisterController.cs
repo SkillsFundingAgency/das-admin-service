@@ -124,7 +124,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 CharityNumber = viewModel.CharityNumber,
                 FinancialDueDate = viewModel.FinancialDueDate,
                 FinancialExempt = viewModel.FinancialExempt,
-                RecognitionNumber = viewModel.RecognitionNumber
+                RecognitionNumber = viewModel.RecognitionNumber ?? string.Empty
             };
          
             await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
