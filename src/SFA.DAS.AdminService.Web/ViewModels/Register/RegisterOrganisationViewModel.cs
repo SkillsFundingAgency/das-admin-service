@@ -22,5 +22,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string Postcode { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }

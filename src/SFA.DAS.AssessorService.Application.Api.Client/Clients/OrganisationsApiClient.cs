@@ -85,7 +85,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber)
+        public async Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber, string recognitionNumber)
         {
             var validationRequest = new CreateEpaOrganisationValidationRequest
             {
@@ -93,7 +93,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 Ukprn = ukprn,
                 OrganisationTypeId = organisationTypeId,
                 CompanyNumber = companyNumber,
-                CharityNumber = charityNumber
+                CharityNumber = charityNumber,
+                RecognitionNumber = recognitionNumber
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-new/"))
@@ -103,7 +104,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
-        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber)
+        public async Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber, string recognitionNumber)
         {
             var validationRequest = new UpdateEpaOrganisationValidationRequest
             {
@@ -119,7 +120,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
                 Status = status,
                 ActionChoice = actionChoice,
                 CompanyNumber = companyNumber,
-                CharityNumber = charityNumber
+                CharityNumber = charityNumber,
+                RecognitionNumber= recognitionNumber
             };
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, $"/api/ao/assessment-organisations/validate-existing/"))
