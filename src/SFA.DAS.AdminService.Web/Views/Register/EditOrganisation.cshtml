@@ -56,6 +56,7 @@
                                 <li><a sfa-validation-for="Postcode"></a></li>
                                 <li><a sfa-validation-for="ContactsCount"></a></li>
                                 <li><a sfa-validation-for="StandardsCount"></a></li>
+                                <li><a sfa-validation-for="RecognitionNumber"></a></li>
                             </ul>
                         </div>
                     </div>
@@ -125,10 +126,17 @@
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-form-group--error">
                         <label class="govuk-label" for="Ukprn">
-                            UKPRN (optional)
+                            UKPRN
                         </label>
                         <span class="govuk-error-message" asp-validation-for="Ukprn"></span>
                         <input type="text" maxlength="8" class="govuk-input js-integers-only" name="Ukprn" sfa-validation-for="Ukprn" sfa-validationerror-class="govuk-input-error" asp-for="Ukprn" />
+                    </div>
+                    <div class="govuk-form-group" sfa-validation-for="RecognitionNumber" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label" for="RecognitionNumber">
+                            Ofqual Recognition Number (optional)
+                        </label>
+                        <span class="govuk-error-message" asp-validation-for="RecognitionNumber"></span>
+                        <input type="text" class="govuk-input" name="RecognitionNumber" sfa-validation-for="RecognitionNumber" sfa-validationerror-class="govuk-input-error" asp-for="RecognitionNumber" />
                     </div>
                     <div class="govuk-form-group" sfa-validation-for="OrganisationTypeId" sfa-validationerror-class="govuk-form-group--error">
                         <p class="govuk-body">Type of organisation</p>

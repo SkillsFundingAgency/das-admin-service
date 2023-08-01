@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.Validators
             {
                 var validationResult = _apiClient.ValidateUpdateOrganisation(vm.OrganisationId, vm.Name, vm.Ukprn, 
                                                 vm.OrganisationTypeId, vm.Address1, vm.Address2, vm.Address3,vm.Address4,vm.Postcode,vm.Status, vm.ActionChoice,
-                                                vm.CompanyNumber, vm.CharityNumber).Result;
+                                                vm.CompanyNumber, vm.CharityNumber, vm.RecognitionNumber).Result;
                 if (validationResult.IsValid) return;
                 foreach (var error in validationResult.Errors)
                 {
