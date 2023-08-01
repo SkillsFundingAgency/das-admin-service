@@ -25,5 +25,6 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Register
         public string CharityNumber { get; set; }
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }

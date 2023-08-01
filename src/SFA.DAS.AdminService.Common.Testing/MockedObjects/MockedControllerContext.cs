@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Http.Internal;
 
 namespace SFA.DAS.AdminService.Common.Testing.MockedObjects
 {

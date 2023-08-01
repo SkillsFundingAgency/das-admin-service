@@ -20,8 +20,8 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task Update(UpdateOrganisationRequest updateOrganisationRequest);
         Task Delete(Guid id);
 
-        Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber);
-        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber);
+        Task<ValidationResponse> ValidateCreateOrganisation(string name, long? ukprn, int? organisationTypeId, string companyNumber, string charityNumber, string recognitionNumber);
+        Task<ValidationResponse> ValidateUpdateOrganisation(string organisationId, string name, long? ukprn, int? organisationTypeId, string address1, string address2, string address3, string address4, string postcode, string status, string actionChoice, string companyNumber, string charityNumber, string recognitionNumber);
 
         Task<ValidationResponse> ValidateCreateContact(string firstName, string lastName, string organisationId, string email, string phone);
         Task<ValidationResponse> ValidateUpdateContact(string contactId, string firstName, string lastName, string email, string phoneNumber);
@@ -44,7 +44,6 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
 
         Task<List<OrganisationType>> GetOrganisationTypes();
         Task SendEmailsToOrganisationUserManagementUsers(NotifyUserManagementUsersRequest notifyUserManagementUsersRequest);
-        Task<OrganisationResponse> GetOrganisationByName(string name);
         Task<OrganisationResponse> GetOrganisationByUserId(Guid userId);
         Task<List<OrganisationStandardSummary>> GetOrganisationStandardsByOrganisation(string endPointAssessorOrganisationId);
     }
