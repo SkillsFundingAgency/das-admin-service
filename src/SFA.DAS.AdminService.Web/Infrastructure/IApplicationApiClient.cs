@@ -14,7 +14,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
     {
         Task EvaluateSection(Guid applicationId, int sequenceNo, int sectionNo, bool isSectionComplete, string evaluatedBy);
         Task<ApplicationResponse> GetApplication(Guid Id);
-        Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? StandardCode);
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
@@ -22,6 +21,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
         Task<PaginatedList<ApplicationSummaryItem>> GetOrganisationApplications(OrganisationApplicationsRequest organisationApplicationsRequest);
         Task<PaginatedList<ApplicationSummaryItem>> GetStandardApplications(StandardApplicationsRequest standardApplicationsRequest);
         Task<PaginatedList<ApplicationSummaryItem>> GetWithdrawalApplications(WithdrawalApplicationsRequest organisationApplicationsRequest);
+        Task<DateTime?> GetLatestWithdrawalDateForStandard(Guid organisationId, int? standardCode);
 
         Task ReturnApplicationSequence(Guid applicationId, int sequenceNo, string returnType, string returnedBy);
 

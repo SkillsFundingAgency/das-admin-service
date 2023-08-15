@@ -96,11 +96,10 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             return await Get<ApplicationResponse>($"/api/v1/Applications/{Id}/application");
         }
 
-        public async Task<List<ApplicationResponse>> GetWithdrawnApplications(Guid orgId, int? standardCode)
+        public async Task<DateTime?> GetLatestWithdrawalDateForStandard(Guid organisationId, int? standardCode)
         {
-            return await Get<List<ApplicationResponse>>($"/api/v1/Applications/{orgId}/application/withdrawn/{standardCode}");
+            return await Get<DateTime?>($"/api/v1/applications/{organisationId}/application/latest-withdrawal-date/{standardCode}");
         }
-
 
         #region Application
         public async Task<ApplicationReviewStatusCounts> GetApplicationReviewStatusCounts()

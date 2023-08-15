@@ -14,6 +14,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
         Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId);
         Task<Dictionary<string, object>> GetApplicationDataDictionary(Guid applicationId);
+        Task<Dictionary<string, object>> UpdateApplicationDataDictionary(Guid applicationId, Dictionary<string, object> applicationData);
         Task<string> GetQuestionTag(Guid applicationId, string questionTag);
         Task<List<Sequence>> GetAllApplicationSequences(Guid applicationId);
         Task<List<Section>> GetAllApplicationSections(Guid applicationId);

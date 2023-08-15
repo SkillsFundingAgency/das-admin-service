@@ -89,14 +89,7 @@
                         }
                         else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                         {
-                            if (Model.Versions != null)
-                            {
-                                <li>@Model.OrganisationName will be withdrawn from the selected standard versions(s) on the agreed date.</li>
-                            }
-                            else
-                            {
-                                <li>@Model.OrganisationName will be withdrawn from the selected standard on the agreed date.</li>
-                            }
+                            <li>@Model.OrganisationName will be withdrawn from the selected standard on the agreed date.</li>
                         }
                     </ul>
                 }

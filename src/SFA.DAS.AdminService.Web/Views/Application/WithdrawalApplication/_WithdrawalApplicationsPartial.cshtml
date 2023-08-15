@@ -98,10 +98,6 @@
                                                         {
                                                             @($"{application.StandardName}") <br /> <text>(All versions)</text>
                                                         }
-                                                        else if (application.WithdrawalType == WithdrawalTypes.Version)
-                                                        {
-                                                            @($"{application.StandardName}") <br /> @($"Version {string.Join(",", application.Versions)}")
-                                                        }
                                                         else
                                                         {
                                                             @($"{application.StandardName} ({application.StandardReference})")

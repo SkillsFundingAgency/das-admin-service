@@ -50,6 +50,14 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
             }
         }
 
+        public async Task<Dictionary<string, object>> UpdateApplicationDataDictionary(Guid applicationId, Dictionary<string, object> applicationData)
+        {
+            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
+            {
+                return await PostPutRequestWithResponse<Dictionary<string, object>, Dictionary<string, object>>(request, applicationData);
+            }
+        }
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData/{questionTag}"))

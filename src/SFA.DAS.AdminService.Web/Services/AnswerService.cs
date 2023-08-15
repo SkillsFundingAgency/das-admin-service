@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -162,6 +164,39 @@ namespace SFA.DAS.AdminService.Web.Services
                 application.StandardApplicationType);
 
             return command;
+        }
+
+        public async Task<WithdrawOrganisationRequest> GatherAnswersForWithdrawOrganisationForApplication(Guid applicationId, string updatedBy)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
+            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+
+            if (application is null || applicationData is null || organisation is null) return null;
+
+            return new WithdrawOrganisationRequest
+            {
+                ApplicationId = application.Id,
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                WithdrawalDate = (DateTime)applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)],
+                UpdatedBy = updatedBy
+            };
+        }
+
+        public async Task<WithdrawStandardRequest> GatherAnswersForWithdrawStandardForApplication(Guid applicationId)
+        {
+            var application = await _applyApiClient.GetApplication(applicationId);
+            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
+            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
+
+            if (application is null || applicationData is null || organisation is null) return null;
+
+            return new WithdrawStandardRequest
+            {
+                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
+                StandardCode = application.StandardCode.Value,
+                WithdrawalDate = (DateTime)applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)],
+            };
         }
 
         private string GetAnswer(Dictionary<string, object> applicationData, string questionTag)
