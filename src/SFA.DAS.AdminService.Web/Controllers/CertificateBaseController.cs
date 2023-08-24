@@ -73,6 +73,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(returnToIfModelNotValid, vm);
             }
 
+            // If we are changing the version then blank out the option.
+            if(action == "Version" && vm is CertificateVersionViewModel)
+            {
+                var cvvm = vm as CertificateVersionViewModel;
+                if(cvvm.StandardUId != certificate.StandardUId)
+                {
+                    certData.CourseOption = null;
+                }
+            }
+
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
             await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
