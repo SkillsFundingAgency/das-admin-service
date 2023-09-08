@@ -1,9 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Api.Types.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using SFA.DAS.AssessorService.ApplyTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,29 +11,19 @@ namespace SFA.DAS.AdminService.Web.Services
 {
     public class AnswerService : IAnswerService
     {
-        private readonly IApiClient _apiApiClient;
-        private readonly IApplicationApiClient _applyApiClient;
-        private readonly IQnaApiClient _qnaApiClient;
+        private readonly IApplicationService _applicationService;
 
-
-        public AnswerService(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient)
+        public AnswerService(IApplicationService applicationService)
         {
-            _apiApiClient = apiClient;
-            _applyApiClient = applyApiClient;
-            _qnaApiClient = qnaApiClient;
+            _applicationService = applicationService;
         }
 
         public async Task<CreateOrganisationContactCommand> GatherAnswersForOrganisationAndContactForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
+            var applicationDetails = await _applicationService.GetApplicationsDetails(applicationId);
+            if(applicationDetails == null) return new CreateOrganisationContactCommand();
 
-            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
-
-            var organisationContacts = await _apiApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
-            var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
-
-            if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationContactCommand();
+            var applicationData = applicationDetails.ApplicationData;
 
             var tradingName = GetAnswer(applicationData, "trading_name");
             var useTradingNameString = GetAnswer(applicationData, "use_trading_name");
@@ -100,12 +87,12 @@ namespace SFA.DAS.AdminService.Web.Services
             var standardWebsite = GetAnswer(applicationData, "standard_website");
 
             var command = new CreateOrganisationContactCommand
-            (organisation.Id,
-                organisation.EndPointAssessorName,
-                organisation.OrganisationType.Type,
-                organisation.EndPointAssessorUkprn,
-                organisation.EndPointAssessorOrganisationId,
-                organisation.OrganisationData.RoEPAOApproved,
+            (applicationDetails.Organisation.Id,
+                applicationDetails.Organisation.EndPointAssessorName,
+                applicationDetails.Organisation.OrganisationType.Type,
+                applicationDetails.Organisation.EndPointAssessorUkprn,
+                applicationDetails.Organisation.EndPointAssessorOrganisationId,
+                applicationDetails.Organisation.OrganisationData.RoEPAOApproved,
                 tradingName,
                 useTradingName,
                 contactGivenNames,
@@ -121,27 +108,23 @@ namespace SFA.DAS.AdminService.Web.Services
                 companyNumber,
                 charityNumber,
                 standardWebsite,
-                applyingContact.Id,
-                applyingContact.GivenNames,
-                applyingContact.FamilyName,
-                applyingContact.Email,
-                organisationContacts.Where(c => c.Email != applyingContact.Email).Select(c => c.Email).ToList(),
-                organisation.OrganisationData?.FHADetails?.FinancialDueDate,
-                organisation.OrganisationData?.FHADetails?.FinancialExempt);
+                applicationDetails.ApplyingContact.Id,
+                applicationDetails.ApplyingContact.GivenNames,
+                applicationDetails.ApplyingContact.FamilyName,
+                applicationDetails.ApplyingContact.Email,
+                applicationDetails.OrganisationContacts.Where(c => c.Email != applicationDetails.ApplyingContact.Email).Select(c => c.Email).ToList(),
+                applicationDetails.Organisation.OrganisationData?.FHADetails?.FinancialDueDate,
+                applicationDetails.Organisation.OrganisationData?.FHADetails?.FinancialExempt);
 
             return command;
         }
 
         public async Task<CreateOrganisationStandardCommand> GatherAnswersForOrganisationStandardForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
+            var applicationDetails = await _applicationService.GetApplicationsDetails(applicationId);
+            if (applicationDetails == null) return new CreateOrganisationStandardCommand();
 
-            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
-            var organisationContacts = await _apiApiClient.GetOrganisationContacts(organisation?.Id ?? Guid.Empty);
-            var applyingContact = organisationContacts?.FirstOrDefault(c => c.Id.ToString().Equals(application?.CreatedBy, StringComparison.InvariantCultureIgnoreCase));
-
-            if (application is null || applicationData is null || organisation is null || applyingContact is null) return new CreateOrganisationStandardCommand();
+            var applicationData = applicationDetails.ApplicationData;
 
             var effectiveFrom = DateTime.UtcNow.Date;
             if (DateTime.TryParse(GetAnswer(applicationData, "effective_from"), out var effectiveFromDate))
@@ -153,49 +136,43 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var command = new CreateOrganisationStandardCommand
             (
-                organisation.Id,
-                organisation.EndPointAssessorOrganisationId,
-                application.StandardCode ?? 0,
-                application.ApplyData?.Apply?.StandardReference,
-                application.ApplyData?.Apply?.Versions,
+                applicationDetails.Organisation.Id,
+                applicationDetails.Organisation.EndPointAssessorOrganisationId,
+                applicationDetails.ApplicationResponse.StandardCode ?? 0,
+                applicationDetails.ApplicationResponse.ApplyData?.Apply?.StandardReference,
+                applicationDetails.ApplicationResponse.ApplyData?.Apply?.Versions,
                 effectiveFrom,
                 deliveryAreas?.Split(',').ToList(),
-                applyingContact.Id,
-                application.StandardApplicationType);
+                applicationDetails.ApplyingContact.Id,
+                applicationDetails.ApplicationResponse.StandardApplicationType);
 
             return command;
         }
 
         public async Task<WithdrawOrganisationRequest> GatherAnswersForWithdrawOrganisationForApplication(Guid applicationId, string updatedBy)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
-            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
-
-            if (application is null || applicationData is null || organisation is null) return null;
+            var withdrawalApplicationDetails = await _applicationService.GetWithdrawalApplicationDetails(applicationId);
+            if (withdrawalApplicationDetails is null) return null;
 
             return new WithdrawOrganisationRequest
             {
-                ApplicationId = application.Id,
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                WithdrawalDate = (DateTime)applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)],
+                ApplicationId = withdrawalApplicationDetails.ApplicationId,
+                EndPointAssessorOrganisationId = withdrawalApplicationDetails.EndPointAssessorOrganisationId,
+                WithdrawalDate = withdrawalApplicationDetails.ConfirmedWithdrawalDate,
                 UpdatedBy = updatedBy
             };
         }
 
         public async Task<WithdrawStandardRequest> GatherAnswersForWithdrawStandardForApplication(Guid applicationId)
         {
-            var application = await _applyApiClient.GetApplication(applicationId);
-            var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
-            var organisation = await _apiApiClient.GetOrganisation(application?.OrganisationId ?? Guid.Empty);
-
-            if (application is null || applicationData is null || organisation is null) return null;
+            var withdrawalApplicationDetails = await _applicationService.GetWithdrawalApplicationDetails(applicationId);
+            if(withdrawalApplicationDetails is null) return null;
 
             return new WithdrawStandardRequest
             {
-                EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                StandardCode = application.StandardCode.Value,
-                WithdrawalDate = (DateTime)applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)],
+                EndPointAssessorOrganisationId = withdrawalApplicationDetails.EndPointAssessorOrganisationId,
+                StandardCode = withdrawalApplicationDetails.StandardCode,
+                WithdrawalDate = withdrawalApplicationDetails.ConfirmedWithdrawalDate
             };
         }
 
