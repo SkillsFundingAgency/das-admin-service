@@ -171,7 +171,7 @@ namespace SFA.DAS.AdminService.Web.Services
             return new WithdrawStandardRequest
             {
                 EndPointAssessorOrganisationId = withdrawalApplicationDetails.EndPointAssessorOrganisationId,
-                StandardCode = withdrawalApplicationDetails.StandardCode,
+                StandardCode = withdrawalApplicationDetails.StandardCode.GetValueOrDefault(),
                 WithdrawalDate = withdrawalApplicationDetails.ConfirmedWithdrawalDate
             };
         }

@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 ApplicationId = application.Id,
                 EndPointAssessorOrganisationId = organisation.EndPointAssessorOrganisationId,
-                StandardCode = application.StandardCode.Value,
+                StandardCode = application.StandardCode,
                 ConfirmedWithdrawalDate = (DateTime)applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)]
             };
         }
