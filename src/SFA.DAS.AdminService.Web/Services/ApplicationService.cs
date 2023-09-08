@@ -38,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.Services
             };
         }
 
-        public async Task<ApplicationDetails?> GetApplicationsDetails(Guid applicationId)
+        public async Task<ApplicationDetails> GetApplicationsDetails(Guid applicationId)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var applicationData = await _qnaApiClient.GetApplicationDataDictionary(application?.ApplicationId ?? Guid.Empty);
