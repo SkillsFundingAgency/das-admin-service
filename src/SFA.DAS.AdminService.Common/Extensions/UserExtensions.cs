@@ -23,7 +23,7 @@
         {
             var identity = user.Identities.FirstOrDefault();
             var givenNameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
-            var givenName = identity?.Claims.FirstOrDefault(x => x.Type == givenNameClaim);
+            var givenName = identity?.Claims.FirstOrDefault(x => x.Type == givenNameClaim || x.Type == "given_name");
 
             if (givenName == null)
             {
@@ -37,7 +37,7 @@
         {
             var identity = user.Identities.FirstOrDefault();
             var surnameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
-            var surname = identity?.Claims.FirstOrDefault(x => x.Type == surnameClaim);
+            var surname = identity?.Claims.FirstOrDefault(x => x.Type == surnameClaim || x.Type == "family_name");
             if (surname == null)
             {
                 Logger.LogError($"Unable to get value of claim {surnameClaim}");
