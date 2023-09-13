@@ -123,7 +123,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 CompanyNumber = viewModel.CompanyNumber,
                 CharityNumber = viewModel.CharityNumber,
                 FinancialDueDate = viewModel.FinancialDueDate,
-                FinancialExempt = viewModel.FinancialExempt
+                FinancialExempt = viewModel.FinancialExempt,
+                RecognitionNumber = viewModel.RecognitionNumber ?? string.Empty
             };
          
             await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
@@ -368,7 +369,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Address4 = viewModel.Address4,
                 Postcode = viewModel.Postcode,
                 CompanyNumber = viewModel.CompanyNumber,
-                CharityNumber = viewModel.CharityNumber
+                CharityNumber = viewModel.CharityNumber,
+                RecognitionNumber = viewModel.RecognitionNumber
             };
 
             var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
@@ -714,7 +716,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 CompanyNumber =  organisation.OrganisationData?.CompanyNumber,
                 Status = organisation.Status,
                 FinancialDueDate = organisation.OrganisationData?.FHADetails?.FinancialDueDate,
-                FinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt
+                FinancialExempt = organisation.OrganisationData?.FHADetails?.FinancialExempt,
+                RecognitionNumber = organisation.RecognitionNumber
             };
 
             viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;

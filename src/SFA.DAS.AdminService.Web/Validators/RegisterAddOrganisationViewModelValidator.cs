@@ -14,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Validators
           
             RuleFor(vm => vm).Custom((vm, context) =>
             {
-                var validationResult =  _apiClient.ValidateCreateOrganisation(vm.Name, vm.Ukprn, vm.OrganisationTypeId, vm.CompanyNumber, vm.CharityNumber).Result;
+                var validationResult =  _apiClient.ValidateCreateOrganisation(vm.Name, vm.Ukprn, vm.OrganisationTypeId, vm.CompanyNumber, vm.CharityNumber, vm.RecognitionNumber).Result;
                 if (validationResult.IsValid) return;
                 foreach (var error in validationResult.Errors)
                 {
