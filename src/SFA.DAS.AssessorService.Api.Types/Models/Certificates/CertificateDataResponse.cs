@@ -18,6 +18,7 @@ namespace SFA.DAS.AssessorService.Api.Types.Models.Certificates
         public string ContactAddLine3 { get; set; }
         public string ContactAddLine4 { get; set; }
         public string ContactPostCode { get; set; }
+        public bool CoronationEmblem { get; set; }
         public string Registration { get; set; }
         public string ProviderName { get; set; }
         public DateTime LearningStartDate { get; set; }
