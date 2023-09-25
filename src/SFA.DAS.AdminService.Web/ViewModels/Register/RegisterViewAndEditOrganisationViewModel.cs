@@ -45,5 +45,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
 
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+        public string RecognitionNumber { get; set; }
     }
 }
