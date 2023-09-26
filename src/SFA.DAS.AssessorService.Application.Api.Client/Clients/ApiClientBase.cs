@@ -20,7 +20,7 @@ namespace SFA.DAS.AssessorService.Application.Api.Client.Clients
         private readonly ILogger<ApiClientBase> _logger;
         protected HttpClient HttpClient;
 
-        private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
 
         protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
