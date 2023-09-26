@@ -26,8 +26,8 @@ namespace SFA.DAS.AdminService.Settings
         RedisCacheSettings RedisCacheSettings { get; }
 
         /// <summary>
-        /// Gets or Sets the UseDfeSignIn property.
+        /// Gets or Sets the UseDfESignIn property.
         /// </summary>
-        bool UseDfeSignIn { get; }
+        bool UseDfESignIn { get; }
     }
 }

@@ -50,7 +50,6 @@ namespace SFA.DAS.AdminService.Web
         private readonly ILogger<Startup> _logger;
         private const string ServiceName = "SFA.DAS.AdminService";
         private const string Version = "1.0";
-        private const string ClientName = "ServiceAdmin";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
@@ -266,7 +265,7 @@ namespace SFA.DAS.AdminService.Web
 
         private void AddAuthentication(IServiceCollection services)
         {
-            if (ApplicationConfiguration.UseDfeSignIn)
+            if (ApplicationConfiguration.UseDfESignIn)
                 UseDfeSignInAuthentication(services);
             else 
                 UseWsFederationAuthentication(services);
@@ -278,7 +277,13 @@ namespace SFA.DAS.AdminService.Web
         /// <param name="services">IServiceCollection.</param>
         private void UseDfeSignInAuthentication(IServiceCollection services)
         {
-            services.AddAndConfigureDfESignInAuthentication(Configuration, $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth", typeof(CustomServiceRole), ClientName, "/signout");
+            services.AddAndConfigureDfESignInAuthentication(
+                Configuration, 
+                $"{typeof(Extensions.ServiceCollectionExtensions).Assembly.GetName().Name}.Auth",
+                typeof(CustomServiceRole),
+                DfESignIn.Auth.Enums.ClientName.ServiceAdmin,
+                "/SignOut",
+                "");
         }
 
         /// <summary>

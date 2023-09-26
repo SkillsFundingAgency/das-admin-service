@@ -7,7 +7,6 @@ namespace SFA.DAS.AdminService.Web.Helpers
     public class CustomServiceRole : ICustomServiceRole
     {
         public string RoleClaimType => ClaimTypes.Role;
-
-        public CustomServiceRoleValueType RoleValueType => CustomServiceRoleValueType.Name;
+        public CustomServiceRoleValueType RoleValueType => CustomServiceRoleValueType.Code;
     }
 }

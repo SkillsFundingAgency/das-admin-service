@@ -36,8 +36,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
 
-            // Get the AuthScheme based on the DfeSignIn config/property.
-            var authScheme = _applicationConfiguration.UseDfeSignIn
+            // Get the AuthScheme based on the DfESignIn config/property.
+            var authScheme = _applicationConfiguration.UseDfESignIn
                 ? OpenIdConnectDefaults.AuthenticationScheme
                 : WsFederationDefaults.AuthenticationScheme;
 
@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             // Get the AuthScheme based on the DfeSignIn config/property.
-            var authScheme = _applicationConfiguration.UseDfeSignIn
+            var authScheme = _applicationConfiguration.UseDfESignIn
                 ? OpenIdConnectDefaults.AuthenticationScheme
                 : WsFederationDefaults.AuthenticationScheme;
 
