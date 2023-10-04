@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers.Apply;
+using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
@@ -44,9 +45,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             _answerInjectionService = new Mock<IAnswerInjectionService>();
             _logger = new Mock<ILogger<ApplicationController>>();
 
-            var identity = new GenericIdentity("test user");
-            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", "JOHN"));
-            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname", "DUNHILL"));
+            var identity = new GenericIdentity("UserName");
+            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", "User"));
+            identity.AddClaim(new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname", "Name"));
 
             _httpContextAccessor.Setup(a => a.HttpContext.User.Identities)
                .Returns(new List<ClaimsIdentity>() { identity });
@@ -55,61 +56,92 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
         }
 
         [Test]
-        public async Task When_RequestingWithdrawalDateCheckPage_Then_WithdrawalDateCheckViewIsReturned()
+        public async Task When_RequestingWithdrawalDateCheck_ThenReturnCorrectView()
         {
             // Arrange
-
-            ArrangeMocksWithIrrelevantData();
+            var id = Guid.NewGuid();
             var applicationId = Guid.NewGuid();
-            var sequenceNumber = 0;
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
             var backModel = new BackViewModel();
-            var currentVersionIndex = 0;
+            
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            _qnaApiClient.Setup(x => x.GetApplicationDataDictionary(It.IsAny<Guid>()))
+                .ReturnsAsync(new Dictionary<string, object> { { nameof(ApplicationData.ConfirmedWithdrawalDate), null } });
 
             // Act
-
-            ViewResult viewResult = await _controller.WithdrawalDateCheck(applicationId, sequenceNumber, backModel, currentVersionIndex) as ViewResult;
+            var viewResult = await _controller.WithdrawalDateCheck(applicationId, sequenceNumber, backModel);
 
             // Assert
-
-            viewResult.ViewName.Should().Be("WithdrawalDateCheck");
+            viewResult.Should().NotBeNull();
+            viewResult.Should().BeOfType<ViewResult>();
+            ((ViewResult)viewResult).ViewName.Should().Be(nameof(ApplicationController.WithdrawalDateCheck));
         }
 
         [Test]
-        public async Task When_RequestingWithdrawalDateChangePageForStandardWithdrawal_Then_RedirectToConfirmation()
+        public async Task When_PostingWithdrawalDateChange_Then_UpdateApplicationDataForChangedDate()
         {
             // Arrange
-
-            ArrangeMocksWithIrrelevantData();
+            var id = Guid.NewGuid();
             var applicationId = Guid.NewGuid();
-            var sequenceNumber = 0;
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
             var backModel = new BackViewModel();
-            var effectiveToDay = "01";
-            var effectiveToMonth = "01";
-            var effectiveToYear = "2021";
-            var currentVersionIndex = 0;
+            var effectiveTo = new DateTime(2021, 01, 01);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            _qnaApiClient.Setup(x => x.GetApplicationDataDictionary(It.IsAny<Guid>()))
+                .ReturnsAsync(new Dictionary<string, object> { { nameof(ApplicationData.ConfirmedWithdrawalDate), null } });
 
             // Act
-
-            var viewResult = await _controller.WithdrawalDateChange(applicationId, sequenceNumber, backModel, effectiveToDay, effectiveToMonth, effectiveToYear, currentVersionIndex);
+            var viewResult = await _controller.WithdrawalDateChange(applicationId, sequenceNumber, backModel, effectiveTo.Day.ToString(), effectiveTo.Month.ToString(), effectiveTo.Year.ToString());
 
             // Assert
+            string specificKey = nameof(ApplicationData.ConfirmedWithdrawalDate);
+            object expectedValue = effectiveTo;
 
+            _qnaApiClient.Verify(m => m.UpdateApplicationDataDictionary(applicationId, It.Is<Dictionary<string, object>>(x => x.ContainsKey(specificKey) && x[specificKey].Equals(expectedValue))));
+        }
+
+        [Test]
+        public async Task When_PostingWithdrawalDateChange_Then_RedirectToConfirmation()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+            var backModel = new BackViewModel();
+            var effectiveTo = new DateTime(2021, 01, 01);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            _qnaApiClient.Setup(x => x.GetApplicationDataDictionary(It.IsAny<Guid>()))
+                .ReturnsAsync(new Dictionary<string, object> { { nameof(ApplicationData.ConfirmedWithdrawalDate), null } });
+
+            // Act
+            var viewResult = await _controller.WithdrawalDateChange(applicationId, sequenceNumber, backModel, effectiveTo.Day.ToString(), effectiveTo.Month.ToString(), effectiveTo.Year.ToString());
+
+            // Assert
             viewResult.Should().NotBeNull();
             viewResult.Should().BeOfType<RedirectToActionResult>();
             ((RedirectToActionResult)viewResult).ActionName.Should().Be("Assessment");  // Confirmation page is generated by the Assessment action
         }
 
         [Test]
-        public async Task When_PostingWithdrawalDateCheckSaveForOrganisationWithdrawal_Then_RedirectToConfirmation()
+        public async Task When_PostingWithdrawalDateCheckSave_Then_UpdateDataDictionaryWithChangedDate()
         {
             // Arrange
-            ArrangeMocksWithIrrelevantData();
-            var withdrawalDate = new DateTime(2021, 10, 1);
+            var id = Guid.NewGuid();
             var applicationId = Guid.NewGuid();
-            var sequenceNumber = 0;
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+            var withdrawalDate = new DateTime(2021, 10, 1);
             var backModel = new BackViewModel();
             var dateApproved = "YES";
-            var currentVersionIndex = 0;
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            _qnaApiClient.Setup(x => x.GetApplicationDataDictionary(It.IsAny<Guid>()))
+                .ReturnsAsync(new Dictionary<string, object> { { nameof(ApplicationData.ConfirmedWithdrawalDate), null } });
 
             _qnaApiClient.Setup(x => x.GetSequence(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new QnA.Api.Types.Sequence()
@@ -150,29 +182,222 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
                });
 
             // Act
-            var viewResult = await _controller.WithdrawalDateCheckSave(applicationId, sequenceNumber, backModel, dateApproved, currentVersionIndex);
+            var viewResult = await _controller.WithdrawalDateCheckSave(applicationId, sequenceNumber, backModel, dateApproved);
 
             // Assert
-            _apiClient.Verify(m => m.WithdrawOrganisation(It.Is<WithdrawOrganisationRequest>(x => x.WithdrawalDate == withdrawalDate &&
-                                                                                                   x.UpdatedBy == "JOHN DUNHILL")));
+            string specificKey = nameof(ApplicationData.ConfirmedWithdrawalDate);
+            object expectedValue = withdrawalDate;
+
+            _qnaApiClient.Verify(m => m.UpdateApplicationDataDictionary(applicationId, It.Is<Dictionary<string, object>>(x => x.ContainsKey(specificKey) && x[specificKey].Equals(expectedValue))));
         }
 
-        private void ArrangeMocksWithIrrelevantData()
+        [Test]
+        public async Task When_PostingWithdrawalDateCheckSave_Then_RedirectToConfirmation()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+            var withdrawalDate = new DateTime(2021, 10, 1);
+            var backModel = new BackViewModel();
+            var dateApproved = "YES";
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            _qnaApiClient.Setup(x => x.GetApplicationDataDictionary(It.IsAny<Guid>()))
+                .ReturnsAsync(new Dictionary<string, object> { { nameof(ApplicationData.ConfirmedWithdrawalDate), null } });
+
+            _qnaApiClient.Setup(x => x.GetSequence(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new QnA.Api.Types.Sequence()
+                {
+                    SequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO,
+                });
+
+            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>()))
+               .ReturnsAsync(new List<QnA.Api.Types.Section>()
+               {
+                    new QnA.Api.Types.Section()
+                    {
+                        SequenceNo = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO,
+                        QnAData = new QnA.Api.Types.Page.QnAData()
+                        {
+                            Pages = new List<QnA.Api.Types.Page.Page>()
+                            {
+                                new QnA.Api.Types.Page.Page()
+                                {
+                                    LinkTitle = "WITHDRAWAL DATE",
+                                    PageOfAnswers = new List<QnA.Api.Types.Page.PageOfAnswers>()
+                                    {
+                                        new QnA.Api.Types.Page.PageOfAnswers()
+                                        {
+                                            Answers = new List<QnA.Api.Types.Page.Answer>()
+                                            {
+                                                new QnA.Api.Types.Page.Answer()
+                                                {
+                                                    Value = withdrawalDate.ToString()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+               });
+
+            // Act
+            var viewResult = await _controller.WithdrawalDateCheckSave(applicationId, sequenceNumber, backModel, dateApproved);
+
+            // Assert
+            viewResult.Should().NotBeNull();
+            viewResult.Should().BeOfType<RedirectToActionResult>();
+            ((RedirectToActionResult)viewResult).ActionName.Should().Be("Assessment");
+        }
+
+        [Test]
+        public async Task When_PostingReturnForWithdrawOrganisationSequence_Then_CallsWithdrawOrganisationAndReturnApplication()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+            var backModel = new BackViewModel();
+
+            var withdrawOrganisationRequest = new WithdrawOrganisationRequest
+            {
+                ApplicationId = id,
+                EndPointAssessorOrganisationId = "EPA0001",
+                WithdrawalDate = DateTime.Now.Date.AddMonths(6),
+                UpdatedBy = "User Name"
+            };
+
+            _answerService.Setup(x => x.GatherAnswersForWithdrawOrganisationForApplication(id, "User Name"))
+                .ReturnsAsync(withdrawOrganisationRequest);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            // Act
+            var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
+
+            // Assert
+            _apiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
+            _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
+        }
+
+        [Test]
+        public async Task When_PostingReturnForWithdrawOrganisationSequence_Then_ShowsReturnedView()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO;
+            var backModel = new BackViewModel();
+
+            var withdrawOrganisationRequest = new WithdrawOrganisationRequest
+            {
+                ApplicationId = id,
+                EndPointAssessorOrganisationId = "EPA0001",
+                WithdrawalDate = DateTime.Now.Date.AddMonths(6),
+                UpdatedBy = "User Name"
+            };
+
+            _answerService.Setup(x => x.GatherAnswersForWithdrawOrganisationForApplication(id, "User Name"))
+                .ReturnsAsync(withdrawOrganisationRequest);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, null, ApplicationSectionStatus.Evaluated);
+
+            // Act
+            var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
+
+            // Assert
+            _apiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
+            _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
+
+            viewResult.Should().NotBeNull();
+            viewResult.Should().BeOfType<ViewResult>();
+            ((ViewResult)viewResult).ViewName.Should().Be("Returned");
+        }
+
+        [Test]
+        public async Task When_PostingReturnForWithdrawStandardSequence_Then_CallsWithdrawStandardAndReturnApplication()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO;
+            var backModel = new BackViewModel();
+            var standardCode = 123;
+
+            var withdrawStandardRequest = new WithdrawStandardRequest
+            {
+                EndPointAssessorOrganisationId = "EPA0001",
+                StandardCode = standardCode,
+                WithdrawalDate = DateTime.Now.Date.AddMonths(6)
+            };
+
+            _answerService.Setup(x => x.GatherAnswersForWithdrawStandardForApplication(id))
+                .ReturnsAsync(withdrawStandardRequest);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, standardCode, ApplicationSectionStatus.Evaluated);
+
+            // Act
+            var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
+
+            // Assert
+            _apiClient.Verify(x => x.WithdrawStandard(withdrawStandardRequest), Times.Once);
+            _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
+        }
+
+        [Test]
+        public async Task When_PostingReturnForWithdrawStandardSequence_Then_ShowsReturnedView()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO;
+            var backModel = new BackViewModel();
+            var standardCode = 123;
+
+            var withdrawStandardRequest = new WithdrawStandardRequest
+            {
+                EndPointAssessorOrganisationId = "EPA0001",
+                StandardCode = standardCode,
+                WithdrawalDate = DateTime.Now.Date.AddMonths(6)
+            };
+
+            _answerService.Setup(x => x.GatherAnswersForWithdrawStandardForApplication(id))
+                .ReturnsAsync(withdrawStandardRequest);
+
+            ArrangeMocksWithQnAData(id, applicationId, sequenceNumber, standardCode, ApplicationSectionStatus.Evaluated);
+
+            // Act
+            var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
+
+            // Assert
+            viewResult.Should().NotBeNull();
+            viewResult.Should().BeOfType<ViewResult>();
+            ((ViewResult)viewResult).ViewName.Should().Be("Returned");
+        }
+
+        private void ArrangeMocksWithQnAData(Guid id, Guid applicationId, int sequenceNumber, int? standardCode, string applicationSectionStatus)
         {
             _applyApiClient.Setup(x => x.GetApplication(It.IsAny<Guid>()))
                 .ReturnsAsync(new ApplicationResponse()
                 {
-                    ApplyData = new AssessorService.ApplyTypes.ApplyData()
+                    Id = id,
+                    ApplicationId = applicationId,
+                    ApplyData = new ApplyData()
                     {
                         Apply = new AssessorService.ApplyTypes.Apply()
                         {
                             ReferenceNumber = "123456",
+                            StandardCode = standardCode
                         },
                         Sequences = new List<ApplySequence>
                         {
                             new ApplySequence
                             {
-                                SequenceNo = 5,
+                                SequenceNo = sequenceNumber,
                                 IsActive = true,
                                 NotRequired = false,
                                 Sections = new List<ApplySection>()
@@ -180,6 +405,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
                                     new ApplySection()
                                     {
                                         NotRequired = false,
+                                        Status = applicationSectionStatus
                                     }
                                 }
                             }

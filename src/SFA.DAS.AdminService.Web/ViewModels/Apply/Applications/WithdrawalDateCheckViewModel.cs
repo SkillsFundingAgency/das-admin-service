@@ -13,23 +13,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
     {
         public DateTime? RequestedWithdrawalDate { get; set; }
 
-        public int? CurrentVersionIndex { get; set; }
-
-        public List<string> Versions { get; private set; }
-
         public WithdrawalDateCheckViewModel(ApplicationResponse application, Organisation organisation, Sequence sequence,
-            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId,
-            int currentVersionIndex)
-        : base(application, organisation, sequence, sections, applySections, backAction, backController, backOrganisationId)
+            List<Section> sections, List<ApplySection> applySections, string backAction, string backController, string backOrganisationId)
+        : base(application, organisation, sequence, sections, applySections, backAction, backController, backOrganisationId, null)
         {
             RequestedWithdrawalDate = GetWithdrawalDate(Sections);
-            CurrentVersionIndex = currentVersionIndex;
-            Versions = application.ApplyData.Apply.Versions;
         }
 
         private DateTime? GetWithdrawalDate(List<Section> sections)
         {
-            DateTime? withdrawalDate = default(DateTime?);
+            DateTime? withdrawalDate = default;
 
             if (null != sections)
             {
@@ -50,25 +43,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             }
 
             return withdrawalDate;
-        }
-
-        public void IncrementCurrentVersionIndex()
-        {
-            if(null == Versions || !Versions.Any())
-            {
-                CurrentVersionIndex = null;
-            }
-            else
-            {
-                if (CurrentVersionIndex < 0 || CurrentVersionIndex >= (Versions.Count - 1))
-                {
-                    CurrentVersionIndex = null;
-                }
-                else
-                {
-                    CurrentVersionIndex++;
-                }
-            }
         }
     }
 }

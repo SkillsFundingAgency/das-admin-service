@@ -5,7 +5,6 @@
 
 @model SFA.DAS.AdminService.Web.ViewModels.Apply.Applications.WithdrawalDateCheckViewModel 
 
-<input type="hidden" name="CurrentVersionIndex" value="@Model.CurrentVersionIndex" />
 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
 
     <div class="govuk-summary-list__row">
@@ -22,19 +21,7 @@
                 }
                 else if (Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
                 {
-                    var standardWithVersion = Model.StandardName;
-                    if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
-                    {
-                        if (Model.CurrentVersionIndex.HasValue)
-                        {
-                            standardWithVersion += $"<br> Version {Model.Versions[Model.CurrentVersionIndex.Value]}";
-                        }
-                        else
-                        {
-                            standardWithVersion += $"<br> Version {Model.StandardVersion}";
-                        }
-                    }
-                    @Html.Raw(standardWithVersion)
+                    <text>@Model.StandardName</text>
                 }
             }
 

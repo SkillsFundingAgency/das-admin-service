@@ -229,31 +229,29 @@ namespace SFA.DAS.AdminService.Web.Services
 
             var warningMessages = new List<string>();
 
-            // Organisation checks ////////////////////////////////
+            // Organisation checks 
             RaiseWarningIfNoEpaoId(command.EndPointAssessorOrganisationId, warningMessages);
             RaiseWarningIfEpaoIdIsInvalid(command.EndPointAssessorOrganisationId, warningMessages);
 
-            // Standard checks ///////////////////////////////////
+            // Standard checks 
             RaiseWarningIfStandardCodeIsInvalid(command.StandardCode, warningMessages);
 
             var standard = await MapCommandToOrganisationStandardRequest(command);
-
-            //if a withdrawal exists - then versions must exist - update rather than insert in the assessor service
-            var withdrawal = await _applyApiClient.GetWithdrawnApplications(command.OrganisationId, command.StandardCode);
-            if (withdrawal.Count != 0)
-                standard.ApplyFollowingWithdrawal = true;
-
 
             // If we passed basic pre-checks; then validate fully
             if (warningMessages.Count == 0)
             {
                 var validationResponse = await _assessorValidationService.ValidateNewOrganisationStandardRequest(standard);
 
-                if (standard.ApplyFollowingWithdrawal && validationResponse.Errors.Count == 1 &&
+                // When applying for a standard that was previously withdrawn
+                var applyFollowingWithdrawal = await _applyApiClient.GetLatestWithdrawalDateForStandard(command.OrganisationId, command.StandardCode) != null ? true : false;
+
+                // The organisation is expected to be present already
+                if (applyFollowingWithdrawal && validationResponse.Errors.Count == 1 &&
                     validationResponse.Errors[0].Field == "OrganisationId" &&
                     validationResponse.Errors[0].StatusCode == ValidationStatusCode.AlreadyExists.ToString())
                 {
-                    _logger.LogInformation($"Inject standard on Validation Service - versions must exist so bypass warnings. OrganisationId: {command.OrganisationId})");
+                    _logger.LogInformation($"Inject standard failed on Validation Service. OrganisationId: {command.OrganisationId} - Bypass: Standard previously withdrawn)");
                 }
                 else
                 {

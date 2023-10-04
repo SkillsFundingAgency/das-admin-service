@@ -26,232 +26,218 @@
             }
             else
             {
-                @if (Model.IsPreviousWithdrawalOlderThanTwelveMonths == false && Model.PreviousWithdrawalDate != null && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
-                {
-                    <div class="info-summary">
-                        <h2 class="govuk-heading-m">This organisation withdrew from this @Model.PreviousWithdrawalType on @Model.PreviousWithdrawalDate.ToShortNumericFormatString()</h2>
-                        <h2 class="govuk-heading-m">Are you sure you wish to continue with this application?</h2>
-                    </div>
-                }
                 @if (Model.IsWithdrawal)
                 {
                     <h1 class="govuk-heading-xl">Withdrawal application overview</h1>
                 }
                 else
                 {
+                    @if (Model.ShowWithdrawalWarning)
+                    {
+                        <div class="info-summary">
+                            <h2 class="govuk-heading-m">This organisation withdrew from this standard on @Model.LatestWithdrawalDate.ToSfaShortDateString()</h2>
+                            <h2 class="govuk-heading-m">Are you sure you wish to continue with this application?</h2>
+                        </div>
+                    }
                     <h1 class="govuk-heading-xl">Application overview</h1>
                 }
                 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                    @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                @if (!string.IsNullOrWhiteSpace(Model.ApplicationReference))
+                {
+                    <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">Application reference</dt>
+                    <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
+                    </div>
+                }
+                    
+                @if (!string.IsNullOrWhiteSpace(Model.OrganisationName) && Model.IsWithdrawal)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Organisation name</dt>
+                        <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Standard</dt>
+                        <dd class="govuk-summary-list__value">@Model.StandardName</dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.StandardReference) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Standard reference</dt>
+                        <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.StandardVersion) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Version</dt>
+                        <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Details</dt>
+                        <dd class="govuk-summary-list__value">@Model.StandardName</dd>
+                    </div>
+                }
+                @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Details</dt>
+                        <dd class="govuk-summary-list__value">Withdrawal from register</dd>
+                    </div>
+                }
+                @if (!Model.IsWithdrawal)
+                {
+                    @if (!string.IsNullOrWhiteSpace(Model.LegalName))
                     {
                         <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Application reference</dt>
-                        <dd class="govuk-summary-list__value">@Model.ApplicationReference</dd>
-                </div>
-            }
-                    @if (!string.IsNullOrWhiteSpace(Model.OrganisationName) && Model.IsWithdrawal)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Organisation name</dt>
-                            <dd class="govuk-summary-list__value">@Model.OrganisationName</dd>
+                            <dt class="govuk-summary-list__key">Registered name</dt>
+                            <dd class="govuk-summary-list__value">@Model.LegalName</dd>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
+                    @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
                     {
                         <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Standard</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardName</dd>
+                            <dt class="govuk-summary-list__key">Trading name</dt>
+                            <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
                         </div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardReference) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Standard reference</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardReference</dd>
-                        </div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardVersion) && Model.SequenceNo == ApplyConst.STANDARD_SEQUENCE_NO)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Version</dt>
-                            <dd class="govuk-summary-list__value">@Model.StandardVersion</dd>
-                        </div>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(Model.StandardName) && Model.SequenceNo == ApplyConst.STANDARD_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        var standardAndVersion = Model.StandardName;
-                        if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
-                        {
-                            standardAndVersion = $"{standardAndVersion}<br>Version {Model.StandardVersion}";
-                        }
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Details</dt>
-                            <dd class="govuk-summary-list__value">
-                                @{
-                                    var standardWithVersion = Model.StandardName;
-                                    if (!string.IsNullOrWhiteSpace(Model.StandardVersion))
-                                    {
-                                        standardWithVersion += $"<br> Version {string.Join(",", Model.StandardVersion)}";
-                                    }
-                                }
-                                @Html.Raw(standardWithVersion)
-                            </dd>
-                        </div>
-                    }
-                    @if (Model.SequenceNo == ApplyConst.ORGANISATION_WITHDRAWAL_SEQUENCE_NO)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Details</dt>
-                            <dd class="govuk-summary-list__value">Withdrawal from register</dd>
-                        </div>
-                    }
-                    @if (!Model.IsWithdrawal)
-                    {
-                        @if (!string.IsNullOrWhiteSpace(Model.LegalName))
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Registered name</dt>
-                                <dd class="govuk-summary-list__value">@Model.LegalName</dd>
-                            </div>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.TradingName) || !string.IsNullOrWhiteSpace(Model.ProviderName))
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">Trading name</dt>
-                                <dd class="govuk-summary-list__value">@(Model.TradingName ?? Model.ProviderName)</dd>
-                            </div>
-                        }
-                    }
-                    @if (Model.Ukprn.HasValue)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">UKPRN</dt>
-                            <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
-                        </div>
-                    }
-                    @if (Model.FinancialDueDate.HasValue)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Financial due date</dt>
-                            <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
-                        </div>
-                    }
-                    @if (Model.IsWithdrawal)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">Contact details</dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.ContactName
-                                <br />
-                                @Model.ContactEmail
-                            </dd>
-                        </div>
-                    }
-                    </dl>
-
-                    @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber) && !Model.IsWithdrawal)
-                    {
-                        <p class="govuk-body">
-                            <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
-                        </p>
-                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                    }
-
-                    <ul class="govuk-list">
-                        @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
-                        {
-                            if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO &&
-                                applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO &&
-                                !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
-                            {
-                                // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
-                                continue;
-                            }
-                            <li>
-                                <h2 class="govuk-heading-m">
-                                    <a class="govuk-link"
-                                       asp-action="Section"
-                                       asp-controller="Application" ,
-                                       asp-route-applicationId="@Model.ApplicationId"
-                                       asp-route-sequenceNo="@applicationSection.SequenceNo"
-                                       asp-route-sectionNo="@applicationSection.SectionNo"
-                                       asp-route-backAction="@Model.BackAction"
-                                       asp-route-backController="@Model.BackController"
-                                       asp-route-backOrganisationId="@Model.BackOrganisationId">
-                                        @Model.GetApplicationLinkText(applicationSection.LinkTitle)
-                                    </a>
-                                </h2>
-                                <span id="company-details-hint" class="govuk-hint">
-                                    @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
-                                </span>
-
-                                @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
-                                {
-                                    <div class="govuk-tag">
-                                        Feedback added
-                                    </div>
-                                }
-
-                                @if (applicationSection.QnAData.RequestedFeedbackAnswered == true)
-                                {
-                                    <div class="govuk-tag">
-                                        Answer updated
-                                    </div>
-                                }
-
-                                @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
-                                @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
-                                {
-                                    <div class="govuk-tag">
-                                        Evaluated
-                                    </div>
-                                }
-                                <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                            </li>
-                        }
-                    </ul>
-
-                    @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
-                    {
-                        if (Model.IsWithdrawal)
-                        {
-                            <form class="js-disable-on-submit"
-                                  asp-controller="Application"
-                                  asp-action="WithdrawalDateCheck"
-                                  asp-route-applicationId="@Model.ApplicationId"
-                                  asp-route-sequenceNo="@Model.SequenceNo"
-                                  asp-route-backAction="@Model.BackAction"
-                                  asp-route-backController="@Model.BackController"
-                                  asp-route-backOrganisationId="@Model.BackOrganisationId"
-                                  method="get">
-                                <button class="govuk-button" type="submit">Continue</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form class="js-disable-on-submit"
-                                  asp-controller="Application"
-                                  asp-action="Assessment"
-                                  asp-route-applicationId="@Model.ApplicationId"
-                                  asp-route-sequenceNo="@Model.SequenceNo"
-                                  asp-route-backAction="@Model.BackAction"
-                                  asp-route-backController="@Model.BackController"
-                                  asp-route-backOrganisationId="@Model.BackOrganisationId"
-                                  method="get">
-                                <button class="govuk-button" type="submit">Complete review</button>
-                            </form>
-                        }
                     }
                 }
+                @if (Model.Ukprn.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">UKPRN</dt>
+                        <dd class="govuk-summary-list__value">@Model.Ukprn</dd>
+                    </div>
+                }
+                @if (Model.FinancialDueDate.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Financial due date</dt>
+                        <dd class="govuk-summary-list__value">@Model.FinancialDueDate.ToSfaShortDateString()</dd>
+                    </div>
+                }
+                @if (Model.IsWithdrawal)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Contact details</dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ContactName
+                            <br />
+                            @Model.ContactEmail
+                        </dd>
+                    </div>
+                }
+                </dl>
+
+                @if (!string.IsNullOrWhiteSpace(Model.CompanyNumber) && !Model.IsWithdrawal)
+                {
+                    <p class="govuk-body">
+                        <a class="govuk-link" target="_blank" href="@string.Format("https://beta.companieshouse.gov.uk/company/{0}", Model.CompanyNumber)">View companies house information</a>
+                    </p>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+
+                <ul class="govuk-list">
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
+                    {
+                        if (applicationSection.SequenceNo == ApplyConst.ORGANISATION_SEQUENCE_NO &&
+                            applicationSection.SectionNo == ApplyConst.FINANCIAL_DETAILS_SECTION_NO &&
+                            !(Model.FinancialReviewStatus == FinancialReviewStatus.Graded || Model.FinancialReviewStatus == FinancialReviewStatus.Approved || Model.FinancialReviewStatus == FinancialReviewStatus.Rejected))
+                        {
+                            // NOTE: FHA Section should only be shown if it has been Graded, Approved or Rejected. See ON-1277
+                            continue;
+                        }
+                        <li>
+                            <h2 class="govuk-heading-m">
+                                <a class="govuk-link"
+                                    asp-action="Section"
+                                    asp-controller="Application" ,
+                                    asp-route-applicationId="@Model.ApplicationId"
+                                    asp-route-sequenceNo="@applicationSection.SequenceNo"
+                                    asp-route-sectionNo="@applicationSection.SectionNo"
+                                    asp-route-backAction="@Model.BackAction"
+                                    asp-route-backController="@Model.BackController"
+                                    asp-route-backOrganisationId="@Model.BackOrganisationId">
+                                    @Model.GetApplicationLinkText(applicationSection.LinkTitle)
+                                </a>
+                            </h2>
+                            <span id="company-details-hint" class="govuk-hint">
+                                @applicationSection.QnAData.Pages.Count(x => x.Complete == true) of @applicationSection.QnAData.Pages.Count(x => x.Active) questions completed
+                            </span>
+
+                            @if (applicationSection.QnAData.Pages.Any(p => p.HasNewFeedback))
+                            {
+                                <div class="govuk-tag">
+                                    Feedback added
+                                </div>
+                            }
+
+                            @if (applicationSection.QnAData.RequestedFeedbackAnswered == true)
+                            {
+                                <div class="govuk-tag">
+                                    Answer updated
+                                </div>
+                            }
+
+                            @* NOTE: Not too sure this is the appropriate way to check, but it works for now :) *@
+                            @if (Model.ApplySections.Any(section => section.SectionId == applicationSection.Id && section.Status == ApplicationSectionStatus.Evaluated))
+                            {
+                                <div class="govuk-tag">
+                                    Evaluated
+                                </div>
+                            }
+                            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                        </li>
+                    }
+                </ul>
+
+                @if (Model.ApplySections.All(s => s.Status == ApplicationSectionStatus.Evaluated || s.NotRequired))
+                {
+                    if (Model.IsWithdrawal)
+                    {
+                        <form class="js-disable-on-submit"
+                                asp-controller="Application"
+                                asp-action="WithdrawalDateCheck"
+                                asp-route-applicationId="@Model.ApplicationId"
+                                asp-route-sequenceNo="@Model.SequenceNo"
+                                asp-route-backAction="@Model.BackAction"
+                                asp-route-backController="@Model.BackController"
+                                asp-route-backOrganisationId="@Model.BackOrganisationId"
+                                method="get">
+                            <button class="govuk-button" type="submit">Continue</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form class="js-disable-on-submit"
+                                asp-controller="Application"
+                                asp-action="Assessment"
+                                asp-route-applicationId="@Model.ApplicationId"
+                                asp-route-sequenceNo="@Model.SequenceNo"
+                                asp-route-backAction="@Model.BackAction"
+                                asp-route-backController="@Model.BackController"
+                                asp-route-backOrganisationId="@Model.BackOrganisationId"
+                                method="get">
+                            <button class="govuk-button" type="submit">Complete review</button>
+                        </form>
+                    }
+                }
+            }
 
             <p class="govuk-body">
                 <a class="govuk-link"
-                   asp-action="@Model.BackAction"
-                   asp-controller="@Model.BackController"
-                   asp-route-organisationId="@Model.BackOrganisationId"
-                   asp-fragment="@Fragment">Return to @(Model.IsWithdrawal ? "withdrawal " : "")applications</a>
+                    asp-action="@Model.BackAction"
+                    asp-controller="@Model.BackController"
+                    asp-route-organisationId="@Model.BackOrganisationId"
+                    asp-fragment="@Fragment">Return to @(Model.IsWithdrawal ? "withdrawal " : "")applications</a>
             </p>
         </div>`
-        </div>
-    </main>
+    </div>
+</main>

@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Services;
 
-namespace SFA.DAS.AdminService.Web.Tests.Services
+namespace SFA.DAS.AdminService.Web.UnitTests.Services
 {
     [TestFixture]
     public class ApplicationDeterminedDateValidationServiceTests

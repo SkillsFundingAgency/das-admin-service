@@ -1,8 +1,8 @@
 # CODEOWNERS file for das-admin-service.
-# The following users will be automatically added as Reviewers to all PRs.
-* @MarkFCain @alandburns @ChrisJWoodcock @cofaulco @chrisfoster76 
 
-#Requires review from DevOps when making changes to the following files/folders
+# The following users will be automatically added as Reviewers to all PRs.
+* @ChrisJWoodcock @SawNawDfE @PeterDavidWilliams
+
 .github/CODEOWNERS      @SkillsFundingAgency/das-platform-engineering
 /azure/                 @SkillsFundingAgency/das-platform-engineering
 azure-pipelines.yml     @SkillsFundingAgency/das-platform-engineering
