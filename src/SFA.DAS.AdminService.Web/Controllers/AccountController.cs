@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Domain;
 using System.Linq;
 using System.Security.Claims;
@@ -12,10 +15,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
+        private readonly IWebConfiguration _applicationConfiguration;
+        private const string ServiceName = "SFA.DAS.AdminService";
+        private const string Version = "1.0";
 
-        public AccountController(ILogger<AccountController> logger)
+        public AccountController(ILogger<AccountController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _applicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
+                configuration["EnvironmentName"],
+                configuration["ConfigurationStorageConnectionString"], 
+                Version, 
+                ServiceName)
+                .Result;
         }
 
         [HttpGet]
@@ -23,9 +35,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             _logger.LogInformation("Start of Sign In");
             var redirectUrl = Url.Action(nameof(PostSignIn), "Account");
+
+            // Get the AuthScheme based on the DfESignIn config/property.
+            var authScheme = _applicationConfiguration.UseDfESignIn
+                ? OpenIdConnectDefaults.AuthenticationScheme
+                : WsFederationDefaults.AuthenticationScheme;
+
             return Challenge(
                 new AuthenticationProperties { RedirectUri = redirectUrl },
-                WsFederationDefaults.AuthenticationScheme);
+                authScheme);
         }
 
         [HttpGet]
@@ -58,10 +76,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Response.Cookies.Delete(cookie);
             }
 
+            // Get the AuthScheme based on the DfeSignIn config/property.
+            var authScheme = _applicationConfiguration.UseDfESignIn
+                ? OpenIdConnectDefaults.AuthenticationScheme
+                : WsFederationDefaults.AuthenticationScheme;
+
             return SignOut(
                 new AuthenticationProperties { RedirectUri = callbackUrl },
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                WsFederationDefaults.AuthenticationScheme);
+                authScheme);
         }
 
         [HttpGet]
