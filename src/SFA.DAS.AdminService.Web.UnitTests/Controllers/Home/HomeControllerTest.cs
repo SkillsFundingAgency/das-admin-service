@@ -92,11 +92,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var result = (ViewResult)_controller.InvalidRole();
 
             //assert
-            Assert.That(result, Is.Not.Null);
+           Assert.Multiple(() => 
+           { 
+               Assert.That(result, Is.Not.Null);
 
-            var actualModel = result.Model as Error403ViewModel;
-            Assert.That(actualModel?.HelpPageLink, Is.EqualTo(helpLink));
-            Assert.That(actualModel?.UseDfESignIn, Is.EqualTo(useDfESignIn));
+               var actualModel = result.Model as Error403ViewModel;
+               Assert.That(actualModel?.HelpPageLink, Is.EqualTo(helpLink));
+               Assert.That(actualModel?.UseDfESignIn, Is.EqualTo(useDfESignIn));
+           });
         }
     }
 }
