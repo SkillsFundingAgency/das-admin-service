@@ -68,10 +68,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var result = _controller.Index();
 
             //assert
-            result.Should().NotBeNull();
-            var actualResult = (RedirectToActionResult)result;
-            actualResult.ControllerName.Should().Be("Dashboard");
-            actualResult.ActionName.Should().Be("Index");
+           using (new AssertionScope())
+           {
+                result.Should().NotBeNull();
+                var actualResult = (RedirectToActionResult)result;
+                actualResult.ControllerName.Should().Be("Dashboard");
+                actualResult.ActionName.Should().Be("Index");
+           }
         }
 
         [TestCase("test", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", true)]
