@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Models;
 
@@ -8,14 +7,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IWebConfiguration _webConfiguration;
-        private readonly IConfiguration _configuration;
 
         public HomeController(
-            IWebConfiguration webConfiguration,
-            IConfiguration configuration)
+            IWebConfiguration webConfiguration)
         {
             _webConfiguration = webConfiguration;
-            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -34,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         public IActionResult InvalidRole()
         {
-            return View(new Error403ViewModel(_configuration["ResourceEnvironmentName"]) { UseDfESignIn = _webConfiguration.UseDfESignIn });
+            return View(new Error403ViewModel { UseDfESignIn = _webConfiguration.UseDfESignIn, HelpPageLink = _webConfiguration.DfESignInServiceHelpUrl });
         }
     }
 }

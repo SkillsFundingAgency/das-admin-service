@@ -7,22 +7,21 @@ using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Models;
 using System.Security.Claims;
-using Microsoft.Extensions.Configuration;
+using FluentAssertions.Execution;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class HomeControllerTest
+    public class HomeControllerTests
     {
         private HomeController _controller;
         private Mock<IWebConfiguration> _mockWebConfiguration;
-        private Mock<IConfiguration> _mockConfiguration;
 
         [SetUp]
         public void Setup()
         {
             _mockWebConfiguration = new Mock<IWebConfiguration>();
-            _mockConfiguration = new Mock<IConfiguration>();
         }
 
 
@@ -32,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             //arrange
             _mockWebConfiguration.Setup(c => c.UseDfESignIn).Returns(useDfESignIn);
-            _controller = new HomeController(_mockWebConfiguration.Object, _mockConfiguration.Object)
+            _controller = new HomeController(_mockWebConfiguration.Object)
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
             };
@@ -59,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             }, "mock"));
             var httpContext = new Mock<HttpContext>();
             httpContext.Setup(c => c.User).Returns(authorizedUser);
-            _controller = new HomeController(_mockWebConfiguration.Object, _mockConfiguration.Object)
+            _controller = new HomeController(_mockWebConfiguration.Object)
             {
                 ControllerContext = new ControllerContext { HttpContext = httpContext.Object }
             };
@@ -77,16 +76,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
            }
         }
 
-        [TestCase("test", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", true)]
-        [TestCase("pp", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", true)]
-        [TestCase("local", "https://test-services.signin.education.gov.uk/approvals/select-organisation?action=request-service", false)]
-        [TestCase("prd", "https://services.signin.education.gov.uk/approvals/select-organisation?action=request-service", false)]
-        public void When_InvalidRole_Then_ViewIsReturned(string env, string helpLink, bool useDfESignIn)
+        [Test, MoqAutoData]
+        public void When_InvalidRole_Then_ViewIsReturned(string helpLink, bool useDfESignIn)
         {
             //arrange
             _mockWebConfiguration.Setup(x => x.UseDfESignIn).Returns(useDfESignIn);
-            _mockConfiguration.Setup(x => x["ResourceEnvironmentName"]).Returns(env);
-            _controller = new HomeController(_mockWebConfiguration.Object, _mockConfiguration.Object);
+            _mockWebConfiguration.Setup(x => x.DfESignInServiceHelpUrl).Returns(helpLink);
+            _controller = new HomeController(_mockWebConfiguration.Object);
 
             //sut
             var result = (ViewResult)_controller.InvalidRole();

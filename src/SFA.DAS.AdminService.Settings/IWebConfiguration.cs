@@ -29,5 +29,7 @@ namespace SFA.DAS.AdminService.Settings
         /// Gets or Sets the UseDfESignIn property.
         /// </summary>
         bool UseDfESignIn { get; }
+
+        string DfESignInServiceHelpUrl { get; set; }
     }
 }
