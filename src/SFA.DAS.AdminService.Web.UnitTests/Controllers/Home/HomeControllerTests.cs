@@ -36,14 +36,17 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
             };
 
-            //sut
+            //act
             var result = _controller.Index();
 
             //assert
-            result.Should().NotBeNull();
-            var resultModel = result.Should().BeOfType<ViewResult>().
-                Which.Model.Should().BeOfType<HomeViewModel>().Which;
-            resultModel.UseDfESignIn.Should().Be(useDfESignIn);
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+                var resultModel = result.Should().BeOfType<ViewResult>().
+                    Which.Model.Should().BeOfType<HomeViewModel>().Which;
+                resultModel.UseDfESignIn.Should().Be(useDfESignIn);
+            });
         }
 
 
@@ -63,7 +66,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 ControllerContext = new ControllerContext { HttpContext = httpContext.Object }
             };
 
-            //sut
+            //act
             var result = _controller.Index();
 
             //assert
@@ -84,7 +87,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _mockWebConfiguration.Setup(x => x.DfESignInServiceHelpUrl).Returns(helpLink);
             _controller = new HomeController(_mockWebConfiguration.Object);
 
-            //sut
+            //act
             var result = (ViewResult)_controller.InvalidRole();
 
             //assert
