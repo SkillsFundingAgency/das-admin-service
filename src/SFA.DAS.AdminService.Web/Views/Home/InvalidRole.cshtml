@@ -1,19 +1,43 @@
-﻿@model object
+﻿@model Error403ViewModel
 
 @{
-    ViewBag.Title = "Invalid role";
+    ViewBag.Title = "You aren't approved – Apprenticeship service admin";
     Layout = "_Layout";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-xl">You aren't assigned the 'end point assessment' role in the Information Management Services system</h1>
-            <p class="govuk-body">You need to be given the 'end point assessment' role so you can start recording assessment grades and request certificates.</p>
-            <p class="govuk-body">To request permission, you need to:</p>
-            <ol class="govuk-list govuk-list--number">
-                <li>Do whatever you need to do to get the Assessor Service role on Staff Idams.</li>
-            </ol>
-        </div>
+        @if (Model.UseDfESignIn)
+        {
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">
+                    You aren't approved to view this page
+                </h1>
+                <p class="govuk-body">
+                    To view this page, you need:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>approval to use this service</li>
+                    <li>the correct service role to access this page</li>
+                </ul>
+                <p class="govuk-body">
+                    You can <a href="@Model.HelpPageLink" target="_blank" rel="noopener noreferrer">request access to this service in your DfE Sign-in.</a> You can also use this link to request a higher service role.
+                </p>
+                <p class="govuk-body">
+                    The DfE Sign-in approver inside your organisation will need to approve your request.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="govuk-grid-column-full">
+                <h1 class="govuk-heading-xl">You aren't assigned the 'end point assessment' role in the Information Management Services system</h1>
+                <p class="govuk-body">You need to be given the 'end point assessment' role so you can start recording assessment grades and request certificates.</p>
+                <p class="govuk-body">To request permission, you need to:</p>
+                <ol class="govuk-list govuk-list--number">
+                    <li>Do whatever you need to do to get the Assessor Service role on Staff Idams.</li>
+                </ol>
+            </div>
+        }
     </div>
 </main>
