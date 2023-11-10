@@ -49,7 +49,7 @@
         public static string UserId(this ClaimsPrincipal user)
         {
             var upnClaimName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn";
-            var upn = user.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == upnClaimName || x.Type == "sub");
+            var upn = user.Identities.FirstOrDefault().Claims.FirstOrDefault(x => x.Type == upnClaimName || x.Type == "email");
             return upn?.Value ?? $"{_unknownGivenName}-{_unknownSurname}";
         }
 
