@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
@@ -130,7 +131,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 await LoadViewModel<CertificateConfirmDeleteViewModel>(vm.CertificateId,
                     "~/Views/CertificateDelete/ConfirmDelete.cshtml");
             var viewResult = (viewModel as ViewResult);
-            var username = ContextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn")?.Value;
+            var username = ContextAccessor.HttpContext.User.UserId();
             var certificateConfirmDeleteViewModel = viewResult.Model as CertificateConfirmDeleteViewModel;
 
             certificateConfirmDeleteViewModel.ReasonForChange = vm.ReasonForChange;
