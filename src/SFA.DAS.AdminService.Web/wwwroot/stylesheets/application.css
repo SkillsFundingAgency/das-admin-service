@@ -1355,35 +1355,7 @@ TODO: change to 'das-page-navigation' and BEM
   padding-top: 30px;
   -webkit-overflow-scrolling: touch;
   position: relative;
-  mask-image: -webkit-linear-gradient(
-    to right,
-    transparent,
-    white 20px,
-    white 97%,
-    transparent
-  );
-  mask-image: -moz-linear-gradient(
-    to right,
-    transparent,
-    white 20px,
-    white 97%,
-    transparent
-  );
   mask-image: linear-gradient(
-    to right,
-    transparent,
-    white 20px,
-    white 97%,
-    transparent
-  );
-  -webkit-mask-image: -webkit-linear-gradient(
-    to right,
-    transparent,
-    white 20px,
-    white 97%,
-    transparent
-  );
-  -webkit-mask-image: -moz-linear-gradient(
     to right,
     transparent,
     white 20px,
@@ -1391,13 +1363,6 @@ TODO: change to 'das-page-navigation' and BEM
     transparent
   );
   -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    white 20px,
-    white 97%,
-    transparent
-  );
-  mask-image: linear-gradient(
     to right,
     transparent,
     white 20px,
