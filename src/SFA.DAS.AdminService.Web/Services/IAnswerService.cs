@@ -1,5 +1,5 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
+﻿using SFA.DAS.AdminService.Application.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using System;
 using System.Threading.Tasks;
 

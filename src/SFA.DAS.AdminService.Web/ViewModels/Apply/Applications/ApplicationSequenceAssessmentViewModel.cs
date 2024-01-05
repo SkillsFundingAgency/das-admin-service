@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.ApplyTypes;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 
             if(fhaSection != null && !fhaSection.QnAData.Pages.Any(p => p.HasNewFeedback))
             {
-                HasInadequateFhaButNoFeedbackGiven = application.FinancialGrade?.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate;
+                HasInadequateFhaButNoFeedbackGiven = application.FinancialGrade?.SelectedGrade == AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Inadequate;
             }
         }
     }

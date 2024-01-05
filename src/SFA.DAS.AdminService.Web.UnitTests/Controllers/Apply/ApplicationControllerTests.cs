@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AdminService.Web.Controllers.Apply;
 using SFA.DAS.AdminService.Web.Domain.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -19,6 +20,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
 {
@@ -26,8 +28,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
     {
         private ApplicationController _controller;
 
-        private Mock<IApiClient> _apiClient;
         private Mock<IApplicationApiClient> _applyApiClient;
+        private Mock<IOrganisationsApiClient> _organisationsApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private Mock<IAnswerService> _answerService;
@@ -37,8 +39,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
         [SetUp]
         public void Setup()
         {
-            _apiClient = new Mock<IApiClient>();
             _applyApiClient = new Mock<IApplicationApiClient>();
+            _organisationsApiClient = new Mock<IOrganisationsApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _answerService = new Mock<IAnswerService>();
@@ -52,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             _httpContextAccessor.Setup(a => a.HttpContext.User.Identities)
                .Returns(new List<ClaimsIdentity>() { identity });
 
-            _controller = new ApplicationController(_apiClient.Object, _applyApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object);
+            _controller = new ApplicationController(_applyApiClient.Object, _organisationsApiClient.Object, _qnaApiClient.Object, _httpContextAccessor.Object, _answerService.Object, _answerInjectionService.Object, _logger.Object);
         }
 
         [Test]
@@ -280,7 +282,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
 
             // Assert
-            _apiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
+            _organisationsApiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
             _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
         }
 
@@ -310,7 +312,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
 
             // Assert
-            _apiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
+            _organisationsApiClient.Verify(x => x.WithdrawOrganisation(withdrawOrganisationRequest), Times.Once);
             _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
 
             viewResult.Should().NotBeNull();
@@ -344,7 +346,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
             var viewResult = await _controller.Return(applicationId, sequenceNumber, ReturnTypes.Approve, backModel);
 
             // Assert
-            _apiClient.Verify(x => x.WithdrawStandard(withdrawStandardRequest), Times.Once);
+            _organisationsApiClient.Verify(x => x.WithdrawStandard(withdrawStandardRequest), Times.Once);
             _applyApiClient.Verify(x => x.ReturnApplicationSequence(id, sequenceNumber, ReturnTypes.Approve, "User Name"));
         }
 
@@ -388,7 +390,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
                     ApplicationId = applicationId,
                     ApplyData = new ApplyData()
                     {
-                        Apply = new AssessorService.ApplyTypes.Apply()
+                        Apply = new ApplyInfo()
                         {
                             ReferenceNumber = "123456",
                             StandardCode = standardCode
@@ -413,7 +415,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Apply
                     }
                 });
 
-            _apiClient.Setup(x => x.GetOrganisation(It.IsAny<Guid>()))
+            _organisationsApiClient.Setup(x => x.Get(It.IsAny<Guid>()))
                 .ReturnsAsync(new Organisation()
                 {
                     OrganisationData = new OrganisationData()

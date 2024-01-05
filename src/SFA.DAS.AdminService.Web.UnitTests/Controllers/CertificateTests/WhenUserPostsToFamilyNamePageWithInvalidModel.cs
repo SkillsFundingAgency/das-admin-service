@@ -1,10 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
-using SFA.DAS.AssessorService.Domain.JsonData;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
@@ -15,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [SetUp]
         public void Arrange()
         {
-            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
+            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
             var invalidModel = new CertificateFamilyNameViewModel { Id = Certificate.Id, ReasonForChange = "Reason Ok but no name" };
             controller.ModelState.AddModelError("FamilyName", "Family name cannot be null");
             _result = controller.FamilyName(invalidModel).GetAwaiter().GetResult();

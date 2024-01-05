@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <ProjectGuid>7597DE7D-2942-4E5C-B64E-4F2BA69FDE26</ProjectGuid>
@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.json" Version="13.0.3" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="1.0.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 

@@ -1,7 +1,6 @@
 using FluentValidation;
-using FluentValidation.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 
 namespace SFA.DAS.AdminService.Web.Validators

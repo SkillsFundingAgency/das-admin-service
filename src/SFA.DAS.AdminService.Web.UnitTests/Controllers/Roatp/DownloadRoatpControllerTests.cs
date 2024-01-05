@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Controllers.Roatp;
 using SFA.DAS.AdminService.Web.Helpers;
@@ -14,7 +11,10 @@ using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {

@@ -12,13 +12,13 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class RegisterEditOrganisationStandardVersionViewModelValidator : AbstractValidator<RegisterEditOrganisationStandardVersionViewModel>
     {
-        private readonly IOrganisationsApiClient _apiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IRegisterValidator _registerValidator;
 
-        public RegisterEditOrganisationStandardVersionViewModelValidator(IOrganisationsApiClient apiClient, IRegisterValidator registerValidator)
+        public RegisterEditOrganisationStandardVersionViewModelValidator(IOrganisationsApiClient organisationsApiClient, IRegisterValidator registerValidator)
         {
+            _organisationsApiClient = organisationsApiClient;
             _registerValidator = registerValidator;
-            _apiClient = apiClient;
 
             var errorInEffectiveFrom = false;
 
@@ -42,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
 
-                var validationResultExternals = _apiClient.ValidateUpdateOrganisationStandardVersion(vm.OrganisationStandardId, vm.Version, vm.EffectiveFrom, vm.EffectiveTo).Result;
+                var validationResultExternals = _organisationsApiClient.ValidateUpdateOrganisationStandardVersion(vm.OrganisationStandardId, vm.Version, vm.EffectiveFrom, vm.EffectiveTo).Result;
 
                 if (validationResultExternals.IsValid) return;
                 foreach (var error in validationResultExternals.Errors)

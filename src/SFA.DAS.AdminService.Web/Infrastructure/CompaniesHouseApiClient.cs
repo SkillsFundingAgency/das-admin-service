@@ -1,15 +1,13 @@
-﻿using AutoMapper;
-using global::System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.ApplyTypes.CompaniesHouse;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {
-    public class CompaniesHouseApiClient:ICompaniesHouseApiClient
+    public class CompaniesHouseApiClient : ICompaniesHouseApiClient
     {
         private ILogger<CompaniesHouseApiClient> _logger;
         private readonly IRoatpApplyTokenService _tokenService;
@@ -25,23 +23,23 @@ namespace SFA.DAS.AdminService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
+        public async Task<AssessorService.Domain.Entities.CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
         {
             var requestMessage =
                 await _httpClient.GetAsync($"companies-house-lookup?companyNumber={companiesHouseNumber}");
 
             if (requestMessage.IsSuccessStatusCode)
             {
-                var companyDetails = await requestMessage.Content.ReadAsAsync<CompaniesHouseSummary>();
+                var companyDetails = await requestMessage.Content.ReadAsAsync<AssessorService.Domain.Entities.CompaniesHouseSummary>();
                 return companyDetails;
             }
 
             if (requestMessage.StatusCode == HttpStatusCode.ServiceUnavailable || requestMessage.StatusCode == HttpStatusCode.InternalServerError)
             {
-                return new CompaniesHouseSummary { Status = "service_unavailable" };
+                return new AssessorService.Domain.Entities.CompaniesHouseSummary { Status = "service_unavailable" };
             }
 
-            return new CompaniesHouseSummary { Status = "not_found" };
+            return new AssessorService.Domain.Entities.CompaniesHouseSummary { Status = "not_found" };
         }
     }
 }

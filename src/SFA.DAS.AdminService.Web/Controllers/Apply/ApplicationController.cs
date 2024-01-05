@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Extensions;
@@ -11,7 +11,6 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Applications;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -25,8 +24,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
     [Authorize(Roles = Roles.AssessmentDeliveryTeam + "," + Roles.CertificationTeam)]
     public class ApplicationController : Controller
     {
-        private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
@@ -34,10 +33,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         private readonly IAnswerInjectionService _answerInjectionService;
         private readonly ILogger<ApplicationController> _logger;
 
-        public ApplicationController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
+        public ApplicationController(IApplicationApiClient applyApiClient, IOrganisationsApiClient organisationsApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor, IAnswerService answerService, IAnswerInjectionService answerInjectionService, ILogger<ApplicationController> logger)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _qnaApiClient = qnaApiClient;
             _contextAccessor = contextAccessor;
 
@@ -50,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> ActiveSequence(Guid applicationId, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
             var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
@@ -72,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Sequence(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
             var latestWithdrawalDate = await _applyApiClient.GetLatestWithdrawalDateForStandard(application.OrganisationId, application.StandardCode);
 
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
@@ -100,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> Section(Guid applicationId, int sequenceNo, int sectionNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
             var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
@@ -146,7 +145,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 }
 
                 var application = await _applyApiClient.GetApplication(applicationId);
-                var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+                var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
                 var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
                 var applySection = applySequence.Sections.Single(x => x.SectionNo == sectionNo);
@@ -266,7 +265,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> WithdrawalDateCheck(Guid applicationId, int sequenceNo, BackViewModel backViewModel)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
             var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
@@ -286,7 +285,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> WithdrawalDateCheckSave(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string dateApproved)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
             var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
@@ -335,7 +334,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         public async Task<IActionResult> WithdrawalDateChange(Guid applicationId, int sequenceNo, BackViewModel backViewModel, string effectiveToDay, string effectiveToMonth, string effectiveToYear)
         {
             var application = await _applyApiClient.GetApplication(applicationId);
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
 
             var activeApplySequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
@@ -383,7 +382,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var application = await _applyApiClient.GetApplication(applicationId);
             var activeApplicationSequence = application.ApplyData.Sequences.Where(seq => seq.IsActive && !seq.NotRequired).OrderBy(seq => seq.SequenceNo).FirstOrDefault();
 
-            var organisation = await _apiClient.GetOrganisation(application.OrganisationId);
+            var organisation = await _organisationsApiClient.Get(application.OrganisationId);
             _logger.LogInformation($"APPROVING_STANDARD - ApplicationId: {application.Id} - Got Organisation {organisation.EndPointAssessorName} RoEPAOApproved: {organisation.OrganisationData.RoEPAOApproved}");
 
 
@@ -505,14 +504,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             _logger.LogInformation($"Attempting to withdrawn organisation from register for application {applicationId}");
             var request = await _answerService.GatherAnswersForWithdrawOrganisationForApplication(applicationId, _contextAccessor.HttpContext.User.UserDisplayName());
-            await _apiClient.WithdrawOrganisation(request);
+            await _organisationsApiClient.WithdrawOrganisation(request);
         }
 
         private async Task WithdrawStandardFromRegister(Guid applicationId)
         {
             _logger.LogInformation($"Attempting to withdrawn standard from register for application {applicationId}");
             var request = await _answerService.GatherAnswersForWithdrawStandardForApplication(applicationId);
-            await _apiClient.WithdrawStandard(request);
+            await _organisationsApiClient.WithdrawStandard(request);
         }
 
         private IActionResult RedirectToApplicationsFromSequence(int sequenceNo)

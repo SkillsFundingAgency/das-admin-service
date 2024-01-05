@@ -1,8 +1,8 @@
-﻿namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
-{
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using System.Collections.Generic;
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+using System.Collections.Generic;
 
+namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
+{
     public class OrganisationSearchResultsViewModel
     { 
         public string Title { get; set; }

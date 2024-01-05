@@ -1,9 +1,9 @@
-﻿namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
-{
-    using System;
-    using System.Collections.Generic;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+using System;
+using System.Collections.Generic;
 
+namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
+{
     public class UpdateOrganisationTypeViewModel
     {
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }

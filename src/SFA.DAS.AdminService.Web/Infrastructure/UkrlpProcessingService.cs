@@ -1,8 +1,6 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
-using System;
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure
 {

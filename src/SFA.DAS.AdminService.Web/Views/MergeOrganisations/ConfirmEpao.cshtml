@@ -89,10 +89,6 @@
                         {
                             <span> @Model.Address4 </span> <br />
                         }
-                        @if (!string.IsNullOrEmpty(Model.City))
-                        {
-                            <span> @Model.City </span> <br />
-                        }
                         @if (!string.IsNullOrEmpty(Model.Postcode))
                         {
                             <span> @Model.Postcode </span>
@@ -119,7 +115,6 @@
                 <input type="hidden" asp-for="Address2" />
                 <input type="hidden" asp-for="Address3" />
                 <input type="hidden" asp-for="Address4" />
-                <input type="hidden" asp-for="City" />
                 <input type="hidden" asp-for="Postcode" />
 
                 <input type="hidden" asp-for="MergeOrganisationType" />

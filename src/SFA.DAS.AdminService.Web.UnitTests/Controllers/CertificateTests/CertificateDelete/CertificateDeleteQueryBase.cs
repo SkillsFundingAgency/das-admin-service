@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
@@ -19,8 +20,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
     {
         protected Mock<ILogger<CertificateDeleteController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
+
         protected CertificateApiClient CertificateApiClient;
-        protected ApiClient ApiClient;
+        protected LearnerDetailApiClient LearnerDetailApiClient;
+        protected OrganisationsApiClient OrganisationsApiClient;
+        protected ScheduleApiClient ScheduleApiClient;
+        protected StandardVersionApiClient StandardVersionApiClient;
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
@@ -28,12 +33,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         public CertificateDeleteQueryBase()
         {
             MockedLogger = new Mock<ILogger<CertificateDeleteController>>();
-            var mockedCertificateApiClientLogger = new Mock<ILogger<CertificateApiClient>>();
-            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
-
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
-            CertificateApiClient = SetupCertificateApiClient(mockedCertificateApiClientLogger);
-            ApiClient = SetupApiClient(mockedApiClientLogger);
+            SetupApiClients();
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
 
@@ -52,24 +53,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             return mockHttpContextAccessor;
         }
 
-        private CertificateApiClient SetupCertificateApiClient(Mock<ILogger<CertificateApiClient>> apiClientLoggerMock)
+        private void SetupApiClients()
         {
             Certificate = SetupCertificate();
-
-            var tokenServiceMock = new Mock<ITokenService>();
-
-            var mockHttp = new MockHttpMessageHandler();
-
-            var client = mockHttp.ToHttpClient();
-            client.BaseAddress = new Uri("http://localhost:59022/");
-
-            var apiClient = new CertificateApiClient(client.BaseAddress.ToString(), tokenServiceMock.Object, apiClientLoggerMock.Object);
-            return apiClient;
-        }
-
-        private ApiClient SetupApiClient(Mock<ILogger<ApiClient>> apiClientLoggerMock)
-        {
-            Certificate = SetupCertificate();var tokenServiceMock = new Mock<ITokenService>();
 
             var mockHttp = new MockHttpMessageHandler();
 
@@ -85,8 +71,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            var apiClient = new ApiClient(client, tokenServiceMock.Object);
-            return apiClient;
+            CertificateApiClient = new CertificateApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            LearnerDetailApiClient = new LearnerDetailApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            OrganisationsApiClient = new OrganisationsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            ScheduleApiClient = new ScheduleApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            StandardVersionApiClient = new StandardVersionApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
         }
 
         private static Certificate SetupCertificate()

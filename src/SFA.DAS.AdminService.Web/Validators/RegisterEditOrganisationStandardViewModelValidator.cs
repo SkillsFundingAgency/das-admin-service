@@ -1,22 +1,22 @@
-﻿using System.Collections.Generic;
-using FluentValidation;
-using FluentValidation.Validators;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+﻿using FluentValidation;
+using SFA.DAS.AdminService.Common.Validation;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
-using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
     public class RegisterEditOrganisationStandardViewModelValidator : AbstractValidator<RegisterViewAndEditOrganisationStandardViewModel>
     {
-        private readonly IOrganisationsApiClient _apiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IRegisterValidator _registerValidator;
-        public RegisterEditOrganisationStandardViewModelValidator(IOrganisationsApiClient apiClient,
+
+        public RegisterEditOrganisationStandardViewModelValidator(IOrganisationsApiClient organisationsApiClient,
             IRegisterValidator registerValidator)
         {
-            _apiClient = apiClient;
+            _organisationsApiClient = organisationsApiClient;
             _registerValidator = registerValidator;
             var errorInEffectiveFrom = false;
 
@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
                 
                 var deliveryAreas = vm.DeliveryAreas ?? new List<int>();
-                var validationResultExternals = _apiClient
+                var validationResultExternals = _organisationsApiClient
                     .ValidateUpdateOrganisationStandard(vm.OrganisationId, vm.OrganisationStandardId, vm.StandardId, vm.EffectiveFrom,
                         vm.EffectiveTo, vm.ContactId, deliveryAreas, vm.ActionChoice, vm.Status, vm.OrganisationStatus).Result;
                 if (validationResultExternals.IsValid) return;

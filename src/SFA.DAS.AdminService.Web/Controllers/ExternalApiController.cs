@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Application.Api.Client.Azure;
-using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Azure;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers

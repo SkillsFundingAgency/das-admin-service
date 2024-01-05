@@ -2,8 +2,9 @@
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Net.Http;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
 {
     public class ApiClientRestartScheduleTests
     {
-        private ApiClient _sut;
+        private ScheduleApiClient _sut;
         private Mock<HttpMessageHandler> _mockHttpMessageHandler;
 
         [SetUp]
@@ -23,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
             var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
             httpClient.BaseAddress = new Uri("http://test/");
 
-            _sut = new ApiClient(httpClient, Mock.Of<ITokenService>());
+            _sut = new ScheduleApiClient(httpClient, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
         }
 
 

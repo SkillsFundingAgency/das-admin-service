@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using System;
-using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp.Snapshot;
-using System.Linq;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 using SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.Snapshot;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp.Apply
 {

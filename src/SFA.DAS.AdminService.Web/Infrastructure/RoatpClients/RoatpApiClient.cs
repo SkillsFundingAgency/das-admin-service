@@ -1,18 +1,10 @@
-﻿
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+using SFA.DAS.AdminService.Settings;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AdminService.Settings;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {

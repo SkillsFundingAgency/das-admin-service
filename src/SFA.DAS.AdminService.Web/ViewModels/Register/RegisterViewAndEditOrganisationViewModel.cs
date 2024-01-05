@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models;
-using System.Collections.Generic;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Register
 {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Register
         public string ContactsCount { get; set; }
         public string StandardsCount { get; set; }
         public RegisterViewOrganisationStandardsViewModel RegisterViewOrganisationStandardsViewModel { get; set; }
-        public List<OrganisationType> OrganisationTypes { get; set; }
+        public List<AssessorService.Api.Types.Models.AO.OrganisationType> OrganisationTypes { get; set; }
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
 
