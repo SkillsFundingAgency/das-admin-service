@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [SetUp]
         public void Arrange()
         {
-            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
+            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailsApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
             var invalidModel = new CertificateFamilyNameViewModel { Id = Certificate.Id, ReasonForChange = "Reason Ok but no name" };
             controller.ModelState.AddModelError("FamilyName", "Family name cannot be null");
             _result = controller.FamilyName(invalidModel).GetAwaiter().GetResult();

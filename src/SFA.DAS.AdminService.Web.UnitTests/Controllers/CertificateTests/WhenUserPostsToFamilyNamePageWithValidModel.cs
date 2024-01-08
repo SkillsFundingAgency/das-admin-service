@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [SetUp]
         public void Arrange()
         {
-            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
+            var controller = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailsApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
             var validModel = new CertificateFamilyNameViewModel { Id = Certificate.Id, FamilyName = "Testing", ReasonForChange = "Change Name" };
             _result = controller.FamilyName(validModel).GetAwaiter().GetResult();
         }

@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
 
         protected CertificateApiClient CertificateApiClient;
-        protected LearnerDetailApiClient LearnerDetailApiClient;
+        protected LearnerDetailsApiClient LearnerDetailsApiClient;
         protected OrganisationsApiClient OrganisationsApiClient;
         protected ScheduleApiClient ScheduleApiClient;
         protected StandardVersionApiClient StandardVersionApiClient;
@@ -79,7 +79,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
             CertificateApiClient = new CertificateApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
-            LearnerDetailApiClient = new LearnerDetailApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            LearnerDetailsApiClient = new LearnerDetailsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
             OrganisationsApiClient = new OrganisationsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
             ScheduleApiClient = new ScheduleApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
             StandardVersionApiClient = new StandardVersionApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
