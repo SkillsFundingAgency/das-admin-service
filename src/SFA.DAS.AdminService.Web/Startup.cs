@@ -104,7 +104,7 @@ namespace SFA.DAS.AdminService.Web
                 ServiceName).Result;
 
             services
-                .AddHttpClient<IApplicationApiClient>(cfg =>
+                .AddHttpClient("EpaoApiAuthentication", cfg =>
                 {
                     cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
                     cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
@@ -113,106 +113,7 @@ namespace SFA.DAS.AdminService.Web
                 .AddPolicyHandler(GetRetryPolicy());
 
             services
-                .AddHttpClient<ICertificateApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IContactsApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<ILearnerDetailsApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IMergeOrganisationsApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IOrganisationsApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IRegisterApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IRegisterValidationApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IScheduleApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IStaffReportsApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IStaffSearchApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IStandardVersionApiClient>(cfg =>
-                {
-                    cfg.BaseAddress = new Uri(ApplicationConfiguration.EpaoApiAuthentication.ApiBaseAddress);
-                    cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5))
-                .AddPolicyHandler(GetRetryPolicy());
-
-            services
-                .AddHttpClient<IQnaApiClient>(cfg =>
+                .AddHttpClient("QnaApiAuthentication", cfg =>
                 {
                     cfg.BaseAddress = new Uri(ApplicationConfiguration.QnaApiAuthentication.ApiBaseUrl);
                     cfg.DefaultRequestHeaders.Add("Accept", "Application/json");
@@ -293,9 +194,95 @@ namespace SFA.DAS.AdminService.Web
                     new AssessorTokenService(ApplicationConfiguration.EpaoApiAuthentication,
                         x.GetService<ILogger<AssessorTokenService>>()));
 
+            services.AddTransient<IApplicationApiClient>(x =>
+                new ApplicationApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApplicationApiClient>>()));
+
+            services.AddTransient<ICertificateApiClient>(x =>
+                new CertificateApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IContactsApiClient>(x =>
+                new ContactsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<ILearnerDetailsApiClient>(x =>
+                new LearnerDetailsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IMergeOrganisationsApiClient>(x =>
+                new MergeOrganisationsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IOrganisationsApiClient>(x =>
+                new OrganisationsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IRegisterApiClient>(x =>
+                new RegisterApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IRegisterValidationApiClient>(x =>
+                new RegisterValidationApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IScheduleApiClient>(x =>
+                new ScheduleApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IStaffReportsApiClient>(x =>
+                new StaffReportsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+            services.AddTransient<IStaffSearchApiClient>(x =>
+                new StaffSearchApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+
+            services.AddTransient<IStandardVersionApiClient>(x =>
+                new StandardVersionApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
+
+            services.AddTransient<IStaffReportsApiClient>(x =>
+                new StaffReportsApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("EpaoApiAuthentication"),
+                    x.GetService<IAssessorTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
+
             services.AddTransient<IQnaTokenService>(x =>
                     new QnaTokenService(ApplicationConfiguration.QnaApiAuthentication,
                         x.GetService<ILogger<QnaTokenService>>()));
+
+            services.AddTransient<IQnaApiClient>(x =>
+                new QnaApiClient(
+                    x.GetRequiredService<IHttpClientFactory>().CreateClient("QnaApiAuthentication"),
+                    x.GetService<IQnaTokenService>(),
+                    x.GetService<ILogger<ApiClientBase>>()));
 
             services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
                 ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
