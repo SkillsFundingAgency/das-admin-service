@@ -72,7 +72,10 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             var application = await _applyApiClient.GetApplication(applicationId);
             var organisation = await _organisationsApiClient.Get(application.OrganisationId);
-            var latestWithdrawalDate = await _applyApiClient.GetLatestWithdrawalDateForStandard(application.OrganisationId, application.StandardCode);
+
+            var latestWithdrawalDate = application.StandardCode != null
+                ? await _applyApiClient.GetLatestWithdrawalDateForStandard(application.OrganisationId, application.StandardCode)
+                : null;
 
             var applySequence = application.ApplyData.Sequences.Single(x => x.SequenceNo == sequenceNo);
 
