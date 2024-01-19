@@ -1,14 +1,14 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
-    using System.Threading.Tasks;
-    using Infrastructure;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.AdminService.Web.Domain;
-    using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class RoatpSearchController : RoatpSearchResultsControllerBase

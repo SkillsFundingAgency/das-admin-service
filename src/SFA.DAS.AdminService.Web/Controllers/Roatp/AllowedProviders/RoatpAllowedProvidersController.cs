@@ -1,14 +1,14 @@
-﻿namespace SFA.DAS.AdminService.Web.Controllers.Roatp.AllowedProviders
-{
-    using System.Threading.Tasks;
-    using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using SFA.DAS.AdminService.Web.Domain;
-    using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
-    using System;
-    using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
+using System;
+using System.Threading.Tasks;
 
+namespace SFA.DAS.AdminService.Web.Controllers.Roatp.AllowedProviders
+{
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class RoatpAllowedProvidersController : Controller
     {

@@ -18,13 +18,13 @@ using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Settings;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Azure;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.AutoMapperProfiles;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.Apply;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ModelBinders;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators;
@@ -34,6 +34,7 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.DfESignIn.Auth.AppStart;
 using SFA.DAS.DfESignIn.Auth.Helpers;
+using SFA.DAS.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,6 +43,7 @@ using System.Net.Http;
 using System.Text.Json.Serialization;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
 using FeatureToggleFilter = SFA.DAS.AdminService.Web.Infrastructure.FeatureToggles.FeatureToggleFilter;
+using IHttpClientFactory = System.Net.Http.IHttpClientFactory;
 using ISessionService = SFA.DAS.AdminService.Web.Infrastructure.ISessionService;
 
 namespace SFA.DAS.AdminService.Web
@@ -284,28 +286,16 @@ namespace SFA.DAS.AdminService.Web
                     x.GetService<IQnaTokenService>(),
                     x.GetService<ILogger<ApiClientBase>>()));
 
-            services.AddTransient<ICompaniesHouseApiClient>(x => new CompaniesHouseApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<CompaniesHouseApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
+            services.AddTransient<IRoatpApiClient>(x =>
+                new RoatpApiClient(
+                    new ManagedIdentityHttpClientFactory(ApplicationConfiguration.RoatpApiAuthentication).CreateHttpClient(),
+                    x.GetService<ILogger<RoatpApiClient>>()));
 
-            services.AddTransient<IRoatpApplyTokenService, RoatpApplyTokenService>();
-
-            services.AddTransient<IRoatpApplicationApiClient>(x => new RoatpApplicationApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<RoatpApplicationApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
-            services.AddTransient<IRoatpOrganisationApiClient>(x => new RoatpOrganisationApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<RoatpOrganisationApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
-            services.AddTransient<IRoatpOrganisationSummaryApiClient>(x => new RoatpOrganisationSummaryApiClient(
-                ApplicationConfiguration.ApplyApiAuthentication.ApiBaseAddress,
-                x.GetService<ILogger<RoatpOrganisationSummaryApiClient>>(),
-                x.GetService<IRoatpApplyTokenService>()));
-
+            services.AddTransient<IRoatpApplicationApiClient>(x => 
+                new RoatpApplicationApiClient(
+                    new ManagedIdentityHttpClientFactory(ApplicationConfiguration.ApplyApiAuthentication).CreateHttpClient(),
+                    x.GetService<ILogger<RoatpApplicationApiClient>>()));
+            
             services.AddTransient<IValidationService, ValidationService>();
             services.AddTransient<IAssessorValidationService, AssessorValidationService>();
             services.AddTransient<ISpecialCharacterCleanserService, SpecialCharacterCleanserService>();

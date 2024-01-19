@@ -1,8 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 
-namespace SFA.DAS.AdminService.Web.Infrastructure
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients
 {
     public class ApiError
     {

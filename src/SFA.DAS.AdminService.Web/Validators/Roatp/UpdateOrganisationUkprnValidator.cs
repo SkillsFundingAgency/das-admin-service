@@ -1,11 +1,7 @@
-﻿
-
-using System.Collections.Generic;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.Resources;
+﻿using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-using SFA.DAS.AdminService.Common.Validation;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp
 {

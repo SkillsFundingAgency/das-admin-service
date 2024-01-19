@@ -1,9 +1,8 @@
 ﻿using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Exceptions;
 using System;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 
 namespace SFA.DAS.AdminService.Web.Tests.Infrastructure.RoatpClients.Exceptions

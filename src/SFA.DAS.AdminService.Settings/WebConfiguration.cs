@@ -14,9 +14,7 @@ namespace SFA.DAS.AdminService.Settings
 
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
         [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
-        [JsonRequired] public ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
-
-        [JsonRequired] public string RoatpApiClientBaseUrl { get; set; }
+        [JsonRequired] public RoatpApplicationApiClientConfiguration ApplyApiAuthentication { get; set; }
 
         [JsonRequired] public string RoatpOversightBaseUrl { get; set; }
         [JsonRequired] public string RoatpAssessorBaseUrl { get; set; }
@@ -24,7 +22,7 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public string RoatpFinanceBaseUrl { get; set; }
         [JsonRequired] public string RoatpProviderModerationBaseUrl { get; set; }
 
-        [JsonRequired] public ClientApiAuthentication RoatpApiAuthentication { get; set; }
+        [JsonRequired] public RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
 
         [JsonRequired] public FeatureToggles FeatureToggles { get; set; }
         [JsonRequired] public RedisCacheSettings RedisCacheSettings { get; set; }
