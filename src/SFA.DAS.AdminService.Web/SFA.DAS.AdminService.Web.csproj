@@ -60,7 +60,7 @@
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.235-prerelease-30" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.242" />
     <PackageReference Include="SFA.DAS.DfESignIn.Auth" Version="17.1.72" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
