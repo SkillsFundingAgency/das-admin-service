@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using OrganisationStatus = SFA.DAS.AssessorService.ApplyTypes.Roatp.OrganisationStatus;
+using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {

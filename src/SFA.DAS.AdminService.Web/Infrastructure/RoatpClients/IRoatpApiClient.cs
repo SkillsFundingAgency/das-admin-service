@@ -1,9 +1,7 @@
-﻿
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {

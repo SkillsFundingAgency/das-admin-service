@@ -21,7 +21,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
         public string Address2 { get; set; }
         public string Address3 { get; set; }
         public string Address4 { get; set; }
-        public string City { get; set; }
         public string Postcode { get; set; }
 
         public string MergeOrganisationType { get; set; }
@@ -47,7 +46,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Merge
             Address2 = epao.OrganisationData.Address2;
             Address3 = epao.OrganisationData.Address3;
             Address4 = epao.OrganisationData.Address4;
-            City = epao.OrganisationData.City;
             Postcode = epao.OrganisationData.Postcode;
 
             MergeOrganisationType = mergeOrganisationType.ToLower();

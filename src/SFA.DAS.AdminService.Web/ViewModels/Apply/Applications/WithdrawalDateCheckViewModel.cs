@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.ApplyTypes;
+﻿using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;

@@ -1,44 +1,43 @@
-﻿using System;
-using System.Threading.Tasks;
-using SFA.DAS.AdminService.Application.Interfaces.Validation;
-using SFA.DAS.AdminService.Common.Validation;
-using SFA.DAS.AdminService.Web.Infrastructure;
+﻿using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
     public class AssessorValidationService : IAssessorValidationService
     {
-        private readonly IApiClient _apiClient;
+        private readonly IRegisterValidationApiClient _registerValidationApiClient;
 
-        public AssessorValidationService(IApiClient apiClient)
+        public AssessorValidationService(IRegisterValidationApiClient registerValidationApiClient)
         {
-            _apiClient = apiClient;
+            _registerValidationApiClient = registerValidationApiClient;
         }
 
         public async Task<ValidationResponse> ValidateNewOrganisationRequest(CreateEpaOrganisationRequest request)
         {
             var validationRequest = MapToCreateEpaOrganisationValidateRequest(request);
-            return await _apiClient.CreateOrganisationValidate(validationRequest);
+            return await _registerValidationApiClient.CreateOrganisationValidate(validationRequest);
         }
 
 
         public async Task<ValidationResponse> ValidateNewContactRequest(CreateEpaOrganisationContactRequest request)
         {
             var validationRequest = MapToCreateEpaContactValidateRequest(request);
-            return await _apiClient.CreateEpaContactValidate(validationRequest);
+            return await _registerValidationApiClient.CreateEpaContactValidate(validationRequest);
         }
 
         public async Task<ValidationResponse> ValidateNewOrganisationStandardRequest(CreateEpaOrganisationStandardRequest request)
         {
             var validationRequest = MapToCreateEpaOrganisationStandardValidateRequest(request);
-            return await _apiClient.CreateOrganisationStandardValidate(validationRequest);
+            return await _registerValidationApiClient.CreateOrganisationStandardValidate(validationRequest);
         }
 
         public async Task<ValidationResponse> ValidateUpdateOrganisationRequest(UpdateEpaOrganisationRequest request)
         {
             var validationRequest = MapToUpdateEpaOrganisationValidateRequest(request);
-            return await _apiClient.UpdateOrganisationValidate(validationRequest);
+            return await _registerValidationApiClient.UpdateOrganisationValidate(validationRequest);
         }
 
         private CreateEpaOrganisationValidationRequest MapToCreateEpaOrganisationValidateRequest(CreateEpaOrganisationRequest request)

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
@@ -13,8 +13,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
 {
     public class CertificateSendToController : CertificateBaseController
     {
-        public CertificateSendToController(ILogger<CertificateAmendController> logger, IHttpContextAccessor contextAccessor,
-            IApiClient apiClient) : base(logger, contextAccessor, apiClient)
+        public CertificateSendToController(
+            ILogger<CertificateAmendController> logger, 
+            IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient,
+            ILearnerDetailsApiClient learnerDetailsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            IScheduleApiClient scheduleApiClient,
+            IStandardVersionApiClient standardVersionApiClient) : base(logger, contextAccessor, certificateApiClient, learnerDetailsApiClient, organisationsApiClient, scheduleApiClient, standardVersionApiClient)
         {
         }
 
@@ -28,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpPost(Name = "SendTo")]
         public async Task<IActionResult> SendTo(CertificateSendToViewModel vm)
         {
-            var certificate = await ApiClient.GetCertificate(vm.Id);
+            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             if (certData.SendTo != vm.SendTo)

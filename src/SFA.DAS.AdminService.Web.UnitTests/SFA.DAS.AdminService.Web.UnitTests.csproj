@@ -23,7 +23,5 @@
     <ProjectReference Include="..\SFA.DAS.AdminService.Common.Testing\SFA.DAS.AdminService.Common.Testing.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
     <ProjectReference Include="..\SFA.DAS.AdminService.Web\SFA.DAS.AdminService.Web.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.Api.Types\SFA.DAS.AssessorService.Api.Types.csproj" />
-    <ProjectReference Include="..\SFA.DAS.AssessorService.ApplyTypes\SFA.DAS.AssessorService.ApplyTypes.csproj" />
   </ItemGroup>
 </Project>

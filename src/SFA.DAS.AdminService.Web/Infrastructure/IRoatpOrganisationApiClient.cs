@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using System;
 using System.Threading.Tasks;
 

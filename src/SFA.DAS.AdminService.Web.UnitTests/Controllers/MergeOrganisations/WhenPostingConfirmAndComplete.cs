@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
-using SFA.DAS.AssessorService.Api.Types.Commands;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -29,7 +29,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             await MergeController.ConfirmAndComplete(viewModel);
 
-            _mockApiClient.Verify(client => client.MergeOrganisations(It.Is<MergeOrganisationsCommand>(
+            _mergeOrganisationApiClient.Verify(client => client.MergeOrganisations(It.Is<MergeOrganisationsRequest>(
                 c => c.ActionedByUser == "user@test.com"
                     && c.PrimaryEndPointAssessorOrganisationId == _mergeRequest.PrimaryEpao.Id
                     && c.SecondaryEndPointAssessorOrganisationId == _mergeRequest.SecondaryEpao.Id
@@ -59,7 +59,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [Test]
         public async Task And_MergeCommandThrowsException_Then_RedirectToErrorPage()
         {
-            _mockApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsCommand>()))
+            _mergeOrganisationApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsRequest>()))
                 .ThrowsAsync(new Exception());
 
             var viewModel = SetupViewModel();
@@ -72,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         [Test]
         public async Task And_MergeCommandThrowsException_Then_MergeRequestIsNotUpdated()
         {
-            _mockApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsCommand>()))
+            _mergeOrganisationApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsRequest>()))
                 .ThrowsAsync(new Exception());
 
             var viewModel = SetupViewModel();
@@ -109,7 +109,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             var response = new { id = Guid.NewGuid() };
 
-            _mockApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsCommand>()))
+            _mergeOrganisationApiClient.Setup(c => c.MergeOrganisations(It.IsAny<MergeOrganisationsRequest>()))
                 .ReturnsAsync(response);
         }
 

@@ -1,20 +1,18 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AdminService.Web.Helpers;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.QnA.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
 {
     public class SectionViewModel : BackViewModel
     {
         public string ApplicationReference { get; set; }
-        public AssessorService.ApplyTypes.FinancialGrade Grade { get; set; }
+        public FinancialGrade Grade { get; set; }
 
         public string LegalName { get; set; }
         public string TradingName { get; set; }
@@ -56,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Applications
             Title = section.Title;
             Status = section.Status;
 
-            if (section.Status == ApplicationSectionStatus.Evaluated)
+            if (section.Status == AssessorService.ApplyTypes.ApplicationSectionStatus.Evaluated)
             {
                 IsSectionComplete = true;
             }

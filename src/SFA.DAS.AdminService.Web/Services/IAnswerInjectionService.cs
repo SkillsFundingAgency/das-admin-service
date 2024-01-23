@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.Api.Types.Commands;
+﻿using SFA.DAS.AdminService.Application.Commands;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using System.Threading.Tasks;
 

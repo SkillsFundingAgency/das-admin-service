@@ -1,17 +1,19 @@
-﻿using System;
-using System.Security.Claims;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
+using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
-using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Infrastructure;
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 {
@@ -19,7 +21,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
     {
         protected Mock<ILogger<CertificateAmendController>> MockedLogger;
         protected Mock<IHttpContextAccessor> MockHttpContextAccessor;
-        protected ApiClient ApiClient;
+
+        protected CertificateApiClient CertificateApiClient;
+        protected LearnerDetailsApiClient LearnerDetailsApiClient;
+        protected OrganisationsApiClient OrganisationsApiClient;
+        protected ScheduleApiClient ScheduleApiClient;
+        protected StandardVersionApiClient StandardVersionApiClient;
 
         protected Certificate Certificate;
         protected CertificateData CertificateData;
@@ -27,10 +34,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         public CertificateAmendQueryBase()
         {
             MockedLogger = new Mock<ILogger<CertificateAmendController>>();
-            var mockedApiClientLogger = new Mock<ILogger<ApiClient>>();
 
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
-            ApiClient = SetupApiClient(mockedApiClientLogger);
+            SetupApiClients();
 
             CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
@@ -50,11 +56,9 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             return mockHttpContextAccessor;
         }
 
-        private ApiClient SetupApiClient(Mock<ILogger<ApiClient>> apiClientLoggerMock)
+        private void SetupApiClients()
         {
             Certificate = SetupCertificate();
-
-            var tokenServiceMock = new Mock<ITokenService>();
 
             var mockHttp = new MockHttpMessageHandler();
 
@@ -74,8 +78,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             mockHttp.When($"http://localhost:59022/api/v1/certificates/update")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            var apiClient = new ApiClient(client, tokenServiceMock.Object);
-            return apiClient;
+            CertificateApiClient = new CertificateApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            LearnerDetailsApiClient = new LearnerDetailsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            OrganisationsApiClient = new OrganisationsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            ScheduleApiClient = new ScheduleApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            StandardVersionApiClient = new StandardVersionApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
         }
 
         private static Certificate SetupCertificate()

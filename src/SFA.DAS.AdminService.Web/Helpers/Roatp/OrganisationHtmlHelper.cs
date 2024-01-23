@@ -1,10 +1,9 @@
-﻿
+﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+
 namespace SFA.DAS.AdminService.Web.Helpers.Roatp
 {
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using Microsoft.AspNetCore.Html;
-    using Microsoft.AspNetCore.Mvc.Rendering;
-
     public static class OrganisationHtmlHelper
     {
         public static IHtmlContent OrganisationStatus(this IHtmlHelper htmlHelper, Organisation organisation)

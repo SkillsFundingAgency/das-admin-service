@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [SetUp]
         public void Arrange()
         {
-            var certificateNamesController = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient);
+            var certificateNamesController = new CertificateNamesController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailsApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
             _result = certificateNamesController.GivenNames(Certificate.Id).GetAwaiter().GetResult();
         }
 

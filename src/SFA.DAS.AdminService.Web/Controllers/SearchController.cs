@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
@@ -11,11 +12,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
     [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class SearchController : Controller
     {
-        private readonly ApiClient _apiClient;
+        private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
+        private readonly IStaffSearchApiClient _staffSearchApiClient;
 
-        public SearchController(ApiClient apiClient)
+        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient)
         {
-            _apiClient = apiClient;
+            _learnerDetailsApiClient = learnerDetailsApiClient;
+            _registerApiClient = registerApiClient;
+            _staffSearchApiClient = staffSearchApiClient;
         }
 
         [HttpGet]
@@ -28,10 +33,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> Results(string searchString, int page = 1)
         {
             EpaOrganisation org=null;
-            var searchResults = await _apiClient.Search(searchString, page);
+            var searchResults = await _staffSearchApiClient.Search(searchString, page);
 
             if(!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
-                org = await _apiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
+                org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
 
             var searchViewModel = new SearchViewModel
             {
@@ -52,7 +57,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             bool allLogs = false,
             int? batchNumber = null)
         {
-            var learner = await _apiClient.GetLearner(stdCode, uln, allLogs);
+            var learner = await _learnerDetailsApiClient.GetLearnerDetail(stdCode, uln, allLogs);
             
             var vm = new SelectViewModel
             {

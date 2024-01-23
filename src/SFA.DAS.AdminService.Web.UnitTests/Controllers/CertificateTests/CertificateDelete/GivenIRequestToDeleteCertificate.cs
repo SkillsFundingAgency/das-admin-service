@@ -26,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
                 IncidentNumber = "INC123",
                 ReasonForChange = "chnage required"
             };
-            _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient, CertificateApiClient);
+            _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, CertificateApiClient, LearnerDetailsApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
 
             client.Setup(c => c.Delete(It.IsAny<DeleteCertificateRequest>())).Throws(new HttpRequestException());
 
-            _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, ApiClient, client.Object);
+            _sut = new CertificateDeleteController(MockedLogger.Object, MockHttpContextAccessor.Object, client.Object, LearnerDetailsApiClient, OrganisationsApiClient, ScheduleApiClient, StandardVersionApiClient);
 
             try
             {

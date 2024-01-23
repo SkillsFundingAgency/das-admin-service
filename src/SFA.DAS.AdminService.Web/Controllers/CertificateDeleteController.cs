@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Common.Extensions;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateDelete;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -19,13 +18,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class CertificateDeleteController : CertificateBaseController
     {
         private readonly ILogger<CertificateDeleteController> _logger;
-        private ICertificateApiClient _certificateApiClient;
-        public CertificateDeleteController(ILogger<CertificateDeleteController> logger,
+
+        public CertificateDeleteController(
+            ILogger<CertificateDeleteController> logger,
             IHttpContextAccessor contextAccessor,
-            IApiClient apiClient, ICertificateApiClient certificateApiClient) : base(logger, contextAccessor, apiClient)
+            ICertificateApiClient certificateApiClient,
+            ILearnerDetailsApiClient learnerDetailsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            IScheduleApiClient scheduleApiClient,
+            IStandardVersionApiClient standardVersionApiClient) : base(logger, contextAccessor, certificateApiClient, learnerDetailsApiClient, organisationsApiClient, scheduleApiClient, standardVersionApiClient)
         {
             _logger = logger;
-            _certificateApiClient = certificateApiClient;
         }
 
         [HttpGet("confirm-delete-certificate", Name = "ConfirmAndSubmit")]
@@ -152,9 +155,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     IncidentNumber = deleteViewModel.IncidentNumber,
                     StandardCode = deleteViewModel.StandardCode,
                     Uln = deleteViewModel.Uln,
-                    Username = deleteViewModel.Username
+                    UserName = deleteViewModel.Username
                 };
-                await _certificateApiClient.Delete(request);
+                await CertificateApiClient.Delete(request);
                 return View("SuccessfullDeletion", deleteViewModel);
             }
             catch (Exception exception)

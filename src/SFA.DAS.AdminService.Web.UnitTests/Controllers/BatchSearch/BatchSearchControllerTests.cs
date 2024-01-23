@@ -8,8 +8,10 @@ using RichardSzalay.MockHttp;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Models;
+using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System;
 using System.Linq;
@@ -29,8 +31,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
         {
             _staffBatchLogResult = SetupStaffBatchLogResult();
             _staffBatchSearchResponse = SetUpBatchSearchResponse();
-            ApiClient apiClient = SetUpApiClient();
-            _controller = new BatchSearchController(Mock.Of<ILogger<BatchSearchController>>(), apiClient, Mock.Of<ISessionService>());
+            StaffSearchApiClient staffSearchApiClient = SetUpApiClient();
+            _controller = new BatchSearchController(Mock.Of<ILogger<BatchSearchController>>(), staffSearchApiClient, Mock.Of<ISessionService>());
         }
 
         [Test]
@@ -66,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             });
         }
 
-        private ApiClient SetUpApiClient()
+        private StaffSearchApiClient SetUpApiClient()
         {
             var mockHttp = new MockHttpMessageHandler();
 
@@ -79,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             mockHttp.When($"/api/v1/staffsearch/batch?batchNumber=1&page=1")
                .Respond("application/json", JsonConvert.SerializeObject(_staffBatchSearchResponse));
 
-            var apiClient = new ApiClient(client, Mock.Of<ITokenService>());
+            var apiClient = new StaffSearchApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
             return apiClient;
         }
 

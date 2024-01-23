@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using System;
 using System.Threading.Tasks;
@@ -15,8 +15,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public CertificateNamesController(ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            ApiClient apiClient) : base(logger, contextAccessor, apiClient)
-        { }
+            ICertificateApiClient certificateApiClient,
+            ILearnerDetailsApiClient learnerDetailsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            IScheduleApiClient scheduleApiClient,
+            IStandardVersionApiClient standardVersionApiClient) : base(logger, contextAccessor, certificateApiClient, learnerDetailsApiClient, organisationsApiClient, scheduleApiClient, standardVersionApiClient)
+        { 
+        }
 
         [HttpGet]
         [Route("certificate/givennames")]

@@ -6,13 +6,12 @@ using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.Domain.Merge;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Shared;
-using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models.Merge;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,7 +21,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
     [Authorize]
     public class MergeOrganisationsController : Controller
     {
-        private readonly IApiClient _apiClient;
+        private readonly IMergeOrganisationsApiClient _mergeOrganisationsApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
         private readonly IMergeOrganisationSessionService _mergeSessionService;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ILogger<MergeOrganisationsController> _logger;
@@ -32,9 +32,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private const string DefaultSortOrder = SortOrder.Desc;
         private const string DefaultSortColumn = MergeOrganisationSortColumn.CompletedAt;
 
-        public MergeOrganisationsController(IApiClient apiClient, IMergeOrganisationSessionService sessionService, IHttpContextAccessor httpContextAccessor, ILogger<MergeOrganisationsController> logger)
+        public MergeOrganisationsController(IMergeOrganisationsApiClient mergeOrganisationsApiClient, IRegisterApiClient registerApiClient, IMergeOrganisationSessionService sessionService, IHttpContextAccessor httpContextAccessor, ILogger<MergeOrganisationsController> logger)
         {
-            _apiClient = apiClient;
+            _mergeOrganisationsApiClient = mergeOrganisationsApiClient;
+            _registerApiClient = registerApiClient;
             _mergeSessionService = sessionService;
             _contextAccessor = httpContextAccessor;
             _logger = logger;
@@ -71,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 SortDirection = pagingState.SortDirection
             };
 
-            var mergeLogResults = await _apiClient.GetMergeLog(getMergeLogRequest);
+            var mergeLogResults = await _mergeOrganisationsApiClient.GetMergeLog(getMergeLogRequest);
 
             var paginationViewModel = new PaginationViewModel<MergeLogEntry>
             {
@@ -136,7 +137,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("merge-organisations/log/{logId}")]
         public async Task<IActionResult> CompletedMergeOverview(int logId)
         {
-            var response = await _apiClient.GetMergeLogEntry(logId);
+            var response = await _mergeOrganisationsApiClient.GetMergeLogEntry(logId);
 
             var viewModel = new CompletedMergeOverviewViewModel
             {
@@ -201,7 +202,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
             searchstring = rx.Replace(searchstring, "");
 
-            var searchResults = await _apiClient.SearchOrganisations(searchstring);
+            var searchResults = await _registerApiClient.SearchOrganisations(searchstring);
 
             var results = searchResults.Select(result => new Epao(result.Id, result.Name, result.Ukprn)).ToList();
 
@@ -231,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 searchString = mergeRequest.PreviousCommand.SearchString;
             }
 
-            var epao = await _apiClient.GetEpaOrganisation(epaoId);
+            var epao = await _registerApiClient.GetEpaOrganisation(epaoId);
 
             var viewModel = new ConfirmEpaoViewModel(epao, mergeOrganisationType, searchString);
 
@@ -325,7 +326,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var mergeRequest = _mergeSessionService.GetMergeRequest();
 
-            var mergeCommand = new MergeOrganisationsCommand
+            var mergeOrganisationsRequest = new MergeOrganisationsRequest
             {
                 PrimaryEndPointAssessorOrganisationId = mergeRequest.PrimaryEpao.Id,
                 SecondaryEndPointAssessorOrganisationId = mergeRequest.SecondaryEpao.Id,
@@ -335,7 +336,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             
             try
             {
-                await _apiClient.MergeOrganisations(mergeCommand);
+                await _mergeOrganisationsApiClient.MergeOrganisations(mergeOrganisationsRequest);
                 
                 mergeRequest.MarkComplete();
 

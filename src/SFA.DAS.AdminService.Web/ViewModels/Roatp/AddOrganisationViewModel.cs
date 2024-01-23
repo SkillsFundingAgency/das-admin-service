@@ -1,13 +1,12 @@
 ﻿using System.Globalization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using SFA.DAS.AdminService.Common.Validation;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-
     public class AddOrganisationViewModel
     {
         public Guid OrganisationId { get; set; }
@@ -21,7 +20,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
         public virtual DateTime? ApplicationDeterminedDate { get; set; }
         public IEnumerable<ProviderType> ProviderTypes { get; set; }
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
-
     }
 
     public class AddOrganisationProviderTypeViewModel : AddOrganisationViewModel
@@ -30,7 +28,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Roatp
         {
             OrganisationId = Guid.NewGuid();
         }
-
     }
 
     public class AddOrganisationTypeViewModel : AddOrganisationViewModel

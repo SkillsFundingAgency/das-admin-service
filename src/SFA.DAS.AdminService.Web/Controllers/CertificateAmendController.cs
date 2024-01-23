@@ -8,6 +8,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
@@ -20,9 +21,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
     [Authorize]
     public class CertificateAmendController : CertificateBaseController
     {
-        public CertificateAmendController(ILogger<CertificateAmendController> logger,
+        public CertificateAmendController(
+            ILogger<CertificateAmendController> logger,
             IHttpContextAccessor contextAccessor,
-            IApiClient apiClient) : base(logger, contextAccessor, apiClient)
+            ICertificateApiClient certificateApiClient,
+            ILearnerDetailsApiClient learnerDetailsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            IScheduleApiClient scheduleApiClient,
+            IStandardVersionApiClient standardVersionApiClient) : base(logger, contextAccessor, certificateApiClient, learnerDetailsApiClient, organisationsApiClient, scheduleApiClient, standardVersionApiClient)
         {
         }
 
@@ -30,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> AmendReason(int stdCode, long uln)
         {
-            var learner = await ApiClient.GetLearner(stdCode, uln, false);
+            var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
             var model = new CertificateAmendReasonViewModel
             {
                 Learner = learner,
@@ -59,7 +65,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction(nameof(AmendReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
             }
 
-            await ApiClient.UpdateCertificateWithAmendReason(new UpdateCertificateWithAmendReasonCommand
+            await CertificateApiClient.UpdateCertificateWithAmendReason(new UpdateCertificateWithAmendReasonCommand
             {
                 CertificateReference = viewModel.Learner.CertificateReference,
                 IncidentNumber = viewModel.IncidentNumber,
@@ -84,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> ReprintReason(int stdCode, long uln)
         {
-            var learner = await ApiClient.GetLearner(stdCode, uln, false);
+            var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
             var model = new CertificateReprintReasonViewModel
             {
                 Learner = learner,
@@ -113,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction(nameof(ReprintReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
             }
 
-            await ApiClient.UpdateCertificateWithReprintReason(new UpdateCertificateWithReprintReasonCommand { 
+            await CertificateApiClient.UpdateCertificateWithReprintReason(new UpdateCertificateWithReprintReasonCommand { 
                 CertificateReference = viewModel.Learner.CertificateReference, 
                 IncidentNumber = viewModel.IncidentNumber, 
                 Reasons = ParseReprintReasons(viewModel.Reasons),
@@ -143,10 +149,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
             viewModel.Page = page;
             viewModel.SearchString = searchString;
 
-            var standards = await ApiClient.GetStandardVersions(viewModel.StandardCode);
+            var standards = await StandardVersionApiClient.GetStandardVersionsByLarsCode(viewModel.StandardCode);
             viewModel.StandardHasMultipleVersions = standards.Count() > 1;
 
-            var options = await ApiClient.GetStandardOptions(viewModel.GetStandardId());
+            var options = await StandardVersionApiClient.GetStandardOptions(viewModel.GetStandardId());
             viewModel.ShowOptionsChangeLink = options != null && options.HasMoreThanOneOption();
 
             return actionResult;
@@ -206,7 +212,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             string searchString,
             int page = 1)
         {
-            var certificate = await ApiClient.GetCertificate(certificateId);
+            var certificate = await CertificateApiClient.GetCertificate(certificateId);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             return View(new CertificateAmendConfirmViewModel 
@@ -226,7 +232,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var username = ContextAccessor.HttpContext.User.UserId();
            
-            var certificate = await ApiClient.UpdateCertificateRequestReprint(new UpdateCertificateRequestReprintCommand
+            var certificate = await CertificateApiClient.UpdateCertificateRequestReprint(new UpdateCertificateRequestReprintCommand
             {
                 CertificateId = certificateId,
                 Username = username
@@ -234,7 +240,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            var nextScheduledRun = await ApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
+            var nextScheduledRun = await ScheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
 
             var viewModel = new CertificateReprintConfirmViewModel
             {

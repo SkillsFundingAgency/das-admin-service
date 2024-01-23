@@ -8,12 +8,12 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.Testing.AutoFixture;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -202,21 +202,30 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         public class CertificateAmendControllerTestsFixture
         {
             private readonly Fixture _fixture;
-
             private readonly CertificateAmendController _sut;
 
-            private readonly Mock<IApiClient> _apiClient;
             private readonly Mock<ILogger<CertificateAmendController>> _logger;
-            
+            private readonly Mock<ICertificateApiClient> _certificateApiClient;
+            private readonly Mock<ILearnerDetailsApiClient> _learnerDetailsApiClient;
+            private readonly Mock<IOrganisationsApiClient> _organisationsApiClient;
+            private readonly Mock<IScheduleApiClient> _scheduleApiClient;
+            private readonly Mock<IStandardVersionApiClient> _standardVersionApiClient;
+
             public CertificateAmendControllerTestsFixture()
             {
                 _fixture = new Fixture();
                 _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-                
-                _apiClient = new Mock<IApiClient>();
+
+                _certificateApiClient = new Mock<ICertificateApiClient>();
+                _learnerDetailsApiClient = new Mock<ILearnerDetailsApiClient>();
+                _organisationsApiClient = new Mock<IOrganisationsApiClient>();
+                _scheduleApiClient = new Mock<IScheduleApiClient>();
+                _standardVersionApiClient = new Mock<IStandardVersionApiClient>();
+
                 _logger = new Mock<ILogger<CertificateAmendController>>();
 
-                _sut = new CertificateAmendController(_logger.Object, SetupMockHttpAccessor().Object, _apiClient.Object)
+                _sut = new CertificateAmendController(_logger.Object, SetupMockHttpAccessor().Object, _certificateApiClient.Object, _learnerDetailsApiClient.Object,
+                    _organisationsApiClient.Object, _scheduleApiClient.Object, _standardVersionApiClient.Object)
                 {
                     TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>())
                 };
@@ -224,7 +233,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
             public CertificateAmendControllerTestsFixture WithLearner(LearnerDetailResult learnerDetailResult)
             {
-                _apiClient.Setup(p => p.GetLearner(learnerDetailResult.StandardCode, learnerDetailResult.Uln, It.IsAny<bool>())).ReturnsAsync(learnerDetailResult);
+                _learnerDetailsApiClient.Setup(p => p.GetLearnerDetail(learnerDetailResult.StandardCode, learnerDetailResult.Uln, It.IsAny<bool>())).ReturnsAsync(learnerDetailResult);
 
                 return this;
             }
@@ -252,12 +261,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
 
             public void VerifyUpdateCertificateWithAmendReasonCalled(string certificateRefernce)
             {
-                _apiClient.Verify(p => p.UpdateCertificateWithAmendReason(It.Is<UpdateCertificateWithAmendReasonCommand>(cmd => cmd.CertificateReference == certificateRefernce)), Times.Once);
+                _certificateApiClient.Verify(p => p.UpdateCertificateWithAmendReason(It.Is<UpdateCertificateWithAmendReasonCommand>(cmd => cmd.CertificateReference == certificateRefernce)), Times.Once);
             }
 
             public void VerifyUpdateCertificateWithReprintReasonCalled(string certificateRefernce)
             {
-                _apiClient.Verify(p => p.UpdateCertificateWithReprintReason(It.Is<UpdateCertificateWithReprintReasonCommand>(cmd => cmd.CertificateReference == certificateRefernce)), Times.Once);
+                _certificateApiClient.Verify(p => p.UpdateCertificateWithReprintReason(It.Is<UpdateCertificateWithReprintReasonCommand>(cmd => cmd.CertificateReference == certificateRefernce)), Times.Once);
             }
 
             public void VerifyRedirectToAction(IActionResult result, string action, string controller, dynamic routeValues = null)

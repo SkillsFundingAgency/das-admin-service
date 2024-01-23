@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [SetUp]
         public async Task Arrange()
         {
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, RegisterApiClient.Object, ApplicationApiClient.Object, OrganisationsApiClient.Object, ContactsApiClient.Object, Env.Object);
             
             Sut.SortViewOrganisationApprovedStandards(OrganisationOneOrganisationId, 
                 ControllerSession.Object.Register_ApprovedStandards.SortColumn, SortOrder.Desc);

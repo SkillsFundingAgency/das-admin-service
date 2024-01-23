@@ -1,16 +1,15 @@
-﻿using FluentAssertions.Common;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Application.Commands;
 using SFA.DAS.AdminService.Web.Domain.Apply;
 using SFA.DAS.AdminService.Web.Services;
-using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.ApplyTypes;
+using SFA.DAS.AdminService.Web.UnitTests.Constraints;
 using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.UnitTests.Constraints;
-using SFA.DAS.AssessorService.Api.Types.Models.UKRLP;
+using Contact = SFA.DAS.AssessorService.Domain.Entities.Contact;
+using Organisation = SFA.DAS.AssessorService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Services
 {

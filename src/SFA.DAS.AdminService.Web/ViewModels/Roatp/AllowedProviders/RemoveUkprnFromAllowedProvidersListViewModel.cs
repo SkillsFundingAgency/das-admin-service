@@ -1,4 +1,4 @@
-﻿using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
+﻿using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders
 {
