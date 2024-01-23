@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
 using SFA.DAS.AdminService.Web.Validators.Merge;
 using SFA.DAS.AdminService.Web.ViewModels.Merge;
-using SFA.DAS.AssessorService.Api.Types.Models.Merge;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Paging;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
     public class ConfirmEpaoViewModelValidatorTests
     {
         private Mock<IMergeOrganisationSessionService> _mockSessionService;
-        private Mock<IApiClient> _mockApiClient;
+        private Mock<IMergeOrganisationsApiClient> _mergeOrganisationsApiClient;
 
         private ConfirmEpaoViewModel _viewModel;
 
@@ -26,14 +26,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
         public void Arrange()
         {
             _mockSessionService = new Mock<IMergeOrganisationSessionService>();
-            _mockApiClient = new Mock<IApiClient>();
+            _mergeOrganisationsApiClient = new Mock<IMergeOrganisationsApiClient>();
 
             _viewModel = new ConfirmEpaoViewModel
             {
                 EpaoId = "EPA0001"
             };
 
-            Validator = new ConfirmEpaoViewModelValidator(_mockSessionService.Object, _mockApiClient.Object);
+            Validator = new ConfirmEpaoViewModelValidator(_mockSessionService.Object, _mergeOrganisationsApiClient.Object);
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators.Merge
 
             var mockResponse = new PaginatedList<MergeLogEntry>(mergeLogEntries, 1, 1, 1);
 
-            _mockApiClient.Setup(c => c.GetMergeLog(It.IsAny<GetMergeLogRequest>()))
+            _mergeOrganisationsApiClient.Setup(c => c.GetMergeLog(It.IsAny<GetMergeLogRequest>()))
                 .ReturnsAsync(mockResponse);
 
             _viewModel.MergeOrganisationType = "secondary";

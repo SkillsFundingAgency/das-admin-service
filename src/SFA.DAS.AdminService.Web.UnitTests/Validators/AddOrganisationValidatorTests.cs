@@ -1,19 +1,16 @@
-﻿using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+﻿using FluentAssertions;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Web.Resources;
+using SFA.DAS.AdminService.Web.Validators.Roatp;
+using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators
 {
-    using System;
-    using System.Linq;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using FluentAssertions;
-    using Infrastructure;
-    using Moq;
-    using NUnit.Framework;
-    using SFA.DAS.AdminService.Web.Resources;
-    using SFA.DAS.AdminService.Web.Validators.Roatp;
-    using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-    using SFA.DAS.AdminService.Web.Infrastructure;
-
     [TestFixture]
     public class AddOrganisationValidatorTests
     {

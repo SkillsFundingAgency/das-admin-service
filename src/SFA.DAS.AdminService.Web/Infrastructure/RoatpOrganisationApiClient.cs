@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;

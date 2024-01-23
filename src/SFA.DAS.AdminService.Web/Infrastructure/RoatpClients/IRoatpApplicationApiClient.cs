@@ -1,13 +1,12 @@
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.Apply;
+using SFA.DAS.AssessorService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.Apply;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 {

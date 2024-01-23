@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.AdminService.Web.Tests.Controllers.Roatp
 {
     using System;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
     using Infrastructure;
     using Microsoft.Extensions.Logging;
     using Moq;

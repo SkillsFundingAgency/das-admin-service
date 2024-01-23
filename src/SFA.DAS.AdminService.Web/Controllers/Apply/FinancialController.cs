@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Apply.Financial;
+using SFA.DAS.AssessorService.Api.Types.Models.Apply;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.AssessorService.Domain.Consts;
@@ -15,22 +16,22 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using FinancialGrade = SFA.DAS.AssessorService.ApplyTypes.FinancialGrade;
+using FinancialGrade = SFA.DAS.AssessorService.Domain.Entities.FinancialGrade;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Apply
 {
     [Authorize(Roles = Roles.ProviderRiskAssuranceTeam + "," + Roles.CertificationTeam)]
     public class FinancialController : Controller
     {
-        private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public FinancialController(IApiClient apiClient, IApplicationApiClient applyApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
+        public FinancialController(IApplicationApiClient applyApiClient, IOrganisationsApiClient organisationsApiClient, IQnaApiClient qnaApiClient, IHttpContextAccessor contextAccessor)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _contextAccessor = contextAccessor;
             _qnaApiClient = qnaApiClient;
         }
@@ -107,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
         {
             // NOTE: Using the QnA applicationId is somewhat dubious! We're using the Assessor applicationId nearly everywhere else.
             var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
-            var organisation = await _apiClient.GetOrganisation(orgId);
+            var organisation = await _organisationsApiClient.Get(orgId);
 
             if (financialSection != null && organisation != null)
             {
@@ -212,7 +213,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             var financialSection = await _qnaApiClient.GetSectionBySectionNo(applicationFromAssessor.ApplicationId, ApplyConst.FINANCIAL_SEQUENCE_NO, ApplyConst.FINANCIAL_DETAILS_SECTION_NO);
 
             var orgId = applicationFromAssessor.OrganisationId;
-            var organisation = await _apiClient.GetOrganisation(orgId);
+            var organisation = await _organisationsApiClient.Get(orgId);
 
             var application = new AssessorService.ApplyTypes.Application
             {
@@ -228,9 +229,9 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             return new FinancialApplicationViewModel(applicationFromAssessor.Id, applicationFromAssessor.ApplicationId, financialSection, grade, application);
         }
 
-        private static List<FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
+        private static List<AssessorService.Domain.Entities.FinancialEvidence> GetFinancialEvidence(QnA.Api.Types.Sequence financialSequence, QnA.Api.Types.Section financialSection)
         {
-            var listOfEvidence = new List<FinancialEvidence>();
+            var listOfEvidence = new List<AssessorService.Domain.Entities.FinancialEvidence>();
 
             if (financialSequence != null && financialSection != null)
             {
@@ -243,7 +244,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                         {
                             if (string.IsNullOrWhiteSpace(answer.ToString())) continue;
                             var filenameWithFullPath = $"{financialSequence.ApplicationId}/{financialSequence.Id}/{financialSection.Id}/{uploadPage.PageId}/{uploadQuestion.QuestionId}/{answer.Value}";
-                            listOfEvidence.Add(new FinancialEvidence { Filename = filenameWithFullPath });
+                            listOfEvidence.Add(new AssessorService.Domain.Entities.FinancialEvidence { Filename = filenameWithFullPath });
                         }
                     }
                 }
@@ -261,13 +262,13 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
 
             switch (vm?.Grade?.SelectedGrade)
             {
-                case FinancialApplicationSelectedGrade.Outstanding:
+                case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Outstanding:
                     return vm.OutstandingFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Good:
+                case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Good:
                     return vm.GoodFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Satisfactory:
+                case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Satisfactory:
                     return vm.SatisfactoryFinancialDueDate?.ToDateTime();
-                case FinancialApplicationSelectedGrade.Monitoring:
+                case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Monitoring:
                     return vm.MonitoringFinancialDueDate?.ToDateTime();
                 default:
                     return null;

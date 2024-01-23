@@ -9,6 +9,7 @@ using SFA.DAS.AdminService.Web.Domain.Merge;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.Merge;
 using SFA.DAS.AdminService.Web.Models.Merge;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 {
@@ -16,7 +17,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
     {
         protected MergeRequest _mergeRequest;
         protected Fixture _autoFixture;
-        protected Mock<IApiClient> _mockApiClient;
+        protected Mock<IMergeOrganisationsApiClient> _mergeOrganisationApiClient;
+        protected Mock<IRegisterApiClient> _registerApiClient;
         protected Mock<IMergeOrganisationSessionService> _mockMergeSessionService;
         protected Mock<IHttpContextAccessor> _mockContextAccessor;
 
@@ -32,11 +34,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             _autoFixture = new Fixture();
 
-            _mockApiClient = new Mock<IApiClient>();
+            _mergeOrganisationApiClient = new Mock<IMergeOrganisationsApiClient>();
+            _registerApiClient = new Mock<IRegisterApiClient>();
             _mockMergeSessionService = new Mock<IMergeOrganisationSessionService>();
             _mockContextAccessor = new Mock<IHttpContextAccessor>();
 
-            MergeController = new MergeOrganisationsController(_mockApiClient.Object, _mockMergeSessionService.Object, _mockContextAccessor.Object, Mock.Of<ILogger<MergeOrganisationsController>>());
+            MergeController = new MergeOrganisationsController(_mergeOrganisationApiClient.Object, _registerApiClient.Object, _mockMergeSessionService.Object, _mockContextAccessor.Object, Mock.Of<ILogger<MergeOrganisationsController>>());
 
             _mergeRequest = _autoFixture.Create<MergeRequest>();
 

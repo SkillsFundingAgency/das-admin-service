@@ -8,6 +8,7 @@ using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using System;
 using System.Linq;
@@ -20,16 +21,36 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         protected readonly ILogger<CertificateBaseController> Logger;
         protected readonly IHttpContextAccessor ContextAccessor;
-        protected readonly IApiClient ApiClient;
 
-        public CertificateBaseController(ILogger<CertificateBaseController> logger, 
-            IHttpContextAccessor contextAccessor, 
-            IApiClient apiClient)
+        private readonly ICertificateApiClient _certificateApiClient;
+        private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IScheduleApiClient _scheduleApiClient;
+        private readonly IStandardVersionApiClient _standardVersionApiClient;
+
+        public CertificateBaseController(
+            ILogger<CertificateBaseController> logger, 
+            IHttpContextAccessor contextAccessor,
+            ICertificateApiClient certificateApiClient,
+            ILearnerDetailsApiClient learnerDetailsApiClient,
+            IOrganisationsApiClient organisationsApiClient,
+            IScheduleApiClient scheduleApiClient,
+            IStandardVersionApiClient standardVersionApiClient)
         {
             Logger = logger;
             ContextAccessor = contextAccessor;
-            ApiClient = apiClient;
+            _certificateApiClient = certificateApiClient;
+            _learnerDetailsApiClient = learnerDetailsApiClient;
+            _organisationsApiClient = organisationsApiClient;
+            _scheduleApiClient = scheduleApiClient;
+            _standardVersionApiClient = standardVersionApiClient;
         }
+
+        protected ICertificateApiClient CertificateApiClient => _certificateApiClient;
+        protected ILearnerDetailsApiClient LearnerDetailsApiClient => _learnerDetailsApiClient;
+        protected IOrganisationsApiClient OrganisationsApiClient => _organisationsApiClient;
+        protected IScheduleApiClient ScheduleApiClient => _scheduleApiClient;
+        protected IStandardVersionApiClient StandardVersionApiClient => _standardVersionApiClient;
 
         protected async Task<IActionResult> LoadViewModel<T>(Guid id, string view) where T : ICertificateViewModel, new()
         {
@@ -38,8 +59,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             Logger.LogInformation($"Load View Model for {typeof(T).Name} for {username}");
             
             var viewModel = new T();
-            var certificate = await ApiClient.GetCertificate(id);
-            var organisation = await ApiClient.GetOrganisation(certificate.OrganisationId);
+            var certificate = await CertificateApiClient.GetCertificate(id);
+            var organisation = await _organisationsApiClient.Get(certificate.OrganisationId);
             certificate.Organisation = organisation;
 
             Logger.LogInformation($"Got Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id}");
@@ -57,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
-            var certificate = await ApiClient.GetCertificate(vm.Id);
+            var certificate = await CertificateApiClient.GetCertificate(vm.Id);
             var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             if(vm.RequiresReasonForChange && string.IsNullOrEmpty(vm.ReasonForChange))
@@ -85,7 +106,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
 
-            await ApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
+            await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
 
             Logger.LogInformation($"Certificate for {typeof(T).Name} requested by {username} with Id {certificate.Id} updated.");
 

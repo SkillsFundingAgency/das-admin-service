@@ -24,14 +24,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
 
             await MergeController.ConfirmEpao(type, epaoId, null);
 
-            _mockApiClient.Verify(c => c.GetEpaOrganisation(epaoId), Times.Once());
+            _registerApiClient.Verify(c => c.GetEpaOrganisation(epaoId), Times.Once());
         }
 
         private void SetupGetEpaoOrganisation()
         {
             _epaOrganisation = _autoFixture.Create<EpaOrganisation>();
 
-            _mockApiClient.Setup(c => c.GetEpaOrganisation(It.IsAny<string>()))
+            _registerApiClient.Setup(c => c.GetEpaOrganisation(It.IsAny<string>()))
                 .ReturnsAsync(_epaOrganisation);
         }
     }

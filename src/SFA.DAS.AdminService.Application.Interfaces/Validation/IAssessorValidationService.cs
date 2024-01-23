@@ -1,5 +1,5 @@
 ﻿using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AssessorService.Api.Types.Models.Validation;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Application.Interfaces.Validation

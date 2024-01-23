@@ -72,7 +72,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.MergeOrganisations
         {
             _response = _autoFixture.Create<List<AssessmentOrganisationSummary>>();
 
-            _mockApiClient.Setup(c => c.SearchOrganisations(It.IsAny<string>()))
+            _registerApiClient.Setup(c => c.SearchOrganisations(It.IsAny<string>()))
                 .ReturnsAsync(_response);
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using SFA.DAS.AssessorService.ApplyTypes;
 using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
@@ -15,7 +14,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
         public string CompanyNumber { get; }
 
         public Section Section { get; }
-        public FinancialGrade Grade { get; set; }
+        public AssessorService.Domain.Entities.FinancialGrade Grade { get; set; }
         public Guid ApplicationId { get; set; }
         public Guid Id { get; set; }
         public Guid OrgId { get; set; }
@@ -27,7 +26,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
         public FinancialApplicationViewModel() { }
 
-        public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, FinancialGrade grade, AssessorService.ApplyTypes.Application application)
+        public FinancialApplicationViewModel(Guid id, Guid applicationId, Section section, AssessorService.Domain.Entities.FinancialGrade grade, AssessorService.ApplyTypes.Application application)
         {
             Id = id;
             if (section != null)
@@ -59,9 +58,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
             }
         }
 
-        private void SetupGradeAndFinancialDueDate(FinancialGrade grade)
+        private void SetupGradeAndFinancialDueDate(AssessorService.Domain.Entities.FinancialGrade grade)
         {
-            Grade = grade ?? new FinancialGrade();
+            Grade = grade ?? new AssessorService.Domain.Entities.FinancialGrade();
 
             OutstandingFinancialDueDate = new FinancialDueDate();
             GoodFinancialDueDate = new FinancialDueDate();
@@ -76,16 +75,16 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Apply.Financial
 
                 switch (Grade.SelectedGrade)
                 {
-                    case FinancialApplicationSelectedGrade.Outstanding:
+                    case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Outstanding:
                         OutstandingFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
                         break;
-                    case FinancialApplicationSelectedGrade.Good:
+                    case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Good:
                         GoodFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
                         break;
-                    case FinancialApplicationSelectedGrade.Satisfactory:
+                    case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Satisfactory:
                         SatisfactoryFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
                         break;
-                    case FinancialApplicationSelectedGrade.Monitoring:
+                    case AssessorService.Domain.Entities.FinancialApplicationSelectedGrade.Monitoring:
                         MonitoringFinancialDueDate = new FinancialDueDate { Day = day, Month = month, Year = year };
                         break;
                     default:

@@ -29,8 +29,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
     public class RegisterController: Controller
     {
         private readonly IControllerSession _controllerSession;
-        private readonly IApiClient _apiClient;
+        private readonly IRegisterApiClient _registerApiClient;
         private readonly IApplicationApiClient _applyApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
         private readonly IHostingEnvironment _env;
 
@@ -38,11 +39,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private const int DefaultStandardsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
-        public RegisterController(IControllerSession controllerSession, IApiClient apiClient, IApplicationApiClient applyApiClient, IContactsApiClient contactsApiClient, IHostingEnvironment env)
+        public RegisterController(IControllerSession controllerSession, IRegisterApiClient registerApiClient, IApplicationApiClient applyApiClient,
+            IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient, IHostingEnvironment env)
         {
             _controllerSession = controllerSession;
-            _apiClient = apiClient;
+            _registerApiClient = registerApiClient;
             _applyApiClient = applyApiClient;
+            _organisationsApiClient = organisationsApiClient;
             _contactsApiClient = contactsApiClient;
             _env = env;
         }
@@ -68,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             searchstring = string.IsNullOrEmpty(searchstring) ? "" : searchstring;
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
             searchstring = rx.Replace(searchstring, "");
-            var searchResults = await _apiClient.SearchOrganisations(searchstring);
+            var searchResults = await _registerApiClient.SearchOrganisations(searchstring);
 
             var results = searchResults ?? new List<AssessmentOrganisationSummary>();
             var registerViewModel = new RegisterViewModel
@@ -85,7 +88,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/edit-organisation/{organisationId}")]
         public async Task<IActionResult> EditOrganisation(string organisationId)
         {
-            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(organisationId);
             var viewModel = await MapOrganisationModel(organisation, false);
             return View(viewModel);
         }
@@ -96,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();
                 await GatherOrganisationContacts(viewModel);
                 await GatherOrganisationStandards(viewModel, false);
                 return View(viewModel);
@@ -127,7 +130,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 RecognitionNumber = viewModel.RecognitionNumber ?? string.Empty
             };
          
-            await _apiClient.UpdateEpaOrganisation(updateOrganisationRequest);
+            await _registerApiClient.UpdateEpaOrganisation(updateOrganisationRequest);
          
             return RedirectToAction("ViewOrganisation", "register", new { organisationId = viewModel.OrganisationId});
         }
@@ -138,7 +141,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var vm = new RegisterOrganisationViewModel
             {
-                OrganisationTypes = await _apiClient.GetOrganisationTypes()
+                OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes()
             };
 
             return View(vm);
@@ -147,7 +150,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/view-standard/{organisationStandardId}", Name="Register_ViewStandard")]
         public async Task<IActionResult> ViewStandard(int organisationStandardId)
         {
-            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+            var organisationStandard = await _registerApiClient.GetOrganisationStandard(organisationStandardId);
 
             var viewModel = MapOrganisationStandardToViewModel(organisationStandard);
 
@@ -158,7 +161,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/edit-standard/{organisationStandardId}")]
         public async Task<IActionResult> EditOrganisationStandard(int organisationStandardId)
         {
-            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+            var organisationStandard = await _registerApiClient.GetOrganisationStandard(organisationStandardId);
             
             var viewModel = MapOrganisationStandardToViewModel(organisationStandard);
             var vm = await AddContactsAndDeliveryAreasAndDateDetails(viewModel);
@@ -191,7 +194,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 DeliveryAreasComments = viewModel.DeliveryAreasComments
             };
 
-            var organisationStandardId = await _apiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
+            var organisationStandardId = await _registerApiClient.UpdateEpaOrganisationStandard(updateOrganisationStandardRequest);
 
             return Redirect($"/register/view-standard/{organisationStandardId}");
         }
@@ -199,7 +202,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/edit-standard/{organisationStandardId}/{organisationStandardVersion}")]
         public async Task<IActionResult> EditStandardVersion(int organisationStandardId, string organisationStandardVersion)
         {
-            var organisationStandard = await _apiClient.GetOrganisationStandard(organisationStandardId);
+            var organisationStandard = await _registerApiClient.GetOrganisationStandard(organisationStandardId);
 
             var viewModel = MapOrganisationStandardToEditStandardVersionViewModel(organisationStandard, organisationStandardVersion);
 
@@ -214,7 +217,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return View(viewModel);
             }
 
-            var request = new UpdateEpaOrganisationStandardVersionRequest
+            var request = new UpdateOrganisationStandardVersionRequest
             {
                 OrganisationStandardId = organisationStandardId,
                 OrganisationStandardVersion = organisationStandardVersion,
@@ -222,7 +225,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 EffectiveTo = viewModel.EffectiveTo
             };
 
-            await _apiClient.UpdateEpaOrganisationStandardVersion(request);
+            await _organisationsApiClient.UpdateEpaOrganisationStandardVersion(request);
 
             return RedirectToAction("ViewStandard", "Register", new { organisationStandardId });
         }
@@ -273,7 +276,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 PhoneNumber = viewModel.PhoneNumber
             };
 
-            var contactId = await _apiClient.CreateEpaContact(addContactRequest);
+            var contactId = await _registerApiClient.CreateEpaContact(addContactRequest);
             return Redirect($"/register/view-contact/{contactId}");
         }
 
@@ -281,8 +284,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/edit-contact/{contactId}")]
         public async Task<IActionResult> EditContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaContact(contactId);
-            var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
+            var contact = await _registerApiClient.GetEpaContact(contactId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
         }
@@ -305,43 +308,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 PhoneNumber = viewAndEditModel.PhoneNumber,
                 ActionChoice = viewAndEditModel.ActionChoice
             };
-            await _apiClient.UpdateEpaContact(request);
+            await _registerApiClient.UpdateEpaContact(request);
             return RedirectToAction("ViewContact", "register", new { contactId = viewAndEditModel.ContactId});
         }
 
         [HttpGet("register/view-contact/{contactId}")]
         public async Task<IActionResult> ViewContact(string contactId)
         {
-            var contact = await _apiClient.GetEpaContact(contactId);
-            var organisation = await _apiClient.GetEpaOrganisation(contact.OrganisationId);
+            var contact = await _registerApiClient.GetEpaContact(contactId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(contact.OrganisationId);
             var viewModel = MapContactModel(contact, organisation);
             return View(viewModel);
         }
 
-
-        [HttpGet("register/impage")]
-        public async Task<IActionResult> Impage()
-        {
-            if (!_env.IsDevelopment())
-                return NotFound();
-           
-            var vm = new AssessmentOrgsImportResponse { Status = "Press to run" };         
-            return View(vm);
-        }
-        [HttpGet("register/impage-{choice}")]
-        public async Task<IActionResult> Impage(string choice)
-        {
-            if (!_env.IsDevelopment())
-                return NotFound();
-
-            var vm = new AssessmentOrgsImportResponse { Status = "Running" };
-            if (choice == "DoIt")
-            {
-                var importResults = await _apiClient.ImportOrganisations();
-                vm.Status = importResults;
-            }
-            return View(vm);
-        }
 
         [Authorize(Roles = Roles.CertificationTeam + "," + Roles.AssessmentDeliveryTeam)]
         [HttpPost("register/add-organisation")]
@@ -349,7 +328,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();             
+                viewModel.OrganisationTypes = await _organisationsApiClient.GetOrganisationTypes();             
                 return View(viewModel);
             }
 
@@ -373,14 +352,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 RecognitionNumber = viewModel.RecognitionNumber
             };
 
-            var organisationId = await _apiClient.CreateEpaOrganisation(addOrganisationRequest);
+            var organisationId = await _registerApiClient.CreateEpaOrganisation(addOrganisationRequest);
             return RedirectToAction("ViewOrganisation", "register",new { organisationId });
         }
 
         [HttpGet("register/view-organisation/{organisationId}", Name = "Register_ViewOrganisation")]
         public async Task<IActionResult> ViewOrganisation(string organisationId)
         {
-            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(organisationId);
             var viewModel = await MapOrganisationModel(organisation, true);     
             return View(viewModel);
         }
@@ -451,7 +430,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/search-standards/{organisationId}")]
         public async Task<IActionResult> SearchStandards(string organisationId)
         {
-            var organisation = await _apiClient.GetEpaOrganisation(organisationId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(organisationId);
             var vm = new SearchStandardsViewModel{OrganisationId = organisationId, OrganisationName = organisation.Name};
             
             return View(vm);
@@ -461,7 +440,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet("register/search-standards-results")]
         public async Task<IActionResult> SearchStandardsResults(SearchStandardsViewModel vm)
         {
-            var organisation = await _apiClient.GetEpaOrganisation(vm.OrganisationId);
+            var organisation = await _registerApiClient.GetEpaOrganisation(vm.OrganisationId);
             vm.OrganisationName = organisation.Name;
             if (!ModelState.IsValid)
             {
@@ -473,7 +452,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
             searchstring = rx.Replace(searchstring, "");
             searchstring = searchstring.Replace("/", "");
-            var searchResults = await _apiClient.SearchStandards(searchstring);
+            var searchResults = await _registerApiClient.SearchStandards(searchstring);
 
             var standardViewModel = new SearchStandardsViewModel
             {
@@ -488,7 +467,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddContactsAndDeliveryAreasAndDateDetails(RegisterViewAndEditOrganisationStandardViewModel vm)
         {
-            var availableDeliveryAreas = await _apiClient.GetDeliveryAreas();
+            var availableDeliveryAreas = await _registerApiClient.GetDeliveryAreas();
 
             vm.Contacts = await _contactsApiClient.GetAllContactsForOrganisation(vm.OrganisationId);
             vm.AvailableDeliveryAreas = availableDeliveryAreas;
@@ -514,7 +493,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         private async Task<RegisterViewAndEditOrganisationStandardViewModel> AddStandardVersions(RegisterViewAndEditOrganisationStandardViewModel viewModel)
         {
-            var organisationStandard = await _apiClient.GetOrganisationStandard(viewModel.OrganisationStandardId);
+            var organisationStandard = await _registerApiClient.GetOrganisationStandard(viewModel.OrganisationStandardId);
 
             viewModel.Versions = organisationStandard.Versions;
 
@@ -523,7 +502,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         private async Task GatherOrganisationStandards(RegisterViewAndEditOrganisationViewModel viewAndEditModel, bool paged = true)
         {
-            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId);
+            var organisationStandards = await _registerApiClient.GetEpaOrganisationStandards(viewAndEditModel.OrganisationId);
             if (organisationStandards != null)
             {
                 viewAndEditModel.RegisterViewOrganisationStandardsViewModel = new RegisterViewOrganisationStandardsViewModel(nameof(RegisterController).RemoveController());
@@ -541,7 +520,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         private async Task<PaginationViewModel<OrganisationStandardSummary>> GatherOrganisationStandards(string organisationId, bool paged)
         {
-            var organisationStandards = await _apiClient.GetEpaOrganisationStandards(organisationId);
+            var organisationStandards = await _registerApiClient.GetEpaOrganisationStandards(organisationId);
             if (organisationStandards != null)
             {
                 var pageOfOrganisationStandards = paged
@@ -720,7 +699,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 RecognitionNumber = organisation.RecognitionNumber
             };
 
-            viewModel.OrganisationTypes = _apiClient.GetOrganisationTypes().Result;
+            viewModel.OrganisationTypes = _organisationsApiClient.GetOrganisationTypes().Result;
 
             if (viewModel.OrganisationTypeId != null)
             {

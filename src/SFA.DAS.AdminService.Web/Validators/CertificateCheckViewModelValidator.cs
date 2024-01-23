@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -8,13 +8,13 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class CertificateCheckViewModelValidator : AbstractValidator<CertificateCheckViewModel>
     {
-        public CertificateCheckViewModelValidator(IApiClient apiClient)
+        public CertificateCheckViewModelValidator(IStandardVersionApiClient standardVersionApiClient)
         {
             When(vm => vm.Status != CertificateStatus.Draft, () => 
             {
                 RuleFor(vm => vm).Custom((vm, context) =>
                 {
-                    var options = apiClient.GetStandardOptions(vm.GetStandardId()).Result;
+                    var options = standardVersionApiClient.GetStandardOptions(vm.GetStandardId()).Result;
                     if (options != null && options.HasOptions())
                     {
                         if (string.IsNullOrWhiteSpace(vm.Option))

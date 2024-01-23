@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using SFA.DAS.AdminService.Common.Extensions;
-    using SFA.DAS.AdminService.Common.Validation;
-    using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-    using System.Linq;
+
 
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class AddRoatpOrganisationController : Controller
@@ -73,8 +73,7 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 
             }
 
-            AssessorService.Api.Types.Models.UKRLP.UkrlpProviderDetails details;
-
+            UkrlpProviderDetails details;
 
             try
             {

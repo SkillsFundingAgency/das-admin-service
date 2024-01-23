@@ -5,16 +5,15 @@ using FluentValidation.Results;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 using SFA.DAS.Testing.AutoFixture;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators
@@ -56,7 +55,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 .WithCertificateCheckViewModel(vm)
                 .WithOrganisation()
                 .WithCertificate(vm.Id, vm.StandardCode, vm.StandardUId, vm.Option)
-                .WithStandardVersions()
                 .WithStandardOptions(options);
 
             fixture.Validate();
@@ -270,9 +268,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             private Fixture _fixture;
             private Certificate _certificate;
             private Organisation _organisation;
-            private List<StandardVersion> _standardVersions;
 
-            private Mock<IApiClient> _apiClient;
+            private Mock<IStandardVersionApiClient> _standardVersionApiClient;
             private CertificateCheckViewModel _sut;
             private ValidationResult _validationResult;
 
@@ -281,7 +278,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 _fixture = new Fixture();
                 _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-                _apiClient = new Mock<IApiClient>();
+                _standardVersionApiClient = new Mock<IStandardVersionApiClient>();
             }
 
             public CertificateCheckViewModelValidatorTestsFixture WithCertificateCheckViewModel(CertificateCheckViewModel viewModel)
@@ -293,8 +290,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             public CertificateCheckViewModelValidatorTestsFixture WithOrganisation()
             {
                 _organisation = _fixture.Create<Organisation>();
-
-                _apiClient.Setup(p => p.GetOrganisation(_organisation.Id)).ReturnsAsync(_organisation);
 
                 return this;
             }
@@ -310,17 +305,6 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 _certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
                 _certificate.OrganisationId = _organisation.Id;
 
-                _apiClient.Setup(p => p.GetCertificate(_certificate.Id, It.IsAny<bool>())).ReturnsAsync(_certificate);
-
-                return this;
-            }
-
-            public CertificateCheckViewModelValidatorTestsFixture WithStandardVersions()
-            {
-                _standardVersions = _fixture.CreateMany<StandardVersion>().ToList();
-
-                _apiClient.Setup(p => p.GetStandardVersions(_certificate.StandardCode)).ReturnsAsync(_standardVersions);
-
                 return this;
             }
 
@@ -329,11 +313,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 // when the StandardUid is missing the StandardId used to return options is the StandardCode instead
                 if (!string.IsNullOrWhiteSpace(_certificate.StandardUId))
                 {
-                    _apiClient.Setup(p => p.GetStandardOptions(_certificate.StandardUId)).ReturnsAsync(standardOptions);
+                    _standardVersionApiClient.Setup(p => p.GetStandardOptions(_certificate.StandardUId)).ReturnsAsync(standardOptions);
                 }
                 else
                 {
-                    _apiClient.Setup(p => p.GetStandardOptions(_certificate.StandardCode.ToString())).ReturnsAsync(standardOptions);
+                    _standardVersionApiClient.Setup(p => p.GetStandardOptions(_certificate.StandardCode.ToString())).ReturnsAsync(standardOptions);
                 }
 
                 return this;
@@ -341,7 +325,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
             public void Validate()
             {
-                _validationResult = new CertificateCheckViewModelValidator(_apiClient.Object).Validate(_sut);
+                _validationResult = new CertificateCheckViewModelValidator(_standardVersionApiClient.Object).Validate(_sut);
             }
 
             public void Verify(string propertyName, string errorCode, string errorMessage, bool shouldHaveError)

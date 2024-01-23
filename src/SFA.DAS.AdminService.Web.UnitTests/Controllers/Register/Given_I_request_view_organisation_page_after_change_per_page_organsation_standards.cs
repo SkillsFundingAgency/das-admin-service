@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Common.Extensions.TagHelpers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
 
         public async Task Setup(int approvedStandardsPerPage)
         {
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, RegisterApiClient.Object, ApplicationApiClient.Object, OrganisationsApiClient.Object, ContactsApiClient.Object, Env.Object);
             
             Sut.ChangeStandardsPerPageViewOrganisationApprovedStandards(OrganisationOneOrganisationId, approvedStandardsPerPage);
             

@@ -10,18 +10,19 @@ using SFA.DAS.AdminService.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
     [Authorize(Roles = Domain.Roles.OperationsTeam + "," + Domain.Roles.CertificationTeam)]
     public class ScheduleConfigController : Controller
     {
-        private readonly ApiClient _apiClient;
+        private readonly IScheduleApiClient _scheduleApiClient;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public ScheduleConfigController(ApiClient apiClient, IHttpContextAccessor contextAccessor)
+        public ScheduleConfigController(IScheduleApiClient scheduleApiClient, IHttpContextAccessor contextAccessor)
         {
-            _apiClient = apiClient;
+            _scheduleApiClient = scheduleApiClient;
             _contextAccessor = contextAccessor;
         }
 
@@ -30,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             List<ScheduleConfigViewModel> viewModels = new List<ScheduleConfigViewModel>();
 
-            foreach (var schedule in await _apiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
+            foreach (var schedule in await _scheduleApiClient.GetAllScheduledRun((int)ScheduleJobType.PrintRun))
             {
                 ScheduleConfigViewModel viewModel = MapToScheduleConfigViewModel(schedule);
 
@@ -43,7 +44,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid scheduleRunId)
         {
-            var schedule = await _apiClient.GetScheduleRun(scheduleRunId);
+            var schedule = await _scheduleApiClient.GetScheduleRun(scheduleRunId);
 
             ScheduleConfigViewModel viewModel = new ScheduleConfigViewModel
             {
@@ -67,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (viewModel != null)
             {
-                await _apiClient.DeleteScheduleRun(viewModel.Id);
+                await _scheduleApiClient.DeleteScheduleRun(viewModel.Id);
             }
 
             return RedirectToAction("Index");
@@ -114,7 +115,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     Interval = (int?)viewModel.ScheduleInterval
                 };
 
-                await _apiClient.CreateScheduleRun(schedule);
+                await _scheduleApiClient.CreateScheduleRun(schedule);
             }
 
             return RedirectToAction("Index");
@@ -135,7 +136,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Restart(Guid scheduleRunId)
         {
-            var schedule = await _apiClient.GetScheduleRun(scheduleRunId);
+            var schedule = await _scheduleApiClient.GetScheduleRun(scheduleRunId);
 
             var viewModel = MapToScheduleConfigViewModel(schedule);
 
@@ -147,7 +148,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (viewModel != null)
             {
-                await _apiClient.RunNowScheduledRun((int)viewModel.ScheduleType);
+                await _scheduleApiClient.RunNowScheduledRun((int)viewModel.ScheduleType);
             }
 
             return RedirectToAction("Index");
@@ -158,7 +159,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (viewModel != null)
             {
-                await _apiClient.RestartSchedule(viewModel.Id);
+                await _scheduleApiClient.RestartSchedule(viewModel.Id);
             }
 
             return RedirectToAction("Index");

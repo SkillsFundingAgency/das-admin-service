@@ -1,24 +1,25 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Application.Commands;
+using SFA.DAS.AdminService.Application.Interfaces;
+using SFA.DAS.AdminService.Application.Interfaces.Validation;
+using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Web.Resources;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.Register;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using SFA.DAS.AssessorService.Domain.Consts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AssessorService.Api.Types.Commands;
-using SFA.DAS.AssessorService.Api.Types.Models;
-using SFA.DAS.AdminService.Application.Interfaces;
-using SFA.DAS.AdminService.Application.Interfaces.Validation;
-using SFA.DAS.AssessorService.Domain.Consts;
-using SFA.DAS.AdminService.Web.Resources;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
-using SFA.DAS.AdminService.Common.Validation;
 
 namespace SFA.DAS.AdminService.Web.Services
 {
     public class AnswerInjectionService : IAnswerInjectionService
     {
-        private readonly IApiClient _apiClient;
         private readonly IApplicationApiClient _applyApiClient;
+        private readonly IOrganisationsApiClient _organisationsApiClient;
+        private readonly IRegisterApiClient _registerApiClient;
 
         private readonly IValidationService _validationService;
         private readonly IAssessorValidationService _assessorValidationService;
@@ -26,11 +27,13 @@ namespace SFA.DAS.AdminService.Web.Services
         private readonly ILogger<AnswerService> _logger;
         private readonly ISpecialCharacterCleanserService _cleanser;
 
-        public AnswerInjectionService(IApiClient apiClient, IApplicationApiClient applyApiClient, IValidationService validationService,
+        public AnswerInjectionService(IApplicationApiClient applyApiClient, IRegisterApiClient registerApiClient, IOrganisationsApiClient organisationsApiClient,
+            IValidationService validationService,
             IAssessorValidationService assessorValidationService, ISpecialCharacterCleanserService cleanser, ILogger<AnswerService> logger)
         {
-            _apiClient = apiClient;
             _applyApiClient = applyApiClient;
+            _organisationsApiClient = organisationsApiClient;
+            _registerApiClient = registerApiClient;
             _validationService = validationService;
             _assessorValidationService = assessorValidationService;
             _cleanser = cleanser;
@@ -96,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 _logger.LogInformation($"Approving organisation {request?.Name} onto the register");
                 request.Status = OrganisationStatus.New;
 
-                var organisationId = await _apiClient.UpdateEpaOrganisation(request);
+                var organisationId = await _registerApiClient.UpdateEpaOrganisation(request);
                 response.OrganisationId = organisationId;
 
                 _logger.LogInformation($"Assigning the primary contact");
@@ -125,7 +128,7 @@ namespace SFA.DAS.AdminService.Web.Services
             {
                 var primaryContactId = Guid.Empty;
 
-                var assessorContact = await _apiClient.GetEpaContactByEmail(primaryContact.Email);
+                var assessorContact = await _registerApiClient.GetEpaContactByEmail(primaryContact.Email);
 
                 if (assessorContact is null)
                 {
@@ -141,7 +144,7 @@ namespace SFA.DAS.AdminService.Web.Services
                         //Create a new contact in assessor table, 
                         //Assumption is that this user will need to have an account created in aslogon too  
                         //And then when they login the signinid etc wll get populated as it does for existing users
-                        var id = await _apiClient.CreateEpaContact(primaryContact);
+                        var id = await _registerApiClient.CreateEpaContact(primaryContact);
                         if (Guid.TryParse(id, out primaryContactId))
                         {
                             _logger.LogInformation($"Contact created successfully - {primaryContactId}");
@@ -163,11 +166,10 @@ namespace SFA.DAS.AdminService.Web.Services
                         OrganisationId = organisationId,
                         ContactStatus = ContactStatus.Live,
                         MakePrimaryContact = true,
-                        AddDefaultRoles = true,
                         AddDefaultPrivileges = false
                     };
 
-                    await _apiClient.AssociateOrganisationWithEpaContact(request);
+                    await _registerApiClient.AssociateOrganisationWithEpaContact(request);
                 }
             }
         }
@@ -176,7 +178,7 @@ namespace SFA.DAS.AdminService.Web.Services
         {
             if (!string.IsNullOrEmpty(applyingUserEmail) && !string.IsNullOrEmpty(organisationId))
             {
-                var applyingContact = await _apiClient.GetEpaContactByEmail(applyingUserEmail);
+                var applyingContact = await _registerApiClient.GetEpaContactByEmail(applyingUserEmail);
 
                 if (applyingContact != null)
                 {
@@ -187,11 +189,10 @@ namespace SFA.DAS.AdminService.Web.Services
                         OrganisationId = organisationId,
                         ContactStatus = ContactStatus.Live,
                         MakePrimaryContact = false,
-                        AddDefaultRoles = true,
                         AddDefaultPrivileges = true
                     };
 
-                    await _apiClient.AssociateOrganisationWithEpaContact(request);
+                    await _registerApiClient.AssociateOrganisationWithEpaContact(request);
                 }
             }
         }
@@ -203,7 +204,7 @@ namespace SFA.DAS.AdminService.Web.Services
                 // For any other user who was trying to apply for the same organisation; they now need to request access
                 foreach (var email in otherApplyingUsersEmails)
                 {
-                    var otherApplyingContact = await _apiClient.GetEpaContactByEmail(email);
+                    var otherApplyingContact = await _registerApiClient.GetEpaContactByEmail(email);
                     if (otherApplyingContact != null)
                     {
                         _logger.LogInformation($"Inviting contact ({otherApplyingContact.Email}) to {organisationId}");
@@ -213,11 +214,10 @@ namespace SFA.DAS.AdminService.Web.Services
                             OrganisationId = organisationId,
                             ContactStatus = ContactStatus.InvitePending,
                             MakePrimaryContact = false,
-                            AddDefaultRoles = false,
                             AddDefaultPrivileges = false
                         };
 
-                        await _apiClient.AssociateOrganisationWithEpaContact(request);
+                        await _registerApiClient.AssociateOrganisationWithEpaContact(request);
                     }
                 }
             }
@@ -272,7 +272,7 @@ namespace SFA.DAS.AdminService.Web.Services
             if (warningMessages.Count == 0)
             {
                 _logger.LogInformation("Injecting new standard into register");
-                response.EpaoStandardId = await _apiClient.CreateEpaOrganisationStandard(standard);
+                response.EpaoStandardId = await _registerApiClient.CreateEpaOrganisationStandard(standard);
             }
             else
             {
@@ -286,7 +286,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private async Task UpdateFinancialDetails(CreateOrganisationContactCommand command)
         {
-            var epaOrgs = await _apiClient.SearchOrganisations(command.OrganisationName);
+            var epaOrgs = await _registerApiClient.SearchOrganisations(command.OrganisationName);
             var result = epaOrgs.FirstOrDefault();
 
             if (result != null)
@@ -329,7 +329,7 @@ namespace SFA.DAS.AdminService.Web.Services
 
         private async Task<int?> GetOrganisationTypeIdFromDescriptor(string organisationType)
         {
-            var organisationTypes = await _apiClient.GetOrganisationTypes();
+            var organisationTypes = await _organisationsApiClient.GetOrganisationTypes();
             return organisationTypes.FirstOrDefault(x => string.Equals(x.Type?.Replace(" ", ""),
                 organisationType?.Replace(" ", ""), StringComparison.OrdinalIgnoreCase))?.Id;
         }
@@ -504,7 +504,7 @@ namespace SFA.DAS.AdminService.Web.Services
         {
             if (command.DeliveryAreas != null)
             {
-                var areas = await _apiClient.GetDeliveryAreas();
+                var areas = await _registerApiClient.GetDeliveryAreas();
                 return areas.Where(a => command.DeliveryAreas.Contains(a.Area)).Select(a => a.Id).ToList();
             }
 

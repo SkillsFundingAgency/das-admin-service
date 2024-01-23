@@ -5,8 +5,8 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
+using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
-using SFA.DAS.AssessorService.Api.Types.Models.Register;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,10 +24,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             _orgStandardResponse = fixture.Create<OrganisationStandard>();
             _orgStandardResponse.Versions.First().Version = "1.0";
 
-            ApiClient.Setup(c => c.GetOrganisationStandard(It.IsAny<int>()))
+            RegisterApiClient.Setup(c => c.GetOrganisationStandard(It.IsAny<int>()))
                      .ReturnsAsync(_orgStandardResponse);
 
-            Sut = new RegisterController(ControllerSession.Object, ApiClient.Object, ApplyApiClient.Object, ContactsApiClient.Object, Env.Object);
+            Sut = new RegisterController(ControllerSession.Object, RegisterApiClient.Object, ApplicationApiClient.Object, OrganisationsApiClient.Object, ContactsApiClient.Object, Env.Object);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         [Test]
         public async Task And_submit_valid_updated_dates_Then_return_redirect_to_view_organisation_standard()
         {
-            ApiClient.Setup(client => client.UpdateEpaOrganisationStandardVersion(It.IsAny<UpdateEpaOrganisationStandardVersionRequest>()))
+            OrganisationsApiClient.Setup(client => client.UpdateEpaOrganisationStandardVersion(It.IsAny<UpdateOrganisationStandardVersionRequest>()))
                 .ReturnsAsync("OK");
             var model = new RegisterEditOrganisationStandardVersionViewModel();
 

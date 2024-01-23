@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-using SFA.DAS.AssessorService.Api.Types.Models.Roatp;
-using SFA.DAS.AssessorService.Api.Types.Models.Validation;
-
+using System;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators
 {

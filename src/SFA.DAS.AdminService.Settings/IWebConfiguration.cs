@@ -1,15 +1,16 @@
 ﻿using SFA.DAS.AdminService.Common.Settings;
+using SFA.DAS.AssessorService.Api.Common;
+using SFA.DAS.AssessorService.Api.Common.Settings;
 
 namespace SFA.DAS.AdminService.Settings
 {
     public interface IWebConfiguration
     {
-        AzureApiAuthentication AzureApiAuthentication { get; set; }
-        ClientApiAuthentication EpaoApiAuthentication { get; set; }
-
+        AzureApiClientConfiguration AzureApiAuthentication { get; set; }
+        AzureActiveDirectoryClientConfiguration EpaoApiAuthentication { get; set; }
 
         AuthSettings StaffAuthentication { get; set; }
-        ManagedIdentityApiAuthentication QnaApiAuthentication { get; set; }
+        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
         ManagedIdentityApiAuthentication ApplyApiAuthentication { get; set; }
 
         string RoatpApiClientBaseUrl { get; set; }

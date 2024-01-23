@@ -9,6 +9,7 @@ using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels;
+using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.ApplyTypes;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.Dashboard

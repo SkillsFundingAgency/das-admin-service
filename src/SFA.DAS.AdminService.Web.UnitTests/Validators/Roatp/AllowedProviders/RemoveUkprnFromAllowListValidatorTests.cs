@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
 using SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
-using SFA.DAS.AssessorService.ApplyTypes.Roatp.AllowedProviders;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators.Roatp.AllowedProviders
 {
