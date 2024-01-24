@@ -1,52 +1,53 @@
 [
-    {
-        "outputFileName": "wwwroot/stylesheets/application.min.css",
-        "inputFiles": [ "wwwroot/stylesheets/application.css" ]
+  {
+    "outputFileName": "wwwroot/stylesheets/application.min.css",
+    "inputFiles": [ "wwwroot/stylesheets/application.css" ]
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/application.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/govuk-frontend-2.13.0.min.js",
+      "wwwroot/javascripts/lib/node_modules/jquery/dist/jquery.min.js",
+      "wwwroot/javascripts/das-expandable-table.js",
+      "wwwroot/javascripts/das-cookie-banner.js",
+      "wwwroot/javascripts/application.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
     },
-    {
-        "outputFileName": "wwwroot/javascripts/application.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/govuk-frontend-2.13.0.min.js",
-            "wwwroot/javascripts/lib/jquery/jquery-3.6.0.js",
-            "wwwroot/javascripts/das-expandable-table.js",
-            "wwwroot/javascripts/das-cookie-banner.js",
-            "wwwroot/javascripts/application.js"
-        ],
-        "minify": {
-            "enabled": true,
-            "renameLocals": true
-        },
-        "sourceMap": false
-    },
-    {
-        "outputFileName": "wwwroot/javascripts/das-application-service.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/das-application-service.js"
-        ],
-        "minify": {
-            "enabled": true,
-            "renameLocals": true
-        }
-    },
-    {
-        "outputFileName": "wwwroot/javascripts/das-view-organisation-service.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/das-view-organisation-service.js"
-        ],
-        "minify": {
-            "enabled": true,
-            "renameLocals": true
-        }
-    },
-    {
-        "outputFileName": "wwwroot/javascripts/epao-validation.min.js",
-        "inputFiles": [
-            "wwwroot/javascripts/epao-validation.js"
-        ],
-        "minify": {
-            "enabled": true,
-            "renameLocals": true
-        },
-        "sourceMap": false
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/das-application-service.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/das-application-service.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
     }
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/das-view-organisation-service.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/das-view-organisation-service.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/javascripts/epao-validation.min.js",
+    "inputFiles": [
+      "wwwroot/javascripts/lib/node_modules/jquery-validation/dist/jquery.validate.min.js",
+      "wwwroot/javascripts/epao-validation.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    "sourceMap": false
+  }
 ]
