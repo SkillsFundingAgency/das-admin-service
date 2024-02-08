@@ -2,9 +2,9 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Testing.MockedObjects;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
 using SFA.DAS.AdminService.Web.Controllers.Roatp.AllowedProviders;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
 using System;
 using System.Collections.Generic;

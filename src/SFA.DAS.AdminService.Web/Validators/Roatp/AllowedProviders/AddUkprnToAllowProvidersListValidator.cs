@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp.AllowedProviders;
 
 namespace SFA.DAS.AdminService.Web.Validators.Roatp.AllowedProviders

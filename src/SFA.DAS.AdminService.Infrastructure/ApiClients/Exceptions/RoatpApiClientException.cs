@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.Exceptions
 {
     [Serializable]
     public class RoatpApiClientException : ApplicationException

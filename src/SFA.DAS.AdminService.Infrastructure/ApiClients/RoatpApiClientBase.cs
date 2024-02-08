@@ -1,25 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Exceptions;
+using System;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients.Exceptions;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients
 {
-    public abstract class RoatpApiClientBase<CB>
+    public abstract class RoatpApiClientBase<L>
     {
         protected readonly HttpClient _client;
-        protected readonly ILogger<CB> _logger;
-        protected readonly IRoatpTokenService _tokenService;
+        protected readonly ILogger<L> _logger;
 
-        public RoatpApiClientBase(string baseUri, ILogger<CB> logger, IRoatpTokenService tokenService)
+        public RoatpApiClientBase(HttpClient client, ILogger<L> logger)
         {
-            _client = new HttpClient { BaseAddress = new Uri(baseUri) };
+            _client = client;
             _logger = logger;
-            _tokenService = tokenService;
         }
 
         /// <summary>
@@ -32,9 +29,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<T> Get<T>(string uri) where T : new()
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             try
             {
                 using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
@@ -60,9 +54,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<string> Get(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             try
             {
                 using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
@@ -88,9 +79,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpResponseMessage> GetResponse(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             try
             {
                 var response = await _client.GetAsync(new Uri(uri, UriKind.Relative));
@@ -114,9 +102,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpStatusCode> Post<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
 
             try
@@ -146,9 +131,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Post<T, U>(string uri, T model) where U : new()
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
 
             try
@@ -177,9 +159,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <remarks><see cref="RoatpApiClientException"/> will not be thrown - it is the responsibility of the caller to determine how an unsuccessful response is handled.</remarks>
         protected async Task<HttpStatusCode> Put<T>(string uri, T model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
 
             try
@@ -209,9 +188,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<U> Put<T, U>(string uri, T model) where U : new()
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             var serializeObject = JsonConvert.SerializeObject(model);
 
             try
@@ -239,9 +215,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         /// <exception cref="HttpRequestException">Thrown if something unexpected occurred when sending the request.</exception>
         protected async Task<HttpStatusCode> Delete(string uri)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
             try
             {
                 using (var response = await _client.DeleteAsync(new Uri(uri, UriKind.Relative)))

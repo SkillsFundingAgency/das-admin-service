@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Resources;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
@@ -19,8 +19,6 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
-
-
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class AddRoatpOrganisationController : Controller
     {

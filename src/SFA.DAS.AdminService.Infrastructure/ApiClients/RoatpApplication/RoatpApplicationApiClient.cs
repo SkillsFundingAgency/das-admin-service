@@ -12,11 +12,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
 {
     public class RoatpApplicationApiClient : RoatpApiClientBase<RoatpApplicationApiClient>, IRoatpApplicationApiClient
     {
-        public RoatpApplicationApiClient(string baseUri, ILogger<RoatpApplicationApiClient> logger, IRoatpApplyTokenService tokenService) : base(baseUri, logger, tokenService)
+        public RoatpApplicationApiClient(HttpClient client, ILogger<RoatpApplicationApiClient> logger)
+            : base(client, logger)
         {
         }
 
@@ -28,16 +29,16 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
         {
-            await Post($"/Application/{applicationId}/StartAssessorSectionReview", 
+            await Post($"/Application/{applicationId}/StartAssessorSectionReview",
                 new { applicationId, sequenceId, sectionId, reviewer });
         }
 
         public async Task StartFinancialReview(Guid applicationId, string reviewer)
         {
-            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });            
+            await Post($"/Financial/{applicationId}/StartReview", new { reviewer });
         }
 
-        public async  Task<Contact> GetContactForApplication(Guid applicationId)
+        public async Task<Contact> GetContactForApplication(Guid applicationId)
         {
             return await Get<Contact>($"/Application/{applicationId}/Contact");
         }
@@ -46,7 +47,6 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             return await Get<List<RoatpSequence>>($"/roatp-sequences");
         }
-
 
         public async Task StartAssessorReview(Guid applicationId, string reviewer)
         {
@@ -62,7 +62,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
         {
             try
             {
-                var response = await Post($"/Clarification/Applications/{applicationId}/Remove", new {fileName, userId});
+                var response = await Post($"/Clarification/Applications/{applicationId}/Remove", new { fileName, userId });
 
                 return response == HttpStatusCode.OK;
             }

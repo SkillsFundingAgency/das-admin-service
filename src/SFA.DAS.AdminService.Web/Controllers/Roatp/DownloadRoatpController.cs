@@ -1,24 +1,22 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
-using SFA.DAS.AdminService.Web.Models;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
+using SFA.DAS.AdminService.Web.Domain;
+using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
-    using OfficeOpenXml;
-    using SFA.DAS.AdminService.Web.Domain;
-    using SFA.DAS.AdminService.Web.Helpers;
-    using SFA.DAS.AdminService.Web.Infrastructure;
-
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
     public class DownloadRoatpController : Controller
     {

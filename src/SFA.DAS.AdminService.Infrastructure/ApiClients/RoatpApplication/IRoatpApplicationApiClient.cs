@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
 {
     public interface IRoatpApplicationApiClient
     {

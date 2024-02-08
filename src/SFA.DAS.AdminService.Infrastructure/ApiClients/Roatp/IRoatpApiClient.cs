@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.AdminService.Web.Infrastructure.RoatpClients
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp
 {
     public interface IRoatpApiClient
     {
