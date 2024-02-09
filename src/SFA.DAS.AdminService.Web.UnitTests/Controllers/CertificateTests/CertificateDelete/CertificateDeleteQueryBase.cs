@@ -1,18 +1,16 @@
-﻿using System;
-using System.Security.Claims;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using RichardSzalay.MockHttp;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
+using System;
+using System.Security.Claims;
 
 namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.CertificateDelete
 {
@@ -62,6 +60,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
 
+            var clientFactory = new Mock<IAssessorApiClientFactory>();
+            clientFactory.Setup(x => x.CreateHttpClient())
+                .Returns(client);
+
             mockHttp.When($"http://localhost:59022/api/v1/certificates/{Certificate.Id}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
@@ -71,11 +73,11 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
             mockHttp.When($"http://localhost:59022/api/v1/organisations/organisation/{Certificate.OrganisationId}")
                 .Respond("application/json", JsonConvert.SerializeObject(Certificate));
 
-            CertificateApiClient = new CertificateApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
-            LearnerDetailsApiClient = new LearnerDetailsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
-            OrganisationsApiClient = new OrganisationsApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
-            ScheduleApiClient = new ScheduleApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
-            StandardVersionApiClient = new StandardVersionApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            CertificateApiClient = new CertificateApiClient(clientFactory.Object, Mock.Of<ILogger<CertificateApiClient>>());
+            LearnerDetailsApiClient = new LearnerDetailsApiClient(clientFactory.Object, Mock.Of<ILogger<LearnerDetailsApiClient>>());
+            OrganisationsApiClient = new OrganisationsApiClient(clientFactory.Object, Mock.Of<ILogger<OrganisationsApiClient>>());
+            ScheduleApiClient = new ScheduleApiClient(clientFactory.Object, Mock.Of<ILogger<ScheduleApiClient>>());
+            StandardVersionApiClient = new StandardVersionApiClient(clientFactory.Object, Mock.Of<ILogger<StandardVersionApiClient>>());
         }
 
         private static Certificate SetupCertificate()

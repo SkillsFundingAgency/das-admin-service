@@ -1,18 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Infrastructure.ApiClients;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp
 {
     public class RoatpApiClient : RoatpApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
-        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger)
-            : base(client, logger)
+        public RoatpApiClient(IRoatpApiClientFactory clientFactory, ILogger<RoatpApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 

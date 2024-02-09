@@ -18,8 +18,8 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.QnA
 {
     public class QnaApiClient : ApiClientBase, IQnaApiClient
     {
-        public QnaApiClient(HttpClient httpClient, IQnaTokenService tokenService, ILogger<ApiClientBase> logger)
-            : base(httpClient, tokenService, logger)
+        public QnaApiClient(IQnaApiClientFactory clientFactory, ILogger<QnaApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 

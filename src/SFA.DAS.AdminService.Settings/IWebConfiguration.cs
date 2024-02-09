@@ -1,16 +1,19 @@
 ﻿using SFA.DAS.AdminService.Common.Settings;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 
 namespace SFA.DAS.AdminService.Settings
 {
     public interface IWebConfiguration
     {
         AzureApiClientConfiguration AzureApiAuthentication { get; set; }
-        AzureActiveDirectoryClientConfiguration EpaoApiAuthentication { get; set; }
+        AssessorApiClientConfiguration EpaoApiAuthentication { get; set; }
 
         AuthSettings StaffAuthentication { get; set; }
-        ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        QnaApiClientConfiguration QnaApiAuthentication { get; set; }
         RoatpApplicationApiClientConfiguration ApplyApiAuthentication { get; set; }
 
         string RoatpOversightBaseUrl { get; set; }

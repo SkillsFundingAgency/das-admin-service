@@ -2,7 +2,6 @@
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
-using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System;
@@ -21,10 +20,15 @@ namespace SFA.DAS.AdminService.Web.Tests.Infrastructure
         public void Arrange()
         {
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>();
-            var httpClient = new HttpClient(_mockHttpMessageHandler.Object);
-            httpClient.BaseAddress = new Uri("http://test/");
+            
+            var client = new HttpClient(_mockHttpMessageHandler.Object);
+            client.BaseAddress = new Uri("http://test/");
 
-            _sut = new ScheduleApiClient(httpClient, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            var clientFactory = new Mock<IAssessorApiClientFactory>();
+            clientFactory.Setup(x => x.CreateHttpClient())
+                .Returns(client);
+
+            _sut = new ScheduleApiClient(clientFactory.Object, Mock.Of<ILogger<ScheduleApiClient>>());
         }
 
 

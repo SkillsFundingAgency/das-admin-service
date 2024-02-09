@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Settings;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.QnA;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AssessorService.Api.Common;
-using SFA.DAS.AssessorService.Api.Common.Settings;
+using SFA.DAS.AssessorService.Application.Api.Client.Configuration;
 
 namespace SFA.DAS.AdminService.Settings
 {
@@ -9,11 +12,11 @@ namespace SFA.DAS.AdminService.Settings
     {
         [JsonRequired] public AzureApiClientConfiguration AzureApiAuthentication { get; set; }
 
-        [JsonRequired] public AzureActiveDirectoryClientConfiguration EpaoApiAuthentication { get; set; }
+        [JsonRequired] public AssessorApiClientConfiguration EpaoApiAuthentication { get; set; }
 
 
         [JsonRequired] public AuthSettings StaffAuthentication { get; set; }
-        [JsonRequired] public ManagedIdentityClientConfiguration QnaApiAuthentication { get; set; }
+        [JsonRequired] public QnaApiClientConfiguration QnaApiAuthentication { get; set; }
         [JsonRequired] public RoatpApplicationApiClientConfiguration ApplyApiAuthentication { get; set; }
 
         [JsonRequired] public string RoatpOversightBaseUrl { get; set; }

@@ -1,11 +1,10 @@
 ﻿using SFA.DAS.Http.Configuration;
 
-namespace SFA.DAS.AdminService.Settings
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp
 {
     public class RoatpApiClientConfiguration : IManagedIdentityClientConfiguration
     {
-        public string ApiBaseUrl { get; set; }
-
         public string IdentifierUri { get; set; }
+        public string ApiBaseUrl { get; set; }
     }
 }

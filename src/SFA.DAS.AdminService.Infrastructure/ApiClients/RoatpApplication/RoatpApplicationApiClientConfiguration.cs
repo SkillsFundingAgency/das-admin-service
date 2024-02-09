@@ -1,6 +1,6 @@
 ﻿using SFA.DAS.Http.Configuration;
 
-namespace SFA.DAS.AdminService.Settings
+namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
 {
     public class RoatpApplicationApiClientConfiguration : IManagedIdentityClientConfiguration
     {
