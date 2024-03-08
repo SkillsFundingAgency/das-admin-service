@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.Apply;
@@ -16,8 +17,8 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
 {
     public class RoatpApplicationApiClient : RoatpApiClientBase<RoatpApplicationApiClient>, IRoatpApplicationApiClient
     {
-        public RoatpApplicationApiClient(HttpClient client, ILogger<RoatpApplicationApiClient> logger)
-            : base(client, logger)
+        public RoatpApplicationApiClient(IRoatpApplicationApiClientFactory clientFactory, ILogger<RoatpApplicationApiClient> logger)
+            : base(clientFactory.CreateHttpClient(), logger)
         {
         }
 
