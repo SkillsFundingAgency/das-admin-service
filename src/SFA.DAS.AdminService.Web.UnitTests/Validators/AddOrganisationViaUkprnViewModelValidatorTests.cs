@@ -1,8 +1,8 @@
 ﻿using Moq;
 using NUnit.Framework;
 using SFA.DAS.AdminService.Common.Validation;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
-using SFA.DAS.AdminService.Web.Infrastructure.RoatpClients;
 using SFA.DAS.AdminService.Web.Validators.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using System;

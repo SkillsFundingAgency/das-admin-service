@@ -60,7 +60,7 @@
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.1" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.242" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.243-prerelease-38" />
     <PackageReference Include="SFA.DAS.DfESignIn.Auth" Version="17.1.72" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.296" />
@@ -252,11 +252,8 @@
 		<!-- File with mtime of last successful npm install -->
 		<NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
 	</PropertyGroup>
-	<Target Name="NpmInstall"
-			BeforeTargets="BeforeBuild"
-			Inputs="wwwroot/javascripts/lib/package.json"
-			Outputs="$(NpmInstallStampFile)">
-		<Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib"/>
+	<Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
+		<Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
 		<Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
 	</Target>
 </Project>

@@ -8,7 +8,6 @@ using RichardSzalay.MockHttp;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.Models;
-using SFA.DAS.AssessorService.Api.Common;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Application.Api.Client;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
@@ -75,13 +74,16 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.BatchSearch
             var client = mockHttp.ToHttpClient();
             client.BaseAddress = new Uri("http://localhost:59022/");
 
+            var clientFactory = new Mock<IAssessorApiClientFactory>();
+            clientFactory.Setup(x => x.CreateHttpClient()).Returns(client);
+
             mockHttp.When($"/api/v1/staffsearch/batchlog?page=1")
               .Respond("application/json", JsonConvert.SerializeObject(_staffBatchLogResult));
 
             mockHttp.When($"/api/v1/staffsearch/batch?batchNumber=1&page=1")
                .Respond("application/json", JsonConvert.SerializeObject(_staffBatchSearchResponse));
 
-            var apiClient = new StaffSearchApiClient(client, Mock.Of<IAssessorTokenService>(), Mock.Of<ILogger<ApiClientBase>>());
+            var apiClient = new StaffSearchApiClient(clientFactory.Object, Mock.Of<ILogger<StaffSearchApiClient>>());
             return apiClient;
         }
 
