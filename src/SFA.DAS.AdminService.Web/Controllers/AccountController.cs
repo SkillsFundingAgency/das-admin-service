@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Domain;
-using SFA.DAS.Configuration.AzureTableStorage;
 using System.Linq;
 using System.Security.Claims;
 

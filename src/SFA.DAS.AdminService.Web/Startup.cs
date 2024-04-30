@@ -52,8 +52,7 @@ namespace SFA.DAS.AdminService.Web
     {
         private readonly IHostingEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
+
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
