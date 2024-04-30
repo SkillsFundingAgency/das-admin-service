@@ -87,6 +87,7 @@ namespace SFA.DAS.AdminService.Web
                 );
             }
             Configuration = config.Build();
+            ApplicationConfiguration = Configuration.Get<WebConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -98,12 +99,6 @@ namespace SFA.DAS.AdminService.Web
                 options.CheckConsentNeeded = context => false; // Default is true, make it false
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            ApplicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
-                Configuration["EnvironmentName"], 
-                Configuration["ConfigurationStorageConnectionString"], 
-                Version, 
-                ServiceName).Result;
 
             AddAuthentication(services);
 

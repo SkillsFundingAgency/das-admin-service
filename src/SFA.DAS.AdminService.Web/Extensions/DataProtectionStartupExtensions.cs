@@ -20,7 +20,7 @@ namespace SFA.DAS.AdminService.Web.Extensions
             }
             else
             {
-                services.AddDistributedRedisCache(options =>
+                services.AddStackExchangeRedisCache(options =>
                 {
                     options.Configuration = $"{redisCacheSettings.RedisConnectionString},{redisCacheSettings.SessionCachingDatabase}";
                 });
