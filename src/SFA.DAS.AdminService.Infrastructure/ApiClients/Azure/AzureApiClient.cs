@@ -175,7 +175,7 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.Azure
                 var request = new CreateAzureUserRequest
                 {
                     FirstName = organisation.EndPointAssessorOrganisationId,
-                    LastName = organisation.EndPointAssessorName,
+                    LastName = "User",
                     Email = emailForOrganisation,
                     Note = $"ukprn={ukprn}"
                 };
