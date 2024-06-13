@@ -52,11 +52,12 @@
             "defaultValue": "[utcNow('yyMMddHHmmss')]"
         }
     },
-    "variables": {
-        "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]"
-    },
+  "variables": {
+    "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
+    "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
+    "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+    "adminServiceConfigNames": "SFA.DAS.AdminService"
+  },
     "resources": [
         {
             "apiVersion": "2017-05-10",
@@ -117,45 +118,53 @@
                     },
                     "appServiceAppSettings": {
                         "value": {
-                          "array": [
-                              {
-                                "name": "ConfigurationStorageConnectionString",
-                                "value": "[parameters('configurationStorageConnectionString')]"
-                              },
-                              {
-                                "name": "ASPNETCORE_ENVIRONMENT",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                              },
-                              {
-                                "name": "LoggingRedisConnectionString",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                              },
-                              {
-                                "name": "LoggingRedisKey",
-                                "value": "[parameters('loggingRedisKey')]"
-                              },
-                              {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(concat('app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
-                              },
-                              {
-                                "name": "EnvironmentName",
-                                "value": "[toUpper(parameters('environmentName'))]"
-                              },
-                              {
-                                "name": "ResourceEnvironmentName",
-                                "value": "[parameters('resourceEnvironmentName')]"
-                              },
-                              {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                                "value": "/health"
-                              },
-                              {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                                "value": "200"
-                              }
-                          ]
-                        }
+                            "array": [
+                                {
+                                  "name": "ConfigurationStorageConnectionString",
+                                  "value": "[parameters('configurationStorageConnectionString')]"
+                                },
+                                {
+                                  "name": "ASPNETCORE_ENVIRONMENT",
+                                  "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                  "name": "LoggingRedisConnectionString",
+                                  "value": "[parameters('loggingRedisConnectionString')]"
+                                },
+                                {
+                                  "name": "LoggingRedisKey",
+                                  "value": "[parameters('loggingRedisKey')]"
+                                },
+                                {
+                                  "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                  "value": "[reference(concat('app-insights-', parameters('utcValue'))).outputs.InstrumentationKey.value]"
+                                },
+                                {
+                                  "name": "EnvironmentName",
+                                  "value": "[toUpper(parameters('environmentName'))]"
+                                },
+                                {
+                                  "name": "ResourceEnvironmentName",
+                                  "value": "[parameters('resourceEnvironmentName')]"
+                                },
+                                {
+                                  "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
+                                  "value": "/health"
+                                },
+                                {
+                                  "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
+                                  "value": "200"
+                                },
+                                {
+                                  "name": "ConfigNames",
+                                  "value": "[variables('adminServiceConfigNames')]"
+                                },
+                                {
+                                  "name": "Version",
+                                  "value": "1.0"
+                                }
+                            ]
+                        }   
                     },
                     "appServiceConnectionStrings": {
                         "value": {
