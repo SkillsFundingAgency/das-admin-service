@@ -43,7 +43,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.KeyVaultExtensions" Version="7.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Logging" Version="7.6.0" />
@@ -61,6 +61,10 @@
 		</PackageReference>
 
     <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.4" />
+
+    <PackageReference Include="NuGet.Common" Version="6.10.0" />
+
+    <PackageReference Include="NuGet.Protocol" Version="6.10.0" />
     <PackageReference Include="Polly" Version="8.3.1" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
     <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.245" />
