@@ -67,8 +67,7 @@ namespace SFA.DAS.AdminService.Web
 #if DEBUG
             if (!configuration.IsDev())
             {
-                config.AddJsonFile("appsettings.json", false)
-                    .AddJsonFile("appsettings.Development.json", true);
+                config.AddJsonFile("appsettings.Development.json", true);
             }
 #endif
 
@@ -108,9 +107,10 @@ namespace SFA.DAS.AdminService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services.AddFluentValidationAutoValidation();
-            services.AddFluentValidationClientsideAdapters();
-            services.AddValidatorsFromAssemblyContaining<Startup>();
+            services
+                .AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<Startup>();
 
             services
                 .AddMvc(options =>
