@@ -1663,11 +1663,13 @@ TODO: change to 'das-page-navigation' and BEM
   background-color: #6f777b;
 }
 
-.govuk-tag--startreview {
-  background-color: #00823b;
+.govuk-tag {
+  white-space: nowrap;
 }
 
-.govuk-tag--updated {
+/* Roatp org results.. remove for v4 */
+.govuk-tag--startreview {
+  background-color: #00823b;
 }
 
 .govuk-tag--approved {
