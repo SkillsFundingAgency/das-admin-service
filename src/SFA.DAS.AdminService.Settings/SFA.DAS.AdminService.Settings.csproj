@@ -6,16 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
-    <PackageReference Include="Azure.Storage.Common" Version="12.18.1" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
-    <PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="7.6.0" />
+	<!--These packages are required to override transient package vulnerabilities-->
+	<PackageReference Include="Azure.Identity" Version="1.12.0" />
+	<PackageReference Include="Azure.Storage.Common" Version="12.18.1" />
+	<PackageReference Include="Microsoft.Identity.Client" Version="4.61.3" />
+	<PackageReference Include="Microsoft.IdentityModel.Abstractions" Version="7.6.0" />
+	<PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+	<PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.0" />
+	<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+	
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.245" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="8.0.0" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 
   <ItemGroup>
