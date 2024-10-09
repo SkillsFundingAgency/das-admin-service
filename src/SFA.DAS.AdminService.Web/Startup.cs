@@ -98,7 +98,7 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            AddAuthentication(services);
+            UseDfeSignInAuthentication(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -225,14 +225,6 @@ namespace SFA.DAS.AdminService.Web
             });
         }
 
-        private void AddAuthentication(IServiceCollection services)
-        {
-            if (ApplicationConfiguration.UseDfESignIn)
-                UseDfeSignInAuthentication(services);
-            else 
-                UseWsFederationAuthentication(services);
-        }
-
         /// <summary>
         /// Method to register the DfeSignIn Authentication services with AspNetCore Authentication Options.
         /// </summary>
@@ -246,26 +238,6 @@ namespace SFA.DAS.AdminService.Web
                 DfESignIn.Auth.Enums.ClientName.ServiceAdmin,
                 "/SignOut",
                 "");
-        }
-
-        /// <summary>
-        /// Method to register the WsFederation Authentication services with AspNetCore Authentication Options.
-        /// </summary>
-        /// <param name="services">IServiceCollection.</param>
-        private void UseWsFederationAuthentication(IServiceCollection services)
-        {
-            services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultSignOutScheme = WsFederationDefaults.AuthenticationScheme;
-            }).AddWsFederation(options =>
-            {
-                options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
-                options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
-                options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
-            }).AddCookie();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
