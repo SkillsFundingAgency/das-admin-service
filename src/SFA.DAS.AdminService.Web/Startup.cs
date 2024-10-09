@@ -1,14 +1,15 @@
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
@@ -39,7 +40,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using CheckSessionFilter = SFA.DAS.AdminService.Web.Infrastructure.CheckSessionFilter;
@@ -50,14 +50,13 @@ namespace SFA.DAS.AdminService.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IHostEnvironment _env;
         private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
+
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IHostEnvironment env, ILogger<Startup> logger)
         {
             _env = env;
             _logger = logger;
@@ -68,8 +67,7 @@ namespace SFA.DAS.AdminService.Web
 #if DEBUG
             if (!configuration.IsDev())
             {
-                config.AddJsonFile("appsettings.json", false)
-                    .AddJsonFile("appsettings.Development.json", true);
+                config.AddJsonFile("appsettings.Development.json", true);
             }
 #endif
 
@@ -87,6 +85,7 @@ namespace SFA.DAS.AdminService.Web
                 );
             }
             Configuration = config.Build();
+            ApplicationConfiguration = Configuration.Get<WebConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -99,13 +98,7 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
-                Configuration["EnvironmentName"], 
-                Configuration["ConfigurationStorageConnectionString"], 
-                Version, 
-                ServiceName).Result;
-
-            AddAuthentication(services);
+            UseDfeSignInAuthentication(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -113,6 +106,11 @@ namespace SFA.DAS.AdminService.Web
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
+
+            services
+                .AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<Startup>();
 
             services
                 .AddMvc(options =>
@@ -125,7 +123,6 @@ namespace SFA.DAS.AdminService.Web
                     options.EnableEndpointRouting = false;
                 })
                 .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -228,14 +225,6 @@ namespace SFA.DAS.AdminService.Web
             });
         }
 
-        private void AddAuthentication(IServiceCollection services)
-        {
-            if (ApplicationConfiguration.UseDfESignIn)
-                UseDfeSignInAuthentication(services);
-            else 
-                UseWsFederationAuthentication(services);
-        }
-
         /// <summary>
         /// Method to register the DfeSignIn Authentication services with AspNetCore Authentication Options.
         /// </summary>
@@ -251,28 +240,8 @@ namespace SFA.DAS.AdminService.Web
                 "");
         }
 
-        /// <summary>
-        /// Method to register the WsFederation Authentication services with AspNetCore Authentication Options.
-        /// </summary>
-        /// <param name="services">IServiceCollection.</param>
-        private void UseWsFederationAuthentication(IServiceCollection services)
-        {
-            services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultChallengeScheme = WsFederationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultSignOutScheme = WsFederationDefaults.AuthenticationScheme;
-            }).AddWsFederation(options =>
-            {
-                options.Wtrealm = ApplicationConfiguration.StaffAuthentication.WtRealm;
-                options.MetadataAddress = ApplicationConfiguration.StaffAuthentication.MetadataAddress;
-                options.TokenValidationParameters.RoleClaimType = Domain.Roles.RoleClaimType;
-            }).AddCookie();
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

@@ -21,10 +21,7 @@
                 <li>descriptions for training providers on Find a training provider if you’re an employer</li>
                 <li>events and ambassadors on the Apprenticeship Ambassador Network (AAN)</li>
             </ul>
-            @if (Model.UseDfESignIn)
-            {
-                <p class="govuk-body">You’ll need a DfE Sign-in account to use this service. If you don’t have a DfE Sign-in account, you can create one at the next step.</p>    
-            }
+            <p class="govuk-body">You’ll need a DfE Sign-in account to use this service. If you don’t have a DfE Sign-in account, you can create one at the next step.</p>  
             <div class="form-group">
                 <a asp-action="SignIn" asp-controller="Account" class="govuk-button govuk-button--start">Start now</a>
             </div>

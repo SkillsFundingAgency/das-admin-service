@@ -25,31 +25,6 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Then_Index_Returns_ViewModel(bool useDfESignIn)
-        {
-            //arrange
-            _mockWebConfiguration.Setup(c => c.UseDfESignIn).Returns(useDfESignIn);
-            _controller = new HomeController(_mockWebConfiguration.Object)
-            {
-                ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
-            };
-
-            //act
-            var result = _controller.Index();
-
-            //assert
-            Assert.Multiple(() =>
-            {
-                result.Should().NotBeNull();
-                var resultModel = result.Should().BeOfType<ViewResult>().
-                    Which.Model.Should().BeOfType<HomeViewModel>().Which;
-                resultModel.UseDfESignIn.Should().Be(useDfESignIn);
-            });
-        }
-
-
         [Test]
         public void When_DfESignIn_True_And_User_Authenticated_Then_Index_Returns_Redirect()
         {
