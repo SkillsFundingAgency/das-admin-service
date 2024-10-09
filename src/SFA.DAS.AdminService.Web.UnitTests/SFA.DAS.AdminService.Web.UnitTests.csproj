@@ -7,6 +7,9 @@
 	<!--These packages are required to override transient package vulnerabilities-->
     <PackageReference Include="Azure.Core" Version="1.40.0" />
     <PackageReference Include="Azure.Identity" Version="1.12.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+	<PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
+	<PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.0" />
