@@ -1,6 +1,5 @@
 ﻿@using SFA.DAS.AdminService.Web.Controllers
-@model SFA.DAS.AdminService.Web.Controllers.SearchViewModel
-
+@model SFA.DAS.AdminService.Web.Controllers.SearchInputViewModel
 @{
     ViewBag.Title = "ILR and certificate search";
     Layout = "_Layout";
@@ -11,27 +10,120 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-action="Results" asp-controller="Search" method="get">
-                @Html.HiddenFor(m => m.Page)
-                <div class="govuk-form-group">
+            <partial name="_ValidationSummaryPartial" />
+            <form class="standards-search-form" asp-action="Results" asp-controller="Search" method="post">
+                <input type="hidden" id="searchMode" name="searchMode" value="" />
+                <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-form-group--error">
                     <h1 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--xl" for="SearchString">
-                            Search
+                            Search standards
                         </label>
                     </h1>
                     <span class="govuk-hint">
-                        <p class="govuk-body govuk-body--hint">Search using either the:</p>
+                        <p class="govuk-body govuk-body--hint">Search using one of these options: </p>
                         <ul class="govuk-list govuk-list--bullet govuk-list--hint">
-                            <li>certificate reference number</li>
                             <li>unique learner number (ULN)</li>
-                            <li>apprentice's name, or</li>
+                            <li>certificate number</li>
+                            <li>apprentice's name</li>
                             <li>EPAO ID</li>
                         </ul>
                     </span>
-                    <input class="govuk-input" asp-for="SearchString" />
+
+                    <span class="govuk-error-message" asp-validation-for="SearchString"></span>
+                    <input class="govuk-input" asp-for="SearchString" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-input--error" id="SearchString" />
+
                 </div>
-                <button class="govuk-button" type="submit">Search</button>
+                <button class="govuk-button" type="submit" name="Standard" id="standardButton">
+                    Search standard certificates
+                </button>
+
+                <p class="govuk-label--s govuk-\!-margin-bottom-2">or</p>
+                
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset">
+                        <legend>
+                            <label class="govuk-label govuk-label--xl">
+                                Search frameworks
+                            </label>
+                        </legend>
+
+                        <span class="govuk-hint">
+                            <p class="govuk-body govuk-body--hint">You must enter the apprentice's first name, last name and their date of birth.</p>
+                        </span>
+
+                        <div class="govuk-form-group" sfa-validation-for="FirstName" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label govuk-label--s" asp-for="FirstName">First name</label>
+                            <span class="govuk-error-message" asp-validation-for="FirstName"></span>
+                            <input class="govuk-input" asp-for="FirstName" sfa-validation-for="FirstName" sfa-validationerror-class="govuk-input--error" id="FirstName" />
+                        </div>
+                        <div class="govuk-form-group" sfa-validation-for="LastName" sfa-validationerror-class="govuk-form-group--error">
+                            <label class="govuk-label govuk-label--s" asp-for="LastName">Last name</label>
+                            <span class="govuk-error-message" asp-validation-for="LastName"></span>
+                            <input class="govuk-input" asp-for="LastName" sfa-validation-for="LastName" sfa-validationerror-class="govuk-input--error" id="LastName" />
+                        </div>
+
+                        <div class="govuk-form-group" sfa-validation-for-list="Date,Year,Month,Day" sfa-validationerror-class="govuk-form-group--error">
+                            <fieldset class="govuk-fieldset">
+                                <legend class="govuk-label govuk-label--s">Date of birth</legend>
+
+                                <div id="date-of-birth-hint" class="govuk-hint">
+                                    For example, 27 3 2007
+                                </div>
+
+                                <div class="govuk-date-input" id="date-of-birth">
+                                    <span class="govuk-error-message" asp-validation-for="Date"></span>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" asp-for="Day">
+                                                Day
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Day" type="text" sfa-validation-for-list="Date,Day" sfa-validationerror-class="govuk-input--error" id="Day">
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" asp-for="Month">
+                                                Month
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="text" sfa-validation-for-list="Date,Month" sfa-validationerror-class="govuk-input--error" id="Month">
+                                        </div>
+                                    </div>
+                                    <div class="govuk-date-input__item">
+                                        <div class="govuk-form-group">
+                                            <label class="govuk-label govuk-date-input__label" asp-for="Year">
+                                                Year
+                                            </label>
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="text" sfa-validation-for-list="Date,Year" sfa-validationerror-class="govuk-input--error" id="Year">
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </fieldset>
+                </div>
+                <button class="govuk-button" type="submit" name="Framework" id="frameworkButton" >Search framework certificates</button>
+
             </form>
         </div>
     </div>
 </main>
+<script>
+    var availableSearchModes = {
+        standards: '@(SearchMode.Standards.ToString())', 
+        frameworks: '@(SearchMode.Frameworks.ToString())' 
+    };
+
+    window.searchmodes = availableSearchModes;
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <environment include="Development">
+        <script src="~/javascripts/das-search-certificates.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/javascripts/das-search-certificates.min.js"></script>
+    </environment> 
+}

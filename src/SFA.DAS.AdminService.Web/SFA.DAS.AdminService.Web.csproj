@@ -9,6 +9,11 @@
 
 	<ItemGroup>
 		<Compile Remove="Controllers\RoatpController.cs" />
+		<Compile Remove="Controllers\SearchFrameworksController.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="Views\Search\_SearchScriptsPartial.cshtml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -218,6 +223,9 @@
 		<Content Update="wwwroot\inactive_app_offline_public_beta.htm">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Update="wwwroot\javascripts\das-search-certificates.min.js">
+		  <DependentUpon>das-search-certificates.js</DependentUpon>
+		</Content>
 		<Content Update="wwwroot\javascripts\das-view-organisation-service.min.js">
 			<DependentUpon>das-view-organisation-service.js</DependentUpon>
 		</Content>
@@ -251,6 +259,7 @@
 	<PropertyGroup>
 		<!-- File with mtime of last successful npm install -->
 		<NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
+		<UserSecretsId>a256a7ab-7342-43f8-a8eb-9ad33e5f3a6c</UserSecretsId>
 	</PropertyGroup>
 	<Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
 		<Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
