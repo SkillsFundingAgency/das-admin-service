@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.AdminService.Web.Attributes;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
+using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
@@ -29,24 +32,37 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View();
         }
 
-        [HttpGet("results")]
-        public async Task<IActionResult> Results(string searchString, int page = 1)
+        [HttpPost("search/results")]
+        public async Task<IActionResult> Results(SearchInputViewModel vm, int page = 1)
         {
-            EpaOrganisation org=null;
-            var searchResults = await _staffSearchApiClient.Search(searchString, page);
-
-            if(!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
-                org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
-
-            var searchViewModel = new SearchViewModel
+            if (!TryValidateModel(vm))
             {
-                OrganisationName = org?.Name??string.Empty,
-                StaffSearchResult = searchResults,
-                SearchString = searchString,
-                Page = page
-            };
+                return View("index",vm);
+            }
 
-            return View(searchViewModel);
+            if (vm.SearchMode == SearchMode.Standards)
+            {
+                EpaOrganisation org = null;
+                var searchResults = await _staffSearchApiClient.Search(vm.SearchString, page);
+
+                if (!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
+                    org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
+
+                var searchViewModel = new SearchResultsViewModel
+                {
+                    OrganisationName = org?.Name ?? string.Empty,
+                    StaffSearchResult = searchResults,
+                    SearchString = vm.SearchString,
+                    Page = page
+                };
+                return View(searchViewModel);
+            }
+            else if (vm.SearchMode == SearchMode.Frameworks)
+            {
+                return RedirectToAction("Index");
+            }
+             
+            return View("index",vm);
         }
 
         [HttpGet("select")]
@@ -72,11 +88,29 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
     }
 
-    public class SearchViewModel
+    public class SearchResultsViewModel
     {
-        public string SearchString { get; set; }
+        public string SearchString { get; set; } = string.Empty;
         public string OrganisationName { get; set; }
         public int Page { get; set; }
         public StaffSearchResult StaffSearchResult { get; set; }
+    }
+
+    public class SearchInputViewModel
+    {
+        public string SearchString { get; set; } = string.Empty; 
+        public string FirstName { get; set; } = string.Empty; 
+        public string LastName { get; set; } = string.Empty;
+        public string Day { get; set; }
+        public string Month { get; set; }
+        public string Year { get; set; }
+        public DateTime Date { get; set; }
+        public string SearchMode { get; set; }
+    }
+
+    public static class SearchMode
+    {
+        public const string Standards = "Standards";
+        public const string Frameworks = "Frameworks";
     }
 }
