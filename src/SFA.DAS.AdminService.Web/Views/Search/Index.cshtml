@@ -10,7 +10,22 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <partial name="_ValidationSummaryPartial" />
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="SearchString"></a></li>
+                            <li><a sfa-validation-for="FirstName"></a></li>
+                            <li><a sfa-validation-for="LastName"></a></li>
+                            <li><a sfa-validation-for="Date"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
             <form class="standards-search-form" asp-action="Results" asp-controller="Search" method="post">
                 <input type="hidden" id="searchMode" name="searchMode" value="" />
                 <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-form-group--error">
@@ -33,7 +48,7 @@
                     <input class="govuk-input" asp-for="SearchString" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-input--error" id="SearchString" />
 
                 </div>
-                <button class="govuk-button" type="submit" name="Standard" id="standardButton">
+                <button class="govuk-button" type="submit" name="SearchType" id="standardButton" value="@SearchTypes.Standards">
                     Search standard certificates
                 </button>
 
@@ -62,7 +77,7 @@
                             <input class="govuk-input" asp-for="LastName" sfa-validation-for="LastName" sfa-validationerror-class="govuk-input--error" id="LastName" />
                         </div>
 
-                        <div class="govuk-form-group" sfa-validation-for-list="Date,Year,Month,Day" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="govuk-form-group" sfa-validation-for="Date" sfa-validationerror-class="govuk-form-group--error">
                             <fieldset class="govuk-fieldset">
                                 <legend class="govuk-label govuk-label--s">Date of birth</legend>
 
@@ -77,7 +92,7 @@
                                             <label class="govuk-label govuk-date-input__label" asp-for="Day">
                                                 Day
                                             </label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Day" type="text" sfa-validation-for-list="Date,Day" sfa-validationerror-class="govuk-input--error" id="Day">
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Day" type="text" sfa-validation-for="Date" sfa-validationerror-class="govuk-input--error" id="Date">
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
@@ -85,7 +100,7 @@
                                             <label class="govuk-label govuk-date-input__label" asp-for="Month">
                                                 Month
                                             </label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="text" sfa-validation-for-list="Date,Month" sfa-validationerror-class="govuk-input--error" id="Month">
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="Month" type="text" sfa-validation-for="Date"  sfa-validationerror-class="govuk-input--error">
                                         </div>
                                     </div>
                                     <div class="govuk-date-input__item">
@@ -93,7 +108,7 @@
                                             <label class="govuk-label govuk-date-input__label" asp-for="Year">
                                                 Year
                                             </label>
-                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="text" sfa-validation-for-list="Date,Year" sfa-validationerror-class="govuk-input--error" id="Year">
+                                            <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="Year" type="text" sfa-validation-for="Date" sfa-validationerror-class="govuk-input--error">
                                         </div>
                                     </div>
                                 </div>
@@ -101,29 +116,10 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button" type="submit" name="Framework" id="frameworkButton" >Search framework certificates</button>
+                <button class="govuk-button" type="submit" name="SearchTYpe" id="frameworkButton" value="@SearchTypes.Frameworks">Search framework certificates</button>
 
             </form>
         </div>
     </div>
 </main>
-<script>
-    var availableSearchModes = {
-        standards: '@(SearchMode.Standards.ToString())', 
-        frameworks: '@(SearchMode.Frameworks.ToString())' 
-    };
-
-    window.searchmodes = availableSearchModes;
-</script>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <environment include="Development">
-        <script src="~/javascripts/das-search-certificates.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="~/javascripts/das-search-certificates.min.js"></script>
-    </environment> 
 }
