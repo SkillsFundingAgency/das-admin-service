@@ -49,15 +49,5 @@
       "renameLocals": true
     },
     "sourceMap": false
-  },
-  {
-    "outputFileName": "wwwroot/javascripts/das-search-certificates.min.js",
-    "inputFiles": [
-      "wwwroot/javascripts/das-search-certificates.js"
-    ],
-    "minify": {
-      "enabled": true,
-      "renameLocals": true
-    }
   }
 ]
