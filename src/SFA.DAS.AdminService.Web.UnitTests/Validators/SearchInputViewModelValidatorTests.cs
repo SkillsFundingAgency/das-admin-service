@@ -117,7 +117,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
             vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks, Day = "0", Month = "0", Year = "0" };
             result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.Date)
-                .WithErrorMessage("The date must be a real dateh");
+                .WithErrorMessage("The date must be a real date");
 
         }
 
