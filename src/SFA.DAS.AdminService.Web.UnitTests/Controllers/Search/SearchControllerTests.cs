@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using AutoMapper;
+using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
+using System;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -24,6 +27,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         private Mock<ILearnerDetailsApiClient> _learnerDetailsApiClientMock;
         private Mock<IRegisterApiClient> _registerApiClientMock;
         private Mock<IStaffSearchApiClient> _staffSearchApiClientMock;
+        private Mock<IFrameworkSearchSessionService> _frameworkSearchSessionServiceMock;
+        private Mock<IMapper> _mapperMock;
 
         [SetUp]
         public void Setup()
@@ -31,7 +36,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock = new Mock<ILearnerDetailsApiClient>();
             _registerApiClientMock = new Mock<IRegisterApiClient>();
             _staffSearchApiClientMock = new Mock<IStaffSearchApiClient>();
-            _controller = new SearchController(_learnerDetailsApiClientMock.Object, _registerApiClientMock.Object, _staffSearchApiClientMock.Object);
+             _frameworkSearchSessionServiceMock = new Mock<IFrameworkSearchSessionService>();
+            _mapperMock = new Mock<IMapper>();
+            _controller = new SearchController(_learnerDetailsApiClientMock.Object, _registerApiClientMock.Object, _staffSearchApiClientMock.Object,
+                _frameworkSearchSessionServiceMock.Object, _mapperMock.Object);
         }
 
         public void Then_Index_Returns_ViewModel()
@@ -141,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Results_FrameworksSearch_ValidInput_RedirectsToIndex()
+        public async Task Results_FrameworksSearch_ValidInput_RedirectsToMultipleResults()
         {
             // Arrange
             var vm = new SearchInputViewModel
@@ -160,7 +168,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             // Assert
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("Index"); 
+            redirectResult.ActionName.Should().Be("MultipleResults"); 
             redirectResult.ControllerName.Should().BeNull(); 
 
             _controller.ModelState.IsValid.Should().BeTrue(); 

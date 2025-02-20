@@ -9,6 +9,13 @@ using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System.Linq;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
+using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
+using AutoMapper;
+using Azure.Core;
+using MediatR;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -18,12 +25,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
+        private readonly IFrameworkSearchSessionService _sessionService;
+        //private readonly IFrameworkSearchApiClient _frameworkSearchApiClient;
+        private readonly IMapper _mapper;
 
-        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient)
+        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
+            IFrameworkSearchSessionService sessionService, IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
+            _sessionService = sessionService;
+            _mapper = mapper;
+
         }
 
         [HttpGet]
@@ -36,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(vm);
         }
 
-        [HttpPost("search/results")]
+        [HttpPost]
         public async Task<IActionResult> Results(SearchInputViewModel vm, int page = 1)
         {
             if (ModelState.IsValid)
@@ -60,7 +74,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
-                    return RedirectToAction("Index");
+
+                    FrameworkSearchRequest request = new FrameworkSearchRequest()
+                    {
+                        FirstName = vm.FirstName,
+                        LastName = vm.LastName,
+                        DateOfBirth = ValidatorExtensions.ConstructDate(vm.Day, vm.Month, vm.Year).Value,
+                        FrameworkResults = new List<FrameworkResultViewModel>
+                        {
+                            new FrameworkResultViewModel{Id = 1, FrameworkName = "BSE Electrotechnical", FrameworkLevel = "Intermediate", CertificationYear="2016" },
+                            new FrameworkResultViewModel{Id = 2, FrameworkName = "BEng Electronic Engineering", FrameworkLevel = "Advanced", CertificationYear="2015" },
+                            new FrameworkResultViewModel{Id = 3, FrameworkName = "MSc Electrochemistry", FrameworkLevel = "Higher", CertificationYear="2014" },
+                        }
+                    };
+
+                    _sessionService.UpdateFrameworkSearchRequest(request);
+                    return RedirectToAction("MultipleResults");
                 }
             }
             else
@@ -103,6 +132,30 @@ namespace SFA.DAS.AdminService.Web.Controllers
         
             return View(vm);
         }
+
+        [HttpGet]
+        public IActionResult MultipleResults()
+        {
+            var sessionModel = _sessionService.GetFrameworkSearchRequest();
+            var viewModel = _mapper.Map<FrameworkSearchResultsViewModel>(sessionModel);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SelectFramework(FrameworkSearchResultsViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var sessionObject = _sessionService.GetFrameworkSearchRequest();
+                sessionObject.SelectedResult = vm.SelectedResult;
+                _sessionService.UpdateFrameworkSearchRequest(sessionObject);
+
+                return RedirectToAction("MultipleResults");
+            }
+            var sessionModel = _sessionService.GetFrameworkSearchRequest();
+            vm.FrameworkResults = sessionModel.FrameworkResults;
+            return View("MultipleResults", vm); 
+        }
     }
 
     public class SearchResultsViewModel
@@ -129,5 +182,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         public const string Standards = "Standards";
         public const string Frameworks = "Frameworks";
+    }
+
+    public class FrameworkResultViewModel
+    {
+        public int Id { get; set; }
+        public string FrameworkName { get; set; }
+        public string FrameworkLevel { get; set; }
+        public string CertificationYear { get; set; }
+    }
+    public class FrameworkSearchResultsViewModel
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public List<FrameworkResultViewModel> FrameworkResults { get; set; }
+        public int FrameworkResultCount => FrameworkResults?.Count ?? 0;
+        public int SelectedResult { get; set; }
     }
 }
