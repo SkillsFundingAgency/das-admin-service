@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
+using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
@@ -52,6 +54,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
+            CreateMap<FrameworkSearchRequest, FrameworkSearchResultsViewModel>();
         }
     }
 }
