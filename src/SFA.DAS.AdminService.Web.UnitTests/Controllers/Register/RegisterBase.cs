@@ -25,7 +25,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
         protected Mock<IOrganisationsApiClient> OrganisationsApiClient;
         protected Mock<IContactsApiClient> ContactsApiClient;
         
-        protected Mock<IHostingEnvironment> Env;
+        protected Mock<IWebHostEnvironment> Env;
 
         protected Guid OrganisationOneId = Guid.NewGuid();
         protected string OrganisationOneOrganisationId = "EPA0001";
@@ -172,7 +172,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.Register
             ContactsApiClient.Setup(p => p.GetAllContactsForOrganisationIncludePrivileges(OrganisationOneOrganisationId, true)).ReturnsAsync(users);
             ContactsApiClient.Setup(p => p.GetAllContactsWhoCanBePrimaryForOrganisation(OrganisationOneOrganisationId)).ReturnsAsync(contactsWhoCanBePrimary);
 
-            Env = new Mock<IHostingEnvironment>();
+            Env = new Mock<IWebHostEnvironment>();
         }
 
         public string NumberToAlpha(long number, bool isLower = false)

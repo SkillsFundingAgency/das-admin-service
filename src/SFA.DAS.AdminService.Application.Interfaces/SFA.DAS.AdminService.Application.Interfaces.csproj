@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <ProjectGuid>00C6C6AC-BABF-41D2-8011-B47B7222A81E</ProjectGuid>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="6.0.7" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.245" />
+    <PackageReference Include="EPPlus" Version="7.6.0" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.272" />
   </ItemGroup>
 
 </Project>

@@ -14,7 +14,7 @@
            data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
            asp-action="@Model.ChangePageAction"
            asp-controller="@Model.ChangePageController"
-           asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
+           asp-all-route-data="@(new RouteValueDictionary((object)Model.RouteValues).ToStringDictionary())"
            asp-route-pageIndex="@(Model.PaginatedList.PageIndex-1)"
            asp-fragment="@Model.Fragment">&laquo; Previous</a>
     }
@@ -31,7 +31,7 @@
                    data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
                    asp-action="@Model.ChangePageAction"
                    asp-controller="@Model.ChangePageController"
-                   asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
+                   asp-all-route-data="@(new RouteValueDictionary((object)Model.RouteValues).ToStringDictionary())"
                    asp-route-pageindex="@pageNumber"
                    asp-fragment="@Model.Fragment">@pageNumber</a>
             }
@@ -50,7 +50,7 @@
            data-all-route-data="@JsonConvert.SerializeObject(Model.RouteValues)"
            asp-action="@Model.ChangePageAction"
            asp-controller="@Model.ChangePageController"
-           asp-all-route-data="@(new RouteValueDictionary(Model.RouteValues).ToStringDictionary())"
+           asp-all-route-data="@(new RouteValueDictionary((object)Model.RouteValues).ToStringDictionary())"
            asp-route-pageIndex="@(Model.PaginatedList.PageIndex+1)"
            asp-fragment="@Model.Fragment">Next &raquo;</a>
     }

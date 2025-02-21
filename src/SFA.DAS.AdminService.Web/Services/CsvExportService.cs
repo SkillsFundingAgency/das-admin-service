@@ -12,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.Services
         {
             var csvConfiguration = new CsvConfiguration(CultureInfo.CurrentCulture)
             {
-                SanitizeForInjection = true,
+                InjectionOptions = InjectionOptions.Escape,
             };
             
             using (var memoryStream = new MemoryStream())

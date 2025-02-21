@@ -19,15 +19,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private const string ServiceName = "SFA.DAS.AdminService";
         private const string Version = "1.0";
 
-        public AccountController(ILogger<AccountController> logger, IConfiguration configuration)
+        public AccountController(ILogger<AccountController> logger, IWebConfiguration configuration)
         {
             _logger = logger;
-            _applicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
-                configuration["EnvironmentName"],
-                configuration["ConfigurationStorageConnectionString"], 
-                Version, 
-                ServiceName)
-                .Result;
+            _applicationConfiguration = configuration;
         }
 
         [HttpGet]
