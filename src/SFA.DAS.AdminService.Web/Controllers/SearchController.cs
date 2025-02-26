@@ -37,23 +37,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public IActionResult Index(SearchInputViewModel vm)
         {
-            if (vm != null && vm.IsFrameworkSearchPopulated())
-            {
-                _sessionService.UpdateFrameworkSearchRequest((frameworkSearch) =>
-                {
-                    frameworkSearch.FirstName = vm.FirstName;
-                    frameworkSearch.LastName = vm.LastName;
-                    frameworkSearch.DateOfBirth = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
-                });
-                return View(vm);
-            }
-
-            if (_sessionService.SessionFrameworkSearch != null)
-            {
-                vm = _mapper.Map<SearchInputViewModel>(_sessionService.SessionFrameworkSearch);
-                return View(vm);
-            }
-
             return View(vm ?? new SearchInputViewModel());
         }
 
@@ -81,20 +64,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
-                    vm.Date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
                     var searchQuery = _mapper.Map<FrameworkSearchQuery>(vm);
                     var frameworkResults = await _frameworkSearchApiClient.SearchFrameworks(searchQuery);
 
-                    var request = new FrameworkSearch()
+                    var searchSessionObject = new FrameworkSearch()
                     {
                         FirstName = vm.FirstName,
                         LastName = vm.LastName,
-                        DateOfBirth = vm.Date,
+                        DateOfBirth = searchQuery.DateOfBirth,
                         FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
                     };
 
-                    _sessionService.SessionFrameworkSearch = request;
-                    return RedirectToAction("MultipleResults");
+                    _sessionService.SessionFrameworkSearch = searchSessionObject;
+                    return RedirectToAction("MultipleResults");      
                 }
             }
             else
@@ -136,7 +118,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ShowDetail = !allLogs,
                 BatchNumber = batchNumber
             };
-        
             return View(vm);
         }
 

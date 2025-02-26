@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
+using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
@@ -57,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
             CreateMap<FrameworkSearch, FrameworkSearchResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkSearchQuery>()
-                .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(source => source.Date));
+                .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
             CreateMap<FrameworkSearchResult, FrameworkResultViewModel>();
             CreateMap<FrameworkSearch, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))

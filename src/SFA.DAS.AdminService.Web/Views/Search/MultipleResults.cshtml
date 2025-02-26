@@ -9,7 +9,14 @@
     bool isFirstResult = true;
 }
 
-<a asp-action="Index" class="govuk-back-link">Back</a>
+<a asp-action="Index" asp-controller="Search" 
+    asp-all-route-data="@(new Dictionary<string, string> { 
+    { "FirstName", Model.FirstName }, 
+    { "LastName", Model.LastName }, 
+    { "Day", Model.DateOfBirth.Day.ToString() }, 
+    { "Month", Model.DateOfBirth.Month.ToString() }, 
+    { "Year", Model.DateOfBirth.Year.ToString() } })" 
+    class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
