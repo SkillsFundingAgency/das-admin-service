@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
-using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
 using SFA.DAS.AdminService.Web.Models.Roatp;
+using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
@@ -54,7 +55,18 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
-            CreateMap<FrameworkSearchRequest, FrameworkSearchResultsViewModel>();
+            CreateMap<FrameworkSearch, FrameworkSearchResultsViewModel>();
+            CreateMap<SearchInputViewModel, FrameworkSearchQuery>()
+                .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(source => source.Date));
+            CreateMap<FrameworkSearchResult,FrameworkResultViewModel>();
+            CreateMap<FrameworkSearch, SearchInputViewModel>()
+                .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
+                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Day : null))
+                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Month : null))
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Year : null));
         }
     }
 }

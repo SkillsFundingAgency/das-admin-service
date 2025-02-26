@@ -1,21 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AdminService.Web.Attributes;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using System.Linq;
-using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
-using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
 using AutoMapper;
-using Azure.Core;
-using MediatR;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Models.Search;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -26,28 +20,41 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
         private readonly IFrameworkSearchSessionService _sessionService;
-        //private readonly IFrameworkSearchApiClient _frameworkSearchApiClient;
+        private readonly IFrameworkSearchApiClient _frameworkSearchApiClient;
         private readonly IMapper _mapper;
 
         public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
-            IFrameworkSearchSessionService sessionService, IMapper mapper)
+            IFrameworkSearchSessionService sessionService, IFrameworkSearchApiClient frameworkSearchApiClient, IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
             _sessionService = sessionService;
+            _frameworkSearchApiClient = frameworkSearchApiClient;
             _mapper = mapper;
-
         }
 
         [HttpGet]
-        public IActionResult Index(SearchInputViewModel vm = null)
+        public IActionResult Index(SearchInputViewModel vm)
         {
-            if (vm == null)
+            if (vm != null && vm.IsFrameworkSearchPopulated())
             {
-                vm = new SearchInputViewModel();
+                _sessionService.UpdateFrameworkSearchRequest((frameworkSearch) =>
+                {
+                    frameworkSearch.FirstName = vm.FirstName;
+                    frameworkSearch.LastName = vm.LastName;
+                    frameworkSearch.DateOfBirth = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                });
+                return View(vm);
             }
-            return View(vm);
+
+            if (_sessionService.SessionFrameworkSearch != null)
+            {
+                vm = _mapper.Map<SearchInputViewModel>(_sessionService.SessionFrameworkSearch);
+                return View(vm);
+            }
+
+            return View(vm ?? new SearchInputViewModel());
         }
 
         [HttpPost]
@@ -74,21 +81,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
+                    vm.Date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                    var searchQuery = _mapper.Map<FrameworkSearchQuery>(vm);
+                    var frameworkResults = await _frameworkSearchApiClient.SearchFrameworks(searchQuery);
 
-                    FrameworkSearchRequest request = new FrameworkSearchRequest()
+                    var request = new FrameworkSearch()
                     {
                         FirstName = vm.FirstName,
                         LastName = vm.LastName,
-                        DateOfBirth = ValidatorExtensions.ConstructDate(vm.Day, vm.Month, vm.Year).Value,
-                        FrameworkResults = new List<FrameworkResultViewModel>
-                        {
-                            new FrameworkResultViewModel{Id = 1, FrameworkName = "BSE Electrotechnical", FrameworkLevel = "Intermediate", CertificationYear="2016" },
-                            new FrameworkResultViewModel{Id = 2, FrameworkName = "BEng Electronic Engineering", FrameworkLevel = "Advanced", CertificationYear="2015" },
-                            new FrameworkResultViewModel{Id = 3, FrameworkName = "MSc Electrochemistry", FrameworkLevel = "Higher", CertificationYear="2014" },
-                        }
+                        DateOfBirth = vm.Date,
+                        FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
                     };
 
-                    _sessionService.UpdateFrameworkSearchRequest(request);
+                    _sessionService.SessionFrameworkSearch = request;
                     return RedirectToAction("MultipleResults");
                 }
             }
@@ -96,12 +101,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
             { 
                 if (vm.SearchType == SearchTypes.Standards)
                 {
+                    _sessionService.ClearFrameworkSearchRequest();
+                    
                     vm.FirstName = null;
                     vm.LastName = null;
                     vm.Day = null;
                     vm.Month = null;
                     vm.Year = null;
-                    vm.Date = null;
+                    vm.Date = null;   
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
@@ -136,7 +143,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [HttpGet]
         public IActionResult MultipleResults()
         {
-            var sessionModel = _sessionService.GetFrameworkSearchRequest();
+            var sessionModel = _sessionService.SessionFrameworkSearch;
             var viewModel = _mapper.Map<FrameworkSearchResultsViewModel>(sessionModel);
             return View(viewModel);
         }
@@ -146,58 +153,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var sessionObject = _sessionService.GetFrameworkSearchRequest();
-                sessionObject.SelectedResult = vm.SelectedResult;
-                _sessionService.UpdateFrameworkSearchRequest(sessionObject);
-
+                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                {
+                    sessionObject.SelectedResult = vm.SelectedResult;
+                });
                 return RedirectToAction("MultipleResults");
             }
-            var sessionModel = _sessionService.GetFrameworkSearchRequest();
+            var sessionModel = _sessionService.SessionFrameworkSearch;
             vm.FrameworkResults = sessionModel.FrameworkResults;
             return View("MultipleResults", vm); 
         }
-    }
-
-    public class SearchResultsViewModel
-    {
-        public string SearchString { get; set; } = string.Empty;
-        public string OrganisationName { get; set; }
-        public int Page { get; set; }
-        public StaffSearchResult StaffSearchResult { get; set; }
-    }
-
-    public class SearchInputViewModel
-    {
-        public string SearchString { get; set; } = string.Empty; 
-        public string FirstName { get; set; } = string.Empty; 
-        public string LastName { get; set; } = string.Empty;
-        public string Day { get; set; }
-        public string Month { get; set; }
-        public string Year { get; set; }
-        public DateTime? Date { get; set; }
-        public string SearchType { get; set; }
-    }
-
-    public static class SearchTypes
-    {
-        public const string Standards = "Standards";
-        public const string Frameworks = "Frameworks";
-    }
-
-    public class FrameworkResultViewModel
-    {
-        public int Id { get; set; }
-        public string FrameworkName { get; set; }
-        public string FrameworkLevel { get; set; }
-        public string CertificationYear { get; set; }
-    }
-    public class FrameworkSearchResultsViewModel
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public List<FrameworkResultViewModel> FrameworkResults { get; set; }
-        public int FrameworkResultCount => FrameworkResults?.Count ?? 0;
-        public int SelectedResult { get; set; }
-    }
+    }  
 }

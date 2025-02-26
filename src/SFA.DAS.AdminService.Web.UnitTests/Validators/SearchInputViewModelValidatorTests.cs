@@ -1,7 +1,8 @@
 ﻿using FluentValidation.TestHelper;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.Validators;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Validators

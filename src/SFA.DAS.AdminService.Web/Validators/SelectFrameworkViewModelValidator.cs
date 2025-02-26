@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using SFA.DAS.AdminService.Web.Controllers;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -7,9 +7,8 @@ namespace SFA.DAS.AdminService.Web.Validators
     {
         public FrameworkSearchResultsViewModelValidator()
         {
-            RuleFor(vm => vm.SelectedResult)
-                .Must(x => x > 0)
-                .WithMessage("Select a course");
+            RuleFor(x => x.SelectedResult)
+            .NotEmpty().WithMessage("Select a course");
         }
     }
 }

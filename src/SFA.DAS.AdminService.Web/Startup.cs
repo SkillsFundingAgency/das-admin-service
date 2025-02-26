@@ -54,8 +54,6 @@ namespace SFA.DAS.AdminService.Web
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
@@ -125,6 +123,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
+
             services.AddValidatorsFromAssemblyContaining<Startup>();
 
             services.Configure<RazorViewEngineOptions>(o =>
@@ -183,6 +182,7 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
             services.AddTransient<ICertificateApiClient, CertificateApiClient>();
             services.AddTransient<IContactsApiClient, ContactsApiClient>();
+            services.AddTransient<IFrameworkSearchApiClient, FrameworkSearchApiClient>();
             services.AddTransient<ILearnerDetailsApiClient, LearnerDetailsApiClient>();
             services.AddTransient<IMergeOrganisationsApiClient, MergeOrganisationsApiClient>();
             services.AddTransient<IOrganisationsApiClient, OrganisationsApiClient>();

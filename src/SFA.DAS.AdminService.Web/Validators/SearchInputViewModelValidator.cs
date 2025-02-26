@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
-using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Extensions;
-using SFA.DAS.AssessorService.Web.Infrastructure;
+using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System;
-using System.Security.Cryptography;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
@@ -47,7 +46,7 @@ namespace SFA.DAS.AdminService.Web.Validators
 
                     if (int.TryParse(vm.Day, out var day) && int.TryParse(vm.Month, out var month) && int.TryParse(vm.Year, out var year))
                     {
-                        var date = ValidatorExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                        var date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
 
                         if (date == null)
                         {

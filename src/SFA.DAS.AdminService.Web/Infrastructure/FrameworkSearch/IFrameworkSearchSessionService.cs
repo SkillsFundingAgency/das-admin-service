@@ -1,11 +1,11 @@
-﻿using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
+﻿using System;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
 {
     public interface IFrameworkSearchSessionService
     {
-        void StartNewFrameworkSearch();
-        FrameworkSearchRequest GetFrameworkSearchRequest();
-        void UpdateFrameworkSearchRequest(FrameworkSearchRequest mergeRequest);
+        Models.Search.FrameworkSearch SessionFrameworkSearch { get; set; }
+        void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearch> action);
+        void ClearFrameworkSearchRequest();
     }
 }

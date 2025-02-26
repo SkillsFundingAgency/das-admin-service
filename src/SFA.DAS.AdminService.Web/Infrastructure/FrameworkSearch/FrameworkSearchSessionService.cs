@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Models.FrameworkSearch;
-using SFA.DAS.AdminService.Web.Models.Merge;
+﻿using SFA.DAS.AdminService.Web.Models.Merge;
 using System;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
@@ -15,24 +14,35 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
             _sessionService = sessionService;
         }
 
-        public void StartNewFrameworkSearch()
+        public Models.Search.FrameworkSearch SessionFrameworkSearch
         {
-            var frameworkSearchRequest = new FrameworkSearchRequest();
-
-            frameworkSearchRequest.StartNewRequest();
-
-            _sessionService.Set(_frameworkSearchSessionKey, frameworkSearchRequest);
+            get
+            {
+                return _sessionService.Get<Models.Search.FrameworkSearch>(_frameworkSearchSessionKey);
+            }
+            set
+            {
+                if (value == null)
+                {
+                    _sessionService.Remove(_frameworkSearchSessionKey);
+                }
+                else
+                {
+                    _sessionService.Set(_frameworkSearchSessionKey, value);
+                }
+            }
         }
 
-        public FrameworkSearchRequest GetFrameworkSearchRequest()
+        public void ClearFrameworkSearchRequest()
         {
-            return _sessionService.Get<FrameworkSearchRequest>(_frameworkSearchSessionKey);
+            _sessionService.Remove(_frameworkSearchSessionKey);
         }
 
-        public void UpdateFrameworkSearchRequest(FrameworkSearchRequest frameworkSearchRequest)
+        public void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearch> action)
         {
-            _sessionService.Set(_frameworkSearchSessionKey, frameworkSearchRequest);
+            var sessionObject = SessionFrameworkSearch;
+            action(sessionObject);
+            SessionFrameworkSearch = sessionObject;
         }
-
     }
 }
