@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Models.Merge;
-using System;
+﻿using System;
 
 namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
 {

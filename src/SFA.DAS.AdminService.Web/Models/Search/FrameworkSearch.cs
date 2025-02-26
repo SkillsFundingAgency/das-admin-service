@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.ViewModels.Search;
+﻿using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;
