@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<FrameworkSearch, FrameworkSearchResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkSearchQuery>()
                 .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(source => source.Date));
-            CreateMap<FrameworkSearchResult,FrameworkResultViewModel>();
+            CreateMap<FrameworkSearchResult, FrameworkResultViewModel>();
             CreateMap<FrameworkSearch, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
