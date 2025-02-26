@@ -23,6 +23,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Reflection.Metadata;
 using System.Threading;
 using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -91,14 +92,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [TestCase]
-        public void Index_ReturnsViewResult_WithMappedViewModel_WhenSessionFrameworkSearchIsNotNull()
+        public void Index_ReturnsViewResult_WithViewModel()
         {
-            // Arrange
-            var sessionFrameworkSearch = new FrameworkSearch { FirstName = "Jane", LastName = "Doe" };
-            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionFrameworkSearch);
-            var mappedVm = new SearchInputViewModel { FirstName = "Jane", LastName = "Doe" };
-            _mapperMock.Setup(m => m.Map<SearchInputViewModel>(sessionFrameworkSearch)).Returns(mappedVm);
-
             // Act
             var result = _controller.Index(null);
 
@@ -108,8 +103,6 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 result.Should().NotBeNull();
                 var resultModel = result.Should().BeOfType<ViewResult>()
                     .Which.Model.Should().BeOfType<SearchInputViewModel>().Which;
-                resultModel.FirstName.Should().Be(mappedVm.FirstName);
-                resultModel.LastName.Should().Be(mappedVm.LastName);
             });
         }
 
@@ -237,8 +230,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             redirectResult.RouteValues["Year"].Should().Be(vm.Year);
         }
 
-        [Test]
-        public async Task Results_FrameworksSearch_ValidInput_RedirectsToMultipleResultsView()
+        [Test][MoqAutoData]
+        public async Task Results_FrameworksSearch_ValidInput_RedirectsToMultipleResultsView(List<FrameworkSearchResult> searchResults, 
+            List<FrameworkSearchResultsViewModel> searchResultsViewModel)
         {
             // Arrange
             var vm = new SearchInputViewModel
@@ -250,6 +244,16 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 Month = "1",     
                 Year = "2000"    
             };
+            var searchQuery = new FrameworkSearchQuery 
+            { 
+                FirstName = vm.FirstName, 
+                LastName = vm.LastName, 
+                DateOfBirth = new DateTime(2000, 1, 1) 
+            };
+
+            _mapperMock.Setup(m => m.Map<FrameworkSearchQuery>(vm)).Returns(searchQuery);
+            _frameworkSearchApiClient.Setup(c => c.SearchFrameworks(searchQuery)).ReturnsAsync(searchResults);
+            _mapperMock.Setup(m => m.Map<List<FrameworkSearchResultsViewModel>>(searchResults)).Returns(searchResultsViewModel);
 
             // Act
             var result = await _controller.Results(vm);
