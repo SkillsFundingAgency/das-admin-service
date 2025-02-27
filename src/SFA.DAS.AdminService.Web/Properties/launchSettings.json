@@ -13,6 +13,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "launchBrowser": true,
+      "launchUrl": "dashboard",
       "applicationUrl": "https://localhost:44348/"
     }
   },
