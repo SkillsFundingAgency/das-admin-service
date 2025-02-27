@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
 using AutoMapper;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
-using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Search;
 
 namespace SFA.DAS.AdminService.Web.Controllers
@@ -63,20 +62,34 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     return View(searchViewModel);
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
-                {
+                {            
                     var searchQuery = _mapper.Map<FrameworkSearchQuery>(vm);
                     var frameworkResults = await _frameworkSearchApiClient.SearchFrameworks(searchQuery);
 
-                    var searchSessionObject = new FrameworkSearch()
+                    if (frameworkResults.Count == 0)
                     {
-                        FirstName = vm.FirstName,
-                        LastName = vm.LastName,
-                        DateOfBirth = searchQuery.DateOfBirth,
-                        FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
-                    };
+                        _sessionService.ClearFrameworkSearchRequest();
+                        return RedirectToAction("NoResults",
+                            new
+                            {
+                                FirstName = searchQuery.FirstName,
+                                LastName = searchQuery.LastName,
+                                DateOfBirth = searchQuery.DateOfBirth
+                            });
+                    }
+                    else
+                    {
+                        var searchSessionObject = new FrameworkSearch()
+                        {
+                            FirstName = searchQuery.FirstName,
+                            LastName = searchQuery.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
+                        };
 
-                    _sessionService.SessionFrameworkSearch = searchSessionObject;
-                    return RedirectToAction("MultipleResults");      
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("MultipleResults");      
+                    }
                 }
             }
             else
@@ -126,6 +139,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             var viewModel = _mapper.Map<FrameworkSearchResultsViewModel>(sessionModel);
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult NoResults(NoResultsViewModel viewModel)
+        {
             return View(viewModel);
         }
 

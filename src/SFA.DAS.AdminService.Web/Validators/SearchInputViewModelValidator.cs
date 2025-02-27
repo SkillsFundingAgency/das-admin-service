@@ -8,6 +8,8 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class SearchInputViewModelValidator : AbstractValidator<SearchInputViewModel>
     {
+        private readonly DateTime minimiumDate = new DateTime(1900, 1, 1);
+        
         public SearchInputViewModelValidator()
         {
             When(vm => vm.SearchType == SearchTypes.Standards, () =>
@@ -51,6 +53,11 @@ namespace SFA.DAS.AdminService.Web.Validators
                         if (date == null)
                         {
                             context.AddFailure("Date", "The date must be a real date");
+                        }
+                        else if (date < minimiumDate)
+                        { 
+                            //Waiting on confirmation of the minimum date and error text
+                            context.AddFailure("Date", "The date of birth must be after 1 January 1900");
                         }
                         else if (date > DateTime.Now.Date)
                         {
