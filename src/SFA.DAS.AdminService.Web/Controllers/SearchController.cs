@@ -77,18 +77,32 @@ namespace SFA.DAS.AdminService.Web.Controllers
                                 DateOfBirth = searchQuery.DateOfBirth
                             });
                     }
-                    else
-                    {
-                        var searchSessionObject = new FrameworkSearch()
+                    else if (frameworkResults.Count == 1)
+                    { 
+                        var searchSessionObject = new FrameworkSearchSessionData()
                         {
                             FirstName = searchQuery.FirstName,
                             LastName = searchQuery.LastName,
                             DateOfBirth = searchQuery.DateOfBirth,
-                            FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
+                            FrameworkResults = _mapper.Map<List<FrameworkCertificateSummaryViewModel>>(frameworkResults),
+                            SelectedResult = frameworkResults[0].Id,
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("MultipleResults");      
+                        return RedirectToAction("Certificate");
+                    }
+                    else
+                    {
+                        var searchSessionObject = new FrameworkSearchSessionData()
+                        {
+                            FirstName = searchQuery.FirstName,
+                            LastName = searchQuery.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkCertificateSummaryViewModel>>(frameworkResults)
+                        };
+
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("MultipleResults");
                     }
                 }
             }
@@ -138,7 +152,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public IActionResult MultipleResults()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            var viewModel = _mapper.Map<FrameworkSearchResultsViewModel>(sessionModel);
+            var viewModel = _mapper.Map<FrameworkCertificateSearchResultsViewModel>(sessionModel);
             return View(viewModel);
         }
 
@@ -149,7 +163,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SelectFramework(FrameworkSearchResultsViewModel vm)
+        public async Task<IActionResult> SelectFramework(FrameworkCertificateSearchResultsViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -157,11 +171,46 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
-                return RedirectToAction("MultipleResults");
+                return RedirectToAction("Certificate");
             }
             var sessionModel = _sessionService.SessionFrameworkSearch;
             vm.FrameworkResults = sessionModel.FrameworkResults;
             return View("MultipleResults", vm); 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Certificate()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null && sessionModel.SelectedResult.HasValue)
+            {
+                var certificateDetails = 
+                    await _frameworkSearchApiClient.GetFrameworkCertificate(sessionModel.SelectedResult.Value);
+
+                return View(_mapper.Map<FrameworkCertificateViewModel>(certificateDetails));
+
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CertificateBackAction()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null)
+            {
+                if (sessionModel.FrameworkResults?.Count > 1)
+                { 
+                    _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                    {
+                        sessionObject.SelectedResult = null;
+                    });
+
+                    return RedirectToAction("MultipleResults");
+                }
+                _sessionService.ClearFrameworkSearchRequest();
+            }
+            return RedirectToAction("Index");
         }
     }  
 }

@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void FrameworkSearchResults_NoneSelected_HasError()
         {
-            var vm = new FrameworkSearchResultsViewModel();
+            var vm = new FrameworkCertificateSearchResultsViewModel();
             var result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.SelectedResult)
                 .WithErrorMessage("Select a course");
@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void FrameworkSearchResults_CourseSelected_NoError()
         {
-            var vm = new FrameworkSearchResultsViewModel { SelectedResult = Guid.NewGuid()};
+            var vm = new FrameworkCertificateSearchResultsViewModel { SelectedResult = Guid.NewGuid()};
             var result = _validator.TestValidate(vm);
             result.ShouldNotHaveValidationErrorFor(x => x.SelectedResult);
         }

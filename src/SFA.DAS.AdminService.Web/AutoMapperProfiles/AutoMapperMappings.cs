@@ -9,6 +9,8 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using System.Collections.Generic;
+using System.Linq;
 using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
@@ -56,11 +58,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
-            CreateMap<FrameworkSearch, FrameworkSearchResultsViewModel>();
+            CreateMap<FrameworkSearchSessionData, FrameworkCertificateSearchResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkSearchQuery>()
                 .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
-            CreateMap<FrameworkSearchResult, FrameworkResultViewModel>();
-            CreateMap<FrameworkSearch, SearchInputViewModel>()
+            CreateMap<FrameworkSearchResult, FrameworkCertificateSummaryViewModel>();
+            CreateMap<FrameworkSearchSessionData, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Day : null))
@@ -68,6 +70,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     (int?)src.DateOfBirth.Value.Month : null))
                 .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Year : null));
+            CreateMap<GetFrameworkCertificateResult, FrameworkCertificateViewModel>()
+                .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src =>
+                    src.QualificationsAndAwardingBodies == null ? new List<string>() :
+                    src.QualificationsAndAwardingBodies.Select(qualification =>
+                        $"{qualification.Name},{qualification.AwardingBody}").ToList()));
         }
     }
 }

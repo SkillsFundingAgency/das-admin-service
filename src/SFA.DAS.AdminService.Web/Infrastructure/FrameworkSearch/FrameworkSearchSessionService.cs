@@ -13,11 +13,11 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
             _sessionService = sessionService;
         }
 
-        public Models.Search.FrameworkSearch SessionFrameworkSearch
+        public Models.Search.FrameworkSearchSessionData SessionFrameworkSearch
         {
             get
             {
-                return _sessionService.Get<Models.Search.FrameworkSearch>(_frameworkSearchSessionKey);
+                return _sessionService.Get<Models.Search.FrameworkSearchSessionData>(_frameworkSearchSessionKey);
             }
             set
             {
@@ -37,7 +37,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
             _sessionService.Remove(_frameworkSearchSessionKey);
         }
 
-        public void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearch> action)
+        public void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearchSessionData> action)
         {
             var sessionObject = SessionFrameworkSearch;
             action(sessionObject);
