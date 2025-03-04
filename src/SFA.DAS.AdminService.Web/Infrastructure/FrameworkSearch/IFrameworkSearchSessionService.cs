@@ -4,8 +4,8 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
 {
     public interface IFrameworkSearchSessionService
     {
-        Models.Search.FrameworkSearch SessionFrameworkSearch { get; set; }
-        void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearch> action);
+        Models.Search.FrameworkSearchSessionData SessionFrameworkSearch { get; set; }
+        void UpdateFrameworkSearchRequest(Action<Models.Search.FrameworkSearchSessionData> action);
         void ClearFrameworkSearchRequest();
     }
 }

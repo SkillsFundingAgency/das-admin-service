@@ -77,9 +77,23 @@ namespace SFA.DAS.AdminService.Web.Controllers
                                 DateOfBirth = searchQuery.DateOfBirth
                             });
                     }
-                    else if (frameworkResults.Count > 1)
+                    else if (frameworkResults.Count == 1)
+                    { 
+                        var searchSessionObject = new FrameworkSearchSessionData()
+                        {
+                            FirstName = searchQuery.FirstName,
+                            LastName = searchQuery.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults),
+                            SelectedResult = frameworkResults[0].Id,
+                        };
+
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("Certificate");
+                    }
+                    else
                     {
-                        var searchSessionObject = new FrameworkSearch()
+                        var searchSessionObject = new FrameworkSearchSessionData()
                         {
                             FirstName = searchQuery.FirstName,
                             LastName = searchQuery.LastName,
@@ -88,7 +102,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("MultipleResults");      
+                        return RedirectToAction("MultipleResults");
                     }
                 }
             }
@@ -157,7 +171,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SelectFramework(FrameworkLearnerSearchResultsViewModel vm)
+        public async Task<IActionResult> SelectFrameworkLearner(FrameworkLearnerSearchResultsViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -165,8 +179,43 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
+                return RedirectToAction("Certificate");
             }
             return RedirectToAction("MultipleResults");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Certificate()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null && sessionModel.SelectedResult.HasValue)
+            {
+                var certificateDetails = 
+                    await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+
+                return View(_mapper.Map<FrameworkLearnerViewModel>(certificateDetails));
+
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CertificateBackAction()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null)
+            {
+                if (sessionModel.FrameworkResults?.Count > 1)
+                { 
+                    _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                    {
+                        sessionObject.SelectedResult = null;
+                    });
+
+                    return RedirectToAction("MultipleResults");
+                }
+                _sessionService.ClearFrameworkSearchRequest();
+            }
+            return RedirectToAction("Index");
         }
     }  
 }

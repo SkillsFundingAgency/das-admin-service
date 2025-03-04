@@ -56,7 +56,7 @@
             <p class="govuk-body">We need more information to narrow down your search to one result.</p>
             <h2 class="govuk-heading-m">We found @Model.FrameworkResultCount certificates</h2>
 
-            <form class="framework-results-form" asp-action="SelectFramework" asp-controller="Search" method="post">
+            <form class="framework-results-form" asp-action="SelectFrameworkLearner" asp-controller="Search" method="post">
                 <input type="hidden" asp-for="FirstName">
                 <input type="hidden" asp-for="LastName">
                 <input type="hidden" asp-for="DateOfBirth">
