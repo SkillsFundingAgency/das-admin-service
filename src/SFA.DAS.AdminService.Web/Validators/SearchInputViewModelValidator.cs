@@ -9,6 +9,7 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class SearchInputViewModelValidator : AbstractValidator<SearchInputViewModel>
     {
+        private readonly DateTime minimiumDate = new DateTime(1753, 1, 1);
         public SearchInputViewModelValidator()
         {
             When(vm => vm.SearchType == SearchTypes.Standards, () =>
@@ -56,6 +57,10 @@ namespace SFA.DAS.AdminService.Web.Validators
                         else if (date > DateTime.Now.Date)
                         {
                             context.AddFailure("Date", "The date of birth must be in the past");
+                        }
+                        else if (date < minimiumDate)
+                        { 
+                            context.AddFailure("Date", "Check the year of your date of birth");
                         }
                     }
                     else
