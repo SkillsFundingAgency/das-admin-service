@@ -22,10 +22,7 @@ namespace SFA.DAS.AdminService.Web
                 logger.Info("Starting up host");
                 var builder = WebApplication.CreateBuilder(args);
 
-                builder.Logging.ClearProviders();
-                builder.Logging.AddConsole();
                 builder.Host.UseNLog();
-                builder.WebHost.UseUrls("https://localhost:44348");
 
                 var startup = new Startup(builder.Configuration, builder.Environment);
                 startup.ConfigureServices(builder.Services);
