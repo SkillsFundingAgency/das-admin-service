@@ -3,7 +3,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class FrameworkSearchResultsViewModelValidator : AbstractValidator<FrameworkSearchResultsViewModel>
+    public class FrameworkSearchResultsViewModelValidator : AbstractValidator<FrameworkLearnerSearchResultsViewModel>
     {
         public FrameworkSearchResultsViewModelValidator()
         {

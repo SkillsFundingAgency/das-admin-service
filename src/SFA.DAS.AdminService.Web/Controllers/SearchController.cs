@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
 using AutoMapper;
-using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AdminService.Web.Infrastructure;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -20,17 +21,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
         private readonly IFrameworkSearchSessionService _sessionService;
-        private readonly IFrameworkSearchApiClient _frameworkSearchApiClient;
         private readonly IMapper _mapper;
 
         public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
-            IFrameworkSearchSessionService sessionService, IFrameworkSearchApiClient frameworkSearchApiClient, IMapper mapper)
+            IFrameworkSearchSessionService sessionService,  IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
             _sessionService = sessionService;
-            _frameworkSearchApiClient = frameworkSearchApiClient;
             _mapper = mapper;
         }
 
@@ -48,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 if (vm.SearchType == SearchTypes.Standards)
                 {
                     EpaOrganisation org = null;
-                    var searchResults = await _staffSearchApiClient.Search(vm.SearchString, page);
+                    var searchResults = await _staffSearchApiClient.SearchCertificates(vm.SearchString, page);
 
                     if (!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
                         org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
@@ -64,15 +63,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
-                    var searchQuery = _mapper.Map<FrameworkSearchQuery>(vm);
-                    var frameworkResults = await _frameworkSearchApiClient.SearchFrameworks(searchQuery);
+                    var searchQuery = _mapper.Map<FrameworkLearnerSearchRequest>(vm);
+                    var frameworkResults = await _staffSearchApiClient.SearchFrameworkLearners(searchQuery);
 
                     var searchSessionObject = new FrameworkSearch()
                     {
                         FirstName = vm.FirstName,
                         LastName = vm.LastName,
                         DateOfBirth = searchQuery.DateOfBirth,
-                        FrameworkResults = _mapper.Map<List<FrameworkResultViewModel>>(frameworkResults)
+                        FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults)
                     };
 
                     _sessionService.SessionFrameworkSearch = searchSessionObject;
@@ -122,15 +121,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult MultipleResults()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            var viewModel = _mapper.Map<FrameworkSearchResultsViewModel>(sessionModel);
+            if (sessionModel == null || sessionModel.FrameworkResults == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = _mapper.Map<FrameworkLearnerSearchResultsViewModel>(sessionModel);
             return View(viewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SelectFramework(FrameworkSearchResultsViewModel vm)
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public async Task<IActionResult> SelectFramework(FrameworkLearnerSearchResultsViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -138,11 +144,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
-                return RedirectToAction("MultipleResults");
             }
-            var sessionModel = _sessionService.SessionFrameworkSearch;
-            vm.FrameworkResults = sessionModel.FrameworkResults;
-            return View("MultipleResults", vm); 
+            return RedirectToAction("MultipleResults");
         }
     }  
 }

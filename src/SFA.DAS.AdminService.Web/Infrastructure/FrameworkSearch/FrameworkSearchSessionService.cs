@@ -4,7 +4,7 @@ namespace SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch
 {
     public class FrameworkSearchSessionService : IFrameworkSearchSessionService
     {
-        private ISessionService _sessionService;
+        private readonly ISessionService _sessionService;
 
         private const string _frameworkSearchSessionKey = "Framework_Search";
 

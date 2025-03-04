@@ -119,7 +119,6 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
             result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.Date)
                 .WithErrorMessage("The date must be a real date");
-
         }
 
         [Test]
@@ -138,6 +137,24 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
 
             result.ShouldHaveValidationErrorFor(x => x.Date)
                 .WithErrorMessage("The date of birth must be in the past");
+        }
+
+        [Test]
+        public void FrameworksSearch_PastDate_HasError()
+        {
+            var pastDate = new DateTime(1752, 12, 12);
+            var vm = new SearchInputViewModel
+            {
+                SearchType = SearchTypes.Frameworks,
+                Day = pastDate.Day.ToString(),
+                Month = pastDate.Month.ToString(),
+                Year = pastDate.Year.ToString()
+            };
+
+            var result = _validator.TestValidate(vm);
+
+            result.ShouldHaveValidationErrorFor(x => x.Date)
+                .WithErrorMessage("Check the year of your date of birth");
         }
 
         [Test]

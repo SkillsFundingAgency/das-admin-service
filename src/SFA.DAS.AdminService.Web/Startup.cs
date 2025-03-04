@@ -182,7 +182,6 @@ namespace SFA.DAS.AdminService.Web
             services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
             services.AddTransient<ICertificateApiClient, CertificateApiClient>();
             services.AddTransient<IContactsApiClient, ContactsApiClient>();
-            services.AddTransient<IFrameworkSearchApiClient, FrameworkSearchApiClient>();
             services.AddTransient<ILearnerDetailsApiClient, LearnerDetailsApiClient>();
             services.AddTransient<IMergeOrganisationsApiClient, MergeOrganisationsApiClient>();
             services.AddTransient<IOrganisationsApiClient, OrganisationsApiClient>();

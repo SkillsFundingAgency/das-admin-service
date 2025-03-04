@@ -10,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
-        public List<FrameworkResultViewModel> FrameworkResults { get; set; }
+        public List<FrameworkLearnerSummaryViewModel> FrameworkResults { get; set; }
         public Guid? SelectedResult { get; set; }
     }
 }

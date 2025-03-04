@@ -8,6 +8,8 @@ namespace SFA.DAS.AdminService.Web.Validators
 {
     public class SearchInputViewModelValidator : AbstractValidator<SearchInputViewModel>
     {
+        private readonly DateTime minimumDate = new DateTime(1753, 1, 1);
+
         public SearchInputViewModelValidator()
         {
             When(vm => vm.SearchType == SearchTypes.Standards, () =>
@@ -40,28 +42,26 @@ namespace SFA.DAS.AdminService.Web.Validators
                 {
                     if (string.IsNullOrEmpty(vm.Day) || string.IsNullOrEmpty(vm.Month) || string.IsNullOrEmpty(vm.Year))
                     {
-                        context.AddFailure("Date", "Enter a date of birth");
+                        context.AddFailure(nameof(vm.Date), "Enter a date of birth");
                         return;
                     }
 
-                    if (int.TryParse(vm.Day, out var day) && int.TryParse(vm.Month, out var month) && int.TryParse(vm.Year, out var year))
-                    {
-                        var date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                    var date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                    vm.Date = date; 
 
-                        if (date == null)
-                        {
-                            context.AddFailure("Date", "The date must be a real date");
-                        }
-                        else if (date > DateTime.Now.Date)
-                        {
-                            context.AddFailure("Date", "The date of birth must be in the past");
-                        }
-                    }
-                    else
+                    if (date == null)
                     {
-                        context.AddFailure("Date", "The date must be a real date");
+                        context.AddFailure(nameof(vm.Date), "The date must be a real date");
                     }
                 });
+
+                RuleFor(vm => vm.Date)
+                    .Must(date => date.HasValue && date.Value.Date <= DateTime.Now.Date).WithMessage("The date of birth must be in the past")
+                    .When(vm => vm.Date.HasValue);
+
+                RuleFor(vm => vm.Date)
+                    .Must(date => date.HasValue && date.Value.Date >= minimumDate).WithMessage("Check the year of your date of birth")
+                    .When(vm => vm.Date.HasValue);
             });
         }
     }
