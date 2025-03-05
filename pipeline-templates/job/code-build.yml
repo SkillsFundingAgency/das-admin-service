@@ -37,8 +37,8 @@ jobs:
     inputs:
       Contents: |
         azure/**
-        TargetFolder: '$(build.artifactstagingdirectory)'
-        OverWrite: true
+      TargetFolder: '$(build.artifactstagingdirectory)'
+      OverWrite: true
 
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact'
