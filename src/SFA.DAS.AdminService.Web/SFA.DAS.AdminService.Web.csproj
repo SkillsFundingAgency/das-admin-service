@@ -10,8 +10,6 @@
 	<ItemGroup>
 		<Compile Remove="Controllers\RoatpController.cs" />
 		<Compile Remove="Controllers\SearchFrameworksController.cs" />
-		<Compile Remove="Orchestrators\FrameworkSearch\FrameworkSearchOrchestrator.cs" />
-		<Compile Remove="Orchestrators\FrameworkSearch\IFrameworkSearchOrchestrator.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -249,10 +247,6 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Orchestrators\FrameworkSearch\" />
 	</ItemGroup>
 	<Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
 		<ItemGroup>

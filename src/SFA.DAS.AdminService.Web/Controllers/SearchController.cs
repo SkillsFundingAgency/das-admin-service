@@ -66,16 +66,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     var searchQuery = _mapper.Map<FrameworkLearnerSearchRequest>(vm);
                     var frameworkResults = await _staffSearchApiClient.SearchFrameworkLearners(searchQuery);
 
-                    var searchSessionObject = new FrameworkSearch()
+                    if (frameworkResults.Count > 1)
                     {
-                        FirstName = vm.FirstName,
-                        LastName = vm.LastName,
-                        DateOfBirth = searchQuery.DateOfBirth,
-                        FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults)
-                    };
+                        var searchSessionObject = new FrameworkSearch()
+                        {
+                            FirstName = vm.FirstName,
+                            LastName = vm.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults)
+                        };
 
-                    _sessionService.SessionFrameworkSearch = searchSessionObject;
-                    return RedirectToAction("MultipleResults");      
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("MultipleResults");
+                    }
                 }
             }
             else

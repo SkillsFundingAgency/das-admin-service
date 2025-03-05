@@ -8,14 +8,14 @@ using System;
 namespace SFA.DAS.AdminService.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class FrameworkSearchResultsViewModelValidatorTests
+    public class FrameworkLearnerSearchResultsViewModelValidatorTests
     {
-        private FrameworkSearchResultsViewModelValidator _validator;
+        private FrameworkLearnerSearchResultsViewModelValidator _validator;
 
         [SetUp]
         public void Setup()
         {
-            _validator = new FrameworkSearchResultsViewModelValidator();
+            _validator = new FrameworkLearnerSearchResultsViewModelValidator();
         }
 
         [Test]
