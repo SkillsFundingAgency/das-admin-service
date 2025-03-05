@@ -44,7 +44,7 @@ stages:
       SolutionBaseName: $(SolutionBaseName)
       BuildConfiguration: $(BuildConfiguration)
 
-  - template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
+- template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks
     
 - stage: Deploy_AT
   dependsOn: Build
