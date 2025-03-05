@@ -15,7 +15,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:44348/search"
+      "launchBrowser": true,
+      "launchUrl": "dashboard",
+      "applicationUrl": "https://localhost:44348/"
     }
   },
   "iisSettings": {
