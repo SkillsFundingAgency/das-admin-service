@@ -290,4 +290,3 @@ src/SFA.DAS.AssessorService.Application.Api.Specflow.Tests/**/*.*
 /src/SFA.DAS.AdminService.Web/wwwroot/javascripts/application.min.js
 /src/SFA.DAS.AdminService.Web/wwwroot/stylesheets/application.min.css
 /src/SFA.DAS.AdminService.Web/wwwroot/javascripts/das-application-service.min.js
-/src/SFA.DAS.AdminService.Web/wwwroot/javascripts/das-search-certificates.min.js
