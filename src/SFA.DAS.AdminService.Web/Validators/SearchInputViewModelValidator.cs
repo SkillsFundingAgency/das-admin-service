@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
@@ -38,31 +38,42 @@ namespace SFA.DAS.AdminService.Web.Validators
                     .Must(x => x == null || x.Trim().Length > 1)
                     .WithMessage("Last name must be at least 2 characters.");
 
-                RuleFor(vm => vm).Custom((vm, context) =>
-                {
-                    if (string.IsNullOrEmpty(vm.Day) || string.IsNullOrEmpty(vm.Month) || string.IsNullOrEmpty(vm.Year))
-                    {
-                        context.AddFailure(nameof(vm.Date), "Enter a date of birth");
-                        return;
-                    }
-
-                    var date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
-                    vm.Date = date; 
-
-                    if (date == null)
-                    {
-                        context.AddFailure(nameof(vm.Date), "The date must be a real date");
-                    }
-                });
-
                 RuleFor(vm => vm.Date)
-                    .Must(date => date.HasValue && date.Value.Date <= DateTime.Now.Date).WithMessage("The date of birth must be in the past")
-                    .When(vm => vm.Date.HasValue);
-
-                RuleFor(vm => vm.Date)
-                    .Must(date => date.HasValue && date.Value.Date >= minimumDate).WithMessage("Check the year of your date of birth")
-                    .When(vm => vm.Date.HasValue);
+                    .Must(BeValidDate)
+                    .WithMessage("Enter a date of birth")
+                    .Must(BeRealDate)
+                    .WithMessage("The date must be a real date")
+                    .Must(BeInPast)
+                    .WithMessage("The date of birth must be in the past")
+                    .Must(BeWithinRange)
+                    .WithMessage("Check the year of your date of birth");
             });
+        }
+
+        private bool BeValidDate(SearchInputViewModel vm, DateTime? date, ValidationContext<SearchInputViewModel> context)
+        {
+            if (string.IsNullOrEmpty(vm.Day) || string.IsNullOrEmpty(vm.Month) || string.IsNullOrEmpty(vm.Year))
+            {
+                return false;
+            }
+
+            vm.Date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+            return true;
+        }
+
+        private bool BeRealDate(SearchInputViewModel vm, DateTime? date, ValidationContext<SearchInputViewModel> context)
+        {
+            return vm.Date != null;
+        }
+
+        private bool BeInPast(SearchInputViewModel vm, DateTime? date, ValidationContext<SearchInputViewModel> context)
+        {
+            return vm.Date.HasValue && vm.Date.Value.Date <= DateTime.Now.Date;
+        }
+
+        private bool BeWithinRange(SearchInputViewModel vm, DateTime? date, ValidationContext<SearchInputViewModel> context)
+        {
+            return vm.Date.HasValue && vm.Date.Value.Date >= minimumDate;
         }
     }
 }

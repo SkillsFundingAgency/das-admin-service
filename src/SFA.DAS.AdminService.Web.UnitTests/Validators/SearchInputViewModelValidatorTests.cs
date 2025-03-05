@@ -119,6 +119,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
             result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.Date)
                 .WithErrorMessage("The date must be a real date");
+
+            vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks, Day = "1", Month = "1", Year = "1001" };
+            result = _validator.TestValidate(vm);
+            result.ShouldHaveValidationErrorFor(x => x.Date)
+                .WithErrorMessage("Check the year of your date of birth");
         }
 
         [Test]
