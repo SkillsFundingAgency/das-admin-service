@@ -56,7 +56,7 @@
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-        "configNames": "SFA.DAS.AdminService.Web,SFA.DAS.Assessor.GovSignIn,SFA.DAS.Provider.DfeSignIn"
+        "configNames": "SFA.DAS.AdminService.Web,SFA.DAS.Provider.DfeSignIn"
     },
     "resources": [
         {

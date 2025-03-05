@@ -16,8 +16,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IWebConfiguration _applicationConfiguration;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
 
         public AccountController(ILogger<AccountController> logger, IWebConfiguration configuration)
         {

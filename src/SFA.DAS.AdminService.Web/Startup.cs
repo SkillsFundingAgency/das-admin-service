@@ -54,8 +54,6 @@ namespace SFA.DAS.AdminService.Web
     public class Startup
     {
         private readonly IWebHostEnvironment _env;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
