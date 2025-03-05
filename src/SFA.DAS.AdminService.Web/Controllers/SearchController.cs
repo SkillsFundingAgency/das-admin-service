@@ -154,6 +154,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
+        public IActionResult NoResults(NoResultsViewModel viewModel)
+        {
+            return View(viewModel);
+        }
+
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SelectFramework(FrameworkLearnerSearchResultsViewModel vm)

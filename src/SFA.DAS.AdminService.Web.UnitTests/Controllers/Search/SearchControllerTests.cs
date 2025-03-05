@@ -1,13 +1,8 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Controllers;
-using SFA.DAS.AdminService.Web.Models;
-using System.Security.Claims;
-using FluentAssertions.Execution;
 using SFA.DAS.Testing.AutoFixture;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using System.Threading.Tasks;
@@ -19,9 +14,6 @@ using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
 using System;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Reflection.Metadata;
-using System.Threading;
 using SFA.DAS.AdminService.Web.Models.Search;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
@@ -232,6 +224,53 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             List<FrameworkLearnerSearchResultsViewModel> searchResultsViewModel)
         {
             // Arrange
+            vm.SearchType = SearchTypes.Frameworks;
+
+            _mapperMock.Setup(m => m.Map<FrameworkSearchQuery>(vm)).Returns(searchQuery);
+            _frameworkSearchApiClient.Setup(c => c.SearchFrameworks(searchQuery)).ReturnsAsync(searchResults);
+            _mapperMock.Setup(m => m.Map<List<FrameworkSearchResultsViewModel>>(searchResults)).Returns(searchResultsViewModel);
+
+            FrameworkSearch capturedFrameworkSearch = null;
+            _sessionServiceMock.SetupSet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearch>())
+                .Callback((FrameworkSearch value) => capturedFrameworkSearch = value);
+
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(new FrameworkSearch());
+
+            //Act
+            var result = await _controller.Results(vm);
+
+            // Assert
+            _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearch>(), Times.Once);
+
+            Assert.NotNull(capturedFrameworkSearch);
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Results_FrameworksSearch_ValidInput_NoResults_ShouldRemoveSessionObject(
+            SearchInputViewModel vm, 
+            FrameworkSearchQuery searchQuery)
+        {
+            // Arrange
+            vm.SearchType = SearchTypes.Frameworks;
+            List<FrameworkSearchResult> searchResults = new List<FrameworkSearchResult>();
+            List<FrameworkSearchResultsViewModel> searchResultsViewModel = new List<FrameworkSearchResultsViewModel>();
+
+            _mapperMock.Setup(m => m.Map<FrameworkSearchQuery>(vm)).Returns(searchQuery);
+            _frameworkSearchApiClient.Setup(c => c.SearchFrameworks(searchQuery)).ReturnsAsync(searchResults);
+            _mapperMock.Setup(m => m.Map<List<FrameworkSearchResultsViewModel>>(searchResults)).Returns(searchResultsViewModel);
+
+            //Act
+            var result = await _controller.Results(vm);
+
+            // Assert
+            _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
+        }
+
+        [Test]
+        public async Task Results_FrameworksSearch_ValidInput_WithoutResults_RedirectsToNoResultsView()
+        {
+            // Arrange
             var vm = new SearchInputViewModel
             {
                 SearchType = SearchTypes.Frameworks,
@@ -247,6 +286,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 LastName = vm.LastName, 
                 DateOfBirth = new DateTime(2000, 1, 1) 
             };
+            var searchResults = new List<FrameworkSearchResult>();
+            var searchResultsViewModel = new List<FrameworkSearchResultsViewModel>();   
 
             _mapperMock.Setup(m => m.Map<FrameworkLearnerSearchRequest>(vm)).Returns(searchQuery);
             _staffSearchApiClientMock.Setup(c => c.SearchFrameworkLearners(searchQuery)).ReturnsAsync(searchResults);
@@ -258,10 +299,12 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             // Assert
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("MultipleResults"); 
+            redirectResult.ActionName.Should().Be("NoResults"); 
             redirectResult.ControllerName.Should().BeNull(); 
 
-            _controller.ModelState.IsValid.Should().BeTrue(); 
+            _controller.ModelState.IsValid.Should().BeTrue();
+
+            _sessionServiceMock.Object.SessionFrameworkSearch.Should().BeNull();
         }
 
         [Test]
