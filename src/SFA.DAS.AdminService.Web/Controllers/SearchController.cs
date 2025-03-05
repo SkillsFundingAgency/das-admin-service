@@ -47,7 +47,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 if (vm.SearchType == SearchTypes.Standards)
                 {
                     EpaOrganisation org = null;
-                    var searchResults = await _staffSearchApiClient.SearchCertificates(vm.SearchString, page);
+                    var searchResults = await _staffSearchApiClient.Search(vm.SearchString, page);
 
                     if (!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
                         org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);

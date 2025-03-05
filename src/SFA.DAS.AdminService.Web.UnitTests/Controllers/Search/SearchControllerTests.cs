@@ -179,7 +179,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var searchResults = new StaffSearchResult { EndpointAssessorOrganisationId = "123" }; 
             var organisation = new EpaOrganisation { Name = "Test Org" }; 
 
-            _staffSearchApiClientMock.Setup(x => x.SearchCertificates(vm.SearchString, 1)).ReturnsAsync(searchResults); 
+            _staffSearchApiClientMock.Setup(x => x.Search(vm.SearchString, 1)).ReturnsAsync(searchResults); 
             _registerApiClientMock.Setup(x => x.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId)).ReturnsAsync(organisation); 
 
             // Act
@@ -197,7 +197,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             model.SearchString.Should().Be("valid search string"); 
             model.Page.Should().Be(1); 
 
-            _staffSearchApiClientMock.Verify(x => x.SearchCertificates(vm.SearchString, 1), Times.Once); 
+            _staffSearchApiClientMock.Verify(x => x.Search(vm.SearchString, 1), Times.Once); 
             _registerApiClientMock.Verify(x => x.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId), Times.Once); 
         }
 
