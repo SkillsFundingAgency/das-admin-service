@@ -48,5 +48,5 @@ jobs:
   - template: azure-pipelines-templates/build/step/nuget-pack.yml@das-platform-building-blocks
     parameters:
       DotNetStandardPackagesToPack: |
-        src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj
+        src/SFA.DAS.AdminService.Common/SFA.DAS.AdminService.Common.csproj;
         src/SFA.DAS.AdminService.Common.Testing/SFA.DAS.AdminService.Common.Testing.csproj
