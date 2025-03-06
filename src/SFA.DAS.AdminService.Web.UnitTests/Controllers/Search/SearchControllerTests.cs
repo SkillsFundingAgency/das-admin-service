@@ -221,6 +221,31 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             redirectResult.RouteValues["Year"].Should().Be(vm.Year);
         }
 
+        
+
+        [Test]
+        public async Task Results_FrameworkSearch_ValidInput_NoResults_RedirectsToNoResults_AndClearSession()
+        {
+            // Arrange
+            var vm = Builder<SearchInputViewModel>.CreateNew()
+                .With(vm => vm.SearchType = SearchTypes.Frameworks)
+                .With(vm => vm.Day = "1")
+                .With(vm => vm.Month = "2")
+                .With(vm => vm.Year = "2001")
+                .Build();
+            FrameworkSearch capturedSessionObject = new FrameworkSearch();
+            SetupResults(vm, capturedSessionObject, 0);
+
+            // Act
+            var result = await _controller.Results(vm) as RedirectToActionResult;
+
+            // Assert
+            result.Should().NotBeNull();
+            result.ActionName.Should().Be("NoResults");
+
+            _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
+        }
+
         [Test]
         public async Task Results_FrameworkSearch_ValidInput_OneResult_RedirectsToIndex()
         {
