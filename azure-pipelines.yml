@@ -6,7 +6,7 @@ trigger:
 
 variables:
 - name: SolutionBaseName
-  value: SFA.DAS.AdminService
+  value: SFA.DAS.AdminService.Web
 - name: BuildConfiguration
   value: release
 - name: BuildPlatform
