@@ -8,9 +8,8 @@
         "customHostName": {
             "type": "string"
         },
-        "certificateName": {
-            "type": "string",
-            "defaultValue": ""
+        "keyVaultCertificateName": {
+            "type": "string"
         },
         "sharedKeyVaultName": {
             "type": "string"
@@ -33,10 +32,8 @@
         "loggingRedisKey": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
-            "type": "array",
-            "defaultValue": [
-            ]
+        "frontEndAccessRestrictions": {
+            "type": "array"
         },
         "sharedFrontendAppServicePlanName": {
             "type": "string"
@@ -64,7 +61,7 @@
             "name": "[concat('app-service-certificate-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[greater(length(parameters('certificateName')), 0)]",
+            "condition": "[greater(length(parameters('keyVaultCertificateName')), 0)]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -73,7 +70,7 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('certificateName')]"
+                        "value": "[parameters('keyVaultCertificateName')]"
                     },
                     "keyVaultName": {
                         "value": "[parameters('sharedKeyVaultName')]"
@@ -114,7 +111,7 @@
                         "value": true
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('frontEndAccessRestrictions')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -181,7 +178,7 @@
                         "value": "[parameters('customHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('certificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('keyVaultCertificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
