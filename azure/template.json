@@ -5,6 +5,9 @@
         "resourceServiceName": {
             "type": "string"
         },
+        "resourceGroupLocation": {
+            "type": "string"
+        },
         "customHostName": {
             "type": "string"
         },
@@ -44,18 +47,30 @@
         "sharedAppServicePlanResourceGroup": {
             "type": "string"
         },
+        "tags": {
+            "type": "object"
+        },
         "utcValue": {
             "type": "string",
-            "defaultValue": "[utcNow('yyMMddHHmmss')]"
+            "defaultValue": "[utcNow()]"
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('resourceServiceName')))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
         "configNames": "SFA.DAS.AdminService.Web,SFA.DAS.Provider.DfeSignIn"
     },
     "resources": [
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
         {
             "apiVersion": "2017-05-10",
             "name": "[concat('app-service-certificate-', parameters('utcValue'))]",
