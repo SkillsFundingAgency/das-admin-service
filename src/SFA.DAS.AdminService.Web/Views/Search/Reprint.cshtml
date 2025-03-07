@@ -7,6 +7,7 @@
     Layout = "_Layout";
 
     bool isFirstResult = true;
+    var count = 0;
 }
 
 <a asp-action="Certificate" asp-controller="Search" class="govuk-back-link">Back</a>
@@ -74,56 +75,58 @@
                         </div>
                         <span class="govuk-error-message" asp-validation-for="SelectedReprintReasons"></span>
                         <div class="govuk-checkboxes" data-module="checkboxes">
-                        @foreach (var availableReason in Model.AvailableReprintReasons)
-                        {
-                            var checkboxId = isFirstResult ? "SelectedReprintReasons" : $"SelectedReprintReasons_{availableReason}";
-                            isFirstResult = false;
-                            var checkboxChecked = Model.SelectedReprintReasons != null && Model.SelectedReprintReasons.Any(x => x == availableReason) ? "checked" : "";
-
-                            @if (availableReason == "Other")
+                            @foreach (var availableReason in Model.AvailableReprintReasons)
                             {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input"
-                                           id=@checkboxId
-                                           name="SelectedReprintReasons"
-                                           type="checkbox"
-                                           value="@availableReason"
-                                           @checkboxChecked
-                                           data-aria-controls="conditional-other" />
-                                    <label class="govuk-label govuk-checkboxes__label" for="@checkboxId">
-                                        Other
-                                    </label>
-                                </div>
-                                <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-other">
-                                    <div class="govuk-character-count" data-module="character-count" data-maxlength="200">
-                                        <div class="govuk-form-group" sfa-validation-for="OtherReason" sfa-validationerror-class="govuk-form-group--error">
-                                            <label class="govuk-label" asp-for="OtherReason">
-                                                Give details
-                                            </label>
-                                            <span class="govuk-error-message" asp-validation-for="OtherReason"></span>
-                                            <textarea class="govuk-textarea js-character-count" id="OtherReason" name="OtherReason" asp-for="OtherReason" rows="5" aria-describedby="OtherReason-info">@Model.OtherReason</textarea>
-                                            <div id="OtherReason-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
-                                                You can enter up to 200 characters
+                                var checkboxId = isFirstResult ? "SelectedReprintReasons" : $"SelectedReprintReasons_{count}";
+                                isFirstResult = false;
+                                var checkboxChecked = Model.SelectedReprintReasons != null && Model.SelectedReprintReasons.Any(x => x == availableReason) ? "checked" : "";
+
+                                @if (availableReason == "Other")
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input"
+                                        id=@checkboxId
+                                        name="SelectedReprintReasons[]"
+                                        type="checkbox"
+                                        value="@availableReason"
+                                        @checkboxChecked
+                                        data-aria-controls="conditional-other" />
+                                        <label class="govuk-label govuk-checkboxes__label" for="@checkboxId">
+                                            Other
+                                        </label>
+                                    </div>
+                                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-other">
+                                        <div class="govuk-character-count" data-module="character-count" data-maxlength="200">
+                                            <div class="govuk-form-group" sfa-validation-for="OtherReason" sfa-validationerror-class="govuk-form-group--error">
+                                                <label class="govuk-label" asp-for="OtherReason">
+                                                    Give details
+                                                </label>
+                                                <span class="govuk-error-message" asp-validation-for="OtherReason"></span>
+                                                <textarea class="govuk-textarea js-character-count" id="OtherReason" name="OtherReason" asp-for="OtherReason" rows="5" aria-describedby="OtherReason-info">@Model.OtherReason</textarea>
+                                                <div id="OtherReason-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                                    You can enter up to 200 characters
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <div class="govuk-checkboxes__item">
+                                        <input class="govuk-checkboxes__input"
+                                        id=@checkboxId
+                                        name="SelectedReprintReasons[]"
+                                        type="checkbox"
+                                        value="@availableReason"
+                                        @checkboxChecked />
+                                        <label class="govuk-label govuk-checkboxes__label" for="@checkboxId">
+                                            @availableReason
+                                        </label>
+                                    </div>
+                                }
+
+                                count++;
                             }
-                            else
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input"
-                                            id=@checkboxId
-                                            name="SelectedReprintReasons"
-                                            type="checkbox"
-                                            value="@availableReason"
-                                    @checkboxChecked />
-                                    <label class="govuk-label govuk-checkboxes__label" for="@checkboxId">
-                                        @availableReason
-                                    </label>
-                                </div>
-                            }
-                        }
                         </div>
                     </fieldset>
                 </div>
