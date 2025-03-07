@@ -174,14 +174,6 @@
                               {
                                   "name": "ConfigNames",
                                   "value": "[variables('configNames')]"
-                              },
-                              {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                                "value": "/health"
-                              },
-                              {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                                "value": "200"
                               }
                           ]
                         }
