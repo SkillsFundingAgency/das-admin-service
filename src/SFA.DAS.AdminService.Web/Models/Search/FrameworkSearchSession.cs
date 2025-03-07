@@ -20,5 +20,12 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public string TicketNumber { get; set; }
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
+
+        //Address
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string TownOrCity { get; set; }
+        public string County { get; set; }
+        public string Postcode { get; set; }
     }
 }

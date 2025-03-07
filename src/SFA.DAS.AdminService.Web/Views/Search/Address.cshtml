@@ -1,0 +1,86 @@
+﻿@using SFA.DAS.AssessorService.Domain.JsonData;
+@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkLearnerAddressViewModel
+
+@{
+    ViewBag.Title = "Add the address that you'd like us to send the certificate to";
+    Layout = "_Layout";
+}
+
+<a class="govuk-back-link" asp-controller="Search" asp-action="ReprintReason">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="AddressLine1"></a></li>
+                            <li><a sfa-validation-for="AddressLine2"></a></li>
+                            <li><a sfa-validation-for="TownOrCity"></a></li>
+                            <li><a sfa-validation-for="County"></a></li>
+                            <li><a sfa-validation-for="Postcode"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            <form class="address-form" type="post" asp-controller="Search" asp-action="UpdateAddress">
+
+                <h1 class="govuk-heading-l">
+                    @ViewBag.Title
+                </h1>
+
+                <div class="govuk-form-group address-item govuk-!-margin-bottom-3" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="AddressLine1">
+                        Address line 1
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="AddressLine1"></span>
+                    <input autocomplete="off" class="govuk-input" name="AddressLine1" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-input--error" asp-for="AddressLine1" type="text" />
+                </div>
+
+                <div class="govuk-form-group address-item govuk-!-margin-bottom-3" sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="AddressLine2">
+                        Address line (optional)
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="AddressLine2"></span>
+                    <input autocomplete="off" class="govuk-input" name="AddressLine2" sfa-validation-for="AddressLine2" sfa-validationerror-class="govuk-input--error" asp-for="AddressLine2" type="text" />
+                </div>
+
+                <div class="govuk-form-group address-item" sfa-validation-for="TownOrCity" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="TownOrCity">
+                        Town or city
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="TownOrCity"></span>
+                    <input autocomplete="off" class="govuk-input" name="TownOrCity" sfa-validation-for="TownOrCity" sfa-validationerror-class="govuk-input--error" asp-for="TownOrCity" type="text" />
+                </div>
+
+                <div class="govuk-form-group address-item" sfa-validation-for="County" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="County">
+                        County (optional)
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="County"></span>
+                    <input autocomplete="off" class="govuk-input" name="County" sfa-validation-for="County" sfa-validationerror-class="govuk-input--error" asp-for="County" type="text" />
+                </div>
+
+                <div class="govuk-form-group address-item" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label" for="Postcode">
+                        Postcode
+                    </label>
+                    <span class="govuk-error-message" asp-validation-for="Postcode"></span>
+                    <input autocomplete="off" class="govuk-input govuk-input--width-10 js-no-special-chars" name="Postcode" sfa-validation-for="Postcode" sfa-validationerror-class="govuk-input--error" asp-for="Postcode" type="text" />
+                </div>
+
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("~/Views/CertificateAmend/_AddressScriptsPartial.cshtml"); }
+}
