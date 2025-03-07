@@ -242,26 +242,67 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult UpdateFrameworkReprintReason(AmendFrameworkReprintReasonViewModel vm)
         {
+            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+            {
+                sessionObject.SelectedReprintReasons = vm.SelectedReprintReasons;
+                sessionObject.TicketNumber = vm.TicketNumber;
+                sessionObject.OtherReason = vm.OtherReason;
+            });
+
             if (ModelState.IsValid)
             {
-                //Page refreshes, temporarily clearing out the entered data until next story is implemented
-                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
-                {
-                    sessionObject.SelectedReprintReasons = new List<string>();
-                    sessionObject.TicketNumber = string.Empty;
-                    sessionObject.OtherReason = string.Empty;
-                });
-                return RedirectToAction("FrameworkReprintReason");
+                return RedirectToAction("Address");
             }
             else
             { 
+                
+                return RedirectToAction("Reprint");   
+            }  
+        }
+
+        [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult Address()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel == null || sessionModel.SelectedResult == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult UpdateAddress(FrameworkLearnerAddressViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                //Page refreshes, clearing out the entered data 
                 _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                 {
-                    sessionObject.SelectedReprintReasons = vm.SelectedReprintReasons;
-                    sessionObject.TicketNumber = vm.TicketNumber;
-                    sessionObject.OtherReason = vm.OtherReason;
+                    sessionObject.AddressLine1 = string.Empty;
+                    sessionObject.AddressLine2 = string.Empty;
+                    sessionObject.TownOrCity = string.Empty;
+                    sessionObject.County = string.Empty;
+                    sessionObject.Postcode = string.Empty;
                 });
-                return RedirectToAction("FrameworkReprintReason");   
+                return RedirectToAction("Address");
+            }
+            else
+            { 
+                //Save updates to session for the GET method
+                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                {
+                    sessionObject.AddressLine1 = vm.AddressLine1;
+                    sessionObject.AddressLine2 = vm.AddressLine2;
+                    sessionObject.TownOrCity = vm.TownOrCity;
+                    sessionObject.County = vm.County;
+                    sessionObject.Postcode = vm.Postcode;
+                });
+                return RedirectToAction("Address");   
             }  
         }
     }  

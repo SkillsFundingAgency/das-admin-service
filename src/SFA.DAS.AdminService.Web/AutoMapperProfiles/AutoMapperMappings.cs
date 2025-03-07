@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
@@ -77,6 +78,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
             CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+            CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
         }
     }
 }
