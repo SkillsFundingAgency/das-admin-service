@@ -220,6 +220,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
+        public IActionResult BackAction(string backActionTarget)
+        {
+             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+            {
+                sessionObject.BackToCheckAnswers = false;
+            });
+
+            return RedirectToAction(backActionTarget);
+        }
+
+        [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public IActionResult FrameworkReprintReason(bool backToCheckAnswers = false)
         {
@@ -234,8 +245,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 sessionObject.BackToCheckAnswers = backToCheckAnswers;
             });
 
-            var viewModel = _mapper.Map<FrameworkReprintReasonViewModel>(sessionModel);
-            viewModel.BackAction = backToCheckAnswers ? "Check" : "Address";
+            var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
+            viewModel.BackAction = backToCheckAnswers ? "Check" : "FrameworkLearnerDetails";
             return View(viewModel);
         }
 
@@ -243,16 +254,19 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult UpdateFrameworkReprintReason(AmendFrameworkReprintReasonViewModel vm)
         {
+            var backToCheckAnswers = _sessionService.SessionFrameworkSearch.BackToCheckAnswers;
+
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
             {
                 sessionObject.SelectedReprintReasons = vm.SelectedReprintReasons;
                 sessionObject.TicketNumber = vm.TicketNumber;
                 sessionObject.OtherReason = vm.OtherReason;
+                sessionObject.BackToCheckAnswers = false;
             });
 
             if (ModelState.IsValid)
             {
-                return _sessionService.SessionFrameworkSearch.BackToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("Address");
+                return backToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("FrameworkLearnerDetails");
             }
             else
             { 
@@ -292,6 +306,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                    sessionObject.TownOrCity = vm.TownOrCity;
                    sessionObject.County = vm.County;
                    sessionObject.Postcode = vm.Postcode;
+                   sessionObject.BackToCheckAnswers = false;
                });
 
             if (ModelState.IsValid)
