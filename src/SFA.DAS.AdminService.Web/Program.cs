@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Builder;
 using NLog;
 using NLog.Web;
 using System;
