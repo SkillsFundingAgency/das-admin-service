@@ -10,6 +10,8 @@ using AutoMapper;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -19,16 +21,23 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
+        private readonly IScheduleApiClient _scheduleApiClient;
         private readonly IFrameworkSearchSessionService _sessionService;
         private readonly IMapper _mapper;
 
-        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
-            IFrameworkSearchSessionService sessionService, IMapper mapper)
+        public SearchController(
+            ILearnerDetailsApiClient learnerDetailsApiClient, 
+            IRegisterApiClient registerApiClient, 
+            IStaffSearchApiClient staffSearchApiClient,
+            IFrameworkSearchSessionService sessionService, 
+            IScheduleApiClient scheduleApiClient,
+            IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
             _sessionService = sessionService;
+            _scheduleApiClient = scheduleApiClient;
             _mapper = mapper;
         }
 
@@ -351,8 +360,10 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             //TODO : Waiting on #2356 to create the reprint request
             _sessionService.ClearFrameworkSearchRequest();
-            return RedirectToAction("Index");
-        }
 
+            var nextScheduledRun = await _scheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
+            return RedirectToAction("Index");
+
+        }
     }
 }
