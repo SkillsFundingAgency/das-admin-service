@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -27,7 +28,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void Reprint_SelectedResultIsNull_RedirectsToIndex()
+        public async Task Reprint_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession { SelectedResult = null };
@@ -42,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void Reprint_ValidSessionAndResults_ReturnsViewWithCorrectModel()
+        public async Task Reprint_ValidSessionAndResults_ReturnsViewWithCorrectModel()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -96,14 +97,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Reprint");
+            redirectToActionResult.ActionName.Should().Be("Address");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
-            capturedAction(sessionModel); 
-            sessionModel.SelectedReprintReasons.Should().BeEmpty();
-            sessionModel.TicketNumber.Should().BeEmpty();
-            sessionModel.OtherReason.Should().BeEmpty();
+            capturedAction(sessionModel);
+            sessionModel.SelectedReprintReasons.Should().BeEquivalentTo(vm.SelectedReprintReasons);
+            sessionModel.TicketNumber.Should().Be(vm.TicketNumber);
+            sessionModel.OtherReason.Should().Be(vm.OtherReason);
         }
 
         [Test]

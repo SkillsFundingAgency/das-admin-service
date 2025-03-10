@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
@@ -21,5 +22,24 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public DateTime CertificationDate { get; set; }
         public string BackAction { get; set; }
+        public string QualificationsDisplay
+        {
+            get
+            {
+                if (Qualifications == null || !Qualifications.Any())
+                {
+                    return string.Empty;
+                }
+
+                if (Qualifications.Count == 1)
+                {
+                    return Qualifications.First();
+                }
+                else
+                {
+                    return $"<ul class=\"govuk-list govuk-list--bullet\"><li>{string.Join("</li><li>", Qualifications)}</li></ul>";
+                }
+            }
+        } 
     }
 }

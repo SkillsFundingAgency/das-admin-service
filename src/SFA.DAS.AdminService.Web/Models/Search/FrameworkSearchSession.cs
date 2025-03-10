@@ -14,9 +14,6 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public Guid? SelectedResult { get; set; }
 
         //Reprint reason
-        public string CertificateNumber { get; set; }
-        public string Status { get; set; }
-        public System.DateTime DateSentToPrinter { get; set; }
         public string TicketNumber { get; set; }
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
@@ -27,5 +24,8 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public string TownOrCity { get; set; }
         public string County { get; set; }
         public string Postcode { get; set; }
+
+        //Navigation
+        public bool BackToCheckAnswers { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IMapper _mapper;
 
         public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
-            IFrameworkSearchSessionService sessionService,  IMapper mapper)
+            IFrameworkSearchSessionService sessionService, IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
@@ -77,7 +77,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                             });
                     }
                     else if (frameworkResults.Count == 1)
-                    { 
+                    {
                         var searchSessionObject = new FrameworkSearchSession()
                         {
                             FirstName = searchQuery.FirstName,
@@ -106,17 +106,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
             }
             else
-            { 
+            {
                 if (vm.SearchType == SearchTypes.Standards)
                 {
                     _sessionService.ClearFrameworkSearchRequest();
-                    
+
                     vm.FirstName = null;
                     vm.LastName = null;
                     vm.Day = null;
                     vm.Month = null;
                     vm.Year = null;
-                    vm.Date = null;   
+                    vm.Date = null;
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
@@ -135,7 +135,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             int? batchNumber = null)
         {
             var learner = await _learnerDetailsApiClient.GetLearnerDetail(stdCode, uln, allLogs);
-            
+
             var vm = new SelectViewModel
             {
                 Learner = learner,
@@ -167,10 +167,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(viewModel);
         }
 
-
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SelectFrameworkLearner(FrameworkLearnerSearchResultsViewModel vm)
+        public IActionResult SelectFrameworkLearner(FrameworkLearnerSearchResultsViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -182,51 +181,47 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             return RedirectToAction("MultipleResults");
         }
+
         [HttpGet]
         public async Task<IActionResult> Certificate()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || ! sessionModel.SelectedResult.HasValue)
+            if (sessionModel == null || !sessionModel.SelectedResult.HasValue)
             {
                 return RedirectToAction("Index");
             }
 
-            var certificateDetails = 
+            var certificateDetails =
                 await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
-
-            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
-            {
-                sessionObject.CertificateNumber = certificateDetails.CertificateNumber;
-            });
 
             return View(_mapper.Map<FrameworkLearnerViewModel>(certificateDetails));
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> CertificateBackAction()
+        public IActionResult CertificateBackAction()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel != null)
             {
                 if (sessionModel.FrameworkResults?.Count > 1)
-                { 
+                {
                     _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                     {
                         sessionObject.SelectedResult = null;
                     });
 
                     return RedirectToAction("MultipleResults");
-                } 
+                }
                 _sessionService.ClearFrameworkSearchRequest();
             }
-            
+
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult Reprint()
+        public IActionResult Reprint(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
@@ -234,7 +229,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+            {
+                sessionObject.BackToCheckAnswers = backToCheckAnswers;
+            });
+
             var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
+            viewModel.BackAction = backToCheckAnswers ? "Check" : "Address";
             return View(viewModel);
         }
 
@@ -251,18 +252,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Address");
+                return _sessionService.SessionFrameworkSearch.BackToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("Address");
             }
             else
-            { 
-                
-                return RedirectToAction("Reprint");   
-            }  
+            {
+                return RedirectToAction("Reprint");
+            }
         }
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult Address()
+        public IActionResult Address(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
@@ -270,7 +270,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+           {
+               sessionObject.BackToCheckAnswers = backToCheckAnswers;
+           });
+
             var viewModel = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel);
+            viewModel.BackAction = backToCheckAnswers ? "Check" : "Reprint";
             return View(viewModel);
         }
 
@@ -278,32 +284,59 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult UpdateAddress(FrameworkLearnerAddressViewModel vm)
         {
+            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+               {
+                   sessionObject.AddressLine1 = vm.AddressLine1;
+                   sessionObject.AddressLine2 = vm.AddressLine2;
+                   sessionObject.TownOrCity = vm.TownOrCity;
+                   sessionObject.County = vm.County;
+                   sessionObject.Postcode = vm.Postcode;
+               });
+
             if (ModelState.IsValid)
             {
-                //Page refreshes, clearing out the entered data 
-                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
-                {
-                    sessionObject.AddressLine1 = string.Empty;
-                    sessionObject.AddressLine2 = string.Empty;
-                    sessionObject.TownOrCity = string.Empty;
-                    sessionObject.County = string.Empty;
-                    sessionObject.Postcode = string.Empty;
-                });
-                return RedirectToAction("Address");
+                return RedirectToAction("Check");
             }
             else
-            { 
-                //Save updates to session for the GET method
-                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
-                {
-                    sessionObject.AddressLine1 = vm.AddressLine1;
-                    sessionObject.AddressLine2 = vm.AddressLine2;
-                    sessionObject.TownOrCity = vm.TownOrCity;
-                    sessionObject.County = vm.County;
-                    sessionObject.Postcode = vm.Postcode;
-                });
-                return RedirectToAction("Address");   
-            }  
+            {
+                return RedirectToAction("Address");
+            }
         }
-    }  
+
+        [HttpGet]
+        public async Task<IActionResult> Check()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel == null || sessionModel.SelectedResult == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var frameworkLearner =
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+
+            var viewModel = new CheckFrameworkLearnerViewModel()
+            {
+                LearnerDetails = _mapper.Map<FrameworkLearnerViewModel>(frameworkLearner),
+                AddressDetails = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel),
+                ReprintDetails = _mapper.Map<UpdateReprintReasonViewModel>(sessionModel)
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Submit()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel == null || sessionModel.SelectedResult == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            //TODO : Waiting on #2356 to create the reprint request
+            _sessionService.ClearFrameworkSearchRequest();
+            return RedirectToAction("Index");
+        }
+
+    }
 }

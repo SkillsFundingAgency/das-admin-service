@@ -83,33 +83,14 @@
                 </div>
                 @if (Model.Qualifications.Any())
                 {
-                    if (Model.Qualifications.Count == 1)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualifications and awarding bodies
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.Qualifications.First()
-                            </dd>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Qualifications and awarding bodies
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                <ul class="govuk-list govuk-error-summary__list">
-                                    @foreach (var qualification in Model.Qualifications)
-                                    {
-                                        <li>@qualification</li>
-                                    }
-                                </ul>
-                            </dd>
-                        </div>
-                    }
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Qualifications and awarding bodies
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.QualificationsDisplay)
+                        </dd>
+                    </div>
                 }
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">

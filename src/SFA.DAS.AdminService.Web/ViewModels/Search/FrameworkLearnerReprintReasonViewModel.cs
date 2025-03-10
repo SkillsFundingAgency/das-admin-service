@@ -13,6 +13,8 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string TicketNumber { get; set; }
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
+        public bool BackToCheckAnswers { get; set; }
+        public string BackAction { get; set; }
         public FrameworkLearnerReprintReasonViewModel()
         {
             AvailableReprintReasons = new List<string>

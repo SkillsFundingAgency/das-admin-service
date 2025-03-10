@@ -9,7 +9,7 @@
     bool isFirstResult = true;
 }
 
-<a asp-action="Certificate" asp-controller="Search" class="govuk-back-link">Back</a>
+<a asp-action="@Model.BackAction" asp-controller="Search" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -57,7 +57,6 @@
             </dl>
 
             <form asp-action="UpdateReprintReason" asp-controller="Search" method="post">
-
                 <div class="govuk-form-group" sfa-validation-for="TicketNumber" sfa-validationerror-class="govuk-form-group--error">
                     <label class="govuk-label govuk-label--m" asp-for="TicketNumber">Enter the ticket reference number</label>
                     <span class="govuk-error-message" asp-validation-for="TicketNumber"></span>

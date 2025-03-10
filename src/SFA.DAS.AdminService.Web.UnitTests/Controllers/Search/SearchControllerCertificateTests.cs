@@ -105,7 +105,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerViewModel>().Subject;
-            resultModel.Should().BeEquivalentTo(certificateViewModel); // Assert model properties
+            resultModel.Should().BeEquivalentTo(certificateViewModel); 
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()))
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
-            var result = await _controller.CertificateBackAction();
+            var result = _controller.CertificateBackAction();
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel); 
@@ -136,7 +136,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
-            var result = await _controller.CertificateBackAction();
+            var result = _controller.CertificateBackAction();
 
             _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
 
@@ -149,7 +149,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
-            var result = await _controller.CertificateBackAction();
+            var result = _controller.CertificateBackAction();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("Index");
