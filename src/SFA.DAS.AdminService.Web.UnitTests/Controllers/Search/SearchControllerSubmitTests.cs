@@ -9,6 +9,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System.Threading.Tasks;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -45,7 +46,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Submit_ValidSessionAndSelectedResult_CallsAPIToCreateReprintRequest()
+        [MoqAutoData]
+        public async Task Submit_ValidSessionAndSelectedResult_CallsAPIToCreateReprintRequest(ScheduleRun scheduleRun)
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -59,6 +61,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
             _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
+            _scheduleApiClientMock.Setup(s => s.GetNextScheduledRun((int)ScheduleType.PrintRun)).ReturnsAsync(scheduleRun);
 
             // Act
             var result = await _controller.Submit();
@@ -94,7 +97,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Submit_ValidSessionAndSelectedResult_ClearsSession()
+        [MoqAutoData]
+        public async Task Submit_ValidSessionAndSelectedResult_ClearsSession(ScheduleRun scheduleRun)
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -108,6 +112,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
             _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
+            _scheduleApiClientMock.Setup(s => s.GetNextScheduledRun((int)ScheduleType.PrintRun)).ReturnsAsync(scheduleRun);
 
             // Act
             var result = await _controller.Submit();
@@ -117,13 +122,15 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Submit_ValidSessionAndSelectedResult_ReturnsViewWithCorrectData()
+        [MoqAutoData]
+        public async Task Submit_ValidSessionAndSelectedResult_ReturnsViewWithCorrectData(ScheduleRun scheduleRun)
         {
             // Arrange
             _sessionServiceMock.Setup(s =>  s.SessionFrameworkSearch).Returns(new FrameworkSearchSession
             {
                 SelectedResult = Guid.NewGuid()
             });
+            _scheduleApiClientMock.Setup(s => s.GetNextScheduledRun((int)ScheduleType.PrintRun)).ReturnsAsync(scheduleRun);
 
             // Act
             var result = await _controller.Submit();
@@ -132,8 +139,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
 
             //TODO: Waiting on #2356
-            //redirectResult.ActionName.Should().Be("Confirmation");
-            //redirectResult.RouteValues["printRunDate"].Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("Confirmation");
+            redirectResult.RouteValues["printRunDate"].Should().Be(scheduleRun.RunTime.ToSfaShortDateString());
         }
     }
 }

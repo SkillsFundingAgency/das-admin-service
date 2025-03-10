@@ -361,8 +361,18 @@ namespace SFA.DAS.AdminService.Web.Controllers
             _sessionService.ClearFrameworkSearchRequest();
 
             var nextScheduledRun = await _scheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
-            return RedirectToAction("Index");
+            if (nextScheduledRun != null)
+            { 
+                return RedirectToAction("Confirmation", new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
+            }
+            return RedirectToAction("Confirmation", new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
 
+        }
+
+        [HttpGet("Confirmation/{printRunDate}")]
+        public IActionResult Confirmation(string printRunDate)
+        {
+            return View(new CertificateReprintSubmittedViewModel { PrintRunDate = printRunDate});
         }
     }
 }
