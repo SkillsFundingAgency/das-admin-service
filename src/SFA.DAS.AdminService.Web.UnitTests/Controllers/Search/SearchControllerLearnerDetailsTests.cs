@@ -10,10 +10,10 @@ using System;
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class SearchControllerSelectTests : SearchControllerTestsBase
+    public class SearchControllerLearnerDetailsTests : SearchControllerTestsBase
     {
         [Test]
-        public async Task Select_ValidInput_ReturnsCorrectViewModel()
+        public async Task LearnerDetails_ValidInput_ReturnsCorrectViewModel()
         {
             // Arrange
             int stdCode = 123;
@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeOfType<LearnerDetailsViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<StandardLearnerDetailsViewModel>().Subject;
 
             model.Learner.Should().Be(learnerDetails);
             model.SearchString.Should().Be(searchString);
@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Select_LearnerDetailsApiClientThrowsException_APIErrorThrown()
+        public async Task LearnerDetails_LearnerDetailsApiClientThrowsException_APIErrorThrown()
         {
             // Arrange
             int stdCode = 123;
@@ -58,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Select_ReturnsCorrectView()
+        public async Task LearnerDetails_ReturnsCorrectView()
         {
             // Arrange
             int stdCode = 123;

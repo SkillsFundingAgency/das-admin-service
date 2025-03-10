@@ -83,7 +83,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void UpdateAddress_ValidModelState_ClearsSessionAndRedirects()
         {
             // Arrange
-            var vm = new FrameworkLearnerAddressViewModel { };
+            var vm = new FrameworkLearnerAddressViewModel 
+            { 
+                AddressLine1 = "69 Southend Rd",
+                AddressLine2 = "Wickford",
+                TownOrCity = "Essex",
+                County = "Essex",
+                Postcode = "SS11 8DX"
+            };
             _controller.ModelState.Clear();
             _controller.ModelState.IsValid.Should().BeTrue();
 
@@ -102,16 +109,16 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Address");
+            redirectToActionResult.ActionName.Should().Be("Check");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel);
-            sessionModel.AddressLine1.Should().Be(string.Empty);
-            sessionModel.AddressLine2.Should().Be(string.Empty);
-            sessionModel.TownOrCity.Should().Be(string.Empty);
-            sessionModel.County.Should().Be(string.Empty);
-            sessionModel.Postcode.Should().Be(string.Empty);
+            sessionModel.AddressLine1.Should().Be(vm.AddressLine1);
+            sessionModel.AddressLine2.Should().Be(vm.AddressLine2);
+            sessionModel.TownOrCity.Should().Be(vm.TownOrCity);
+            sessionModel.County.Should().Be(vm.County);
+            sessionModel.Postcode.Should().Be(vm.Postcode);
         }
 
         [Test]

@@ -78,7 +78,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
             CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+            CreateMap<FrameworkSearchSession, AmendFrameworkReprintReasonViewModel>();
             CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
+            CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
+
         }
     }
 }
