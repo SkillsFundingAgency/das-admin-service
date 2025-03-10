@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -64,6 +66,31 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             // Assert
             //TODO : Waiting on #2356 to create the reprint request
             //_apiMock.Verify(s => s.SubmitFrameworkReprintRequest(), Times.Once);
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Submit_ValidSessionAndSelectedResult_CallsAPIToGetNextPrintRunDate(ScheduleRun scheduleRun)
+        {
+            // Arrange
+            var sessionModel = new FrameworkSearchSession
+            {
+                FrameworkResults = new List<FrameworkLearnerSummaryViewModel> { new FrameworkLearnerSummaryViewModel() },
+                FirstName = "Test",
+                LastName = "User",
+                DateOfBirth = DateTime.Now.AddYears(-20),
+                SelectedResult = Guid.NewGuid(),
+            };
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+            var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
+            _scheduleApiClientMock.Setup(s => s.GetNextScheduledRun((int)ScheduleType.PrintRun)).ReturnsAsync(scheduleRun);
+
+            // Act
+            var result = await _controller.Submit();
+
+            // Assert
+            _scheduleApiClientMock.Verify(s => s.GetNextScheduledRun((int)ScheduleType.PrintRun), Times.Once);
         }
 
         [Test]
