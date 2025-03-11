@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(vm ?? new SearchInputViewModel());
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Results(SearchInputViewModel vm, int page = 1)
         {
             if (ModelState.IsValid)
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("Certificate");
+                        return RedirectToAction("FrameworkLearnerDetails");
                     }
                     else
                     {
@@ -127,8 +127,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction("Index", vm);
         }
 
-        [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode,
+        [HttpGet("learner-details")]
+        public async Task<IActionResult> LearnerDetails(int stdCode,
             long uln,
             string searchString,
             int page = 1,
@@ -137,7 +137,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var learner = await _learnerDetailsApiClient.GetLearnerDetail(stdCode, uln, allLogs);
             
-            var vm = new SelectViewModel
+            var vm = new LearnerDetailsViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
@@ -179,12 +179,12 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
-                return RedirectToAction("Certificate");
+                return RedirectToAction("FrameworkLearnerDetails");
             }
             return RedirectToAction("MultipleResults");
         }
         [HttpGet]
-        public async Task<IActionResult> Certificate()
+        public async Task<IActionResult> FrameworkLearnerDetails()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel != null && sessionModel.SelectedResult.HasValue)
@@ -192,7 +192,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 var certificateDetails = 
                     await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
 
-                return View(_mapper.Map<FrameworkLearnerViewModel>(certificateDetails));
+                return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(certificateDetails));
 
             }
             return RedirectToAction("Index");

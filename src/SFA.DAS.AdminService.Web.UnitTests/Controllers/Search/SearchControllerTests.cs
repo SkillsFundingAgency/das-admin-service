@@ -248,7 +248,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Results_FrameworkSearch_ValidInput_OneResult_RedirectsToCertificate()
+        public async Task Results_FrameworkSearch_ValidInput_OneResult_RedirectsToFrameworkLearnerDetails()
         {
             // Arrange
             var vm = Builder<SearchInputViewModel>.CreateNew()
@@ -265,7 +265,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             result.Should().NotBeNull();
-            result.ActionName.Should().Be("Certificate");
+            result.ActionName.Should().Be("FrameworkLearnerDetails");
         }
 
         [Test]
@@ -318,7 +318,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             // Assert
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("Certificate");
+            redirectResult.ActionName.Should().Be("FrameworkLearnerDetails");
             redirectResult.ControllerName.Should().BeNull();
 
             _controller.ModelState.IsValid.Should().BeTrue();
@@ -368,13 +368,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, searchString, page, allLogs, batchNumber);
+            var result = await _controller.LearnerDetails(stdCode, uln, searchString, page, allLogs, batchNumber);
 
             // Assert
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
 
-            var model = viewResult.Model as SelectViewModel;
+            var model = viewResult.Model as LearnerDetailsViewModel;
             model.Should().NotBeNull();
             model.Learner.Should().Be(learnerDetails);
             model.SearchString.Should().Be(searchString);
@@ -394,7 +394,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ThrowsAsync(new Exception("API Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            Func<Task> act = async () => await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("API Error");
@@ -412,7 +412,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            var result = await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             var viewResult = result as ViewResult;
@@ -436,7 +436,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task SelectFramework_ModelStateIsValid_UpdatesSessionAndRedirectsToCertificate()
+        public async Task SelectFramework_ModelStateIsValid_UpdatesSessionAndRedirectsToFrameworkLearnerDetails()
         {
             // Arrange
             var vm = new FrameworkLearnerSearchResultsViewModel { SelectedResult = Guid.NewGuid() };
@@ -459,7 +459,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 result.Should().NotBeNull();
 
                 var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
-                redirectToActionResult.ActionName.Should().Be("Certificate");
+                redirectToActionResult.ActionName.Should().Be("FrameworkLearnerDetails");
             });
 
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSessionData>>()), Times.Once);
@@ -474,7 +474,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSessionData)null);
 
             // Act
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             // Assert
             Assert.Multiple(() =>
@@ -507,7 +507,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             // Assert
             Assert.Multiple(() =>
@@ -542,7 +542,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
 
             // Act
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             // Assert
             _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedResult.Value), Times.Once);
@@ -552,7 +552,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [MoqAutoData]
         public async Task Certificate_SessionAndSelectedResultValid_MapsViewModel(
             GetFrameworkLearnerResponse certificateResult, 
-            FrameworkLearnerViewModel certificateViewModel)
+            FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             // Arrange
             var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
@@ -570,20 +570,20 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
             // Act
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             // Assert
-            _mapperMock.Verify(m => m.Map<FrameworkLearnerViewModel>(certificateResult), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult), Times.Once);
         }
 
         [Test]
         [MoqAutoData]
         public async Task Certificate_SessionAndSelectedResultValid_ReturnsCorrectView(
             GetFrameworkLearnerResponse certificateResult, 
-            FrameworkLearnerViewModel certificateViewModel)
+            FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             // Arrange
             var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
@@ -601,10 +601,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
             // Act
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             // Assert
             Assert.Multiple(() =>
@@ -613,7 +613,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
                 var viewResult = result.Should().BeOfType<ViewResult>().Which;
 
-                var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerViewModel>().Which;
+                var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Which;
                 resultModel.Should().NotBeNull();
             });
 

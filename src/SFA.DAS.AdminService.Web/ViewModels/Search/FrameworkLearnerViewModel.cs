@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerViewModel
+    public class FrameworkLearnerDetailsViewModel
     {
         public Guid Id { get; set; }
         public string ApprenticeForename { get; set; }
