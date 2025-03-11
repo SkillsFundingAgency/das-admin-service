@@ -43,7 +43,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("Index");
@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var sessionModel = CreateSessionModel(results, null);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("Index");
@@ -71,41 +71,41 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
 
-            await _controller.Certificate();
+            await _controller.FrameworkLearnerDetails();
 
             _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedResult.Value), Times.Once);
         }
 
         [Test]
         [MoqAutoData]
-        public async Task Certificate_SessionAndSelectedResultValid_MapsViewModel(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerViewModel certificateViewModel)
+        public async Task Certificate_SessionAndSelectedResultValid_MapsViewModel(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
-            await _controller.Certificate();
+            await _controller.FrameworkLearnerDetails();
 
-            _mapperMock.Verify(m => m.Map<FrameworkLearnerViewModel>(certificateResult), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult), Times.Once);
         }
 
         [Test]
         [MoqAutoData]
-        public async Task Certificate_SessionAndSelectedResultValid_ReturnsCorrectView(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerViewModel certificateViewModel)
+        public async Task Certificate_SessionAndSelectedResultValid_ReturnsCorrectView(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerViewModel>().Subject;
-            resultModel.Should().BeEquivalentTo(certificateViewModel); // Assert model properties
+            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Subject;
+            resultModel.Should().BeEquivalentTo(certificateViewModel); 
         }
 
         [Test]
@@ -164,7 +164,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ThrowsAsync(new Exception("API Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Certificate();
+            Func<Task> act = async () => await _controller.FrameworkLearnerDetails();
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("API Error");
@@ -177,10 +177,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(_fixture.Create<GetFrameworkLearnerResponse>());
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(It.IsAny<GetFrameworkLearnerResponse>())).Throws(new Exception("Mapping Error"));
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(It.IsAny<GetFrameworkLearnerResponse>())).Throws(new Exception("Mapping Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Certificate();
+            Func<Task> act = async () => await _controller.FrameworkLearnerDetails();
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("Mapping Error");

@@ -27,11 +27,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, searchString, page, allLogs, batchNumber);
+            var result = await _controller.LearnerDetails(stdCode, uln, searchString, page, allLogs, batchNumber);
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeOfType<SelectViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<LearnerDetailsViewModel>().Subject;
 
             model.Learner.Should().Be(learnerDetails);
             model.SearchString.Should().Be(searchString);
@@ -51,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ThrowsAsync(new Exception("API Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            Func<Task> act = async () => await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("API Error");
@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            var result = await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;

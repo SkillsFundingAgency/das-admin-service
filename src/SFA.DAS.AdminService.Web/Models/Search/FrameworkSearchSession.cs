@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public List<FrameworkLearnerSummaryViewModel> FrameworkResults { get; set; }
         public Guid? SelectedResult { get; set; }
 
-        //Reprint reason
+        //FrameworkReprintReason reason
         public string CertificateNumber { get; set; }
         public string Status { get; set; }
         public System.DateTime DateSentToPrinter { get; set; }

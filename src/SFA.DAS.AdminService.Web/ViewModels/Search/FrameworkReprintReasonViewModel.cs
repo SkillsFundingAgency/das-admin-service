@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerReprintReasonViewModel
+    public class FrameworkReprintReasonViewModel
     {
         public IEnumerable<string> AvailableReprintReasons { get; }
         public string CertificateNumber { get; set; }
@@ -13,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string TicketNumber { get; set; }
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
-        public FrameworkLearnerReprintReasonViewModel()
+        public FrameworkReprintReasonViewModel()
         {
             AvailableReprintReasons = new List<string>
             { 

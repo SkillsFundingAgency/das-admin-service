@@ -90,7 +90,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectResult.ActionName.Should().Be("Certificate");
+            redirectResult.ActionName.Should().Be("FrameworkLearnerDetails");
             _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSession>(), Times.Once);
 
         }

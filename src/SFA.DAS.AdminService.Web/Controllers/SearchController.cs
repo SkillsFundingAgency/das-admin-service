@@ -226,7 +226,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult Reprint()
+        public IActionResult FrameworkReprintReason()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
@@ -234,13 +234,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
+            var viewModel = _mapper.Map<FrameworkReprintReasonViewModel>(sessionModel);
             return View(viewModel);
         }
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult UpdateReprintReason(UpdateReprintReasonViewModel vm)
+        public IActionResult UpdateFrameworkReprintReason(AmendFrameworkReprintReasonViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -251,7 +251,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     sessionObject.TicketNumber = string.Empty;
                     sessionObject.OtherReason = string.Empty;
                 });
-                return RedirectToAction("Reprint");
+                return RedirectToAction("FrameworkReprintReason");
             }
             else
             { 
@@ -261,7 +261,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     sessionObject.TicketNumber = vm.TicketNumber;
                     sessionObject.OtherReason = vm.OtherReason;
                 });
-                return RedirectToAction("Reprint");   
+                return RedirectToAction("FrameworkReprintReason");   
             }  
         }
     }  
