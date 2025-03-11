@@ -70,7 +70,7 @@
         "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('resourceServiceName')))]",
         "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
         "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
-        "configNames": "SFA.DAS.AdminService.Web,SFA.DAS.Provider.DfeSignIn"
+        "configNames": "SFA.DAS.AdminService,SFA.DAS.Provider.DfeSignIn"
     },
     "resources": [
         {
