@@ -199,7 +199,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CertificateBackAction()
+        public async Task<IActionResult> FrameworkLearnerDetailsBackAction()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel != null)

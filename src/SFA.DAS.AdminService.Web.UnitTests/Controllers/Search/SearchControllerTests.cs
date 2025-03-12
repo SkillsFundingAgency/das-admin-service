@@ -621,7 +621,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task CertificateBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSessionData
@@ -635,7 +635,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             // Assert
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<System.Action<FrameworkSearchSessionData>>()), Times.Once);
@@ -651,7 +651,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task CertificateBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSessionData
@@ -665,7 +665,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             // Assert
             _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
@@ -680,7 +680,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task CertificateBackAction_SessionIsNull_RedirectsToIndex()
+        public async Task FrameworkLearnerDetailsBackAction_SessionIsNull_RedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSessionData
@@ -694,7 +694,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             // Assert
             Assert.Multiple(() =>
