@@ -10,10 +10,10 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class ReprintTests : SearchControllerTestsBase 
+    public class FrameworkReprintReasonTests : SearchControllerTestsBase 
     {
         [Test]
-        public void Reprint_SessionIsNull_RedirectsToIndex()
+        public void FrameworkReprintReason_SessionIsNull_RedirectsToIndex()
         {
             // Arrange
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void Reprint_SelectedResultIsNull_RedirectsToIndex()
+        public void FrameworkReprintReason_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession { SelectedResult = null };
@@ -42,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void Reprint_ValidSessionAndResults_ReturnsViewWithCorrectModel()
+        public void FrameworkReprintReason_ValidSessionAndResults_ReturnsViewWithCorrectModel()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -70,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         
 
         [Test]
-        public void UpdateReprintReason_ValidModelState_ClearsSessionAndRedirects()
+        public void UpdateFrameworkReprintReason_ValidModelState_ClearsSessionAndRedirects()
         {
             // Arrange
             var vm = new AmendFrameworkReprintReasonViewModel { SelectedReprintReasons = new List<string> { "Reason1" }, TicketNumber = "123", OtherReason = "Other" };
@@ -107,7 +107,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void UpdateReprintReason_InvalidModelState_UpdatesSessionAndRedirects()
+        public void UpdateFrameworkReprintReason_InvalidModelState_UpdatesSessionAndRedirects()
         {
             // Arrange
             var vm = new AmendFrameworkReprintReasonViewModel

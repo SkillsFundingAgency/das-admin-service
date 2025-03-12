@@ -191,20 +191,20 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var certificateDetails = 
+            var frameworkLearnerDetails = 
                 await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
 
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
             {
-                sessionObject.CertificateNumber = certificateDetails.CertificateNumber;
+                sessionObject.CertificateNumber = frameworkLearnerDetails.CertificateNumber;
             });
 
-            return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(certificateDetails));
+            return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails));
 
         }
 
         [HttpGet]
-        public async Task<IActionResult> CertificateBackAction()
+        public async Task<IActionResult> FrameworkLearnerDetailsBackAction()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel != null)

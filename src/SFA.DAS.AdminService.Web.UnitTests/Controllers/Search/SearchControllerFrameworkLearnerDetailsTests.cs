@@ -16,7 +16,7 @@ using SFA.DAS.Testing.AutoFixture;
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class CertificateTests : SearchControllerTestsBase 
+    public class FrameworkLearnerDetailsTests : SearchControllerTestsBase 
     {
         private IFixture _fixture;
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Certificate_SessionIsNull_RedirectsToIndex()
+        public async Task FrameworkLearnerDetails_SessionIsNull_RedirectsToIndex()
         {
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Certificate_SelectedResultIsNull_RedirectsToIndex()
+        public async Task FrameworkLearnerDetails_SelectedResultIsNull_RedirectsToIndex()
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, null);
@@ -64,12 +64,12 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
         [Test]
         [MoqAutoData]
-        public async Task Certificate_SessionAndSelectedResultValid_CallsGetFrameworkLearner(GetFrameworkLearnerResponse certificateResult)
+        public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_CallsGetFrameworkLearner(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse)
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(frameworkLearnerDetailsResponse);
 
             await _controller.FrameworkLearnerDetails();
 
@@ -78,38 +78,38 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
         [Test]
         [MoqAutoData]
-        public async Task Certificate_SessionAndSelectedResultValid_MapsViewModel(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerDetailsViewModel certificateViewModel)
+        public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_MapsViewModel(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse, FrameworkLearnerDetailsViewModel frameworkLearnerDetailsViewModel)
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(frameworkLearnerDetailsResponse);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworkLearnerDetailsViewModel);
 
             await _controller.FrameworkLearnerDetails();
 
-            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse), Times.Once);
         }
 
         [Test]
         [MoqAutoData]
-        public async Task Certificate_SessionAndSelectedResultValid_ReturnsCorrectView(GetFrameworkLearnerResponse certificateResult, FrameworkLearnerDetailsViewModel certificateViewModel)
+        public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_ReturnsCorrectView(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse, FrameworkLearnerDetailsViewModel frameworklearnerDetailsViewModel)
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(frameworkLearnerDetailsResponse);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworklearnerDetailsViewModel);
 
             var result = await _controller.FrameworkLearnerDetails();
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Subject;
-            resultModel.Should().BeEquivalentTo(certificateViewModel); 
+            resultModel.Should().BeEquivalentTo(frameworklearnerDetailsViewModel); 
         }
 
         [Test]
-        public async Task CertificateBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
@@ -119,7 +119,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()))
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel); 
@@ -130,13 +130,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task CertificateBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
 
@@ -145,18 +145,18 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task CertificateBackAction_SessionIsNull_RedirectsToIndex()
+        public async Task FrameworkLearnerDetailsBackAction_SessionIsNull_RedirectsToIndex()
         {
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
-            var result = await _controller.CertificateBackAction();
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("Index");
         }
 
         [Test]
-        public async Task Certificate_ApiThrowsException_ReturnsErrorView()
+        public async Task FrameworkLearnerDetails_ApiThrowsException_ReturnsErrorView()
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
@@ -171,7 +171,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Certificate_MappingThrowsException_ReturnsErrorView()
+        public async Task FrameworkLearnerDetails_MappingThrowsException_ReturnsErrorView()
         {
             var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
