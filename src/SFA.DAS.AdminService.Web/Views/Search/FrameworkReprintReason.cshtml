@@ -10,7 +10,7 @@
     var count = 0;
 }
 
-<a asp-action="@Model.BackAction" asp-controller="Search" class="govuk-back-link">Back</a>
+<a asp-action="BackAction" asp-route-backActionTarget="@Model.BackAction" asp-controller="Search" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
