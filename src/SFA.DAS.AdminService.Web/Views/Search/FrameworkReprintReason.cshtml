@@ -22,39 +22,12 @@
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Certificate number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.CertificateNumber
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
                         Apprentice name
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.ApprenticeName
                     </dd>
                 </div>
-                @if(@Model.HasPreviousReprint)
-                {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Status
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.Status
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Date sent to printer
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.DateSentToPrinter
-                        </dd>
-                    </div>
-                }
             </dl>
 
             <form asp-action="UpdateReprintReason" asp-controller="Search" method="post">
