@@ -96,14 +96,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("FrameworkReprintReason");
+            redirectToActionResult.ActionName.Should().Be("Address");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel); 
-            sessionModel.SelectedReprintReasons.Should().BeEmpty();
-            sessionModel.TicketNumber.Should().BeEmpty();
-            sessionModel.OtherReason.Should().BeEmpty();
+            sessionModel.SelectedReprintReasons.Should().BeEquivalentTo(vm.SelectedReprintReasons);
+            sessionModel.TicketNumber.Should().Be(vm.TicketNumber);
+            sessionModel.OtherReason.Should().Be(vm.OtherReason);
         }
 
         [Test]

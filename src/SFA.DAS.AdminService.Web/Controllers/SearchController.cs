@@ -256,7 +256,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             else
             { 
                 
-                return RedirectToAction("Reprint");   
+                return RedirectToAction("FrameworkReprintReason");   
             }  
         }
 
