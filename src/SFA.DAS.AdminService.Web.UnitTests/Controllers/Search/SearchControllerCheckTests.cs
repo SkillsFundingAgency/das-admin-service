@@ -63,33 +63,33 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [MoqAutoData]
         public async Task Check_SessionAndSelectedResultValid_MapsViewModel(
             GetFrameworkLearnerResponse certificateResult, 
-            FrameworkLearnerViewModel certificateViewModel)
+            FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             var sessionModel = new FrameworkSearchSession { SelectedResult = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
-            await _controller.Certificate();
+            await _controller.FrameworkLearnerDetails();
 
-            _mapperMock.Verify(m => m.Map<FrameworkLearnerViewModel>(certificateResult), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult), Times.Once);
         }
 
         [Test]
         [MoqAutoData]
         public async Task Check_SessionAndSelectedResultValid_ReturnsViewWithCorrectModel(
             GetFrameworkLearnerResponse certificateResult, 
-            FrameworkLearnerViewModel certificateViewModel)
+            FrameworkLearnerDetailsViewModel certificateViewModel)
         {
             var sessionModel = new FrameworkSearchSession { SelectedResult = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerViewModel>(certificateResult)).Returns(certificateViewModel);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
-            var result = await _controller.Certificate();
+            var result = await _controller.FrameworkLearnerDetails();
 
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerViewModel>().Subject;
+            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Subject;
             resultModel.Should().BeEquivalentTo(certificateViewModel); 
         }
     }

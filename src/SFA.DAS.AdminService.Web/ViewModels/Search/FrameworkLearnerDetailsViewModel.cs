@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerViewModel
+    public class FrameworkLearnerDetailsViewModel
     {
         public Guid Id { get; set; }
         public string ApprenticeForename { get; set; }
@@ -22,6 +22,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public DateTime CertificationDate { get; set; }
         public string BackAction { get; set; }
+
         public string QualificationsDisplay
         {
             get

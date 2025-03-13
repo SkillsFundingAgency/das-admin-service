@@ -37,17 +37,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> AmendReason(int stdCode, long uln)
         {
             var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
-            var model = new CertificateAmendReasonViewModel
+            var model = new AmendStandardReprintReasonViewModel
             {
                 Learner = learner,
                 IncidentNumber = !ModelState.IsValid
-                    ? ModelState[nameof(CertificateAmendReasonViewModel.IncidentNumber)]?.AttemptedValue
+                    ? ModelState[nameof(AmendStandardReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
                     : string.Empty,
                 Reasons = !ModelState.IsValid
-                    ? new List<string>(ModelState[nameof(CertificateAmendReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
+                    ? new List<string>(ModelState[nameof(AmendStandardReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
                     : new List<string>(),
                 OtherReason = !ModelState.IsValid
-                    ? ModelState[nameof(CertificateAmendReasonViewModel.OtherReason)]?.AttemptedValue
+                    ? ModelState[nameof(AmendStandardReprintReasonViewModel.OtherReason)]?.AttemptedValue
                     : string.Empty
             };
 
@@ -56,7 +56,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> AmendReason(CertificateAmendReasonViewModel viewModel)
+        public async Task<IActionResult> AmendReason(AmendStandardReprintReasonViewModel viewModel)
         {
             var username = ContextAccessor.HttpContext.User.UserId();
 
@@ -88,20 +88,20 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> ReprintReason(int stdCode, long uln)
+        public async Task<IActionResult> StandardReprintReason(int stdCode, long uln)
         {
             var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
-            var model = new CertificateReprintReasonViewModel
+            var model = new StandardReprintReasonViewModel
             {
                 Learner = learner,
                 IncidentNumber = !ModelState.IsValid
-                    ? ModelState[nameof(CertificateReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
+                    ? ModelState[nameof(StandardReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
                     : string.Empty,
                 Reasons = !ModelState.IsValid
-                    ? new List<string>(ModelState[nameof(CertificateReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
+                    ? new List<string>(ModelState[nameof(StandardReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
                     : new List<string>(),
                 OtherReason = !ModelState.IsValid
-                    ? ModelState[nameof(CertificateReprintReasonViewModel.OtherReason)]?.AttemptedValue
+                    ? ModelState[nameof(StandardReprintReasonViewModel.OtherReason)]?.AttemptedValue
                     : string.Empty
             };
 
@@ -110,26 +110,26 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> ReprintReason(CertificateReprintReasonViewModel viewModel)
+        public async Task<IActionResult> StandardReprintReason(StandardReprintReasonViewModel viewModel)
         {
             var username = ContextAccessor.HttpContext.User.UserId();
 
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(ReprintReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
+                return RedirectToAction(nameof(StandardReprintReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
             }
 
             await CertificateApiClient.UpdateCertificateWithReprintReason(new UpdateCertificateWithReprintReasonCommand { 
                 CertificateReference = viewModel.Learner.CertificateReference, 
                 IncidentNumber = viewModel.IncidentNumber, 
-                Reasons = ParseReprintReasons(viewModel.Reasons),
+                Reasons = ParseStandardReprintReasons(viewModel.Reasons),
                 OtherReason = viewModel.Reasons.Contains("Other") ? viewModel.OtherReason : string.Empty,
                 Username = username } );
 
             return RedirectToAction(nameof(Check), new { viewModel.Learner.CertificateId });
         }
 
-        private ReprintReasons? ParseReprintReasons(List<string> reasons)
+        private ReprintReasons? ParseStandardReprintReasons(List<string> reasons)
         {
             var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
             

@@ -10,18 +10,18 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
     [TestFixture]
     public class UpdateReprintReasonViewModelValidatorTests
     {
-        private UpdateReprintReasonViewModelValidator _validator;
+        private AmendFrameworkReprintReasonViewModelValidator _validator;
 
         [SetUp]
         public void Setup()
         {
-            _validator = new UpdateReprintReasonViewModelValidator();
+            _validator = new AmendFrameworkReprintReasonViewModelValidator();
         }
 
         [Test]
         public void UpdateReprintReason_ValidModel_NoErrors()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC12345",
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -36,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [TestCase("")]
         public void UpdateReprintReason_TicketNumberNullOrEmpty_HasError(string ticketNumber)
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = ticketNumber,
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -50,7 +50,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_TicketNumberExceedsMaxCharacters_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -71,7 +71,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [TestCase("ABC123*")]
         public void UpdateReprintReason_TicketNumberContainsNonAlphanumericCharacters_HasError(string ticketNumber)
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = ticketNumber,
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -85,7 +85,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_SelectedReprintReasonsEmpty_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string>(),
@@ -99,7 +99,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_SelectedReprintReasonsNull_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = null,
@@ -113,7 +113,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_Other_OtherReasonEmpty_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},
@@ -127,7 +127,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_Other_OtherReasonNull_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},
@@ -141,7 +141,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void UpdateReprintReason_Other_OtherReasonExceedsMaxCharacters_HasError()
         {
-            var vm = new UpdateReprintReasonViewModel
+            var vm = new AmendFrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},

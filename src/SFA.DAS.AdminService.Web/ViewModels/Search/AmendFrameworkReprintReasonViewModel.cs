@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class UpdateReprintReasonViewModel
+    public class AmendFrameworkReprintReasonViewModel
     {
         public List<string> SelectedReprintReasons { get; set; }
         public string TicketNumber { get; set; }

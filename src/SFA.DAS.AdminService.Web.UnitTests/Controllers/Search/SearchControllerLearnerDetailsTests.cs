@@ -10,10 +10,10 @@ using System;
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class SearchControllerSelectTests : SearchControllerTestsBase
+    public class SearchControllerLearnerDetailsTests : SearchControllerTestsBase
     {
         [Test]
-        public async Task Select_ValidInput_ReturnsCorrectViewModel()
+        public async Task LearnerDetails_ValidInput_ReturnsCorrectViewModel()
         {
             // Arrange
             int stdCode = 123;
@@ -27,11 +27,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, searchString, page, allLogs, batchNumber);
+            var result = await _controller.LearnerDetails(stdCode, uln, searchString, page, allLogs, batchNumber);
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeOfType<SelectViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<StandardLearnerDetailsViewModel>().Subject;
 
             model.Learner.Should().Be(learnerDetails);
             model.SearchString.Should().Be(searchString);
@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Select_LearnerDetailsApiClientThrowsException_APIErrorThrown()
+        public async Task LearnerDetails_LearnerDetailsApiClientThrowsException_APIErrorThrown()
         {
             // Arrange
             int stdCode = 123;
@@ -51,14 +51,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ThrowsAsync(new Exception("API Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            Func<Task> act = async () => await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("API Error");
         }
 
         [Test]
-        public async Task Select_ReturnsCorrectView()
+        public async Task LearnerDetails_ReturnsCorrectView()
         {
             // Arrange
             int stdCode = 123;
@@ -69,7 +69,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            var result = await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;

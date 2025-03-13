@@ -71,16 +71,16 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     (int?)src.DateOfBirth.Value.Month : null))
                 .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Year : null));
-
-            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerViewModel>()
+            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerDetailsViewModel>()
                 .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src =>
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
-            CreateMap<FrameworkSearchSession, UpdateReprintReasonViewModel>();
-            CreateMap<FrameworkSearchSession, FrameworkLearnerReprintReasonViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+            CreateMap<FrameworkSearchSession, AmendFrameworkReprintReasonViewModel>();
             CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
-            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
+            CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
         }

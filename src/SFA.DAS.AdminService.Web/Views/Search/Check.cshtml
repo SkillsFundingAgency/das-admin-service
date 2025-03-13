@@ -135,7 +135,7 @@
                         @Model.ReprintDetails.TicketNumber
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-action="Reprint" asp-route-backToCheckAnswers="true">
+                        <a class="govuk-link" asp-action="FrameworkReprintReason" asp-route-backToCheckAnswers="true">
                             Change<span class="govuk-visually-hidden"> reference number</span>
                         </a>
                     </dd>
@@ -148,7 +148,7 @@
                         @Html.Raw(Model.ReprintDetails.ReprintReasonDisplay)
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-action="Reprint" asp-route-backToCheckAnswers="true">
+                        <a class="govuk-link" asp-action="FrameworkReprintReason" asp-route-backToCheckAnswers="true">
                             Change<span class="govuk-visually-hidden"> reason for requesting a reprint</span>
                         </a>
                     </dd>
