@@ -254,7 +254,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 sessionObject.BackToCheckAnswers = backToCheckAnswers;
             });
 
-            var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
+            var viewModel = _mapper.Map<FrameworkReprintReasonViewModel>(sessionModel);
             viewModel.BackAction = backToCheckAnswers ? "Check" : "FrameworkLearnerDetails";
             return View(viewModel);
         }
@@ -275,7 +275,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                return backToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("FrameworkLearnerDetails");
+                return backToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("Address");
             }
             else
             { 
@@ -300,7 +300,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
            });
 
             var viewModel = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel);
-            viewModel.BackAction = backToCheckAnswers ? "Check" : "Reprint";
+            viewModel.BackAction = backToCheckAnswers ? "Check" : "FrameworkReprintReason";
             return View(viewModel);
         }
 

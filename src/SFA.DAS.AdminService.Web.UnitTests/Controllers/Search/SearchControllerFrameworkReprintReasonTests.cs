@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
