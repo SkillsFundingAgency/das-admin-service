@@ -279,8 +279,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             else
             { 
-                
-                return RedirectToAction("FrameworkReprintReason");   
+                return RedirectToAction("FrameworkReprintReason", new { backToCheckAnswers});   
             }  
         }
 
@@ -308,6 +307,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult UpdateAddress(FrameworkLearnerAddressViewModel vm)
         {
+            var backToCheckAnswers = _sessionService.SessionFrameworkSearch.BackToCheckAnswers;
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                {
                    sessionObject.AddressLine1 = vm.AddressLine1;
@@ -324,7 +324,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             else
             {
-                return RedirectToAction("Address");
+                return RedirectToAction("Address", new { backToCheckAnswers});
             }
         }
 
@@ -366,7 +366,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             { 
                 return RedirectToAction("Confirmation", new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
             }
-            return RedirectToAction("Confirmation", new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
+            //TODO: Not sure what to do if run date not found
+            return RedirectToAction("Confirmation", new { printRunDate = "Unknown"});
 
         }
 
