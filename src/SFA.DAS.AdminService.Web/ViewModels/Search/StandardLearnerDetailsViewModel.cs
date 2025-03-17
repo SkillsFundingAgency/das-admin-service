@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public bool ShowToAdress => Learner.CertificateStatus == CertificateStatus.Submitted ||
                                     CertificateStatus.HasPrintProcessStatus(Learner.CertificateStatus);
 
-        public string GetReasonLink(CertificateLogSummary log)
+        public static string GetReasonLink(CertificateLogSummary log)
         {
             return log.Action == CertificateActions.ReprintReason || log.Action == CertificateActions.AmendReason
                 ? "Show other reason"

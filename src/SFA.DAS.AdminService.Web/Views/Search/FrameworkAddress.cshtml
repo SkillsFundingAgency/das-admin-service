@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<a asp-action="BackAction" asp-controller="Search" asp-route-backActionTarget="@Model.BackAction" class="govuk-back-link">Back</a>
+<a asp-controller="Search" asp-action="ResetBackToCheckAnswersAndRedirect" asp-route-backActionTarget="@Model.BackAction" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">

@@ -76,11 +76,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
-            CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
+            CreateMap<FrameworkSearchSession, FrameworkLearnerReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
-            CreateMap<FrameworkSearchSession, AmendFrameworkReprintReasonViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkLearnerAmendReprintReasonViewModel>();
             CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
-            CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
+            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
         }
