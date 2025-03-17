@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class AmendFrameworkReprintReasonViewModel
+    public class FrameworkLearnerAmendReprintReasonViewModel
     {
         public List<string> SelectedReprintReasons { get; set; }
         public string TicketNumber { get; set; }
@@ -12,7 +13,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         {
             get
             {
-                if (SelectedReprintReasons == null || !SelectedReprintReasons.Any())
+                if (SelectedReprintReasons.IsNullOrEmpty())
                 {
                     return string.Empty;
                 }

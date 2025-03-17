@@ -1,5 +1,4 @@
-﻿using SFA.DAS.AdminService.Web.Controllers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {

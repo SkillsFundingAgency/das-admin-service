@@ -10,8 +10,6 @@ using AutoMapper;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
-using SFA.DAS.AdminService.Common.Extensions;
-using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -60,7 +58,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     if (!string.IsNullOrEmpty(searchResults?.EndpointAssessorOrganisationId))
                         org = await _registerApiClient.GetEpaOrganisation(searchResults.EndpointAssessorOrganisationId);
 
-                    var searchViewModel = new SearchResultsViewModel
+                    var searchViewModel = new StandardLearnerSearchResultsViewModel
                     {
                         OrganisationName = org?.Name ?? string.Empty,
                         StaffSearchResult = searchResults,
@@ -77,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     if (frameworkResults.Count == 0)
                     {
                         _sessionService.ClearFrameworkSearchRequest();
-                        return RedirectToAction("NoResults",
+                        return RedirectToAction(nameof(NoResults),
                             new
                             {
                                 FirstName = searchQuery.FirstName,
@@ -97,7 +95,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("FrameworkLearnerDetails");
+                        return RedirectToAction(nameof(FrameworkLearnerDetails));
                     }
                     else
                     {
@@ -110,7 +108,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("MultipleResults");
+                        return RedirectToAction(nameof(MultipleResults));
                     }
                 }
             }
@@ -132,7 +130,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     vm.SearchString = null;
                 }
             }
-            return RedirectToAction("Index", vm);
+            return RedirectToAction(nameof(Index), vm);
         }
 
         [HttpGet("learner-details")]
@@ -163,7 +161,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.FrameworkResults == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             var viewModel = _mapper.Map<FrameworkLearnerSearchResultsViewModel>(sessionModel);
@@ -171,7 +169,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult NoResults(NoResultsViewModel viewModel)
+        public IActionResult NoResults(FrameworkLearnerNoResultsViewModel viewModel)
         {
             return View(viewModel);
         }
@@ -186,9 +184,9 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
-                return RedirectToAction("FrameworkLearnerDetails");
+                return RedirectToAction(nameof(FrameworkLearnerDetails));
             }
-            return RedirectToAction("MultipleResults");
+            return RedirectToAction(nameof(MultipleResults));
         }
 
         [HttpGet]
@@ -220,16 +218,16 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         sessionObject.SelectedResult = null;
                     });
 
-                    return RedirectToAction("MultipleResults");
-                }
+                    return RedirectToAction(nameof(MultipleResults));
+                } 
                 _sessionService.ClearFrameworkSearchRequest();
             }
-
-            return RedirectToAction("Index");
+            
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public IActionResult BackAction(string backActionTarget)
+        public IActionResult ResetBackToCheckAnswersAndRedirect(string backActionTarget)
         {
              _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
             {
@@ -246,7 +244,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
@@ -254,14 +252,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 sessionObject.BackToCheckAnswers = backToCheckAnswers;
             });
 
-            var viewModel = _mapper.Map<FrameworkReprintReasonViewModel>(sessionModel);
-            viewModel.BackAction = backToCheckAnswers ? "Check" : "FrameworkLearnerDetails";
+            var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
+            viewModel.BackAction = backToCheckAnswers ? nameof(CheckFrameworkDetails) : nameof(FrameworkLearnerDetails);
             return View(viewModel);
         }
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult UpdateFrameworkReprintReason(AmendFrameworkReprintReasonViewModel vm)
+        public IActionResult FrameworkReprintReason(FrameworkLearnerAmendReprintReasonViewModel vm)
         {
             var backToCheckAnswers = _sessionService.SessionFrameworkSearch.BackToCheckAnswers;
 
@@ -275,22 +273,22 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                return backToCheckAnswers ? RedirectToAction("Check") : RedirectToAction("Address");
+                return backToCheckAnswers ? RedirectToAction(nameof(CheckFrameworkDetails)) : RedirectToAction(nameof(FrameworkAddress));
             }
             else
             { 
-                return RedirectToAction("FrameworkReprintReason", new { backToCheckAnswers});   
+                return RedirectToAction(nameof(FrameworkReprintReason), new { backToCheckAnswers});   
             }  
         }
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult Address(bool backToCheckAnswers = false)
+        public IActionResult FrameworkAddress(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
@@ -299,13 +297,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
            });
 
             var viewModel = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel);
-            viewModel.BackAction = backToCheckAnswers ? "Check" : "FrameworkReprintReason";
+            viewModel.BackAction = backToCheckAnswers ? nameof(CheckFrameworkDetails) : nameof(FrameworkReprintReason);
             return View(viewModel);
         }
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public IActionResult UpdateAddress(FrameworkLearnerAddressViewModel vm)
+        public IActionResult FrameworkAddress(FrameworkLearnerAddressViewModel vm)
         {
             var backToCheckAnswers = _sessionService.SessionFrameworkSearch.BackToCheckAnswers;
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
@@ -320,21 +318,21 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Check");
+                return RedirectToAction(nameof(CheckFrameworkDetails));
             }
             else
             {
-                return RedirectToAction("Address", new { backToCheckAnswers});
+                return RedirectToAction(nameof(FrameworkAddress), new { backToCheckAnswers});
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> Check()
+        public async Task<IActionResult> CheckFrameworkDetails()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             var frameworkLearner =
@@ -344,7 +342,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 LearnerDetails = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearner),
                 AddressDetails = _mapper.Map<FrameworkLearnerAddressViewModel>(sessionModel),
-                ReprintDetails = _mapper.Map<AmendFrameworkReprintReasonViewModel>(sessionModel)
+                ReprintDetails = _mapper.Map<FrameworkLearnerAmendReprintReasonViewModel>(sessionModel)
             };
             return View(viewModel);
         }
@@ -355,7 +353,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedResult == null)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
 
             //TODO : Waiting on #2356 to create the reprint request

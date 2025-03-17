@@ -5,7 +5,7 @@
     ViewBag.Title = "Check and submit the assessment details";
     Layout = "_Layout";
 }
-<a asp-action="Address" class="govuk-back-link">Back</a>
+<a asp-action="FrameworkAddress" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -165,7 +165,7 @@
                         @Html.Raw(Model.AddressDetails.AddressDisplay)
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-action="Address" asp-route-backToCheckAnswers="true"> 
+                        <a class="govuk-link" asp-action="FrameworkAddress" asp-route-backToCheckAnswers="true"> 
                             Change<span class="govuk-visually-hidden"> address</span>
                         </a>
                     </dd>

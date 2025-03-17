@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
             // Act
-            var result = _controller.Address();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = _controller.Address();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -70,7 +70,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _mapperMock.Setup(m => m.Map<FrameworkLearnerAddressViewModel>(sessionModel)).Returns(mappedViewModel);
 
             // Act
-            var result = _controller.Address();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
@@ -105,11 +105,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
             // Act
-            var result = _controller.UpdateAddress(vm);
+            var result = _controller.FrameworkAddress(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Check");
+            redirectToActionResult.ActionName.Should().Be("CheckFrameworkDetails");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
@@ -140,11 +140,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
             // Act
-            var result = _controller.UpdateAddress(vm);
+            var result = _controller.FrameworkAddress(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Address");
+            redirectToActionResult.ActionName.Should().Be("FrameworkAddress");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();

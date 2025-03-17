@@ -55,17 +55,17 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 SelectedResult = Guid.NewGuid(),
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            var mappedViewModel = new FrameworkReprintReasonViewModel { ApprenticeName = "Test User" };
-            _mapperMock.Setup(m => m.Map<FrameworkReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
+            var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
 
             // Act
             var result = _controller.FrameworkReprintReason();
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeOfType<FrameworkReprintReasonViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<FrameworkLearnerReprintReasonViewModel>().Subject;
             model.Should().BeEquivalentTo(mappedViewModel);
-            _mapperMock.Verify(m => m.Map<FrameworkReprintReasonViewModel>(sessionModel), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel), Times.Once);
         }
 
         
@@ -74,7 +74,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void UpdateFrameworkReprintReason_ValidModelState_ClearsSessionAndRedirects()
         {
             // Arrange
-            var vm = new AmendFrameworkReprintReasonViewModel { SelectedReprintReasons = new List<string> { "Reason1" }, TicketNumber = "123", OtherReason = "Other" };
+            var vm = new FrameworkLearnerAmendReprintReasonViewModel { SelectedReprintReasons = new List<string> { "Reason1" }, TicketNumber = "123", OtherReason = "Other" };
             _controller.ModelState.Clear(); 
             _controller.ModelState.IsValid.Should().BeTrue();
 
@@ -93,11 +93,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
 
             // Act
-            var result = _controller.UpdateFrameworkReprintReason(vm);
+            var result = _controller.FrameworkReprintReason(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Address");
+            redirectToActionResult.ActionName.Should().Be("FrameworkAddress");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
@@ -111,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void UpdateFrameworkReprintReason_InvalidModelState_UpdatesSessionAndRedirects()
         {
             // Arrange
-            var vm = new AmendFrameworkReprintReasonViewModel
+            var vm = new FrameworkLearnerAmendReprintReasonViewModel
             {
                 SelectedReprintReasons = new List<string> { "Reason1" },
                 TicketNumber = "123",
@@ -129,7 +129,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
             // Act
-            var result = _controller.UpdateFrameworkReprintReason(vm);
+            var result = _controller.FrameworkReprintReason(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;

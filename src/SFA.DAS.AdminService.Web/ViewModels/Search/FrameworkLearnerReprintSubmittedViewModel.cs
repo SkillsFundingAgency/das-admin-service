@@ -1,8 +1,7 @@
-﻿using System;
-
+﻿
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class CertificateReprintSubmittedViewModel 
+    public class FrameworkLearnerReprintSubmittedViewModel 
     {
         public string PrintRunDate { get; set; }
     }

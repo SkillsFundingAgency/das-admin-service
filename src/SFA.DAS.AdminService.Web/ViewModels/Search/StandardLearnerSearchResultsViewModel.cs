@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class SearchResultsViewModel
+    public class StandardLearnerSearchResultsViewModel
     {
         public string SearchString { get; set; } = string.Empty;
         public string OrganisationName { get; set; }
