@@ -92,11 +92,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
 
             // Act
-            var result = _controller.UpdateFrameworkReprintReason(vm);
+            var result = _controller.FrameworkReprintReason(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("Address");
+            redirectToActionResult.ActionName.Should().Be("FrameworkAddress");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
@@ -128,7 +128,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
             // Act
-            var result = _controller.UpdateFrameworkReprintReason(vm);
+            var result = _controller.FrameworkReprintReason(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
