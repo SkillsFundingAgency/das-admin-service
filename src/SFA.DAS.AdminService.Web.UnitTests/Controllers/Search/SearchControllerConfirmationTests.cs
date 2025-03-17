@@ -23,11 +23,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var printRunDate = DateTime.Now.AddDays(3).ToSfaShortDateString();
          
             //Act
-            var result = _controller.Confirmation(printRunDate);
+            var result = _controller.ConfirmFrameworkReprint(printRunDate);
 
             //Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var resultModel = viewResult.Model.Should().BeOfType<CertificateReprintSubmittedViewModel>().Subject;
+            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerReprintSubmittedViewModel>().Subject;
             resultModel.PrintRunDate.Should().Be(printRunDate); 
         }
     }

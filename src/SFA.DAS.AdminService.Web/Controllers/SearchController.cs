@@ -10,6 +10,8 @@ using AutoMapper;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -362,17 +364,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var nextScheduledRun = await _scheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
             if (nextScheduledRun != null)
             { 
-                return RedirectToAction("Confirmation", new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
+                return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
             }
             //TODO: Not sure what to do if run date not found
-            return RedirectToAction("Confirmation", new { printRunDate = "Unknown"});
+            return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = "Unknown"});
 
         }
 
-        [HttpGet("Confirmation/{printRunDate}")]
-        public IActionResult Confirmation(string printRunDate)
+        [HttpGet("ConfirmFrameworkReprint/{printRunDate}")]
+        public IActionResult ConfirmFrameworkReprint(string printRunDate)
         {
-            return View(new CertificateReprintSubmittedViewModel { PrintRunDate = printRunDate});
+            return View(new FrameworkLearnerReprintSubmittedViewModel { PrintRunDate = printRunDate});
         }
     }
 }
