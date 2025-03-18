@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
-using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
@@ -13,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string ApprenticeSurname { get; set; }
         public DateTime ApprenticeDoB { get; set; }
         public long? ApprenticeULN { get; set; }
-        public string CertificateNumber { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
         public string FrameworkName { get; set; }
         public string PathwayName { get; set; }
         public string ApprenticeshipLevelName { get; set; }
