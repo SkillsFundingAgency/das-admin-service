@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintReasonViewModel
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkLearnerReprintReasonViewModel
 @using SFA.DAS.AdminService.Common.Extensions;
 @using SFA.DAS.AssessorService.Domain.Consts
 
@@ -10,7 +10,10 @@
     var count = 0;
 }
 
-<a asp-action="FrameworkLearnerDetails" asp-controller="Search" class="govuk-back-link">Back</a>
+<a asp-controller="Search" 
+    asp-action="ResetBackToCheckAnswersAndRedirect" 
+    asp-route-backActionTarget="@Model.BackAction" 
+    class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
