@@ -66,18 +66,29 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     var searchQuery = _mapper.Map<FrameworkLearnerSearchRequest>(vm);
                     var frameworkResults = await _staffSearchApiClient.SearchFrameworkLearners(searchQuery);
 
-                    if (frameworkResults.Count > 1)
+                    if (frameworkResults.Count == 0)
+                    {
+                        _sessionService.ClearFrameworkSearchRequest();
+                        return RedirectToAction("NoResults",
+                            new
+                            {
+                                FirstName = searchQuery.FirstName,
+                                LastName = searchQuery.LastName,
+                                DateOfBirth = searchQuery.DateOfBirth
+                            });
+                    }
+                    else if (frameworkResults.Count > 1)
                     {
                         var searchSessionObject = new FrameworkSearch()
                         {
-                            FirstName = vm.FirstName,
-                            LastName = vm.LastName,
+                            FirstName = searchQuery.FirstName,
+                            LastName = searchQuery.LastName,
                             DateOfBirth = searchQuery.DateOfBirth,
                             FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults)
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("MultipleResults");
+                        return RedirectToAction("MultipleResults");      
                     }
                 }
             }
@@ -136,6 +147,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var viewModel = _mapper.Map<FrameworkLearnerSearchResultsViewModel>(sessionModel);
             return View(viewModel);
         }
+
+        [HttpGet]
+        public IActionResult NoResults(NoResultsViewModel viewModel)
+        {
+            return View(viewModel);
+        }
+
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
