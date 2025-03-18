@@ -26,34 +26,32 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         public void ThenShouldReturnValidAdddressLine1()
         {         
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
-
             _viewModelResponse.Id.Should().Be(Certificate.Id);
-            _viewModelResponse.AddressLine1.Should().Be(certificateData.ContactAddLine1);           
+            _viewModelResponse.AddressLine1.Should().Be(Certificate.CertificateData.ContactAddLine1);           
         }
 
         [Test]
         public void ThenShouldReturnValidAdddressLine2()
         {                      
-            _viewModelResponse.AddressLine2.Should().Be(CertificateData.ContactAddLine2);
+            _viewModelResponse.AddressLine2.Should().Be(Certificate.CertificateData.ContactAddLine2);
        }
 
         [Test]
         public void ThenShouldReturnValidAdddressLine3()
         {                       
             _viewModelResponse.Id.Should().Be(Certificate.Id);
-            _viewModelResponse.AddressLine3.Should().Be(CertificateData.ContactAddLine3);            
+            _viewModelResponse.AddressLine3.Should().Be(Certificate.CertificateData.ContactAddLine3);            
         }
         [Test]
         public void ThenShouldReturnValidCity()
         {                     
-            _viewModelResponse.City.Should().Be(CertificateData.ContactAddLine4);            
+            _viewModelResponse.City.Should().Be(Certificate.CertificateData.ContactAddLine4);            
         }
 
         [Test]
         public void ThenShouldReturnValidPostcode()
         {                     
-            _viewModelResponse.Postcode.Should().Be(CertificateData.ContactPostCode);
+            _viewModelResponse.Postcode.Should().Be(Certificate.CertificateData.ContactPostCode);
         }
     }   
 }

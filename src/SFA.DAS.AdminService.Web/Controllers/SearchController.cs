@@ -208,7 +208,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails);
             viewModel.ShowDetails = allLogs;
 
-            return View();
+            return View(viewModel);
 
         }
 
