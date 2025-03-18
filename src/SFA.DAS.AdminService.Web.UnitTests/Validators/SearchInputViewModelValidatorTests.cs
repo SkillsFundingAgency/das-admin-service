@@ -87,13 +87,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
             var vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks, Day = "", Month = "", Year = "" };
             var result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.Date)
-                .WithErrorMessage("Enter a date of birth");
+                .WithErrorMessage("Enter date of birth");
 
 
             vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks, Day = null, Month = null, Year = null };
             result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.Date)
-                .WithErrorMessage("Enter a date of birth");
+                .WithErrorMessage("Enter date of birth");
         }
 
         [Test]
