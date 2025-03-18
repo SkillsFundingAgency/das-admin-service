@@ -39,7 +39,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return View(vm ?? new SearchInputViewModel());
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Results(SearchInputViewModel vm, int page = 1)
         {
             if (ModelState.IsValid)
@@ -77,9 +77,23 @@ namespace SFA.DAS.AdminService.Web.Controllers
                                 DateOfBirth = searchQuery.DateOfBirth
                             });
                     }
-                    else if (frameworkResults.Count > 1)
+                    else if (frameworkResults.Count == 1)
+                    { 
+                        var searchSessionObject = new FrameworkSearchSessionData()
+                        {
+                            FirstName = searchQuery.FirstName,
+                            LastName = searchQuery.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults),
+                            SelectedResult = frameworkResults[0].Id,
+                        };
+
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("FrameworkLearnerDetails");
+                    }
+                    else
                     {
-                        var searchSessionObject = new FrameworkSearch()
+                        var searchSessionObject = new FrameworkSearchSessionData()
                         {
                             FirstName = searchQuery.FirstName,
                             LastName = searchQuery.LastName,
@@ -88,7 +102,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
-                        return RedirectToAction("MultipleResults");      
+                        return RedirectToAction("MultipleResults");
                     }
                 }
             }
@@ -113,8 +127,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction("Index", vm);
         }
 
-        [HttpGet("select")]
-        public async Task<IActionResult> Select(int stdCode,
+        [HttpGet("learner-details")]
+        public async Task<IActionResult> LearnerDetails(int stdCode,
             long uln,
             string searchString,
             int page = 1,
@@ -123,7 +137,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var learner = await _learnerDetailsApiClient.GetLearnerDetail(stdCode, uln, allLogs);
             
-            var vm = new SelectViewModel
+            var vm = new LearnerDetailsViewModel
             {
                 Learner = learner,
                 SearchString = searchString,
@@ -157,7 +171,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> SelectFramework(FrameworkLearnerSearchResultsViewModel vm)
+        public async Task<IActionResult> SelectFrameworkLearner(FrameworkLearnerSearchResultsViewModel vm)
         {
             if (ModelState.IsValid)
             {
@@ -165,8 +179,43 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     sessionObject.SelectedResult = vm.SelectedResult;
                 });
+                return RedirectToAction("FrameworkLearnerDetails");
             }
             return RedirectToAction("MultipleResults");
+        }
+        [HttpGet]
+        public async Task<IActionResult> FrameworkLearnerDetails()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null && sessionModel.SelectedResult.HasValue)
+            {
+                var certificateDetails = 
+                    await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+
+                return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(certificateDetails));
+
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FrameworkLearnerDetailsBackAction()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel != null)
+            {
+                if (sessionModel.FrameworkResults?.Count > 1)
+                { 
+                    _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                    {
+                        sessionObject.SelectedResult = null;
+                    });
+
+                    return RedirectToAction("MultipleResults");
+                }
+                _sessionService.ClearFrameworkSearchRequest();
+            }
+            return RedirectToAction("Index");
         }
     }  
 }

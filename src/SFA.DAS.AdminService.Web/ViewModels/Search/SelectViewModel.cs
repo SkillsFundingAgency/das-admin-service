@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class SelectViewModel : LearnerDetailViewModel
+    public class LearnerDetailsViewModel : LearnerDetailViewModel
     {
         public string SearchString { get; set; }
         public int Page { get; set; }

@@ -1,0 +1,156 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkLearnerDetailsViewModel
+
+@{
+    ViewBag.Title = "Framework certificate record";
+    Layout = "_Layout";
+}
+<a asp-action="FrameworkLearnerDetailsBackAction" asp-controller="Search" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-5">
+                @ViewBag.Title
+            </h1>
+
+            <h2 class="govuk-heading-m">Apprentice details</h2>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeForename @Model.ApprenticeSurname
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date of birth
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeDoB.ToSfaShortDateString()
+                    </dd>
+                </div>
+                @if(Model.ApprenticeULN.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Unique learner number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ApprenticeULN.Value
+                        </dd>
+                    </div>
+                }
+            </dl>
+
+            <h2 class="govuk-heading-m">Certificate details</h2>
+
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Framework certificate number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificateNumber
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Framework
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FrameworkName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Framework pathway
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PathwayName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Level
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeshipLevelName
+                    </dd>
+                </div>
+                @if (Model.Qualifications.Any())
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Qualifications and awarding bodies
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.QualificationsDisplay)
+                        </dd>
+                    </div>
+                }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Training provider
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ProviderName
+                    </dd>
+                </div>
+                @if(!string.IsNullOrEmpty(Model.EmployerName))
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Employer
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.EmployerName
+                    </dd>
+                </div>
+                }
+                @if(Model.ApprenticeStartdate.HasValue)
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Learner start date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeStartdate.Value.ToSfaShortDateString()
+                    </dd>
+                </div>
+                }
+                @if(Model.ApprenticeLastdateInLearning.HasValue)
+                {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last date in learning
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ApprenticeLastdateInLearning.Value.ToSfaShortDateString()
+                    </dd>
+                </div>
+                }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Certification date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificationDate.ToSfaShortDateString()
+                    </dd>
+                </div>
+            </dl>
+
+            <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Search" asp-action="FrameworkLearnerDetails">Request certificate reprint</a>
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
+            </p>
+        </div>
+    </div>
+</main>

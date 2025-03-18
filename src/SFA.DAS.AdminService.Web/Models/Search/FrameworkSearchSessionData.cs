@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Models.Search
 {
-    public class FrameworkSearch
+    public class FrameworkSearchSessionData
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

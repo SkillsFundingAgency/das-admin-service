@@ -18,6 +18,7 @@ using SFA.DAS.AdminService.Web.Models.Search;
 using FizzWare.NBuilder;
 using System.Linq;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -67,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             // Arrange
             var vm = new SearchInputViewModel { FirstName = "John", LastName = "Doe" };
-            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearch>>()));
+            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSessionData>>()));
 
             // Act
             var result = _controller.Index(vm);
@@ -102,14 +103,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void Index_UpdatesSessionAndReturnsViewResult_WithNewViewModel_WhenVmIsNotNullAndSessionFrameworkSearchIsNotNull()
         {
             // Arrange
-            var existingFrameworkSearch = new FrameworkSearch { FirstName = "Jane", LastName = "Doe" };
+            var existingFrameworkSearch = new FrameworkSearchSessionData { FirstName = "Jane", LastName = "Doe" };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(existingFrameworkSearch);
 
             var newVm = new SearchInputViewModel { FirstName = "John", LastName = "Smith", Day = "01", Month = "01", Year = "2000" };
-            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearch>>()))
-                .Callback<Action<FrameworkSearch>>(updateAction =>
+            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSessionData>>()))
+                .Callback<Action<FrameworkSearchSessionData>>(updateAction =>
                 {
-                    var frameworkSearch = new FrameworkSearch();
+                    var frameworkSearch = new FrameworkSearchSessionData();
                     updateAction(frameworkSearch);
                     frameworkSearch.FirstName.Should().Be(newVm.FirstName);
                     frameworkSearch.LastName.Should().Be(newVm.LastName);
@@ -233,12 +234,12 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .With(vm => vm.Month = "2")
                 .With(vm => vm.Year = "2001")
                 .Build();
-            FrameworkSearch capturedSessionObject = new FrameworkSearch();
+            FrameworkSearchSessionData capturedSessionObject = new FrameworkSearchSessionData();
             SetupResults(vm, capturedSessionObject, 0);
 
             // Act
             var result = await _controller.Results(vm) as RedirectToActionResult;
-
+            
             // Assert
             result.Should().NotBeNull();
             result.ActionName.Should().Be("NoResults");
@@ -247,7 +248,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Results_FrameworkSearch_ValidInput_OneResult_RedirectsToIndex()
+        public async Task Results_FrameworkSearch_ValidInput_OneResult_RedirectsToFrameworkLearnerDetails()
         {
             // Arrange
             var vm = Builder<SearchInputViewModel>.CreateNew()
@@ -256,7 +257,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .With(vm => vm.Month = "2")
                 .With(vm => vm.Year = "2001")
                 .Build();
-            FrameworkSearch capturedSessionObject = new FrameworkSearch();
+            FrameworkSearchSessionData capturedSessionObject = new FrameworkSearchSessionData();
             SetupResults(vm, capturedSessionObject, 1);
 
             // Act
@@ -264,7 +265,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             result.Should().NotBeNull();
-            result.ActionName.Should().Be("Index");
+            result.ActionName.Should().Be("FrameworkLearnerDetails");
         }
 
         [Test]
@@ -278,7 +279,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .With(vm => vm.Month = dateOfBirth.Month.ToString())
                 .With(vm => vm.Year = dateOfBirth.Year.ToString())
                 .Build();
-            FrameworkSearch capturedSessionObject = new FrameworkSearch();
+            FrameworkSearchSessionData capturedSessionObject = new FrameworkSearchSessionData();
             SetupResults(vm, capturedSessionObject, 3);
 
             // Act
@@ -293,9 +294,64 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             capturedSessionObject.FirstName.Should().Be(vm.FirstName);
             capturedSessionObject.LastName.Should().Be(vm.LastName);
             capturedSessionObject.DateOfBirth.Should().Be(dateOfBirth);
-            _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearch>(), Times.Once);
+            _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSessionData>(), Times.Once);
 
         }
+
+        [Test]
+        public async Task Results_FrameworksSearch_ValidInput_WithOneResult_RedirectsToCertificateView()
+        {
+            // Arrange
+            var dateOfBirth = new DateTime(2001, 01, 01);
+            var vm = Builder<SearchInputViewModel>.CreateNew()
+                .With(vm => vm.SearchType = SearchTypes.Frameworks)
+                .With(vm => vm.Day = dateOfBirth.Day.ToString())
+                .With(vm => vm.Month = dateOfBirth.Month.ToString())
+                .With(vm => vm.Year = dateOfBirth.Year.ToString())
+                .Build();
+            FrameworkSearchSessionData capturedSessionObject = new FrameworkSearchSessionData();
+            SetupResults(vm, capturedSessionObject, 1);
+
+            // Act
+            var result = await _controller.Results(vm);
+
+            // Assert
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("FrameworkLearnerDetails");
+            redirectResult.ControllerName.Should().BeNull();
+
+            _controller.ModelState.IsValid.Should().BeTrue();
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Results_FrameworksSearch_ValidInput_WithOneResult_UpdatesSessionObject()
+        {
+            // Arrange
+            var dateOfBirth = new DateTime(2001, 01, 01);
+            var vm = Builder<SearchInputViewModel>.CreateNew()
+                .With(vm => vm.SearchType = SearchTypes.Frameworks)
+                .With(vm => vm.Day = dateOfBirth.Day.ToString())
+                .With(vm => vm.Month = dateOfBirth.Month.ToString())
+                .With(vm => vm.Year = dateOfBirth.Year.ToString())
+                .Build();
+            FrameworkSearchSessionData capturedSessionObject = new FrameworkSearchSessionData();
+            SetupResults(vm, capturedSessionObject, 1);
+
+            //Act
+            var result = await _controller.Results(vm);
+
+            // Assert
+            _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSessionData>(), Times.Once);
+
+            capturedSessionObject.Should().NotBeNull();
+            capturedSessionObject.FirstName.Should().Be(vm.FirstName);
+            capturedSessionObject.LastName.Should().Be(vm.LastName);
+            capturedSessionObject.DateOfBirth.Should().Be(dateOfBirth);
+            capturedSessionObject.SelectedResult.Should().NotBeNull();
+        }
+
 
         [Test]
         public async Task Select_ValidInput_ReturnsCorrectViewModel()
@@ -312,13 +368,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, searchString, page, allLogs, batchNumber);
+            var result = await _controller.LearnerDetails(stdCode, uln, searchString, page, allLogs, batchNumber);
 
             // Assert
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
 
-            var model = viewResult.Model as SelectViewModel;
+            var model = viewResult.Model as LearnerDetailsViewModel;
             model.Should().NotBeNull();
             model.Learner.Should().Be(learnerDetails);
             model.SearchString.Should().Be(searchString);
@@ -328,7 +384,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Select_LearnerDetailsApiClientThrowsException_HandlesExceptionGracefully()
+        public async Task Select_LearnerDetailsApiClientThrowsException_APIErrorThrown()
         {
             // Arrange
             int stdCode = 123;
@@ -338,7 +394,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ThrowsAsync(new Exception("API Error"));
 
             // Act
-            Func<Task> act = async () => await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            Func<Task> act = async () => await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             await act.Should().ThrowAsync<Exception>().WithMessage("API Error");
@@ -356,7 +412,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, allLogs)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.Select(stdCode, uln, "test search", 1, allLogs, null);
+            var result = await _controller.LearnerDetails(stdCode, uln, "test search", 1, allLogs, null);
 
             // Assert
             var viewResult = result as ViewResult;
@@ -368,7 +424,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void MultipleResults_SessionFrameworkSearchIsNull_RedirectsToIndex()
         {
             // Arrange
-            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearch)null);
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSessionData)null);
 
             // Act
             var result = _controller.MultipleResults();
@@ -380,54 +436,274 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void MultipleResults_SessionFrameworkSearchIsNotNull_ReturnsViewWithMappedViewModel()
-        {
-            // Arrange
-            var sessionFrameworkSearch = new FrameworkSearch { FirstName = "Kevin", LastName = "Edgewater", FrameworkResults =new List<FrameworkLearnerSummaryViewModel>() };
-            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionFrameworkSearch);
-            var mappedViewModel = new FrameworkLearnerSearchResultsViewModel { FirstName = "Kevin", LastName = "Edgewater" };
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerSearchResultsViewModel>(sessionFrameworkSearch)).Returns(mappedViewModel);
-
-            // Act
-            var result = _controller.MultipleResults();
-
-            // Assert
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().BeNullOrEmpty();
-
-            var model = viewResult.Model as FrameworkLearnerSearchResultsViewModel;
-            model.Should().NotBeNull();
-            model.FirstName.Should().Be("Kevin");
-            model.LastName.Should().Be("Edgewater");
-        }
-
-        [Test]
-        public async Task SelectFramework_ModelStateIsValid_UpdatesSessionAndRedirectsToMultipleResults()
+        public async Task SelectFramework_ModelStateIsValid_UpdatesSessionAndRedirectsToFrameworkLearnerDetails()
         {
             // Arrange
             var vm = new FrameworkLearnerSearchResultsViewModel { SelectedResult = Guid.NewGuid() };
             _controller.ModelState.Clear(); 
 
-            FrameworkSearch capturedSessionObject = null;
-            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearch>>()))
-                .Callback<Action<FrameworkSearch>>(action =>
+            FrameworkSearchSessionData capturedSessionObject = null;
+            _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSessionData>>()))
+                .Callback<Action<FrameworkSearchSessionData>>(action =>
                 {
-                    capturedSessionObject = new FrameworkSearch();
+                    capturedSessionObject = new FrameworkSearchSessionData();
                     action(capturedSessionObject);
                 });
 
             // Act
-            var result = await _controller.SelectFramework(vm);
+            var result = await _controller.SelectFrameworkLearner(vm);
 
             // Assert
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("MultipleResults");
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
 
-            _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearch>>()), Times.Once);
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("FrameworkLearnerDetails");
+            });
+
+            _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSessionData>>()), Times.Once);
             capturedSessionObject.Should().NotBeNull();
             capturedSessionObject.SelectedResult.Should().Be(vm.SelectedResult);
+        }
+
+        [Test]
+        public async Task Certificate_SessionIsNull_RedirectsToIndex()
+        {
+            // Arrange
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSessionData)null);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("Index");
+            });
+        }
+
+        [Test]
+        public async Task Certificate_SelectedResultIsNull_RedirectsToIndex()
+        {
+            
+            // Arrange
+            var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(1)
+                .All()
+                .Build()
+                .ToList();
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FrameworkResults = results,
+                SelectedResult = null,
+                FirstName = "Bob",
+                LastName = "Holland",
+                DateOfBirth = DateTime.Now.AddYears(-22)
+            };
+
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("Index");
+            });
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Certificate_SessionAndSelectedResultValid_CallsGetFrameworkCertificate(
+            GetFrameworkLearnerResponse certificateResult)
+        {
+            // Arrange
+            var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
+                .All()
+                .Build()
+                .ToList();
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FirstName = "First",
+                LastName = "",
+                DateOfBirth = DateTime.Now.AddYears(-28),
+                FrameworkResults = results,
+                SelectedResult = results[0].Id
+            };
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails();
+
+            // Assert
+            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedResult.Value), Times.Once);
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Certificate_SessionAndSelectedResultValid_MapsViewModel(
+            GetFrameworkLearnerResponse certificateResult, 
+            FrameworkLearnerDetailsViewModel certificateViewModel)
+        {
+            // Arrange
+            var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
+                .All()
+                .Build()
+                .ToList();
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FirstName = "First",
+                LastName = "",
+                DateOfBirth = DateTime.Now.AddYears(-28),
+                FrameworkResults = results,
+                SelectedResult = results[0].Id
+            };
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails();
+
+            // Assert
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult), Times.Once);
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task Certificate_SessionAndSelectedResultValid_ReturnsCorrectView(
+            GetFrameworkLearnerResponse certificateResult, 
+            FrameworkLearnerDetailsViewModel certificateViewModel)
+        {
+            // Arrange
+            var results = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
+                .All()
+                .Build()
+                .ToList();
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FirstName = "First",
+                LastName = "",
+                DateOfBirth = DateTime.Now.AddYears(-28),
+                FrameworkResults = results,
+                SelectedResult = results[0].Id
+            };
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var viewResult = result.Should().BeOfType<ViewResult>().Which;
+
+                var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Which;
+                resultModel.Should().NotBeNull();
+            });
+
+
+        }
+
+        [Test]
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
+        {
+            // Arrange
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FrameworkResults = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(3)
+                .All()
+                .Build()
+                .ToList() 
+            };
+
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
+
+            // Assert
+            _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<System.Action<FrameworkSearchSessionData>>()), Times.Once);
+            sessionModel.SelectedResult.Should().BeNull();
+
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("MultipleResults");
+            });
+        }
+
+        [Test]
+        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
+        {
+            // Arrange
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FrameworkResults = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(1)
+                .All()
+                .Build()
+                .ToList() 
+            };
+
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
+
+            // Assert
+            _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
+
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("Index");
+            });
+        }
+
+        [Test]
+        public async Task FrameworkLearnerDetailsBackAction_SessionIsNull_RedirectsToIndex()
+        {
+            // Arrange
+            var sessionModel = new FrameworkSearchSessionData
+            {
+                FrameworkResults = Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(1)
+                .All()
+                .Build()
+                .ToList() 
+            };
+
+            _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetailsBackAction();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                result.Should().NotBeNull();
+
+                var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Which;
+                redirectToActionResult.ActionName.Should().Be("Index");
+            });
         }
 
         private static IEnumerable<SearchInputViewModel> SearchFrameworksInvalidInput()
@@ -444,7 +720,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 { SearchType = SearchTypes.Frameworks, SearchString = "will-be-removed", FirstName = "first", LastName="last", Day="1", Month="1", Year=null };
         }
 
-        private void SetupResults(SearchInputViewModel vm, FrameworkSearch capturedSessionObject, int resultSize)
+        private void SetupResults(SearchInputViewModel vm, FrameworkSearchSessionData capturedSessionObject, int resultSize)
         { 
              var searchQuery = new FrameworkLearnerSearchRequest { FirstName = vm.FirstName, LastName = vm.LastName , DateOfBirth = new DateTime(2001,01,01)};
             _mapperMock.Setup(m => m.Map<FrameworkLearnerSearchRequest>(vm)).Returns(searchQuery);
@@ -459,8 +735,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 Builder<FrameworkLearnerSummaryViewModel>.CreateListOfSize(resultSize).Build().ToList();
             _mapperMock.Setup(m => m.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResponse)).Returns(frameworkViewModel);
 
-            _sessionServiceMock.SetupSet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearch>())
-                .Callback<FrameworkSearch>(fs =>
+            _sessionServiceMock.SetupSet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSessionData>())
+                .Callback<FrameworkSearchSessionData>(fs =>
                 {
                     capturedSessionObject.FirstName = fs.FirstName;
                     capturedSessionObject.LastName = fs.LastName;
