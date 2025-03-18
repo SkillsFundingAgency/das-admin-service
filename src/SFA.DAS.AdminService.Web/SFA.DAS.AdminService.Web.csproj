@@ -112,6 +112,9 @@
 		<Content Update="Views\CertificateDelete\AuditDetails.cshtml">
 			<Pack>$(IncludeRazorContentInPack)</Pack>
 		</Content>
+		<Content Update="Views\Search\FrameworkAddress.cshtml">
+		  <Pack>$(IncludeRazorContentInPack)</Pack>
+		</Content>
 		<Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
 			<Pack>$(IncludeRazorContentInPack)</Pack>
 		</Content>
