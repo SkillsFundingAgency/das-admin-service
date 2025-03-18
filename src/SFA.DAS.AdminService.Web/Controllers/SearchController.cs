@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
 using AutoMapper;
-using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
@@ -79,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     }
                     else if (frameworkResults.Count == 1)
                     { 
-                        var searchSessionObject = new FrameworkSearchSessionData()
+                        var searchSessionObject = new FrameworkSearchSession()
                         {
                             FirstName = searchQuery.FirstName,
                             LastName = searchQuery.LastName,
@@ -93,7 +92,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     }
                     else
                     {
-                        var searchSessionObject = new FrameworkSearchSessionData()
+                        var searchSessionObject = new FrameworkSearchSession()
                         {
                             FirstName = searchQuery.FirstName,
                             LastName = searchQuery.LastName,
@@ -187,15 +186,21 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> FrameworkLearnerDetails()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel != null && sessionModel.SelectedResult.HasValue)
+            if (sessionModel == null || ! sessionModel.SelectedResult.HasValue)
             {
-                var certificateDetails = 
-                    await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
-
-                return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(certificateDetails));
-
+                return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
+
+            var frameworkLearnerDetails = 
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+
+            _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+            {
+                sessionObject.CertificateNumber = frameworkLearnerDetails.CertificateNumber;
+            });
+
+            return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails));
+
         }
 
         [HttpGet]
@@ -212,10 +217,52 @@ namespace SFA.DAS.AdminService.Web.Controllers
                     });
 
                     return RedirectToAction("MultipleResults");
-                }
+                } 
                 _sessionService.ClearFrameworkSearchRequest();
             }
+            
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult FrameworkReprintReason()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel == null || sessionModel.SelectedResult == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var viewModel = _mapper.Map<FrameworkReprintReasonViewModel>(sessionModel);
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public IActionResult UpdateFrameworkReprintReason(AmendFrameworkReprintReasonViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                //Page refreshes, temporarily clearing out the entered data until next story is implemented
+                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                {
+                    sessionObject.SelectedReprintReasons = new List<string>();
+                    sessionObject.TicketNumber = string.Empty;
+                    sessionObject.OtherReason = string.Empty;
+                });
+                return RedirectToAction("FrameworkReprintReason");
+            }
+            else
+            { 
+                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                {
+                    sessionObject.SelectedReprintReasons = vm.SelectedReprintReasons;
+                    sessionObject.TicketNumber = vm.TicketNumber;
+                    sessionObject.OtherReason = vm.OtherReason;
+                });
+                return RedirectToAction("FrameworkReprintReason");   
+            }  
         }
     }  
 }

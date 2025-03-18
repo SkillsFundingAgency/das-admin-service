@@ -58,11 +58,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
-            CreateMap<FrameworkSearchSessionData, FrameworkLearnerSearchResultsViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkLearnerSearchResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
                 .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
             CreateMap<FrameworkLearnerSearchResponse, FrameworkLearnerSummaryViewModel>();
-            CreateMap<FrameworkSearchSessionData, SearchInputViewModel>()
+            CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Day : null))
@@ -75,6 +75,8 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
+            CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
         }
     }
 }
