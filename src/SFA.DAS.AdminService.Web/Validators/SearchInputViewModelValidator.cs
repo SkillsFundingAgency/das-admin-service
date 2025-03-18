@@ -40,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Validators
 
                 RuleFor(vm => vm.Date)
                     .Must(BeValidDate)
-                    .WithMessage("Enter a date of birth")
+                    .WithMessage("Enter date of birth")
                     .Must(BeRealDate)
                     .WithMessage("The date must be a real date")
                     .Must(BeInPast)
