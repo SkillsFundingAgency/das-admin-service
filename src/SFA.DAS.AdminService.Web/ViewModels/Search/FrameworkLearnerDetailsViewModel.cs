@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
@@ -22,7 +24,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public DateTime CertificationDate { get; set; }
         public string BackAction { get; set; }
-
         public string QualificationsDisplay
         {
             get
@@ -41,6 +42,21 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
                     return $"<ul class=\"govuk-list govuk-list--bullet\"><li>{string.Join("</li><li>", Qualifications)}</li></ul>";
                 }
             }
-        } 
+        }
+        public string CertificateStatus { get; set; }
+        public DateTime? CertificateStatusDate { get; set; }
+        public string CertificateReference { get; set; }
+        public List<CertificateLogSummary> CertificateLogs{ get; set; }
+        public bool ShowDetails { get; set; }
+
+        //public DateTime CertificateStatusDateValue
+        //{
+        //    get
+        //    {
+        //        return CertificateStatus.HasPrintNotificateStatus(CertificateStatus) && PrintStatusAt.HasValue
+        //            ? PrintStatusAt.Value
+        //            : LastUpdatedAt ?? default;
+        //    }
+        //}
     }
 }

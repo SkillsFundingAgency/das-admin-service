@@ -21,10 +21,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateDelete
             StandardCode = cert.StandardCode;
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
             certificate.Status = CertificateStatus.Submitted;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
             
             return certificate;
         }

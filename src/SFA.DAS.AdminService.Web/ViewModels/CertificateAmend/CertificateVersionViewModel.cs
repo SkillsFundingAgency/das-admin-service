@@ -15,11 +15,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             base.FromCertificate(cert);
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
             certificate.StandardUId = StandardUId;
-            certData.Version = Version;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData.Version = Version;
             
             return certificate;
         }

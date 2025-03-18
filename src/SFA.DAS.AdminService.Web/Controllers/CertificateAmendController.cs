@@ -213,7 +213,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             int page = 1)
         {
             var certificate = await CertificateApiClient.GetCertificate(certificateId);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             return View(new CertificateAmendConfirmViewModel 
             { 
@@ -224,7 +223,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StdCode = stdCode,
                 BackToCheckPage = redirectToCheck,
                 CertificateReference = certificate.CertificateReference,
-                FullName = certData.FullName
+                FullName = certificate.CertificateData.FullName
             });
         }
 
@@ -238,8 +237,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Username = username
             });
 
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
             var nextScheduledRun = await ScheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
 
             var viewModel = new CertificateReprintConfirmViewModel
@@ -251,7 +248,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StdCode = stdCode,
                 Uln = uln,
                 Status = certificate.Status,
-                FullName = certData.FullName,
+                FullName = certificate.CertificateData.FullName,
                 Page = page
             };
 

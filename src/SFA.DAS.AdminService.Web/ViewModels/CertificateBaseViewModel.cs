@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 
         public virtual void FromCertificate(Certificate cert)
         {
-            CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+            CertificateData = cert.CertificateData;
             Id = cert.Id;
             GivenNames = CertificateData.LearnerGivenNames;
             FamilyName = CertificateData.LearnerFamilyName;
@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
             Version = CertificateData.Version;
         }
 
-        public virtual Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public virtual Certificate GetCertificateFromViewModel(Certificate certificate)
         {
             return certificate;
         }

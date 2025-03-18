@@ -22,10 +22,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             SendTo = CertificateData.SendTo;
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
-            certData.SendTo = SendTo;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData.SendTo = SendTo;
             
             return certificate;
         }

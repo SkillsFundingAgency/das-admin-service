@@ -19,10 +19,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             HasAdditionalLearningOption = !string.IsNullOrWhiteSpace(Option);
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
-            certData.CourseOption = SelectedOption;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData.CourseOption = SelectedOption;
 
             return certificate;
         }

@@ -26,11 +26,9 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             WarningShown = "false";
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
-            data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
-
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
             return certificate;
         }

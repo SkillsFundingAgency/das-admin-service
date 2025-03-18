@@ -12,6 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -192,7 +193,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FrameworkLearnerDetails()
+        public async Task<IActionResult> FrameworkLearnerDetails(bool allLogs = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || !sessionModel.SelectedResult.HasValue)
@@ -201,9 +202,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             var frameworkLearnerDetails = 
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+                await _learnerDetailsApiClient.GetFrameworkLearner(
+                    new GetFrameworkLearnerRequest(sessionModel.SelectedResult.Value, allLogs));
 
-            return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails));
+            var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails);
+            viewModel.ShowDetails = allLogs;
+
+            return View();
 
         }
 
@@ -338,7 +343,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             var frameworkLearner =
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+                await _learnerDetailsApiClient.GetFrameworkLearner(new GetFrameworkLearnerRequest(sessionModel.SelectedResult.Value, true));
 
             var viewModel = new CheckFrameworkLearnerViewModel()
             {

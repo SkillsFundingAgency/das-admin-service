@@ -14,6 +14,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels
         string ReasonForChange { get; set; }
         bool RequiresReasonForChange { get; set; }
 
-        Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData);
+        Certificate GetCertificateFromViewModel(Certificate certificate);
     }
 }

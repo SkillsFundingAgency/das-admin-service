@@ -33,20 +33,18 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             Postcode = CertificateData.ContactPostCode;
         }
         
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
             if (certificate == null) throw new ArgumentNullException(nameof(certificate));
 
-            certData.ContactName = Name;
-            certData.Department = Dept;
-            certData.ContactOrganisation = Employer;
-            certData.ContactAddLine1 = AddressLine1;
-            certData.ContactAddLine2 = AddressLine2;
-            certData.ContactAddLine3 = AddressLine3;
-            certData.ContactAddLine4 = City;
-            certData.ContactPostCode = Postcode;
-
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData.ContactName = Name;
+            certificate.CertificateData.Department = Dept;
+            certificate.CertificateData.ContactOrganisation = Employer;
+            certificate.CertificateData.ContactAddLine1 = AddressLine1;
+            certificate.CertificateData.ContactAddLine2 = AddressLine2;
+            certificate.CertificateData.ContactAddLine3 = AddressLine3;
+            certificate.CertificateData.ContactAddLine4 = City;
+            certificate.CertificateData.ContactPostCode = Postcode;
 
             return certificate;
         }

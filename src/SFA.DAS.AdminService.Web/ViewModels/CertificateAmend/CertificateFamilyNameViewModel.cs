@@ -13,12 +13,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             FullName = CertificateData.FullName;
         }
 
-        public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData certData)
+        public override Certificate GetCertificateFromViewModel(Certificate certificate)
         {
-            certData.LearnerFamilyName = FamilyName;
-            certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
-
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData.LearnerFamilyName = FamilyName;
+            certificate.CertificateData.FullName = $"{certificate.CertificateData.LearnerGivenNames} {certificate.CertificateData.LearnerFamilyName}";
             return certificate;
         }
     }
