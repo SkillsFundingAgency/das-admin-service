@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.AdminService.Web.Attributes;
-using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
-using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.AO;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
-using System.Linq;
-using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
+using AutoMapper;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AdminService.Web.Infrastructure;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -18,25 +20,26 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
+        private readonly IFrameworkSearchSessionService _sessionService;
+        private readonly IMapper _mapper;
 
-        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient)
+        public SearchController(ILearnerDetailsApiClient learnerDetailsApiClient, IRegisterApiClient registerApiClient, IStaffSearchApiClient staffSearchApiClient,
+            IFrameworkSearchSessionService sessionService,  IMapper mapper)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
+            _sessionService = sessionService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult Index(SearchInputViewModel vm = null)
+        public IActionResult Index(SearchInputViewModel vm)
         {
-            if (vm == null)
-            {
-                vm = new SearchInputViewModel();
-            }
-            return View(vm);
+            return View(vm ?? new SearchInputViewModel());
         }
 
-        [HttpPost("search/results")]
+        [HttpPost]
         public async Task<IActionResult> Results(SearchInputViewModel vm, int page = 1)
         {
             if (ModelState.IsValid)
@@ -60,19 +63,36 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
-                    return RedirectToAction("Index");
+                    var searchQuery = _mapper.Map<FrameworkLearnerSearchRequest>(vm);
+                    var frameworkResults = await _staffSearchApiClient.SearchFrameworkLearners(searchQuery);
+
+                    if (frameworkResults.Count > 1)
+                    {
+                        var searchSessionObject = new FrameworkSearch()
+                        {
+                            FirstName = vm.FirstName,
+                            LastName = vm.LastName,
+                            DateOfBirth = searchQuery.DateOfBirth,
+                            FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults)
+                        };
+
+                        _sessionService.SessionFrameworkSearch = searchSessionObject;
+                        return RedirectToAction("MultipleResults");
+                    }
                 }
             }
             else
             { 
                 if (vm.SearchType == SearchTypes.Standards)
                 {
+                    _sessionService.ClearFrameworkSearchRequest();
+                    
                     vm.FirstName = null;
                     vm.LastName = null;
                     vm.Day = null;
                     vm.Month = null;
                     vm.Year = null;
-                    vm.Date = null;
+                    vm.Date = null;   
                 }
                 else if (vm.SearchType == SearchTypes.Frameworks)
                 {
@@ -100,34 +120,35 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ShowDetail = !allLogs,
                 BatchNumber = batchNumber
             };
-        
             return View(vm);
         }
-    }
 
-    public class SearchResultsViewModel
-    {
-        public string SearchString { get; set; } = string.Empty;
-        public string OrganisationName { get; set; }
-        public int Page { get; set; }
-        public StaffSearchResult StaffSearchResult { get; set; }
-    }
+        [HttpGet]
+        [ModelStatePersist(ModelStatePersist.RestoreEntry)]
+        public IActionResult MultipleResults()
+        {
+            var sessionModel = _sessionService.SessionFrameworkSearch;
+            if (sessionModel == null || sessionModel.FrameworkResults == null)
+            {
+                return RedirectToAction("Index");
+            }
 
-    public class SearchInputViewModel
-    {
-        public string SearchString { get; set; } = string.Empty; 
-        public string FirstName { get; set; } = string.Empty; 
-        public string LastName { get; set; } = string.Empty;
-        public string Day { get; set; }
-        public string Month { get; set; }
-        public string Year { get; set; }
-        public DateTime? Date { get; set; }
-        public string SearchType { get; set; }
-    }
+            var viewModel = _mapper.Map<FrameworkLearnerSearchResultsViewModel>(sessionModel);
+            return View(viewModel);
+        }
 
-    public static class SearchTypes
-    {
-        public const string Standards = "Standards";
-        public const string Frameworks = "Frameworks";
-    }
+        [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
+        public async Task<IActionResult> SelectFramework(FrameworkLearnerSearchResultsViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
+                {
+                    sessionObject.SelectedResult = vm.SelectedResult;
+                });
+            }
+            return RedirectToAction("MultipleResults");
+        }
+    }  
 }

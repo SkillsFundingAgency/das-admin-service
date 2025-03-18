@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.6.0" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.272" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.274-prerelease-19" />
   </ItemGroup>
 
 </Project>

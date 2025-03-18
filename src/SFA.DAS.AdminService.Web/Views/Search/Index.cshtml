@@ -1,5 +1,5 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
-@model SFA.DAS.AdminService.Web.Controllers.SearchInputViewModel
+﻿@using SFA.DAS.AdminService.Web.Models.Search
+@model SFA.DAS.AdminService.Web.ViewModels.Search.SearchInputViewModel
 @{
     ViewBag.Title = "ILR and certificate search";
     Layout = "_Layout";
@@ -116,7 +116,7 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button" type="submit" name="SearchTYpe" id="frameworkButton" value="@SearchTypes.Frameworks">Search framework certificates</button>
+                <button class="govuk-button" type="submit" name="SearchType" id="frameworkButton" value="@SearchTypes.Frameworks">Search framework certificates</button>
 
             </form>
         </div>

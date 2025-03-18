@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.Extensions
 {
-    public static class ValidatorExtensions
+    public static class DateExtensions
     {
         public static DateTime? ConstructDate(string dayString, string monthString, string yearString)
         {
