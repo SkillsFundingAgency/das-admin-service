@@ -1,7 +1,8 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts
+﻿@using SFA.DAS.AdminService.Web.Models.Search
+@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Search.SelectViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Search.StandardLearnerDetailsViewModel
 
 @{
     ViewBag.Title = "Certificate details";
@@ -14,7 +15,10 @@
 }
 else
 {
-    <a class="govuk-back-link" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+    <a class="govuk-back-link" asp-action="Results" asp-controller="Search" 
+    asp-route-searchType="@SearchTypes.Standards"
+    asp-route-searchString="@Model.SearchString" 
+    asp-route-page="@Model.Page">Back</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -27,7 +31,6 @@ else
                     Certificate @Model.Learner.CertificateReference
                     <span class="govuk-caption-xl">Status: @Model.Learner.CertificateStatus</span>
                 </h1>
-
             }
             else
             {
@@ -341,7 +344,7 @@ else
                                             {
                                                 <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
                                                     <i class="arrow arrow-closed">►</i>
-                                                    <span>@Model.GetReasonLink(log)</span>
+                                                    <span>StandardLearnerDetailsViewModel.GetReasonLink(log)</span>
                                                 </div>
                                             }
                                         }
@@ -365,11 +368,11 @@ else
 
                 @if (Model.ShowDetail)
                 {
-                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
+                    <a class="govuk-button" asp-action="LearnerDetails" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
                 }
                 else
                 {
-                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
+                    <a class="govuk-button" asp-action="LearnerDetails" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
                 }
             </div>
         </div>

@@ -82,7 +82,7 @@
                             <td class="govuk-table__cell">@result.Status</td>
                             <td class="govuk-table__cell">@result.StatusAt.UtcToTimeZoneTime()</td>
                             <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
-                            <td class="govuk-table__cell"><a asp-controller="Search" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
+                            <td class="govuk-table__cell"><a asp-controller="Search" asp-action="LearnerDetails" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
                         </tr>
                         }
                     </tbody>
