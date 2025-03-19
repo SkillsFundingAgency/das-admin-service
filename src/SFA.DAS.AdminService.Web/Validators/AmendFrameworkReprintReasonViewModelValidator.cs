@@ -3,7 +3,7 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class AmendFrameworkReprintReasonViewModelValidator : AbstractValidator<AmendFrameworkReprintReasonViewModel>
+    public class AmendFrameworkReprintReasonViewModelValidator : AbstractValidator<FrameworkLearnerAmendReprintReasonViewModel>
     {
         public AmendFrameworkReprintReasonViewModelValidator()
         {

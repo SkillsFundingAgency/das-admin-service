@@ -20,6 +20,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         protected Mock<IRegisterApiClient> _registerApiClientMock;
         protected Mock<IStaffSearchApiClient> _staffSearchApiClientMock;
         protected Mock<IFrameworkSearchSessionService> _sessionServiceMock;
+        protected Mock<IScheduleApiClient> _scheduleApiClientMock;
         protected Mock<IMapper> _mapperMock;
 
         [SetUp]
@@ -29,9 +30,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _registerApiClientMock = new Mock<IRegisterApiClient>();
             _staffSearchApiClientMock = new Mock<IStaffSearchApiClient>();
              _sessionServiceMock = new Mock<IFrameworkSearchSessionService>();
+            _scheduleApiClientMock = new Mock<IScheduleApiClient>();
             _mapperMock = new Mock<IMapper>();
             _controller = new SearchController(_learnerDetailsApiClientMock.Object, _registerApiClientMock.Object, _staffSearchApiClientMock.Object,
-                _sessionServiceMock.Object,  _mapperMock.Object);
+                _sessionServiceMock.Object, _scheduleApiClientMock.Object, _mapperMock.Object);
         }
         protected SearchInputViewModel CreateValidSearchInputViewModel()
         {

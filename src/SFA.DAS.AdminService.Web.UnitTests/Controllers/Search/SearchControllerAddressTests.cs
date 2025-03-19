@@ -6,21 +6,20 @@ using System;
 using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class FrameworkReprintReasonTests : SearchControllerTestsBase 
+    public class AddressTests : SearchControllerTestsBase 
     {
         [Test]
-        public void FrameworkReprintReason_SessionIsNull_RedirectsToIndex()
+        public void Address_SessionIsNull_RedirectsToIndex()
         {
             // Arrange
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -28,14 +27,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void FrameworkReprintReason_SelectedResultIsNull_RedirectsToIndex()
+        public void Address_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession { SelectedResult = null };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -43,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void FrameworkReprintReason_ValidSessionAndResults_ReturnsViewWithCorrectModel()
+        public void Address_ValidSessionAndResults_ReturnsViewWithCorrectModel()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -53,37 +52,51 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 LastName = "User",
                 DateOfBirth = DateTime.Now.AddYears(-20),
                 SelectedResult = Guid.NewGuid(),
+                AddressLine1 = "43 West Road",
+                AddressLine2 = "Townlandish",
+                County = "Portlanshire",
+                TownOrCity ="Leeds",
+                Postcode ="LS12 3RF"
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
-            _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
+            var mappedViewModel = new FrameworkLearnerAddressViewModel
+            { 
+                AddressLine1 = sessionModel.AddressLine1, 
+                AddressLine2 = sessionModel.AddressLine2, 
+                County = sessionModel.County,
+                TownOrCity = sessionModel.TownOrCity, 
+                Postcode = sessionModel.Postcode
+            };
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerAddressViewModel>(sessionModel)).Returns(mappedViewModel);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = _controller.FrameworkAddress();
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
-            var model = viewResult.Model.Should().BeOfType<FrameworkLearnerReprintReasonViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<FrameworkLearnerAddressViewModel>().Subject;
             model.Should().BeEquivalentTo(mappedViewModel);
-            _mapperMock.Verify(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel), Times.Once);
+            _mapperMock.Verify(m => m.Map<FrameworkLearnerAddressViewModel>(sessionModel), Times.Once);
         }
 
-        
-
         [Test]
-        public void UpdateFrameworkReprintReason_ValidModelState_ClearsSessionAndRedirects()
+        public void UpdateAddress_ValidModelState_ClearsSessionAndRedirects()
         {
             // Arrange
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel { SelectedReprintReasons = new List<string> { "Reason1" }, TicketNumber = "123", OtherReason = "Other" };
-            _controller.ModelState.Clear(); 
+            var vm = new FrameworkLearnerAddressViewModel 
+            { 
+                AddressLine1 = "69 Southend Rd",
+                AddressLine2 = "Wickford",
+                TownOrCity = "Essex",
+                County = "Essex",
+                Postcode = "SS11 8DX"
+            };
+            _controller.ModelState.Clear();
             _controller.ModelState.IsValid.Should().BeTrue();
 
             var sessionModel = new FrameworkSearchSession
             {
-                SelectedResult = Guid.NewGuid(),
-                SelectedReprintReasons = vm.SelectedReprintReasons,
-                TicketNumber = vm.TicketNumber,
-                OtherReason = vm.OtherReason
+                SelectedResult = Guid.NewGuid()
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
@@ -91,31 +104,29 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()))
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
-
             // Act
-            var result = _controller.FrameworkReprintReason(vm);
+            var result = _controller.FrameworkAddress(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("FrameworkAddress");
+            redirectToActionResult.ActionName.Should().Be("CheckFrameworkDetails");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
-            capturedAction(sessionModel); 
-            sessionModel.SelectedReprintReasons.Should().BeEquivalentTo(vm.SelectedReprintReasons);
-            sessionModel.TicketNumber.Should().Be(vm.TicketNumber);
-            sessionModel.OtherReason.Should().Be(vm.OtherReason);
+            capturedAction(sessionModel);
+            sessionModel.AddressLine1.Should().Be(vm.AddressLine1);
+            sessionModel.AddressLine2.Should().Be(vm.AddressLine2);
+            sessionModel.TownOrCity.Should().Be(vm.TownOrCity);
+            sessionModel.County.Should().Be(vm.County);
+            sessionModel.Postcode.Should().Be(vm.Postcode);
         }
 
         [Test]
-        public void UpdateFrameworkReprintReason_InvalidModelState_UpdatesSessionAndRedirects()
+        public void UpdateAddress_InvalidModelState_UpdatesSessionAndRedirects()
         {
             // Arrange
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkLearnerAddressViewModel
             {
-                SelectedReprintReasons = new List<string> { "Reason1" },
-                TicketNumber = "123",
-                OtherReason = "Other"
             };
             _controller.ModelState.AddModelError("Error", "Error");
             _controller.ModelState.IsValid.Should().BeFalse();
@@ -129,18 +140,20 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
             // Act
-            var result = _controller.FrameworkReprintReason(vm);
+            var result = _controller.FrameworkAddress(vm);
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("FrameworkReprintReason");
+            redirectToActionResult.ActionName.Should().Be("FrameworkAddress");
             _sessionServiceMock.Verify(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()), Times.Once);
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel); 
-            sessionModel.SelectedReprintReasons.Should().BeEquivalentTo(vm.SelectedReprintReasons);
-            sessionModel.TicketNumber.Should().Be(vm.TicketNumber);
-            sessionModel.OtherReason.Should().Be(vm.OtherReason);
+            sessionModel.AddressLine1.Should().Be(vm.AddressLine1);
+            sessionModel.AddressLine2.Should().Be(vm.AddressLine2);
+            sessionModel.TownOrCity.Should().Be(vm.TownOrCity);
+            sessionModel.County.Should().Be(vm.County);
+            sessionModel.Postcode.Should().Be(vm.Postcode);
         }
     }
 }
