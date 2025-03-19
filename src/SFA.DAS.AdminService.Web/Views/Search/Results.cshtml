@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.SearchResultsViewModel
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.StandardLearnerSearchResultsViewModel
 @using SFA.DAS.AdminService.Common.Extensions;
 @using SFA.DAS.AssessorService.Domain.Consts;
 
@@ -50,7 +50,7 @@
                         @foreach (var result in Model.StaffSearchResult.StaffSearchItems.Items)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><a class="govuk-link" asp-action="Select" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
+                                <td class="govuk-table__cell"><a class="govuk-link" asp-action="LearnerDetails" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.StaffSearchResult.StaffSearchItems.PageIndex">@result.GivenNames @result.FamilyName</a></td>
                                 <td class="govuk-table__cell">@result.Uln</td>
                                 <td class="govuk-table__cell">@result.Standard (@result.StandardCode)</td>
                                 <td class="govuk-table__cell">@result.CertificateReference</td>
