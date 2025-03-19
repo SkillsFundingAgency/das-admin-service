@@ -4,6 +4,7 @@ using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
+using SFA.DAS.AdminService.Web.Validators;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
@@ -58,11 +59,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
-            CreateMap<FrameworkSearchSessionData, FrameworkLearnerSearchResultsViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkLearnerSearchResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
                 .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
             CreateMap<FrameworkLearnerSearchResponse, FrameworkLearnerSummaryViewModel>();
-            CreateMap<FrameworkSearchSessionData, SearchInputViewModel>()
+            CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Day : null))
@@ -75,6 +76,13 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
+            CreateMap<FrameworkSearchSession, FrameworkLearnerReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+            CreateMap<FrameworkSearchSession, FrameworkLearnerAmendReprintReasonViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
+            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
+
         }
     }
 }

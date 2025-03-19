@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class LearnerDetailsViewModel : LearnerDetailViewModel
+    public class StandardLearnerDetailsViewModel : LearnerDetailViewModel
     {
         public string SearchString { get; set; }
         public int Page { get; set; }
@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public bool ShowToAdress => Learner.CertificateStatus == CertificateStatus.Submitted ||
                                     CertificateStatus.HasPrintProcessStatus(Learner.CertificateStatus);
 
-        public string GetReasonLink(CertificateLogSummary log)
+        public static string GetReasonLink(CertificateLogSummary log)
         {
             return log.Action == CertificateActions.ReprintReason || log.Action == CertificateActions.AmendReason
                 ? "Show other reason"
