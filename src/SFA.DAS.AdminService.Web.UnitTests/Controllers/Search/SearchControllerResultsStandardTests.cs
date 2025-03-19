@@ -68,7 +68,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             viewResult.ViewName.Should().BeNullOrEmpty();
 
-            var model = viewResult.Model.Should().BeOfType<SearchResultsViewModel>().Subject;
+            var model = viewResult.Model.Should().BeOfType<StandardLearnerSearchResultsViewModel>().Subject;
             model.OrganisationName.Should().Be("Test Org");
             model.StaffSearchResult.Should().Be(searchResults);
             model.SearchString.Should().Be("valid search string");

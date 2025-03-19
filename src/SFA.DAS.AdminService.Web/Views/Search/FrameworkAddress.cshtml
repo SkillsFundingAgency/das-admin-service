@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<a class="govuk-back-link" asp-controller="Search" asp-action="FrameworkReprintReason">Back</a>
+<a asp-controller="Search" asp-action="ResetBackToCheckAnswersAndRedirect" asp-route-backActionTarget="@Model.BackAction" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -28,6 +28,7 @@
                     </div>
                 </div>
             }
+            
             <form class="address-form" type="post" asp-controller="Search" asp-action="FrameworkAddress">
 
                 <h1 class="govuk-heading-l">
