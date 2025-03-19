@@ -12,6 +12,11 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AdminService.Common.Extensions;
+using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.AssessorService.Api.Types.Enums;
+using System.Linq;
+using System;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -21,24 +26,30 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly ILearnerDetailsApiClient _learnerDetailsApiClient;
         private readonly IRegisterApiClient _registerApiClient;
         private readonly IStaffSearchApiClient _staffSearchApiClient;
+        private readonly ICertificateApiClient _certificateApiClient;
         private readonly IScheduleApiClient _scheduleApiClient;
         private readonly IFrameworkSearchSessionService _sessionService;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public SearchController(
             ILearnerDetailsApiClient learnerDetailsApiClient, 
             IRegisterApiClient registerApiClient, 
             IStaffSearchApiClient staffSearchApiClient,
             IFrameworkSearchSessionService sessionService, 
+            ICertificateApiClient certificateApiClient,
             IScheduleApiClient scheduleApiClient,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor contextAccessor)
         {
             _learnerDetailsApiClient = learnerDetailsApiClient;
             _registerApiClient = registerApiClient;
             _staffSearchApiClient = staffSearchApiClient;
             _sessionService = sessionService;
+            _certificateApiClient = certificateApiClient;
             _scheduleApiClient = scheduleApiClient;
             _mapper = mapper;
+            _contextAccessor = contextAccessor;
         }
 
         [HttpGet]
@@ -93,7 +104,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                             LastName = searchQuery.LastName,
                             DateOfBirth = searchQuery.DateOfBirth,
                             FrameworkResults = _mapper.Map<List<FrameworkLearnerSummaryViewModel>>(frameworkResults),
-                            SelectedResult = frameworkResults[0].Id,
+                            SelectedFrameworkLearnerId = frameworkResults[0].Id,
                         };
 
                         _sessionService.SessionFrameworkSearch = searchSessionObject;
@@ -184,7 +195,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                 {
-                    sessionObject.SelectedResult = vm.SelectedResult;
+                    sessionObject.SelectedFrameworkLearnerId = vm.SelectedResult;
                 });
                 return RedirectToAction(nameof(FrameworkLearnerDetails));
             }
@@ -195,13 +206,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> FrameworkLearnerDetails()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || !sessionModel.SelectedResult.HasValue)
+            if (sessionModel == null || !sessionModel.SelectedFrameworkLearnerId.HasValue)
             {
                 return RedirectToAction("Index");
             }
 
             var frameworkLearnerDetails = 
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value);
 
             return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails));
 
@@ -217,7 +228,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 {
                     _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                     {
-                        sessionObject.SelectedResult = null;
+                        sessionObject.SelectedFrameworkLearnerId = null;
                     });
 
                     return RedirectToAction(nameof(MultipleResults));
@@ -244,7 +255,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public IActionResult FrameworkReprintReason(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || sessionModel.SelectedResult == null)
+            if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -288,7 +299,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public IActionResult FrameworkAddress(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || sessionModel.SelectedResult == null)
+            if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -332,13 +343,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> CheckFrameworkDetails()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || sessionModel.SelectedResult == null)
+            if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
             {
                 return RedirectToAction(nameof(Index));
             }
 
             var frameworkLearner =
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedResult.Value);
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value);
 
             var viewModel = new CheckFrameworkLearnerViewModel()
             {
@@ -353,28 +364,49 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> Submit()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || sessionModel.SelectedResult == null)
+            if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            //TODO : Waiting on #2356 to create the reprint request
+            var username = _contextAccessor.HttpContext.User.UserId();
+
+            var startFrameworkRequest = new StartFrameworkCertificateRequest
+            {
+                FrameworkLearnerId = sessionModel.SelectedFrameworkLearnerId.Value,
+                Username = username,
+                IncidentNumber = sessionModel.TicketNumber,
+                Reasons = ParseReprintReasons(sessionModel.SelectedReprintReasons),
+                OtherReason = sessionModel.OtherReason,
+                ContactName = $"{sessionModel.FirstName} {sessionModel.LastName}",
+                ContactAddLine1 = sessionModel.AddressLine1,
+                ContactAddLine2 = sessionModel.AddressLine2,
+                ContactAddLine3 = sessionModel.TownOrCity,
+                ContactAddLine4 = sessionModel.County,
+                ContactPostcode = sessionModel.Postcode,
+            };
+
+            var certificate = await _certificateApiClient.StartFramework(startFrameworkRequest);
+
             _sessionService.ClearFrameworkSearchRequest();
 
             var nextScheduledRun = await _scheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
-            if (nextScheduledRun != null)
-            { 
-                return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
-            }
-            //TODO: Not sure what to do if run date not found
-            return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = "Unknown"});
-
+            return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = nextScheduledRun?.RunTime.ToSfaShortDateString() ?? "Unknown" });
         }
 
         [HttpGet("ConfirmFrameworkReprint/{printRunDate}")]
         public IActionResult ConfirmFrameworkReprint(string printRunDate)
         {
             return View(new FrameworkLearnerReprintSubmittedViewModel { PrintRunDate = printRunDate});
+        }
+
+        private ReprintReasons? ParseReprintReasons(List<string> reasons)
+        {
+            var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
+            
+            return !string.IsNullOrWhiteSpace(reprintReasons)
+                ? (ReprintReasons?)Enum.Parse(typeof(ReprintReasons), reprintReasons)
+                : null;
         }
     }
 }

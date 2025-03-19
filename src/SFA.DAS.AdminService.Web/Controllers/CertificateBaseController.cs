@@ -79,7 +79,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
             Logger.LogInformation($"Save View Model for {typeof(T).Name} for {username} with values: {GetModelValues(vm)}");
 
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
             if(vm.RequiresReasonForChange && string.IsNullOrEmpty(vm.ReasonForChange))
             {
@@ -88,8 +87,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                vm.FamilyName = certData.LearnerFamilyName;
-                vm.GivenNames = certData.LearnerGivenNames;
+                vm.FamilyName = certificate.CertificateData.LearnerFamilyName;
+                vm.GivenNames = certificate.CertificateData.LearnerGivenNames;
                 Logger.LogInformation($"Model State not valid for {typeof(T).Name} requested by {username} with Id {certificate.Id}. Errors: {ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)}");
                 return View(returnToIfModelNotValid, vm);
             }
@@ -100,11 +99,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 var cvvm = vm as CertificateVersionViewModel;
                 if(cvvm.StandardUId != certificate.StandardUId)
                 {
-                    certData.CourseOption = null;
+                    certificate.CertificateData.CourseOption = null;
                 }
             }
 
-            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certData);
+            var updatedCertificate = vm.GetCertificateFromViewModel(certificate, certificate.CertificateData);
 
             await CertificateApiClient.UpdateCertificate(new UpdateCertificateRequest(updatedCertificate) { Username = username, Action = action, ReasonForChange = vm.ReasonForChange });
 

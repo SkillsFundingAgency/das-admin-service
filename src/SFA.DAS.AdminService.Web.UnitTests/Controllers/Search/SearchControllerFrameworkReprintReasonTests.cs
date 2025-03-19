@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void FrameworkReprintReason_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
-            var sessionModel = new FrameworkSearchSession { SelectedResult = null };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = null };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
@@ -52,7 +52,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 FirstName = "Test",
                 LastName = "User",
                 DateOfBirth = DateTime.Now.AddYears(-20),
-                SelectedResult = Guid.NewGuid(),
+                SelectedFrameworkLearnerId = Guid.NewGuid(),
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
@@ -80,7 +80,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             var sessionModel = new FrameworkSearchSession
             {
-                SelectedResult = Guid.NewGuid(),
+                SelectedFrameworkLearnerId = Guid.NewGuid(),
                 SelectedReprintReasons = vm.SelectedReprintReasons,
                 TicketNumber = vm.TicketNumber,
                 OtherReason = vm.OtherReason

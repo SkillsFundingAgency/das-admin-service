@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.Models.Search
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public List<FrameworkLearnerSummaryViewModel> FrameworkResults { get; set; }
-        public Guid? SelectedResult { get; set; }
+        public Guid? SelectedFrameworkLearnerId { get; set; }
 
         //frameworkReprint reason
         public string TicketNumber { get; set; }

@@ -9,6 +9,8 @@ using SFA.DAS.AdminService.Web.Infrastructure.FrameworkSearch;
 using System;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AdminService.Web.Models.Search;
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.AdminService.Web.Infrastructure;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -20,8 +22,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         protected Mock<IRegisterApiClient> _registerApiClientMock;
         protected Mock<IStaffSearchApiClient> _staffSearchApiClientMock;
         protected Mock<IFrameworkSearchSessionService> _sessionServiceMock;
+        protected Mock<ICertificateApiClient> _certificateApiClientMock;
         protected Mock<IScheduleApiClient> _scheduleApiClientMock;
         protected Mock<IMapper> _mapperMock;
+        protected Mock<IHttpContextAccessor> _httpContextAccessorMock;
 
         [SetUp]
         public void SetupBase()
@@ -30,10 +34,19 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _registerApiClientMock = new Mock<IRegisterApiClient>();
             _staffSearchApiClientMock = new Mock<IStaffSearchApiClient>();
              _sessionServiceMock = new Mock<IFrameworkSearchSessionService>();
+             _certificateApiClientMock = new Mock<ICertificateApiClient>();
             _scheduleApiClientMock = new Mock<IScheduleApiClient>();
             _mapperMock = new Mock<IMapper>();
-            _controller = new SearchController(_learnerDetailsApiClientMock.Object, _registerApiClientMock.Object, _staffSearchApiClientMock.Object,
-                _sessionServiceMock.Object, _scheduleApiClientMock.Object, _mapperMock.Object);
+            _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            _controller = new SearchController(_learnerDetailsApiClientMock.Object, 
+                _registerApiClientMock.Object, 
+                _staffSearchApiClientMock.Object,
+                _sessionServiceMock.Object, 
+                _certificateApiClientMock.Object,
+                _scheduleApiClientMock.Object, 
+                _mapperMock.Object, 
+                _httpContextAccessorMock.Object);
+            
         }
         protected SearchInputViewModel CreateValidSearchInputViewModel()
         {

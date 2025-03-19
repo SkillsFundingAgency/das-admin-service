@@ -31,7 +31,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         public override Certificate GetCertificateFromViewModel(Certificate certificate, CertificateData data)
         {
             data.OverallGrade = SelectedGrade;
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = data;
             
             return certificate;
         }

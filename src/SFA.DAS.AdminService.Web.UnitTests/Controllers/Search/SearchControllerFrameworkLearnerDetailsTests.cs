@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 LastName = "",
                 DateOfBirth = DateTime.Now.AddYears(-28),
                 FrameworkResults = results,
-                SelectedResult = selectedResult
+                SelectedFrameworkLearnerId = selectedResult
             };
         }
 
@@ -73,7 +73,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             await _controller.FrameworkLearnerDetails();
 
-            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedResult.Value), Times.Once);
+            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value), Times.Once);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel); 
-            sessionModel.SelectedResult.Should().BeNull();
+            sessionModel.SelectedFrameworkLearnerId.Should().BeNull();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("MultipleResults");

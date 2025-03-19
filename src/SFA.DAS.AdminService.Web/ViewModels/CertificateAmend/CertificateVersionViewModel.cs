@@ -19,7 +19,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         {
             certificate.StandardUId = StandardUId;
             certData.Version = Version;
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             
             return certificate;
         }

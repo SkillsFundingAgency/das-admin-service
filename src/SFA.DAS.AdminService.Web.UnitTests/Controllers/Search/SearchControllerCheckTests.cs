@@ -35,7 +35,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public async Task Check_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
-            var sessionModel = new FrameworkSearchSession { SelectedResult = null };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = null };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
@@ -50,13 +50,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [MoqAutoData]
         public async Task Check_SessionAndSelectedResultValid_CallsGetFrameworkLearner(GetFrameworkLearnerResponse certificateResult)
         {
-            var sessionModel = new FrameworkSearchSession { SelectedResult = Guid.NewGuid() };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
 
             await _controller.CheckFrameworkDetails();
 
-            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedResult.Value), Times.Once);
+            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value), Times.Once);
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             GetFrameworkLearnerResponse certificateResult, 
             FrameworkLearnerDetailsViewModel certificateViewModel)
         {
-            var sessionModel = new FrameworkSearchSession { SelectedResult = Guid.NewGuid() };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
             _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             GetFrameworkLearnerResponse certificateResult, 
             FrameworkLearnerDetailsViewModel certificateViewModel)
         {
-            var sessionModel = new FrameworkSearchSession { SelectedResult = Guid.NewGuid() };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
             _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);

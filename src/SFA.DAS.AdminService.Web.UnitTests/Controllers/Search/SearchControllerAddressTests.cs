@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         public void Address_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
-            var sessionModel = new FrameworkSearchSession { SelectedResult = null };
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = null };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
@@ -51,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 FirstName = "Test",
                 LastName = "User",
                 DateOfBirth = DateTime.Now.AddYears(-20),
-                SelectedResult = Guid.NewGuid(),
+                SelectedFrameworkLearnerId = Guid.NewGuid(),
                 AddressLine1 = "43 West Road",
                 AddressLine2 = "Townlandish",
                 County = "Portlanshire",
@@ -96,7 +96,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             var sessionModel = new FrameworkSearchSession
             {
-                SelectedResult = Guid.NewGuid()
+                SelectedFrameworkLearnerId = Guid.NewGuid()
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 

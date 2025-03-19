@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         {
             data.AchievementDate = new DateTime(int.Parse(Year), int.Parse(Month), int.Parse(Day));
 
-            certificate.CertificateData = JsonConvert.SerializeObject(data);
+            certificate.CertificateData = data;
 
             return certificate;
         }

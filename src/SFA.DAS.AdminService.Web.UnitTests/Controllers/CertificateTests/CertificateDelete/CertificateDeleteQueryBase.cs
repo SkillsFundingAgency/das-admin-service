@@ -26,14 +26,12 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         protected StandardVersionApiClient StandardVersionApiClient;
 
         protected Certificate Certificate;
-        protected CertificateData CertificateData;
 
         public CertificateDeleteQueryBase()
         {
             MockedLogger = new Mock<ILogger<CertificateDeleteController>>();
             MockHttpContextAccessor = SetupMockedHttpContextAccessor();
             SetupApiClients();
-            CertificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
         }
 
         private static Mock<IHttpContextAccessor> SetupMockedHttpContextAccessor()
@@ -84,10 +82,10 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests.Certificat
         {
             var certificateId = Guid.NewGuid();
             var certificate = new Builder().CreateNew<Certificate>()
-                .With(q => q.CertificateData = JsonConvert.SerializeObject(new Builder()
+                .With(q => q.CertificateData = new Builder()
                     .CreateNew<CertificateData>()
                     .With(x => x.AchievementDate = DateTime.Now)
-                    .Build()))
+                    .Build())
                 .Build();
 
             var organisaionId = Guid.NewGuid();

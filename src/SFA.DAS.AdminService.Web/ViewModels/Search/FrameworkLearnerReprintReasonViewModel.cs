@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using EnumsNET;
+using SFA.DAS.AssessorService.Api.Types.Enums;
+using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
     public class FrameworkLearnerReprintReasonViewModel
     {
-        public IEnumerable<string> AvailableReprintReasons { get; }
         public string CertificateNumber { get; set; }
         public string ApprenticeName { get; set; }
         public bool HasPreviousReprint { get; set; }
@@ -14,19 +15,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
         public bool BackToCheckAnswers { get; set; }
-        public string BackAction { get; set; }
-        public FrameworkLearnerReprintReasonViewModel()
+        public string BackAction { get; set; }}
+
+        public string GetReprintReasonDescription(ReprintReasons reprintReason)
         {
-            AvailableReprintReasons = new List<string>
-            { 
-                "Delivery failed",
-                "Apprentice moved to different employer or no longer with employer",
-                "Incorrect apprentice details",
-                "Incorrect employer address",
-                "Incorrect apprenticeship details",
-                "Lost or damaged by receiver",
-                "Other"
-            };
+            return reprintReason.AsString(EnumFormat.Description);
         }
     }
 }
