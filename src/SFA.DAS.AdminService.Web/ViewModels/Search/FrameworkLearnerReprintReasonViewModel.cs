@@ -15,7 +15,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public List<string> SelectedReprintReasons { get; set; }
         public string OtherReason { get; set; }
         public bool BackToCheckAnswers { get; set; }
-        public string BackAction { get; set; }}
+        public string BackAction { get; set; }
 
         public string GetReprintReasonDescription(ReprintReasons reprintReason)
         {
