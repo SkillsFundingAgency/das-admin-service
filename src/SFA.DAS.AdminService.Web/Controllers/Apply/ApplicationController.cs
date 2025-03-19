@@ -330,7 +330,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
                 await _qnaApiClient.UpdateApplicationDataDictionary(application.ApplicationId, applicationData);
             }
 
-            return RedirectToAction(nameof(Assessment));
+            return RedirectToAction(nameof(Assessment), new 
+            { 
+                applicationId, 
+                sequenceNo, 
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId
+            });
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/WithdrawalDateChange/{backOrganisationId?}")]
@@ -376,7 +383,14 @@ namespace SFA.DAS.AdminService.Web.Controllers.Apply
             applicationData[nameof(ApplicationData.ConfirmedWithdrawalDate)] = effectiveToDate;
             await _qnaApiClient.UpdateApplicationDataDictionary(application.ApplicationId, applicationData);
             
-            return RedirectToAction(nameof(Assessment));
+            return RedirectToAction(nameof(Assessment), new 
+            { 
+                applicationId, 
+                sequenceNo, 
+                backViewModel.BackAction,
+                backViewModel.BackController,
+                backViewModel.BackOrganisationId
+            });
         }
 
         [HttpPost("/Applications/{applicationId}/{backAction}/{backController}/Sequence/{sequenceNo}/Return/{backOrganisationId?}")]

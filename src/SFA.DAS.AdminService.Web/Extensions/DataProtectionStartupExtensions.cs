@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.AdminService.Common.Settings;
 using StackExchange.Redis;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SFA.DAS.AdminService.Web.Extensions
 {
@@ -10,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.Extensions
     {
         private const string ApplicationName = "das-admin-service-web";
 
-        public static IServiceCollection AddDistributedCache(this IServiceCollection services, RedisCacheSettings redisCacheSettings, IHostingEnvironment environment)
+        public static IServiceCollection AddDistributedCache(this IServiceCollection services, RedisCacheSettings redisCacheSettings, IWebHostEnvironment environment)
         {
             if (environment.IsDevelopment())
             {
@@ -20,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.Extensions
             }
             else
             {
-                services.AddDistributedRedisCache(options =>
+                services.AddStackExchangeRedisCache(options =>
                 {
                     options.Configuration = $"{redisCacheSettings.RedisConnectionString},{redisCacheSettings.SessionCachingDatabase}";
                 });

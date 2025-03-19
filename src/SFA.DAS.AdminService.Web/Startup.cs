@@ -1,3 +1,4 @@
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
@@ -9,9 +10,11 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Extensions.Http;
+using Scrutor;
 using SFA.DAS.AdminService.Application.Interfaces;
 using SFA.DAS.AdminService.Application.Interfaces.Validation;
 using SFA.DAS.AdminService.Common.Extensions;
@@ -50,17 +53,13 @@ namespace SFA.DAS.AdminService.Web
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _env;
-        private readonly ILogger<Startup> _logger;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
+        private readonly IWebHostEnvironment _env;
         public IConfiguration Configuration { get; }
         public IWebConfiguration ApplicationConfiguration { get; set; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _env = env;
-            _logger = logger;
 
             var config = new ConfigurationBuilder()
                 .AddConfiguration(configuration)
@@ -74,19 +73,18 @@ namespace SFA.DAS.AdminService.Web
 #endif
 
             config.AddEnvironmentVariables();
-            if (!configuration.IsDev())
-            {
-                // read the DfeSignIn Configurations from Application settings.
-                config.AddAzureTableStorage(options =>
-                    {
-                        options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
-                        options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
-                        options.EnvironmentName = configuration["EnvironmentName"];
-                        options.PreFixConfigurationKeys = false;
-                    }
-                );
-            }
+
+            config.AddAzureTableStorage(options =>
+                {
+                    options.ConfigurationKeys = configuration["ConfigNames"].Split(",");
+                    options.StorageConnectionString = configuration["ConfigurationStorageConnectionString"];
+                    options.EnvironmentName = configuration["EnvironmentName"];
+                    options.PreFixConfigurationKeys = false;
+                }
+            );
+
             Configuration = config.Build();
+            ApplicationConfiguration = Configuration.Get<WebConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -99,12 +97,6 @@ namespace SFA.DAS.AdminService.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            ApplicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
-                Configuration["EnvironmentName"], 
-                Configuration["ConfigurationStorageConnectionString"], 
-                Version, 
-                ServiceName).Result;
-
             AddAuthentication(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
@@ -114,22 +106,24 @@ namespace SFA.DAS.AdminService.Web
                 options.RequestCultureProviders.Clear();
             });
 
-            services
-                .AddMvc(options =>
-                {
-                    options.Filters.Add<CheckSessionFilter>();
-                    options.Filters.Add<FeatureToggleFilter>();
-                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                    options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new StringTrimmingModelBinderProvider());
-                    options.EnableEndpointRouting = false;
-                })
-                .AddMvcOptions(m => m.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider()))
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                });
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<CheckSessionFilter>();
+                options.Filters.Add<FeatureToggleFilter>();
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                options.ModelBinderProviders.Insert(0, new SuppressBindingErrorsModelBinderProvider());
+                options.ModelBinderProviders.Insert(0, new StringTrimmingModelBinderProvider());
+
+                options.ModelMetadataDetailsProviders.Add(new HumanizerMetadataProvider());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
+
+            services.AddFluentValidationAutoValidation();
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<Startup>();
 
             services.Configure<RazorViewEngineOptions>(o =>
                 {
@@ -159,9 +153,12 @@ namespace SFA.DAS.AdminService.Web
         {
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
+            // Exclude classes that require constructor parameters (cannot be constructed by DI)
+            var excludedTypes = new[] { typeof(SessionService), typeof(PagingState), typeof(ModelStatePersist), typeof(ModelStatePersistAttribute)  };
+
             services.Scan(scan =>
                 scan.FromCallingAssembly()
-                    .AddClasses()
+                    .AddClasses(classes => classes.Where(type => !excludedTypes.Contains(type)))
                     .AsImplementedInterfaces()
                     .WithTransientLifetime());
 
@@ -272,7 +269,7 @@ namespace SFA.DAS.AdminService.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -290,13 +287,20 @@ namespace SFA.DAS.AdminService.Web
             app.UseStatusCodePagesWithReExecute("/ErrorPage/{0}");
             app.UseSecurityHeaders();
             app.UseStaticFiles();
+
+            app.UseRouting();
+
             app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseHealthChecks("/health");
-            app.UseMvc(routes =>
+            
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
         static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()

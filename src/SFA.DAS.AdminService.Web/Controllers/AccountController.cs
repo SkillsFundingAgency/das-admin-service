@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Settings;
 using SFA.DAS.AdminService.Web.Domain;
@@ -16,18 +15,11 @@ namespace SFA.DAS.AdminService.Web.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly IWebConfiguration _applicationConfiguration;
-        private const string ServiceName = "SFA.DAS.AdminService";
-        private const string Version = "1.0";
 
-        public AccountController(ILogger<AccountController> logger, IConfiguration configuration)
+        public AccountController(ILogger<AccountController> logger, IWebConfiguration configuration)
         {
             _logger = logger;
-            _applicationConfiguration = ConfigurationService.GetConfig<WebConfiguration>(
-                configuration["EnvironmentName"],
-                configuration["ConfigurationStorageConnectionString"], 
-                Version, 
-                ServiceName)
-                .Result;
+            _applicationConfiguration = configuration;
         }
 
         [HttpGet]

@@ -33,14 +33,14 @@ namespace SFA.DAS.AdminService.Web.Controllers
         private readonly IApplicationApiClient _applyApiClient;
         private readonly IOrganisationsApiClient _organisationsApiClient;
         private readonly IContactsApiClient _contactsApiClient;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
         private const int DefaultPageIndex = 1;
         private const int DefaultStandardsPerPage = 10;
         private const int DefaultPageSetSize = 6;
 
         public RegisterController(IControllerSession controllerSession, IRegisterApiClient registerApiClient, IApplicationApiClient applyApiClient,
-            IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient, IHostingEnvironment env)
+            IOrganisationsApiClient organisationsApiClient, IContactsApiClient contactsApiClient, IWebHostEnvironment env)
         {
             _controllerSession = controllerSession;
             _registerApiClient = registerApiClient;

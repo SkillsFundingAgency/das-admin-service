@@ -2,15 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "serviceName": {
+        "resourceServiceName": {
+            "type": "string"
+        },
+        "resourceGroupLocation": {
+            "type": "string"
+        },
+        "sharedEnvResourceGroup": {
             "type": "string"
         },
         "customHostName": {
             "type": "string"
         },
-        "certificateName": {
-            "type": "string",
-            "defaultValue": ""
+        "keyVaultCertificateName": {
+            "type": "string"
         },
         "sharedKeyVaultName": {
             "type": "string"
@@ -33,10 +38,8 @@
         "loggingRedisKey": {
             "type": "string"
         },
-        "appServiceAllowedIPs": {
-            "type": "array",
-            "defaultValue": [
-            ]
+        "frontEndAccessRestrictions": {
+            "type": "array"
         },
         "sharedFrontendAppServicePlanName": {
             "type": "string"
@@ -47,23 +50,43 @@
         "sharedAppServicePlanResourceGroup": {
             "type": "string"
         },
+        "tags": {
+            "type": "object"
+        },
+        "logAnalyticsSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
+        },
+        "logAnalyticsWorkspaceName": {
+            "type": "string"
+        },
         "utcValue": {
             "type": "string",
-            "defaultValue": "[utcNow('yyMMddHHmmss')]"
+            "defaultValue": "[utcNow()]"
         }
     },
     "variables": {
         "deploymentUrlBase": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/",
-        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('serviceName')))]",
-        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]"
+        "resourceNamePrefix": "[toLower(concat('das-', parameters('resourceEnvironmentName'),'-', parameters('resourceServiceName')))]",
+        "resourceGroupName": "[concat(variables('resourceNamePrefix'), '-rg')]",
+        "appServiceName": "[concat(variables('resourceNamePrefix'), '-as')]",
+        "configNames": "SFA.DAS.AdminService,SFA.DAS.Provider.DfeSignIn"
     },
     "resources": [
+        {
+            "apiVersion": "2021-04-01",
+            "name": "[variables('resourceGroupName')]",
+            "type": "Microsoft.Resources/resourceGroups",
+            "location": "[parameters('resourceGroupLocation')]",
+            "tags": "[parameters('tags')]",
+            "properties": {}
+        },
         {
             "apiVersion": "2017-05-10",
             "name": "[concat('app-service-certificate-', parameters('utcValue'))]",
             "resourceGroup": "[parameters('sharedAppServicePlanResourceGroup')]",
             "type": "Microsoft.Resources/deployments",
-            "condition": "[greater(length(parameters('certificateName')), 0)]",
+            "condition": "[greater(length(parameters('keyVaultCertificateName')), 0)]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -72,16 +95,13 @@
                 },
                 "parameters": {
                     "keyVaultCertificateName": {
-                        "value": "[parameters('certificateName')]"
+                        "value": "[parameters('keyVaultCertificateName')]"
                     },
                     "keyVaultName": {
                         "value": "[parameters('sharedKeyVaultName')]"
                     },
                     "keyVaultResourceGroup": {
                         "value": "[parameters('sharedManagementResourceGroup')]"
-                    },
-                    "serverFarmId": {
-                        "value": "[resourceId(parameters('sharedAppServicePlanResourceGroup'), 'Microsoft.Web/serverfarms', parameters('sharedFrontEndAppServicePlanName'))]"
                     }
                 }
             }
@@ -90,6 +110,7 @@
             "apiVersion": "2017-05-10",
             "name": "[concat('app-service-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -113,7 +134,7 @@
                         "value": true
                     },
                     "ipSecurityRestrictions": {
-                        "value": "[parameters('appServiceAllowedIPs')]"
+                        "value": "[parameters('frontEndAccessRestrictions')]"
                     },
                     "appServiceAppSettings": {
                         "value": {
@@ -143,16 +164,16 @@
                                 "value": "[toUpper(parameters('environmentName'))]"
                               },
                               {
+                                  "name": "Version",
+                                  "value": "1.0"
+                              },
+                              {
                                 "name": "ResourceEnvironmentName",
                                 "value": "[parameters('resourceEnvironmentName')]"
                               },
                               {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
-                                "value": "/health"
-                              },
-                              {
-                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
-                                "value": "200"
+                                  "name": "ConfigNames",
+                                  "value": "[variables('configNames')]"
                               }
                           ]
                         }
@@ -172,18 +193,19 @@
                         "value": "[parameters('customHostName')]"
                     },
                     "certificateThumbprint": {
-                        "value": "[if(greater(length(parameters('certificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                        "value": "[if(greater(length(parameters('keyVaultCertificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
                     }
                 }
             },
             "dependsOn": [
-                "[concat('app-service-certificate-', parameters('utcValue'))]"
+                "[variables('resourceGroupName')]"
             ]
         },
         {
             "apiVersion": "2017-08-01",
             "name": "[concat('app-insights-', parameters('utcValue'))]",
             "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[variables('resourceGroupName')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -196,15 +218,25 @@
                     },
                     "attachedService": {
                         "value": "[variables('appServiceName')]"
+                    },
+                    "logAnalyticsWorkspaceId": {
+                        "value": "[resourceId(parameters('logAnalyticsSubscriptionId'),parameters('sharedManagementResourceGroup'),'Microsoft.OperationalInsights/workspaces',parameters('logAnalyticsWorkspaceName'))]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[variables('resourceGroupName')]"
+            ]
         }
     ],
     "outputs": {
-        "appServiceName": {
+        "AppServiceName": {
             "type": "string",
             "value": "[variables('appServiceName')]"
+        },
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('resourceGroupName')]"
         }
     }
 }
