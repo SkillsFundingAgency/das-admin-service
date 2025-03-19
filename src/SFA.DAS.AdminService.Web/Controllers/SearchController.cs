@@ -10,6 +10,8 @@ using AutoMapper;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AdminService.Web.Infrastructure;
+using SFA.DAS.AssessorService.Domain.Entities;
+using SFA.DAS.AdminService.Common.Extensions;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -277,8 +279,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             else
             { 
-                
-                return RedirectToAction(nameof(FrameworkReprintReason));   
+                return RedirectToAction(nameof(FrameworkReprintReason), new { backToCheckAnswers});   
             }  
         }
 
@@ -306,6 +307,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         [ModelStatePersist(ModelStatePersist.Store)]
         public IActionResult FrameworkAddress(FrameworkLearnerAddressViewModel vm)
         {
+            var backToCheckAnswers = _sessionService.SessionFrameworkSearch.BackToCheckAnswers;
             _sessionService.UpdateFrameworkSearchRequest((sessionObject) =>
                {
                    sessionObject.AddressLine1 = vm.AddressLine1;
@@ -322,7 +324,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(FrameworkAddress));
+                return RedirectToAction(nameof(FrameworkAddress), new { backToCheckAnswers});
             }
         }
 
@@ -359,8 +361,20 @@ namespace SFA.DAS.AdminService.Web.Controllers
             //TODO : Waiting on #2356 to create the reprint request
             _sessionService.ClearFrameworkSearchRequest();
 
-            return RedirectToAction(nameof(Index));
+            var nextScheduledRun = await _scheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
+            if (nextScheduledRun != null)
+            { 
+                return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = nextScheduledRun.RunTime.ToSfaShortDateString()});
+            }
+            //TODO: Not sure what to do if run date not found
+            return RedirectToAction(nameof(ConfirmFrameworkReprint), new { printRunDate = "Unknown"});
 
+        }
+
+        [HttpGet("ConfirmFrameworkReprint/{printRunDate}")]
+        public IActionResult ConfirmFrameworkReprint(string printRunDate)
+        {
+            return View(new FrameworkLearnerReprintSubmittedViewModel { PrintRunDate = printRunDate});
         }
     }
 }
