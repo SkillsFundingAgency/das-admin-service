@@ -1,5 +1,5 @@
-﻿@using SFA.DAS.AdminService.Web.Controllers
-@model SFA.DAS.AdminService.Web.Controllers.SearchInputViewModel
+﻿@using SFA.DAS.AdminService.Web.Models.Search
+@model SFA.DAS.AdminService.Web.ViewModels.Search.SearchInputViewModel
 @{
     ViewBag.Title = "ILR and certificate search";
     Layout = "_Layout";
@@ -26,7 +26,7 @@
                     </div>
                 </div>
             }
-            <form class="standards-search-form" asp-action="Results" asp-controller="Search" method="post">
+            <form class="standards-search-form" asp-action="Results" asp-controller="Search" method="get">
                 <input type="hidden" id="searchMode" name="searchMode" value="" />
                 <div class="govuk-form-group" sfa-validation-for="SearchString" sfa-validationerror-class="govuk-form-group--error">
                     <h1 class="govuk-label-wrapper">
@@ -116,10 +116,9 @@
                         </div>
                     </fieldset>
                 </div>
-                <button class="govuk-button" type="submit" name="SearchTYpe" id="frameworkButton" value="@SearchTypes.Frameworks">Search framework certificates</button>
+                <button class="govuk-button" type="submit" name="SearchType" id="frameworkButton" value="@SearchTypes.Frameworks">Search framework certificates</button>
 
             </form>
         </div>
     </div>
 </main>
-}

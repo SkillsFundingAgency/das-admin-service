@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                 searchstring = rx.Replace(searchstring, "");
                 searchstring = searchstring.Replace("/", "");
                 searchstring = searchstring.Replace("+", "");
-                var searchTerm = Uri.EscapeUriString(searchstring);
+                var searchTerm = Uri.EscapeDataString(searchstring);
                 var validationResult = _apiClient.ValidateSearchStandards(searchTerm).Result;
                 if (validationResult.IsValid) return;
                 foreach (var error in validationResult.Errors)

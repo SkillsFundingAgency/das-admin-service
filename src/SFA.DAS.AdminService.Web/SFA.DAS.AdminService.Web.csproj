@@ -1,26 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
-		<ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
-		<TargetFramework>net8.0</TargetFramework>
-		<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-		<LangVersion>12</LangVersion>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="Controllers\RoatpController.cs" />
-		<Compile Remove="Controllers\SearchFrameworksController.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Remove="Views\Search\_SearchScriptsPartial.cshtml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
-	</ItemGroup>
+  <PropertyGroup>
+    <ProjectGuid>027ED1F2-884B-4BA9-8131-4CE16F9675AE</ProjectGuid>
+    <TargetFramework>net8.0</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>12</LangVersion>
+  </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\RoatpController.cs" />
+    <Compile Remove="Controllers\SearchFrameworksController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Search\_SearchScriptsPartial.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
     <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="Enums.NET" Version="5.0.0" />
@@ -46,18 +47,19 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 
-		<PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.4" />
 
     <PackageReference Include="Polly" Version="8.4.2" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.272" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.274-prerelease-24" />
     <PackageReference Include="SFA.DAS.DfESignIn.Auth" Version="17.1.72" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.2.1" />
     <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.304-prerelease-3" />
 
   </ItemGroup>
 
-  <ItemGroup><!--These specific versions are required for DFESignIn which is currently .net 6.0-->
+  <ItemGroup>
+    <!--These specific versions are required for DFESignIn which is currently .net 6.0-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.WsFederation" Version="6.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.8" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.22.0" />
@@ -69,7 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-		<!--Transitive reference from Microsoft.Extensions.Caching.Redis-->
+    <!--Transitive reference from Microsoft.Extensions.Caching.Redis-->
     <PackageReference Include="System.Net.Security" Version="4.3.2" />
   </ItemGroup>
 
@@ -81,186 +83,189 @@
     <ProjectReference Include="..\SFA.DAS.AdminService.Settings\SFA.DAS.AdminService.Settings.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-		<Compile Update="Resources\OrganisationAndContactMessages.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>OrganisationAndContactMessages.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Resources\RoatpConfirmationMessages.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>RoatpConfirmationMessages.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Resources\RoatpOrganisationValidation.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>RoatpOrganisationValidation.resx</DependentUpon>
-		</Compile>
-		<Compile Update="Resources\RoatpSearchValidation.Designer.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>RoatpSearchValidation.resx</DependentUpon>
-		</Compile>
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\OrganisationAndContactMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OrganisationAndContactMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\RoatpConfirmationMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpConfirmationMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\RoatpOrganisationValidation.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpOrganisationValidation.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\RoatpSearchValidation.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RoatpSearchValidation.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
-	<ItemGroup>
-		<Content Update="nlog.config">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Views\CertificateDelete\AuditDetails.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Application\Assessment.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Application\Returned.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\Address.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\Date.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\Grade.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\Option.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\_DateScriptsPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\_GradeScriptsPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\_OptionScriptsPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\CertificateAmend\_ViewImports.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Reports\Run.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Reports\Index.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddApplicationDeterminedDate.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\Apply\Snapshot\Index.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\EnterUkprn.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddProviderType.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddOrganisationType.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationApplicationDeterminedDate.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UkprnPreview.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UkprnNotFound.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UkprnIsUnavailable.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationProviderType.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationType.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationStatus.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationUkprn.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\UpdateOrganisationLegalName.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddOrganisationPreview.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddOrganisationDetails.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\AddOrganisation.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\Index.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Roatp\_AddOrganisationFieldsPartial.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\Shared\_ViewStart.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="Views\_ViewImports.cshtml">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-		<Content Update="wwwroot\inactive_app_offline_public_beta.htm">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Update="wwwroot\javascripts\das-view-organisation-service.min.js">
-			<DependentUpon>das-view-organisation-service.js</DependentUpon>
-		</Content>
-	</ItemGroup>
+  <ItemGroup>
+    <Content Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Views\CertificateDelete\AuditDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Search\FrameworkAddress.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_PaginationLinksPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Application\Assessment.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Application\Returned.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\Address.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\Date.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\Grade.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\Option.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_DateScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_GradeScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_OptionScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\CertificateAmend\_ViewImports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\Run.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Reports\_ReportScriptsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddApplicationDeterminedDate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\Apply\Snapshot\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\EnterUkprn.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddProviderType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisationType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationApplicationDeterminedDate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UkprnPreview.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UkprnNotFound.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UkprnIsUnavailable.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationProviderType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationType.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationStatus.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationUkprn.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\UpdateOrganisationLegalName.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisationPreview.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisationDetails.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\AddOrganisation.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Roatp\_AddOrganisationFieldsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_ValidationScriptsPartial.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Shared\_ViewStart.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\_ViewImports.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="wwwroot\inactive_app_offline_public_beta.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\javascripts\das-view-organisation-service.min.js">
+      <DependentUpon>das-view-organisation-service.js</DependentUpon>
+    </Content>
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Update="Resources\OrganisationAndContactMessages.resx">
-			<Generator>ResXFileCodeGenerator</Generator>
-			<LastGenOutput>OrganisationAndContactMessages.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-		<EmbeddedResource Update="Resources\RoatpSearchValidation.resx">
-			<Generator>PublicResXFileCodeGenerator</Generator>
-			<LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
-	</ItemGroup>
-	<Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
-		<ItemGroup>
-			<ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">
-				<Aliases>signed</Aliases>
-			</ReferencePath>
-		</ItemGroup>
-	</Target>
-	<PropertyGroup>
-		<!-- File with mtime of last successful npm install -->
-		<NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
-		<UserSecretsId>a256a7ab-7342-43f8-a8eb-9ad33e5f3a6c</UserSecretsId>
-	</PropertyGroup>
-	<Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
-		<Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
-		<Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
-	</Target>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\OrganisationAndContactMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>OrganisationAndContactMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\RoatpSearchValidation.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">
+        <Aliases>signed</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <!-- File with mtime of last successful npm install -->
+    <NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
+    <UserSecretsId>a256a7ab-7342-43f8-a8eb-9ad33e5f3a6c</UserSecretsId>
+  </PropertyGroup>
+  <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
+    <Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
+    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+  </Target>
 </Project>

@@ -34,8 +34,8 @@ namespace SFA.DAS.AdminService.Web.Validators
                     vm.EffectiveToYear, "EffectiveToDay",
                     "EffectiveToMonth", "EffectiveToYear", "EffectiveTo", "Effective To");
 
-                vm.EffectiveFrom = ValidatorExtensions.ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
-                vm.EffectiveTo = ValidatorExtensions.ConstructDate(vm.EffectiveToDay, vm.EffectiveToMonth, vm.EffectiveToYear);
+                vm.EffectiveFrom = DateExtensions.ConstructDate(vm.EffectiveFromDay, vm.EffectiveFromMonth, vm.EffectiveFromYear);
+                vm.EffectiveTo = DateExtensions.ConstructDate(vm.EffectiveToDay, vm.EffectiveToMonth, vm.EffectiveToYear);
 
                 CreateFailuresInContext(validationResultEffectiveFrom.Errors, context);
                 CreateFailuresInContext(validationResultEffectiveTo.Errors, context);
