@@ -52,11 +52,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(certificateResult);
 
             await _controller.CheckFrameworkDetails();
 
-            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value), Times.Once);
+            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, false), Times.Once);
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(certificateResult);
             _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
             await _controller.FrameworkLearnerDetails();
@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
-            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>())).ReturnsAsync(certificateResult);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(certificateResult);
             _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(certificateResult)).Returns(certificateViewModel);
 
             var result = await _controller.FrameworkLearnerDetails();

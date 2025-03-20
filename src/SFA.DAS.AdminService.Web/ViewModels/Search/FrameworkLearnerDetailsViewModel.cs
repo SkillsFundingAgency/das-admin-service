@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
@@ -11,7 +12,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string ApprenticeSurname { get; set; }
         public DateTime ApprenticeDoB { get; set; }
         public long? ApprenticeULN { get; set; }
-        public string CertificateNumber { get; set; }
+        public string FrameworkCertificateNumber { get; set; }
         public string FrameworkName { get; set; }
         public string PathwayName { get; set; }
         public string ApprenticeshipLevelName { get; set; }
@@ -22,7 +23,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public DateTime? ApprenticeLastdateInLearning { get; set; }
         public DateTime CertificationDate { get; set; }
         public string BackAction { get; set; }
-
         public string QualificationsDisplay
         {
             get
@@ -42,5 +42,10 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
                 }
             }
         } 
+        public string CertificateStatus { get; set; }
+        public DateTime? CertificateStatusDate { get; set; }
+        public string CertificateReference { get; set; }
+        public List<CertificateLogSummary> CertificateLogs{ get; set; }
+        public bool ShowDetails { get; set; }
     }
 }

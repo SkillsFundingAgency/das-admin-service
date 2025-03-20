@@ -184,7 +184,7 @@ else
                             Learner start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.LearnStartDate?.ToShortDateString()
+                            @Model.Learner.LearnStartDate?.ToSfaShortDateString()
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -192,7 +192,7 @@ else
                             @(Model.Learner.OverallGrade == CertificateGrade.Fail ? "Fail date" : "Achievement date" )
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.AchievementDate?.ToShortDateString()
+                            @Model.Learner.AchievementDate?.ToSfaShortDateString()
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
