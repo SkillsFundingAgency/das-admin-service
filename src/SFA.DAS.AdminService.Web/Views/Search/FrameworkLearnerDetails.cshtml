@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions
+@using SFA.DAS.AssessorService.Domain.Consts
 @model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkLearnerDetailsViewModel
 
 @{
@@ -12,6 +13,10 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l govuk-!-margin-bottom-5">
                 @ViewBag.Title
+                @if (!string.IsNullOrEmpty(Model.CertificateStatus))
+                {
+                    <span class="govuk-caption-xl">Status: @Model.CertificateStatus</span>
+                }
             </h1>
 
             <h2 class="govuk-heading-m">Apprentice details</h2>
@@ -49,12 +54,23 @@
             <h2 class="govuk-heading-m">Certificate details</h2>
 
             <dl class="govuk-summary-list">
+                @if (!string.IsNullOrEmpty(Model.CertificateReference))
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Certificate reference
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.CertificateReference
+                        </dd>
+                    </div>
+                }
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         Framework certificate number
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.CertificateNumber
+                        @Model.FrameworkCertificateNumber
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -141,6 +157,28 @@
                         @Model.CertificationDate.ToSfaShortDateString()
                     </dd>
                 </div>
+                @if (!string.IsNullOrEmpty(Model.CertificateStatus))
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @CertificateStatus.GetDisplayName(Model.CertificateStatus)
+                        </dd>
+                    </div>
+                }
+                @if (Model.CertificateStatusDate.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            @CertificateStatus.GetStatusDateDisplayName(Model.CertificateStatus)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.CertificateStatusDate
+                        </dd>
+                    </div>
+                }
             </dl>
 
             <h3 class="govuk-heading-m">What do you want to do next?</h3>
@@ -151,6 +189,88 @@
             <p class="govuk-body">
                 <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
             </p>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l" id="history">History</h2>
+
+            <table class="govuk-table govuk-table--s das-table--responsive">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Date and time</th>
+                        <th class="govuk-table__header" scope="col">Action</th>
+                        <th class="govuk-table__header" scope="col">User</th>
+                        <th class="govuk-table__header" scope="col">Status</th>
+                        <th class="govuk-table__header" scope="col">Batch</th>
+                        <th class="govuk-table__header" scope="col">
+                            @if (Model.CertificateLogs.Count() > 1)
+                            {
+                                <span>Changes</span>
+                            }
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var log in Model.CertificateLogs)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell" data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
+                            <td class="govuk-table__cell" data-label="Action">@log.Action</td>
+                            <td class="govuk-table__cell" data-label="By">
+                                @log.ActionBy<br />
+                                <span class="govuk-body-s">@log.ActionByEmail</span>
+                            </td>
+                            <td class="govuk-table__cell" data-label="Status">@log.Status</td>
+                            <td class="govuk-table__cell" data-label="Batch">@log.BatchNumber</td>
+                            <td class="govuk-table__cell" data-label="Change">
+                                @{
+                                    if (Model.CertificateLogs.Count() > 1)
+                                    {
+                                        foreach (var difference in log.DifferencesToPrevious)
+                                        {
+                                            <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
+                                                @(difference.Key)
+                                            </p>
+                                            <p class="govuk-body-s govuk-!-margin-bottom-3">
+                                                @if (difference.IsList)
+                                                {
+                                                    <ul class="govuk-list govuk-list--bullet">
+                                                        @foreach (string value in difference.Values)
+                                                        {
+                                                            <li>@value</li>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <span>@difference.Values[0]</span>
+                                                }
+                                            </p>
+                                        }
+                                        if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
+                                        {
+                                            <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
+                                                <i class="arrow arrow-closed">►</i>
+                                                <span>StandardLearnerDetailsViewModel.GetReasonLink(log)</span>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (Model.ShowDetails)
+            {
+                <a class="govuk-button" asp-action="FrameworkLearnerDetails" asp-route-allLogs=true>Show all history</a>
+            }
+            else
+            {
+                <a class="govuk-button" asp-action="FrameworkLearnerDetails">Show summary</a>
+            }
         </div>
     </div>
 </main>
