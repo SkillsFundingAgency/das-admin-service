@@ -1,13 +1,16 @@
 ﻿using EnumsNET;
 using SFA.DAS.AssessorService.Api.Types.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
     public class FrameworkLearnerReprintReasonViewModel
     {
-        public string CertificateNumber { get; set; }
+        public string CertificateReference { get; set; }
         public string ApprenticeName { get; set; }
+        public string CertificateStatus { get; set; }
+        public DateTime? CertificateStatusDate { get; set; }
         public bool HasPreviousReprint { get; set; }
         public string Status { get; set; }
         public System.DateTime DateSentToPrinter { get; set; }

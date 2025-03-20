@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using System.Threading.Tasks;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -14,13 +16,13 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
     public class FrameworkReprintReasonTests : SearchControllerTestsBase 
     {
         [Test]
-        public void FrameworkReprintReason_SessionIsNull_RedirectsToIndex()
+        public async Task FrameworkReprintReason_SessionIsNull_RedirectsToIndex()
         {
             // Arrange
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = await _controller.FrameworkReprintReason();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -28,14 +30,14 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void FrameworkReprintReason_SelectedResultIsNull_RedirectsToIndex()
+        public async Task FrameworkReprintReason_SelectedResultIsNull_RedirectsToIndex()
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = null };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = await _controller.FrameworkReprintReason();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -43,7 +45,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public void FrameworkReprintReason_ValidSessionAndResults_ReturnsViewWithCorrectModel()
+        [MoqAutoData]
+        public async Task FrameworkReprintReason_ValidSessionAndResults_ReturnsViewWithCorrectModel(GetFrameworkLearnerResponse frameworkLearnerResponse)
         {
             // Arrange
             var sessionModel = new FrameworkSearchSession
@@ -55,16 +58,23 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
                 SelectedFrameworkLearnerId = Guid.NewGuid(),
             };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
+            _learnerDetailsApiClientMock.Setup(c => c.GetFrameworkLearner(It.IsAny<Guid>(), It.IsAny<bool>()))
+                .ReturnsAsync(frameworkLearnerResponse);
             var mappedViewModel = new FrameworkLearnerReprintReasonViewModel { ApprenticeName = "Test User" };
             _mapperMock.Setup(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel)).Returns(mappedViewModel);
 
             // Act
-            var result = _controller.FrameworkReprintReason();
+            var result = await _controller.FrameworkReprintReason();
 
             // Assert
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             var model = viewResult.Model.Should().BeOfType<FrameworkLearnerReprintReasonViewModel>().Subject;
-            model.Should().BeEquivalentTo(mappedViewModel);
+            model.ApprenticeName.Should().Be(mappedViewModel.ApprenticeName);
+            model.BackAction.Should().Be("FrameworkLearnerDetails");
+            model.BackToCheckAnswers.Should().BeFalse();
+            model.CertificateReference.Should().Be(frameworkLearnerResponse.CertificateReference);
+            model.CertificateStatus.Should().Be(frameworkLearnerResponse.CertificateStatus);
+            model.CertificateStatusDate.Should().Be(frameworkLearnerResponse.CertificateStatusDate);
             _mapperMock.Verify(m => m.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel), Times.Once);
         }
 

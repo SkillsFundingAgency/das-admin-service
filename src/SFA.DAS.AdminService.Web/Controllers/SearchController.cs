@@ -255,7 +255,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult FrameworkReprintReason(bool backToCheckAnswers = false)
+        public async Task<IActionResult> FrameworkReprintReason(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
@@ -268,8 +268,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 sessionObject.BackToCheckAnswers = backToCheckAnswers;
             });
 
+            var frameworkLearnerDetails =
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, false);
+
             var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
             viewModel.BackAction = backToCheckAnswers ? nameof(CheckFrameworkDetails) : nameof(FrameworkLearnerDetails);
+            viewModel.CertificateReference = frameworkLearnerDetails.CertificateReference;
+            viewModel.CertificateStatus = frameworkLearnerDetails.CertificateStatus;
+            viewModel.CertificateStatusDate = frameworkLearnerDetails.CertificateStatusDate;
+
             return View(viewModel);
         }
 
