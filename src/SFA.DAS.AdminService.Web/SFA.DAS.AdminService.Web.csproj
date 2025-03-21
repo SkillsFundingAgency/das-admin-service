@@ -249,6 +249,9 @@
 			</ReferencePath>
 		</ItemGroup>
 	</Target>
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+  </PropertyGroup>
 	<PropertyGroup>
 		<!-- File with mtime of last successful npm install -->
 		<NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
