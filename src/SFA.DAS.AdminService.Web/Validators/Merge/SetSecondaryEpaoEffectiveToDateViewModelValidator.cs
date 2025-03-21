@@ -38,7 +38,7 @@ namespace SFA.DAS.AdminService.Web.Validators.Merge
 
                     if (day != 0 && month != 0 && year != 0)
                     {
-                        var date = ValidatorExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
+                        var date = DateExtensions.ConstructDate(vm.Day, vm.Month, vm.Year);
 
                         if (date == null)
                         {

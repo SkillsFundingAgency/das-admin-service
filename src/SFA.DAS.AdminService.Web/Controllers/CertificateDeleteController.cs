@@ -82,7 +82,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 }
                 if (vm.IsDeleteConfirmed != null && vm.IsDeleteConfirmed == false)
                 {
-                    return RedirectToAction("Select", "Search", new
+                    return RedirectToAction("LearnerDetails", "Search", new
                     {
                         stdCode = vm.StandardCode,
                         uln = vm.Uln,

@@ -29,20 +29,20 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         public void ThenShouldReturnValidDay()
         {
             _viewModelResponse.Id.Should().Be(Certificate.Id);
-            _viewModelResponse.Day.PadLeft(2, '0').Should().Be(CertificateData.AchievementDate.Value.ToString("dd"));
+            _viewModelResponse.Day.PadLeft(2, '0').Should().Be(Certificate.CertificateData.AchievementDate.Value.ToString("dd"));
 
         }
 
         [Test]
         public void ThenShouldReturnValidMonth()
         {
-            _viewModelResponse.Month.PadLeft(2, '0').Should().Be(CertificateData.AchievementDate.Value.ToString("MM"));
+            _viewModelResponse.Month.PadLeft(2, '0').Should().Be(Certificate.CertificateData.AchievementDate.Value.ToString("MM"));
         }
 
         [Test]
         public void ThenShouldReturnValidYear()
         {
-            _viewModelResponse.Year.Should().Be(CertificateData.AchievementDate.Value.ToString("yyyy"));
+            _viewModelResponse.Year.Should().Be(Certificate.CertificateData.AchievementDate.Value.ToString("yyyy"));
         }
     }
 }

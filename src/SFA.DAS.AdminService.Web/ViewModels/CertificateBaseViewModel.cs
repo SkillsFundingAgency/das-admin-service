@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 using SFA.DAS.AssessorService.Domain.Entities;
 using SFA.DAS.AssessorService.Domain.JsonData;
 
@@ -11,7 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels
 
         public virtual void FromCertificate(Certificate cert)
         {
-            CertificateData = JsonConvert.DeserializeObject<CertificateData>(cert.CertificateData);
+            CertificateData = cert.CertificateData;
             Id = cert.Id;
             GivenNames = CertificateData.LearnerGivenNames;
             FamilyName = CertificateData.LearnerFamilyName;

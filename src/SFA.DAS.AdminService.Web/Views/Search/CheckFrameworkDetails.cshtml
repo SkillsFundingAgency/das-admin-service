@@ -1,0 +1,180 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Search.CheckFrameworkLearnerViewModel
+
+@{
+    ViewBag.Title = "Check and submit the assessment details";
+    Layout = "_Layout";
+}
+<a asp-action="FrameworkAddress" class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-5">
+                @ViewBag.Title
+            </h1>
+            <h2 class="govuk-heading-m">Apprentice details</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.ApprenticeForename @Model.LearnerDetails.ApprenticeSurname
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date of birth
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.ApprenticeDoB.ToSfaShortDateString()
+                    </dd>
+                </div>
+                @if(Model.LearnerDetails.ApprenticeULN.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Unique learner number
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.LearnerDetails.ApprenticeULN.Value
+                        </dd>
+                    </div>
+                }
+            </dl>
+
+            <h2 class="govuk-heading-m">Apprenticeship details</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Framework
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.FrameworkName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Framework pathway
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.PathwayName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Level
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.ApprenticeshipLevelName
+                    </dd>
+                </div>
+                @if (Model.LearnerDetails.Qualifications.Any())
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Qualifications and awarding bodies
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.LearnerDetails.QualificationsDisplay)
+                        </dd>
+                    </div>
+                }
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Training provider
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LearnerDetails.ProviderName
+                    </dd>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.LearnerDetails.EmployerName))
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Employer
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.LearnerDetails.EmployerName
+                        </dd>
+                    </div>
+                }
+                @if (Model.LearnerDetails.ApprenticeStartdate.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Learner start date
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                                @Model.LearnerDetails.ApprenticeStartdate.Value.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                }
+                @if (Model.LearnerDetails.ApprenticeLastdateInLearning.HasValue)
+                {
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Last date in learning
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                                @Model.LearnerDetails.ApprenticeLastdateInLearning.Value.ToSfaShortDateString()
+                        </dd>
+                    </div>
+                }
+                
+            </dl>
+
+            <h2 class="govuk-heading-m">Ticket details</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Reference number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.ReprintDetails.TicketNumber
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-action="FrameworkReprintReason" asp-route-backToCheckAnswers="true">
+                            Change<span class="govuk-visually-hidden"> reference number</span>
+                        </a>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @(Model.ReprintDetails.IsSingleReason ? "Reason for requesting a reprint" : "Reasons for requesting a reprint")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Raw(Model.ReprintDetails.ReprintReasonDisplay)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-action="FrameworkReprintReason" asp-route-backToCheckAnswers="true">
+                            Change<span class="govuk-visually-hidden"> reason for requesting a reprint</span>
+                        </a>
+                    </dd>
+                </div>
+             </dl>
+  
+            <h2 class="govuk-heading-m">Delivery details</h2>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Raw(Model.AddressDetails.AddressDisplay)
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-action="FrameworkAddress" asp-route-backToCheckAnswers="true"> 
+                            Change<span class="govuk-visually-hidden"> address</span>
+                        </a>
+                    </dd>
+                </div>
+            </dl>
+
+            <form type="post" asp-controller="Search" asp-action="Submit">
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>

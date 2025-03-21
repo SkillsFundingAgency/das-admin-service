@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(CertificateReprintReasonViewModel.IncidentNumber), "Enter the ticket reference", incidentNumber)
+                new ValidationFailure(nameof(StandardReprintReasonViewModel.IncidentNumber), "Enter the ticket reference", incidentNumber)
             });
         }
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(CertificateReprintReasonViewModel.Reasons), "Select reason(s) for requesting a certificate reprint", reasons)
+                new ValidationFailure(nameof(StandardReprintReasonViewModel.Reasons), "Select reason(s) for requesting a certificate reprint", reasons)
             });
         }
 
@@ -111,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(CertificateReprintReasonViewModel.OtherReason), "Give details", otherReason)
+                new ValidationFailure(nameof(StandardReprintReasonViewModel.OtherReason), "Give details", otherReason)
             });
         }
 
@@ -167,13 +167,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
         public class CertificateReprintReasonViewModelValidatorTestsFixture
         {
-            private CertificateReprintReasonViewModel _viewModel;
-            private CertificateReprintReasonViewModelValidator _sut;
+            private StandardReprintReasonViewModel _viewModel;
+            private StandardReprintReasonViewModelValidator _sut;
 
             public CertificateReprintReasonViewModelValidatorTestsFixture()
             {
-                _viewModel = new CertificateReprintReasonViewModel();
-                _sut = new CertificateReprintReasonViewModelValidator();
+                _viewModel = new StandardReprintReasonViewModel();
+                _sut = new StandardReprintReasonViewModelValidator();
             }
 
             public CertificateReprintReasonViewModelValidatorTestsFixture WithIncidentNumber(string incidentNumber)

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
-    public class CertificateReprintReasonViewModel : LearnerDetailViewModel
+    public class StandardReprintReasonViewModel : LearnerDetailViewModel
     {
         public string IncidentNumber { get; set; }
         public List<string> Reasons { get; set; }

@@ -302,7 +302,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
                 _certificate.StandardUId = standardUId;
                 var certificateData = _fixture.Create<CertificateData>();
                 certificateData.CourseOption = option;
-                _certificate.CertificateData = JsonConvert.SerializeObject(certificateData);
+                _certificate.CertificateData = certificateData;
                 _certificate.OrganisationId = _organisation.Id;
 
                 return this;
