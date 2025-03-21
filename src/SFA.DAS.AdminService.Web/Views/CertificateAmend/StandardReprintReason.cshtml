@@ -45,7 +45,7 @@
 
             @{await Html.RenderPartialAsync("_LearnerSummaryPartial", Model);}
 
-            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ReprintReason">
+            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="StandardReprintReason">
                 @Html.HiddenFor(model => model.Learner.CertificateId)
                 @Html.HiddenFor(model => model.Learner.CertificateReference)
                 @Html.HiddenFor(model => model.Learner.StandardCode)

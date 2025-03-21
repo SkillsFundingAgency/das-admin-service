@@ -234,38 +234,41 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\OrganisationAndContactMessages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>OrganisationAndContactMessages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Resources\RoatpSearchValidation.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
-    <ItemGroup>
-      <ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">
-        <Aliases>signed</Aliases>
-      </ReferencePath>
-    </ItemGroup>
-  </Target>
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\OrganisationAndContactMessages.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>OrganisationAndContactMessages.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\RoatpConfirmationMessages.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>RoatpConfirmationMessages.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\RoatpOrganisationValidation.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>RoatpOrganisationValidation.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\RoatpSearchValidation.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>RoatpSearchValidation.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+	<Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+		<ItemGroup>
+			<ReferencePath Condition="'%(FileName)' == 'StackExchange.Redis.StrongName'">
+				<Aliases>signed</Aliases>
+			</ReferencePath>
+		</ItemGroup>
+	</Target>
   <PropertyGroup>
-    <!-- File with mtime of last successful npm install -->
-    <NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
-    <UserSecretsId>a256a7ab-7342-43f8-a8eb-9ad33e5f3a6c</UserSecretsId>
+    <PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
   </PropertyGroup>
-  <Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
-    <Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
-    <Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
-  </Target>
+	<PropertyGroup>
+		<!-- File with mtime of last successful npm install -->
+		<NpmInstallStampFile>wwwroot/javascripts/lib/node_modules/.install-stamp</NpmInstallStampFile>
+    <UserSecretsId>a256a7ab-7342-43f8-a8eb-9ad33e5f3a6c</UserSecretsId>
+	</PropertyGroup>
+	<Target Name="NpmInstall" BeforeTargets="BeforeBuild" Inputs="wwwroot/javascripts/lib/package.json" Outputs="$(NpmInstallStampFile)">
+		<Exec Command="npm install" WorkingDirectory="wwwroot/javascripts/lib" />
+		<Touch Files="$(NpmInstallStampFile)" AlwaysCreate="true" />
+	</Target>
 </Project>

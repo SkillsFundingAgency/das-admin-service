@@ -426,7 +426,7 @@ else
                 @if (Model.CanRequestReprint)
                 {
                     <li>
-                        <a class="govuk-link" asp-action="ReprintReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Request certificate reprint</a>
+                            <a class="govuk-link" asp-action="StandardReprintReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Request certificate reprint</a>
                     </li>
                 }
                 else if (Model.CanAmendCertificate)
