@@ -1,7 +1,8 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions
 @using SFA.DAS.AdminService.Web.Extensions
-@using SFA.DAS.AssessorService.Api.Types.Models.Staff;
-@model BatchSearchViewModel<StaffBatchSearchResult>
+@using SFA.DAS.AdminService.Web.ViewModels.Search
+@using SFA.DAS.AssessorService.Api.Types.Models.Staff
+@model BatchSearchViewModel<StaffBatchSearchResultViewModel>
 
 @{
     ViewBag.Title = "Search results";
@@ -77,13 +78,13 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
-                                <td class="govuk-table__cell">@result.DisplayUln()</td>
-                                <td class="govuk-table__cell">@result.DisplayTrainingCourse()</td>
+                                <td class="govuk-table__cell">@result.DisplayUln</td>
+                                <td class="govuk-table__cell">@result.TrainingCourse</td>
                                 <td class="govuk-table__cell">@result.CertificateReference</td>
                                 <td class="govuk-table__cell">@result.Status</td>
                                 <td class="govuk-table__cell">@result.StatusAt.UtcToTimeZoneTime()</td>
                                 <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
-                                <td class="govuk-table__cell"><a asp-controller="Search" asp-action="@result.ViewCertificateLinkAction()" asp-all-route-data="@result.ViewCertificateLinkRouteData()">View</a></td>
+                                <td class="govuk-table__cell"><a asp-controller="Search" asp-action="@result.ViewCertificateLinkAction" asp-all-route-data="@result.ViewCertificateLinkRouteData">View</a></td>
                             </tr>
                         }
                     </tbody>
