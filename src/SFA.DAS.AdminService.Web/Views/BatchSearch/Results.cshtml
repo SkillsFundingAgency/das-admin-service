@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.AdminService.Common.Extensions;
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@using SFA.DAS.AdminService.Web.Extensions
 @using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 @model BatchSearchViewModel<StaffBatchSearchResult>
 
@@ -47,7 +48,7 @@
                             Printed date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @(Model.PrintedDate?.UtcToTimeZoneTime().ToString() ?? string.Empty)
+                            @(Model.PrintedDate?.UtcToTimeZoneTime().Date.ToString() ?? string.Empty)
                         </dd>
                     </div>
                 </dl>
@@ -63,7 +64,7 @@
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header">Name</th>
                             <th class="govuk-table__header">ULN</th>
-                            <th class="govuk-table__header">Standard</th>
+                            <th class="govuk-table__header">Training course</th>
                             <th class="govuk-table__header">Certificate reference</th>
                             <th class="govuk-table__header">Status</th>
                             <th class="govuk-table__header">Status updated</th>
@@ -74,16 +75,16 @@
                     <tbody class="govuk-table__body">
                         @foreach (var result in Model.PaginatedList.Items)
                         {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
-                            <td class="govuk-table__cell">@result.Uln</td>
-                            <td class="govuk-table__cell">@result.CertificateData.StandardName (@result.StandardCode)</td>
-                            <td class="govuk-table__cell">@result.CertificateReference</td>
-                            <td class="govuk-table__cell">@result.Status</td>
-                            <td class="govuk-table__cell">@result.StatusAt.UtcToTimeZoneTime()</td>
-                            <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
-                            <td class="govuk-table__cell"><a asp-controller="Search" asp-action="LearnerDetails" asp-route-stdcode="@result.StandardCode" asp-route-uln="@result.Uln" asp-route-searchstring="@result.CertificateReference" asp-route-batchNumber="@result.BatchNumber">View</a></td>
-                        </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">@result.CertificateData.LearnerGivenNames @result.CertificateData.LearnerFamilyName</td>
+                                <td class="govuk-table__cell">@result.DisplayUln()</td>
+                                <td class="govuk-table__cell">@result.DisplayTrainingCourse()</td>
+                                <td class="govuk-table__cell">@result.CertificateReference</td>
+                                <td class="govuk-table__cell">@result.Status</td>
+                                <td class="govuk-table__cell">@result.StatusAt.UtcToTimeZoneTime()</td>
+                                <td class="govuk-table__cell">@result.CertificateData.OverallGrade</td>
+                                <td class="govuk-table__cell"><a asp-controller="Search" asp-action="@result.ViewCertificateLinkAction()" asp-all-route-data="@result.ViewCertificateLinkRouteData()">View</a></td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -101,10 +102,10 @@
                     @if (Model.PaginatedList.HasPreviousPage)
                     {
                         <a asp-action="Results"
-                        asp-controller="BatchSearch"
-                        asp-route-batchNumber="@Model.BatchNumber"
-                        asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
-                        class="govuk-link previous">
+                           asp-controller="BatchSearch"
+                           asp-route-batchNumber="@Model.BatchNumber"
+                           asp-route-page="@( Model.PaginatedList.PageIndex - 1)"
+                           class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
                             <span class="description">Previous <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="prevPage">@(Model.PaginatedList.PageIndex - 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>
@@ -114,10 +115,10 @@
                     @if (Model.PaginatedList.HasNextPage)
                     {
                         <a asp-action="Results"
-                        asp-controller="BatchSearch"
-                        asp-route-batchNumber="@Model.BatchNumber"
-                        asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
-                        class="govuk-link next">
+                           asp-controller="BatchSearch"
+                           asp-route-batchNumber="@Model.BatchNumber"
+                           asp-route-page="@( Model.PaginatedList.PageIndex + 1)"
+                           class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
                             <span class="description">Next <span class="hide-mob">page</span></span>
                             <span class="counter">Page <span class="nextPage">@(Model.PaginatedList.PageIndex + 1)</span> of <span class="totalPage">@(Model.PaginatedList.TotalPages)</span></span>

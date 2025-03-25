@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using System.Linq;
 using System;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -203,22 +204,30 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FrameworkLearnerDetails(bool allLogs = false)
+        public async Task<IActionResult> FrameworkLearnerDetails(Guid? frameworkLearnerId = null, int? batchNumber = null, bool allLogs = false)
         {
-            var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || !sessionModel.SelectedFrameworkLearnerId.HasValue)
+            FrameworkSearchSession sessionModel;
+            GetFrameworkLearnerResponse frameworkLearnerDetails; 
+            if (frameworkLearnerId.HasValue)
             {
-                return RedirectToAction("Index");
+                frameworkLearnerDetails = await _learnerDetailsApiClient.GetFrameworkLearner(frameworkLearnerId.Value, allLogs);
+            }
+            else
+            { 
+                sessionModel = _sessionService.SessionFrameworkSearch;
+                if (sessionModel == null || !sessionModel.SelectedFrameworkLearnerId.HasValue)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                frameworkLearnerDetails = await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, allLogs);
             }
 
-            var frameworkLearnerDetails = 
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, allLogs);
-
-            var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails);
+            var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails); 
             viewModel.ShowDetails = !allLogs;
+            viewModel.BatchNumber = batchNumber; 
 
             return View(viewModel);
-
         }
 
         [HttpGet]
@@ -238,7 +247,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 } 
                 _sessionService.ClearFrameworkSearchRequest();
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
 
