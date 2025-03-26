@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.json" Version="13.0.3" />
-    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="1.0.0" />
+    <PackageReference Include="SFA.DAS.AssessorService.Shared" Version="0.1.278-prerelease-48" />
     <PackageReference Include="SFA.DAS.Http" Version="3.2.69" />
   </ItemGroup>
 
