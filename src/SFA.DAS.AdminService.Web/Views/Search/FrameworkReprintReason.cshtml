@@ -12,9 +12,9 @@
 }
 
 <a asp-controller="Search" 
-    asp-action="ResetBackToCheckAnswersAndRedirect" 
-    asp-route-backActionTarget="@Model.BackAction" 
-    class="govuk-back-link">Back</a>
+asp-action="ResetBackToCheckAnswersAndRedirect" 
+asp-route-backActionTarget="@Model.BackAction" 
+class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -24,14 +24,47 @@
                 @ViewBag.Title
             </h1>
             <dl class="govuk-summary-list">
+            @if (!string.IsNullOrEmpty(Model.CertificateReference))
+            {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Apprentice name
+                        Certificate reference
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.ApprenticeName
+                        @Model.CertificateReference
                     </dd>
                 </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Apprentice name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.ApprenticeName
+                </dd>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.CertificateStatus))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @CertificateStatus.GetDisplayName(@Model.CertificateStatus)
+                    </dd>
+                </div>
+            }
+            @if (Model.CertificateStatusDate.HasValue)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @CertificateStatus.GetStatusDateDisplayName(Model.CertificateStatus)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificateStatusDate
+                    </dd>
+                </div>
+            }
             </dl>
 
             <form asp-action="FrameworkReprintReason" asp-controller="Search" method="post">

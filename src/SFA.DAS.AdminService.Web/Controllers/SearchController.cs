@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using System.Linq;
 using System;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -203,19 +204,30 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FrameworkLearnerDetails()
+        public async Task<IActionResult> FrameworkLearnerDetails(Guid? frameworkLearnerId = null, int? batchNumber = null, bool allLogs = false)
         {
-            var sessionModel = _sessionService.SessionFrameworkSearch;
-            if (sessionModel == null || !sessionModel.SelectedFrameworkLearnerId.HasValue)
+            FrameworkSearchSession sessionModel;
+            GetFrameworkLearnerResponse frameworkLearnerDetails; 
+            if (frameworkLearnerId.HasValue)
             {
-                return RedirectToAction("Index");
+                frameworkLearnerDetails = await _learnerDetailsApiClient.GetFrameworkLearner(frameworkLearnerId.Value, allLogs);
+            }
+            else
+            { 
+                sessionModel = _sessionService.SessionFrameworkSearch;
+                if (sessionModel == null || !sessionModel.SelectedFrameworkLearnerId.HasValue)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                frameworkLearnerDetails = await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, allLogs);
             }
 
-            var frameworkLearnerDetails = 
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value);
+            var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails); 
+            viewModel.ShowDetails = !allLogs;
+            viewModel.BatchNumber = batchNumber; 
 
-            return View(_mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails));
-
+            return View(viewModel);
         }
 
         [HttpGet]
@@ -235,7 +247,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 } 
                 _sessionService.ClearFrameworkSearchRequest();
             }
-            
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -252,7 +264,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public IActionResult FrameworkReprintReason(bool backToCheckAnswers = false)
+        public async Task<IActionResult> FrameworkReprintReason(bool backToCheckAnswers = false)
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
             if (sessionModel == null || sessionModel.SelectedFrameworkLearnerId == null)
@@ -265,8 +277,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 sessionObject.BackToCheckAnswers = backToCheckAnswers;
             });
 
+            var frameworkLearnerDetails =
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, false);
+
             var viewModel = _mapper.Map<FrameworkLearnerReprintReasonViewModel>(sessionModel);
             viewModel.BackAction = backToCheckAnswers ? nameof(CheckFrameworkDetails) : nameof(FrameworkLearnerDetails);
+            viewModel.CertificateReference = frameworkLearnerDetails.CertificateReference;
+            viewModel.CertificateStatus = frameworkLearnerDetails.CertificateStatus;
+            viewModel.CertificateStatusDate = frameworkLearnerDetails.CertificateStatusDate;
+
             return View(viewModel);
         }
 
@@ -349,7 +368,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             var frameworkLearner =
-                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value);
+                await _learnerDetailsApiClient.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, false);
 
             var viewModel = new CheckFrameworkLearnerViewModel()
             {
