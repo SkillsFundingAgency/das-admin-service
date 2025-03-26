@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using SFA.DAS.AssessorService.Domain.DTOs.Staff;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
@@ -47,5 +48,20 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string CertificateReference { get; set; }
         public List<CertificateLogSummary> CertificateLogs{ get; set; }
         public bool ShowDetails { get; set; }
+        public int? BatchNumber { get; set; }
+
+        public Dictionary<string,string> CertificateHistoryButtonRouteData(bool allLogs)
+        {
+            var routeValues = new Dictionary<string, string>()
+            {
+                { "allLogs", allLogs.ToString()}
+            };
+            if (BatchNumber.HasValue)
+            {
+                routeValues.Add("frameworkLearnerId", Id.ToString());
+                routeValues.Add("batchNumber", BatchNumber.ToString());
+            }
+            return routeValues;
+        }
     }
 }

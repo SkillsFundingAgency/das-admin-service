@@ -6,7 +6,14 @@
     ViewBag.Title = "Framework certificate record";
     Layout = "_Layout";
 }
-<a asp-action="FrameworkLearnerDetailsBackAction" asp-controller="Search" class="govuk-back-link">Back</a>
+@if (Model.BatchNumber.HasValue)
+{
+    <a class="govuk-back-link" asp-action="Results" asp-controller="BatchSearch" asp-route-batchNumber="@Model.BatchNumber">Back</a>
+}
+else
+{
+    <a asp-action="FrameworkLearnerDetailsBackAction" asp-controller="Search" class="govuk-back-link">Back</a>
+}
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -180,15 +187,17 @@
                     </div>
                 }
             </dl>
+            @if(!Model.BatchNumber.HasValue)
+            {
+                <h3 class="govuk-heading-m">What do you want to do next?</h3>
 
-            <h3 class="govuk-heading-m">What do you want to do next?</h3>
-
-            <p class="govuk-body">
-                <a class="govuk-link" asp-controller="Search" asp-action="FrameworkReprintReason">Request certificate reprint</a>
-            </p>
-            <p class="govuk-body">
-                <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
-            </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="FrameworkReprintReason">Request certificate reprint</a>
+                </p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
+                </p>
+            }
         </div>
     </div>
     <div class="govuk-grid-row">
@@ -265,11 +274,11 @@
 
             @if (Model.ShowDetails)
             {
-                <a class="govuk-button" asp-action="FrameworkLearnerDetails" asp-route-allLogs=true>Show all history</a>
+                <a class="govuk-button" asp-action="FrameworkLearnerDetails" asp-all-route-data=@Model.CertificateHistoryButtonRouteData(true)>Show all history</a>
             }
             else
             {
-                <a class="govuk-button" asp-action="FrameworkLearnerDetails">Show summary</a>
+                <a class="govuk-button" asp-action="FrameworkLearnerDetails" asp-all-route-data=@Model.CertificateHistoryButtonRouteData(false)>Show summary</a>
             }
         </div>
     </div>

@@ -2,6 +2,7 @@
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
@@ -9,6 +10,8 @@ using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Domain.Paging;
 using System.Collections.Generic;
 using System.Linq;
 using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
@@ -82,6 +85,14 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
+            CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>();
+            CreateMap<StaffBatchSearchResponse, BatchSearchViewModel<StaffBatchSearchResultViewModel>>()
+                .ForMember(dest => dest.PaginatedList, opt => opt.MapFrom((src, dest, _, context) => new PaginatedList<StaffBatchSearchResultViewModel>(
+                    src.Results.Items.Select(item => context.Mapper.Map<StaffBatchSearchResultViewModel>(item)).ToList(),
+                    src.Results.TotalRecordCount,
+                    src.Results.PageIndex,
+                    src.Results.PageSize
+                )));
         }
     }
 }

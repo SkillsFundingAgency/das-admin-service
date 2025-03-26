@@ -12,8 +12,7 @@ using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.Testing.AutoFixture;
-using NLog.Fluent;
-using System.ServiceModel;
+using AutoFixture.NUnit3;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
@@ -66,11 +65,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
         [Test]
         [MoqAutoData]
-        public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_CallsGetFrameworkLearner(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse,
+        public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_CallsGetFrameworkLearner(
+            GetFrameworkLearnerResponse frameworkLearnerDetailsResponse,
             FrameworkLearnerDetailsViewModel frameworkLearnerDetailsViewModel)
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
-            var sessionModel = CreateSessionModel(results, results[0].Id);
+            var sessionModel = new FrameworkSearchSession { SelectedFrameworkLearnerId = Guid.NewGuid() };
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(frameworkLearnerDetailsResponse);
             _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworkLearnerDetailsViewModel);
@@ -204,10 +203,52 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(frameworkLearnerGuid, allLogsValue)).ReturnsAsync(learnerDetails);
 
             // Act
-            var result = await _controller.FrameworkLearnerDetails(allLogsValue);
+            var result = await _controller.FrameworkLearnerDetails(allLogs: allLogsValue);
 
             // Assert
             _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(frameworkLearnerGuid, allLogsValue), Times.Once);
         }
+
+        [Test]
+        [InlineAutoData("d2719b2e-4f5b-4c5e-9a2e-2a4f5b4c5e9a", 1, true)]
+        [InlineAutoData("d2719b2e-4f5b-4c5e-9a2e-2a4f5b4c5e9a", 1, false)]
+        public async Task FrameworkLearnerDetails_FromBatchSearch_ShouldPassCorrectParametersToGetFrameworkLearner(
+            string frameworkLearnerId,
+            int batchNumber,
+            bool allLogs,
+            GetFrameworkLearnerResponse frameworkLearnerDetailsResponse,
+            FrameworkLearnerDetailsViewModel frameworkLearnerDetailsViewModel)
+        {
+            var id = new Guid(frameworkLearnerId);
+            
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(id, allLogs)).ReturnsAsync(frameworkLearnerDetailsResponse);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworkLearnerDetailsViewModel);
+
+            await _controller.FrameworkLearnerDetails(id, batchNumber, allLogs);
+
+            _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(id, allLogs), Times.Once);
+        }
+
+        [Test]
+        [InlineAutoData("d2719b2e-4f5b-4c5e-9a2e-2a4f5b4c5e9a", 1, true)]
+        [InlineAutoData("d2719b2e-4f5b-4c5e-9a2e-2a4f5b4c5e9a", 1, false)]
+        public async Task FrameworkLearnerDetails_FromBatchSearch_ShouldReturnCorrectView(
+            string frameworkLearnerId,
+            int batchNumber,
+            bool allLogs,
+            GetFrameworkLearnerResponse frameworkLearnerDetailsResponse,
+            FrameworkLearnerDetailsViewModel frameworkLearnerDetailsViewModel)
+        {
+            var id = new Guid(frameworkLearnerId);
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(id, allLogs)).ReturnsAsync(frameworkLearnerDetailsResponse);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworkLearnerDetailsViewModel);
+
+            var result = await _controller.FrameworkLearnerDetails(id, batchNumber, allLogs);
+
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Subject;
+            resultModel.BatchNumber.Should().Be(batchNumber);
+
+        } 
     }
 }
