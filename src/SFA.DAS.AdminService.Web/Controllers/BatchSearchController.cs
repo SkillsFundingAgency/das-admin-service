@@ -49,6 +49,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var searchResponse = await _staffSearchApiClient.BatchSearch(batchNumber, page);
 
             var batchSearchViewModel = _mapper.Map<BatchSearchViewModel<StaffBatchSearchResultViewModel>>(searchResponse);
+            batchSearchViewModel.Page = page;
+            batchSearchViewModel.BatchNumber = batchNumber;
 
             return View(batchSearchViewModel);
         }

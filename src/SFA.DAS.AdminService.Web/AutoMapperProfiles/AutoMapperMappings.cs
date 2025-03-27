@@ -85,7 +85,8 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
-            CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>();
+            CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>()
+                .ConstructUsing(src => new StaffBatchSearchResultViewModel(src));
             CreateMap<StaffBatchSearchResponse, BatchSearchViewModel<StaffBatchSearchResultViewModel>>()
                 .ForMember(dest => dest.PaginatedList, opt => opt.MapFrom((src, dest, _, context) => new PaginatedList<StaffBatchSearchResultViewModel>(
                     src.Results.Items.Select(item => context.Mapper.Map<StaffBatchSearchResultViewModel>(item)).ToList(),
