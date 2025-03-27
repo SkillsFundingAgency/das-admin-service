@@ -35,9 +35,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> SendTo(CertificateSendToViewModel vm)
         {
             var certificate = await CertificateApiClient.GetCertificate(vm.Id);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
 
-            if (certData.SendTo != vm.SendTo)
+            if (certificate.CertificateData.SendTo != vm.SendTo)
             {
                 return await SaveViewModel(vm,
                     returnToIfModelNotValid: "~/Views/CertificateAmend/SendTo.cshtml",

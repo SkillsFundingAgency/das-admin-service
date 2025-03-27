@@ -1,10 +1,11 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts
+﻿@using SFA.DAS.AdminService.Web.Models.Search
+@using SFA.DAS.AssessorService.Domain.Consts
 @using SFA.DAS.AdminService.Common.Extensions;
 
-@model SFA.DAS.AdminService.Web.ViewModels.Search.SelectViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Search.StandardLearnerDetailsViewModel
 
 @{
-    ViewBag.Title = "Certificate details";
+    ViewBag.Title = "Standard certificate record";
     Layout = "_Layout";
 }
 
@@ -14,28 +15,22 @@
 }
 else
 {
-    <a class="govuk-back-link" asp-action="Results" asp-controller="Search" asp-route-searchstring="@Model.SearchString" asp-route-page="@Model.Page">Back</a>
+    <a class="govuk-back-link" asp-action="Results" asp-controller="Search" 
+    asp-route-searchType="@SearchTypes.Standards"
+    asp-route-searchString="@Model.SearchString" 
+    asp-route-page="@Model.Page">Back</a>
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
-            @if (Model.Learner.CertificateReference != null)
-            {
-                <h1 class="govuk-heading-xl">
-                    Certificate @Model.Learner.CertificateReference
+            <h1 class="govuk-heading-xl">
+                @ViewBag.Title
+                @if (!string.IsNullOrEmpty(Model.Learner.CertificateStatus))
+                {
                     <span class="govuk-caption-xl">Status: @Model.Learner.CertificateStatus</span>
-                </h1>
-
-            }
-            else
-            {
-                <h1 class="govuk-heading-xl">
-                    No certificate requested
-                </h1>
-            }
-
+                }
+            </h1>
         </div>
     </div>
 
@@ -54,7 +49,7 @@ else
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        <abbr title="Unique learner number">ULN</abbr>
+                        Unique learner number
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.Learner.Uln
@@ -92,14 +87,14 @@ else
     </div>
 
     @if (Model.Learner.CertificateReference != null)
-            {
+    {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-l">Certificate details</h2>
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Certificate number
+                            Certificate reference
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.Learner.CertificateReference
@@ -181,7 +176,7 @@ else
                             Learner start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.LearnStartDate?.ToShortDateString()
+                            @Model.Learner.LearnStartDate?.ToSfaShortDateString()
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -189,7 +184,7 @@ else
                             @(Model.Learner.OverallGrade == CertificateGrade.Fail ? "Fail date" : "Achievement date" )
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.AchievementDate?.ToShortDateString()
+                            @Model.Learner.AchievementDate?.ToSfaShortDateString()
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -341,7 +336,7 @@ else
                                             {
                                                 <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
                                                     <i class="arrow arrow-closed">►</i>
-                                                    <span>@Model.GetReasonLink(log)</span>
+                                                    <span>StandardLearnerDetailsViewModel.GetReasonLink(log)</span>
                                                 </div>
                                             }
                                         }
@@ -365,11 +360,11 @@ else
 
                 @if (Model.ShowDetail)
                 {
-                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
+                    <a class="govuk-button" asp-action="LearnerDetails" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=true>Show all history</a>
                 }
                 else
                 {
-                    <a class="govuk-button" asp-action="Select" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
+                    <a class="govuk-button" asp-action="LearnerDetails" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln" asp-route-searchstring="@Model.SearchString" asp-route-alllogs=false>Show summary</a>
                 }
             </div>
         </div>
@@ -423,7 +418,7 @@ else
                 @if (Model.CanRequestReprint)
                 {
                     <li>
-                        <a class="govuk-link" asp-action="ReprintReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Request certificate reprint</a>
+                        <a class="govuk-link" asp-action="StandardReprintReason" asp-controller="CertificateAmend" asp-route-stdcode="@Model.Learner.StandardCode" asp-route-uln="@Model.Learner.Uln">Request certificate reprint</a>
                     </li>
                 }
                 else if (Model.CanAmendCertificate)

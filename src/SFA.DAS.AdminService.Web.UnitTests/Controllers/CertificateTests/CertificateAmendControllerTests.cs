@@ -33,7 +33,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         [MoqAutoData]
         public async Task WhenPostAmendReason_WithModelError_RedirectsToGetAmendReasonAction(
-            CertificateAmendReasonViewModel vm)
+            AmendStandardReprintReasonViewModel vm)
         {
             // Arrange
             var fixture = new CertificateAmendControllerTestsFixture()
@@ -49,7 +49,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         [MoqAutoData]
         public async Task WhenPostAmendReason_WithoutModelError_RedirectsToGetCheckAction(
-            CertificateAmendReasonViewModel vm)
+            AmendStandardReprintReasonViewModel vm)
         {
             // Arrange
             vm.Reasons = new List<string> { AmendReasons.ApprenticeAddress.ToString() };
@@ -65,7 +65,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         [MoqAutoData]
         public async Task WhenPostAmendReason_WithoutModelError_CallsApiToUpdateCertificate(
-            CertificateAmendReasonViewModel vm)
+            AmendStandardReprintReasonViewModel vm)
         {
             // Arrange
             vm.Reasons = new List<string> { AmendReasons.ApprenticeAddress.ToString() };
@@ -81,7 +81,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         [MoqAutoData]
         public async Task WhenPostReprintReason_WithModelError_RedirectsToGetReprintReasonAction(
-            CertificateReprintReasonViewModel vm)
+            StandardReprintReasonViewModel vm)
         {
             // Arrange
             var fixture = new CertificateAmendControllerTestsFixture()
@@ -91,13 +91,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             var result = await fixture.ReprintReason(vm);
 
             // Assert
-            fixture.VerifyRedirectToAction(result, "ReprintReason", null, new { StdCode = vm.Learner.StandardCode, vm.Learner.Uln });
+            fixture.VerifyRedirectToAction(result, "StandardReprintReason", null, new { StdCode = vm.Learner.StandardCode, vm.Learner.Uln });
         }
 
         [Test]
         [MoqAutoData]
         public async Task WhenPostReprintReason_WithoutModelError_RedirectsToGetCheckAction(
-            CertificateReprintReasonViewModel vm)
+            StandardReprintReasonViewModel vm)
         {
             // Arrange
             vm.Reasons = new List<string> { ReprintReasons.ApprenticeAddress.ToString() };
@@ -113,7 +113,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
         [Test]
         [MoqAutoData]
         public async Task WhenPostReprintReason_WithoutModelError_CallsApiToUpdateCertificate(
-            CertificateReprintReasonViewModel vm)
+            StandardReprintReasonViewModel vm)
         {
             // Arrange
             vm.Reasons = new List<string> { ReprintReasons.ApprenticeAddress.ToString() };
@@ -249,14 +249,14 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
                 return _sut.Check(viewModel);
             }
 
-            public async Task<IActionResult> AmendReason(CertificateAmendReasonViewModel viewModel)
+            public async Task<IActionResult> AmendReason(AmendStandardReprintReasonViewModel viewModel)
             {
                 return await _sut.AmendReason(viewModel);
             }
 
-            public async Task<IActionResult> ReprintReason(CertificateReprintReasonViewModel viewModel)
+            public async Task<IActionResult> ReprintReason(StandardReprintReasonViewModel viewModel)
             {
-                return await _sut.ReprintReason(viewModel);
+                return await _sut.StandardReprintReason(viewModel);
             }
 
             public void VerifyUpdateCertificateWithAmendReasonCalled(string certificateRefernce)
