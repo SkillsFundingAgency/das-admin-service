@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
@@ -10,11 +13,6 @@ using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -37,17 +35,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
         public async Task<IActionResult> AmendReason(int stdCode, long uln)
         {
             var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
-            var model = new AmendStandardReprintReasonViewModel
+            var model = new CertificateAmendReasonViewModel
             {
                 Learner = learner,
                 IncidentNumber = !ModelState.IsValid
-                    ? ModelState[nameof(AmendStandardReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
+                    ? ModelState[nameof(CertificateAmendReasonViewModel.IncidentNumber)]?.AttemptedValue
                     : string.Empty,
                 Reasons = !ModelState.IsValid
-                    ? new List<string>(ModelState[nameof(AmendStandardReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
+                    ? new List<string>(ModelState[nameof(CertificateAmendReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
                     : new List<string>(),
                 OtherReason = !ModelState.IsValid
-                    ? ModelState[nameof(AmendStandardReprintReasonViewModel.OtherReason)]?.AttemptedValue
+                    ? ModelState[nameof(CertificateAmendReasonViewModel.OtherReason)]?.AttemptedValue
                     : string.Empty
             };
 
@@ -56,7 +54,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> AmendReason(AmendStandardReprintReasonViewModel viewModel)
+        public async Task<IActionResult> AmendReason(CertificateAmendReasonViewModel viewModel)
         {
             var username = ContextAccessor.HttpContext.User.UserId();
 
@@ -77,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction(nameof(Check), new { viewModel.Learner.CertificateId });
         }
 
-        private AmendReasons? ParseAmendReasons(List<string> reasons)
+        private static AmendReasons? ParseAmendReasons(List<string> reasons)
         {
             var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
 
@@ -88,20 +86,20 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpGet]
         [ModelStatePersist(ModelStatePersist.RestoreEntry)]
-        public async Task<IActionResult> StandardReprintReason(int stdCode, long uln)
+        public async Task<IActionResult> ReprintReason(int stdCode, long uln)
         {
             var learner = await LearnerDetailsApiClient.GetLearnerDetail(stdCode, uln, false);
-            var model = new StandardReprintReasonViewModel
+            var model = new CertificateReprintReasonViewModel
             {
                 Learner = learner,
                 IncidentNumber = !ModelState.IsValid
-                    ? ModelState[nameof(StandardReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
+                    ? ModelState[nameof(CertificateReprintReasonViewModel.IncidentNumber)]?.AttemptedValue
                     : string.Empty,
                 Reasons = !ModelState.IsValid
-                    ? new List<string>(ModelState[nameof(StandardReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
+                    ? new List<string>(ModelState[nameof(CertificateReprintReasonViewModel.Reasons)]?.AttemptedValue?.Split(",") ?? new string[] { })
                     : new List<string>(),
                 OtherReason = !ModelState.IsValid
-                    ? ModelState[nameof(StandardReprintReasonViewModel.OtherReason)]?.AttemptedValue
+                    ? ModelState[nameof(CertificateReprintReasonViewModel.OtherReason)]?.AttemptedValue
                     : string.Empty
             };
 
@@ -110,26 +108,26 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
         [HttpPost]
         [ModelStatePersist(ModelStatePersist.Store)]
-        public async Task<IActionResult> StandardReprintReason(StandardReprintReasonViewModel viewModel)
+        public async Task<IActionResult> ReprintReason(CertificateReprintReasonViewModel viewModel)
         {
             var username = ContextAccessor.HttpContext.User.UserId();
 
             if (!ModelState.IsValid)
             {
-                return RedirectToAction(nameof(StandardReprintReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
+                return RedirectToAction(nameof(ReprintReason), new { StdCode = viewModel.Learner.StandardCode, viewModel.Learner.Uln });
             }
 
             await CertificateApiClient.UpdateCertificateWithReprintReason(new UpdateCertificateWithReprintReasonCommand { 
                 CertificateReference = viewModel.Learner.CertificateReference, 
                 IncidentNumber = viewModel.IncidentNumber, 
-                Reasons = ParseStandardReprintReasons(viewModel.Reasons),
+                Reasons = ParseReprintReasons(viewModel.Reasons),
                 OtherReason = viewModel.Reasons.Contains("Other") ? viewModel.OtherReason : string.Empty,
                 Username = username } );
 
             return RedirectToAction(nameof(Check), new { viewModel.Learner.CertificateId });
         }
 
-        private ReprintReasons? ParseStandardReprintReasons(List<string> reasons)
+        private static ReprintReasons? ParseReprintReasons(List<string> reasons)
         {
             var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
             

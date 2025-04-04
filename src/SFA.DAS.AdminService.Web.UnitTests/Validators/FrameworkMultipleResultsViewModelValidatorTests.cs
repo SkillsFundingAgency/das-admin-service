@@ -8,20 +8,20 @@ using System;
 namespace SFA.DAS.AdminService.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class FrameworkLearnerSearchResultsViewModelValidatorTests
+    public class FrameworkMultipleResultsViewModelValidatorTests
     {
-        private FrameworkLearnerSearchResultsViewModelValidator _validator;
+        private FrameworkMultipleResultsViewModelValidator _validator;
 
         [SetUp]
         public void Setup()
         {
-            _validator = new FrameworkLearnerSearchResultsViewModelValidator();
+            _validator = new FrameworkMultipleResultsViewModelValidator();
         }
 
         [Test]
         public void FrameworkSearchResults_NoneSelected_HasError()
         {
-            var vm = new FrameworkLearnerSearchResultsViewModel();
+            var vm = new FrameworkMultipleResultsViewModel();
             var result = _validator.TestValidate(vm);
             result.ShouldHaveValidationErrorFor(x => x.SelectedResult)
                 .WithErrorMessage("Select a course");
@@ -30,7 +30,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         public void FrameworkSearchResults_CourseSelected_NoError()
         {
-            var vm = new FrameworkLearnerSearchResultsViewModel { SelectedResult = Guid.NewGuid()};
+            var vm = new FrameworkMultipleResultsViewModel { SelectedResult = Guid.NewGuid()};
             var result = _validator.TestValidate(vm);
             result.ShouldNotHaveValidationErrorFor(x => x.SelectedResult);
         }

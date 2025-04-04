@@ -6,21 +6,21 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 namespace SFA.DAS.AdminService.Web.Tests.Validators
 {
      [TestFixture]
-    public class FrameworkLearnerAddressViewModelValidatorTests
+    public class FrameworkReprintAddressViewModelValidatorTests
     {
-        private readonly FrameworkLearnerAddressViewModelValidator _validator;
+        private readonly FrameworkReprintAddressViewModelValidator _validator;
         private readonly string invalidCharacters = @"@#$^=+\\/<%>%";
 
-        public FrameworkLearnerAddressViewModelValidatorTests()
+        public FrameworkReprintAddressViewModelValidatorTests()
         {
-            _validator = new FrameworkLearnerAddressViewModelValidator();
+            _validator = new FrameworkReprintAddressViewModelValidator();
         }
 
         [Test]
         public void ValidModel_ShouldNotHaveErrors()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel 
+            var model = new FrameworkReprintAddressViewModel 
             {
                 AddressLine1 = "123 Main St",
                 TownOrCity = "Anytown",
@@ -40,7 +40,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void EmptyAddressLine1_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel 
+            var model = new FrameworkReprintAddressViewModel 
             {
                 AddressLine1 = string.Empty,
                 TownOrCity = "Anytown",
@@ -61,7 +61,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidCharactersInAddressLine1_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { AddressLine1 = "Anytown@" };
+            var model = new FrameworkReprintAddressViewModel { AddressLine1 = "Anytown@" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -75,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidCharactersInAddressLine2_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { AddressLine2 = "Anytown$" };
+            var model = new FrameworkReprintAddressViewModel { AddressLine2 = "Anytown$" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -89,7 +89,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void EmptyTownOrCity_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel 
+            var model = new FrameworkReprintAddressViewModel 
             {
                 AddressLine1 = "123 Main St",
                 TownOrCity = "",
@@ -110,7 +110,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidCharactersInTownOrCity_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { TownOrCity = "Anytown^" };
+            var model = new FrameworkReprintAddressViewModel { TownOrCity = "Anytown^" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -124,7 +124,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidCharactersInCounty_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { County = "Anytown<^>" };
+            var model = new FrameworkReprintAddressViewModel { County = "Anytown<^>" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -138,7 +138,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void EmptyPostcode_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel 
+            var model = new FrameworkReprintAddressViewModel 
             {
                 AddressLine1 = "123 Main St",
                 TownOrCity = "Anytown",
@@ -159,7 +159,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidCharactersInPostcode_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { Postcode = "Anytown<^>" };
+            var model = new FrameworkReprintAddressViewModel { Postcode = "Anytown<^>" };
 
             // Act
             var result = _validator.TestValidate(model);
@@ -173,7 +173,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
         public void InvalidPostcodeFormat_ShouldHaveError()
         {
             // Arrange
-            var model = new FrameworkLearnerAddressViewModel { Postcode = "InvalidPostcode" };
+            var model = new FrameworkReprintAddressViewModel { Postcode = "InvalidPostcode" };
 
             // Act
             var result = _validator.TestValidate(model);

@@ -61,10 +61,10 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
-            CreateMap<FrameworkSearchSession, FrameworkLearnerSearchResultsViewModel>();
+            CreateMap<FrameworkSearchSession, FrameworkMultipleResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
                 .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
-            CreateMap<FrameworkLearnerSearchResponse, FrameworkLearnerSummaryViewModel>();
+            CreateMap<FrameworkLearnerSearchResponse, FrameworkResultViewModel>();
             CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
                 .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
@@ -74,15 +74,15 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
                     (int?)src.DateOfBirth.Value.Year : null));
             CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerDetailsViewModel>()
+                .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src))
                 .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src =>
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name},{qualification.AwardingBody}").ToList()));
-            CreateMap<FrameworkSearchSession, FrameworkLearnerReprintReasonViewModel>()
+            CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
-            CreateMap<FrameworkSearchSession, FrameworkLearnerAmendReprintReasonViewModel>();
-            CreateMap<FrameworkSearchSession, FrameworkLearnerAddressViewModel>();
-            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerReprintReasonViewModel>()
+            CreateMap<FrameworkSearchSession, FrameworkReprintAddressViewModel>();
+            CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
             CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>()

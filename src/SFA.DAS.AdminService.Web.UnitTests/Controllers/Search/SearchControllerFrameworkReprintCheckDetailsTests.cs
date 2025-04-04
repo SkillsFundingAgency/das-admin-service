@@ -1,21 +1,18 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.Testing.AutoFixture;
-using System.Threading.Tasks;
-using AutoFixture.AutoMoq;
-using AutoFixture;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 {
     [TestFixture]
-    public class SearchControllerCheckTests : SearchControllerTestsBase 
+    public class SearchControllerFrameworkReprintCheckDetailsTests : SearchControllerTestsBase 
     {
         [Test]
         public async Task Check_SessionIsNull_RedirectsToIndex()
@@ -24,7 +21,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
             // Act
-            var result = await _controller.CheckFrameworkDetails();
+            var result = await _controller.FrameworkReprintCheckDetails();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -39,7 +36,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
             // Act
-            var result = await _controller.CheckFrameworkDetails();
+            var result = await _controller.FrameworkReprintCheckDetails();
 
             // Assert
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
@@ -54,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(certificateResult);
 
-            await _controller.CheckFrameworkDetails();
+            await _controller.FrameworkReprintCheckDetails();
 
             _learnerDetailsApiClientMock.Verify(api => api.GetFrameworkLearner(sessionModel.SelectedFrameworkLearnerId.Value, false), Times.Once);
         }

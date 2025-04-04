@@ -14,25 +14,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
     public class SearchControllerResultsFrameworkSearchTests : SearchControllerTestsBase
     {
         [Test]
-        public async Task Results_FrameworkSearchWithInvalidInput_RedirectsToIndexWithCorrectError()
-        {
-            //Arrange
-            SearchInputViewModel vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks };
-            _controller.ModelState.AddModelError("Error", "Error message");
-
-            //Act
-            var result = await _controller.Results(vm);
-
-            //Assert
-            var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectResult.ActionName.Should().Be("Index");
-
-            _controller.ModelState.IsValid.Should().BeFalse();
-            redirectResult.RouteValues["SearchString"].Should().BeNull();
-        }
-
-        [Test]
-        public async Task Results_FrameworkSearchWithValidInput_NoResults_RedirectsToNoResultsAndClearsSession()
+        public async Task Results_FrameworkSearchWithValidInput_NoResults_RedirectsToFrameworkNoResultsAndClearsSession()
         {
             // Arrange
             var vm = CreateValidSearchInputViewModel();
@@ -45,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectResult.ActionName.Should().Be("NoResults");
+            redirectResult.ActionName.Should().Be("FrameworkNoResults");
             _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
             redirectResult.RouteValues["FirstName"].Should().Be(searchQuery.FirstName);
             redirectResult.RouteValues["LastName"].Should().Be(searchQuery.LastName);
@@ -53,7 +35,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task Results_FrameworkSearchWithValidInput_MultipleResults_RedirectsToMultipleResultsAndSetsSession()
+        public async Task Results_FrameworkSearchWithValidInput_MultipleResults_RedirectsToFrameworkMultipleResultsAndSetsSession()
         {
             // Arrange
             var vm = CreateValidSearchInputViewModel();
@@ -69,7 +51,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
 
             // Assert
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectResult.ActionName.Should().Be("MultipleResults");
+            redirectResult.ActionName.Should().Be("FrameworkMultipleResults");
             _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSession>(), Times.Once);
         }
 
@@ -92,7 +74,24 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectResult.ActionName.Should().Be("FrameworkLearnerDetails");
             _sessionServiceMock.VerifySet(s => s.SessionFrameworkSearch = It.IsAny<FrameworkSearchSession>(), Times.Once);
+        }
 
+        [Test]
+        public async Task Results_FrameworkSearchWithInvalidInput_RedirectsToIndexWithCorrectError()
+        {
+            //Arrange
+            SearchInputViewModel vm = new SearchInputViewModel { SearchType = SearchTypes.Frameworks };
+            _controller.ModelState.AddModelError("Error", "Error message");
+
+            //Act
+            var result = await _controller.Results(vm);
+
+            //Assert
+            var redirectResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
+            redirectResult.ActionName.Should().Be("Index");
+
+            _controller.ModelState.IsValid.Should().BeFalse();
+            redirectResult.RouteValues["SearchString"].Should().BeNull();
         }
 
         [TestCaseSource(nameof(SearchFrameworksInvalidInput))]

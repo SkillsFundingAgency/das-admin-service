@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.Tests.Validators
 {
-    public class CertificateAmendStandardReasonViewModelValidatorTests
+    public class CertificateAmendReasonViewModelValidatorTests
     {
         [TestCaseSource(nameof(ValidIncidentNumberCases))]
         public void WhenValidatedPassed_ValidIncidentNumber_ThenNoErrorsAreRaised(string incidentNumber, List<string> reasons, string otherReason)
@@ -41,7 +41,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(AmendStandardReprintReasonViewModel.IncidentNumber), "Enter the ticket reference", incidentNumber)
+                new ValidationFailure(nameof(CertificateAmendReasonViewModel.IncidentNumber), "Enter the ticket reference", incidentNumber)
             });
         }
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(AmendStandardReprintReasonViewModel.Reasons), "Select reason(s) for amending certificate information", reasons)
+                new ValidationFailure(nameof(CertificateAmendReasonViewModel.Reasons), "Select reason(s) for amending certificate information", reasons)
             });
         }
 
@@ -111,7 +111,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             // Assert
             fixture.VerifyErrors(result, 1, new List<ValidationFailure>
             {
-                new ValidationFailure(nameof(AmendStandardReprintReasonViewModel.OtherReason), "Give details", otherReason)
+                new ValidationFailure(nameof(CertificateAmendReasonViewModel.OtherReason), "Give details", otherReason)
             });
         }
 
@@ -167,13 +167,13 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
 
         public class CertificateAmendReasonViewModelValidatorTestsFixture
         {
-            private AmendStandardReprintReasonViewModel _viewModel;
-            private AmendStandardReprintReasonViewModelValidator _sut;
+            private CertificateAmendReasonViewModel _viewModel;
+            private CertificateAmendReasonViewModelValidator _sut;
 
             public CertificateAmendReasonViewModelValidatorTestsFixture()
             {
-                _viewModel = new AmendStandardReprintReasonViewModel();
-                _sut = new AmendStandardReprintReasonViewModelValidator();
+                _viewModel = new CertificateAmendReasonViewModel();
+                _sut = new CertificateAmendReasonViewModelValidator();
             }
 
             public CertificateAmendReasonViewModelValidatorTestsFixture WithIncidentNumber(string incidentNumber)

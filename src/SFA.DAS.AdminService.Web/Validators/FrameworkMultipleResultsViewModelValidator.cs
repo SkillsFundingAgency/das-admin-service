@@ -3,9 +3,9 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class FrameworkLearnerSearchResultsViewModelValidator : AbstractValidator<FrameworkLearnerSearchResultsViewModel>
+    public class FrameworkMultipleResultsViewModelValidator : AbstractValidator<FrameworkMultipleResultsViewModel>
     {
-        public FrameworkLearnerSearchResultsViewModelValidator()
+        public FrameworkMultipleResultsViewModelValidator()
         {
             RuleFor(x => x.SelectedResult)
             .NotEmpty().WithMessage("Select a course");

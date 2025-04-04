@@ -1,5 +1,5 @@
 ﻿@using SFA.DAS.AssessorService.Domain.JsonData;
-@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkLearnerAddressViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintAddressViewModel
 
 @{
     ViewBag.Title = "Add the address that you'd like us to send the certificate to";
@@ -29,7 +29,7 @@
                 </div>
             }
             
-            <form class="address-form" type="post" asp-controller="Search" asp-action="FrameworkAddress">
+            <form class="address-form" type="post" asp-controller="Search" asp-action="FrameworkReprintAddress">
 
                 <h1 class="govuk-heading-l">
                     @ViewBag.Title

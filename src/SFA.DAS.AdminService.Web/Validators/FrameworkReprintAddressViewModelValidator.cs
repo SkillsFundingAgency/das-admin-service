@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class FrameworkLearnerAddressViewModelValidator : AbstractValidator<FrameworkLearnerAddressViewModel>
+    public class FrameworkReprintAddressViewModelValidator : AbstractValidator<FrameworkReprintAddressViewModel>
     {
         private readonly string invalidCharacters = @"@#$^=+\\/<%>%";
-        public FrameworkLearnerAddressViewModelValidator()
+        public FrameworkReprintAddressViewModelValidator()
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
 

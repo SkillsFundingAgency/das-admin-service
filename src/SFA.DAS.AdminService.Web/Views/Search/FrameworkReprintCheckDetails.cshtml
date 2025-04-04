@@ -1,11 +1,11 @@
 ﻿@using SFA.DAS.AdminService.Common.Extensions
-@model SFA.DAS.AdminService.Web.ViewModels.Search.CheckFrameworkLearnerViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintCheckDetailsViewModel
 
 @{
     ViewBag.Title = "Check and submit the assessment details";
     Layout = "_Layout";
 }
-<a asp-action="FrameworkAddress" class="govuk-back-link">Back</a>
+<a asp-action="FrameworkReprintAddress" class="govuk-back-link">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -20,7 +20,7 @@
                         Name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.ApprenticeForename @Model.LearnerDetails.ApprenticeSurname
+                        @Model.LearnerDetails.Learner.ApprenticeForename @Model.LearnerDetails.Learner.ApprenticeSurname
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -28,17 +28,17 @@
                         Date of birth
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.ApprenticeDoB.ToSfaShortDateString()
+                        @Model.LearnerDetails.Learner.ApprenticeDoB.ToSfaShortDateString()
                     </dd>
                 </div>
-                @if(Model.LearnerDetails.ApprenticeULN.HasValue)
+                @if (Model.LearnerDetails.Learner.ApprenticeULN.HasValue)
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Unique learner number
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.LearnerDetails.ApprenticeULN.Value
+                            @Model.LearnerDetails.Learner.ApprenticeULN.Value
                         </dd>
                     </div>
                 }
@@ -51,7 +51,7 @@
                         Framework
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.FrameworkName
+                        @Model.LearnerDetails.Learner.FrameworkName
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -59,7 +59,7 @@
                         Framework pathway
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.PathwayName
+                        @Model.LearnerDetails.Learner.PathwayName
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -67,7 +67,7 @@
                         Level
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.ApprenticeshipLevelName
+                        @Model.LearnerDetails.Learner.ApprenticeshipLevelName
                     </dd>
                 </div>
                 @if (Model.LearnerDetails.Qualifications.Any())
@@ -86,39 +86,39 @@
                         Training provider
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LearnerDetails.ProviderName
+                        @Model.LearnerDetails.Learner.ProviderName
                     </dd>
                 </div>
-                @if (!string.IsNullOrEmpty(Model.LearnerDetails.EmployerName))
+                @if (!string.IsNullOrEmpty(Model.LearnerDetails.Learner.EmployerName))
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Employer
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.LearnerDetails.EmployerName
+                            @Model.LearnerDetails.Learner.EmployerName
                         </dd>
                     </div>
                 }
-                @if (Model.LearnerDetails.ApprenticeStartdate.HasValue)
+                @if (Model.LearnerDetails.Learner.ApprenticeStartdate.HasValue)
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Learner start date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                                @Model.LearnerDetails.ApprenticeStartdate.Value.ToSfaShortDateString()
+                            @Model.LearnerDetails.Learner.ApprenticeStartdate.Value.ToSfaShortDateString()
                         </dd>
                     </div>
                 }
-                @if (Model.LearnerDetails.ApprenticeLastdateInLearning.HasValue)
+                @if (Model.LearnerDetails.Learner.ApprenticeLastdateInLearning.HasValue)
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Last date in learning
                         </dt>
                         <dd class="govuk-summary-list__value">
-                                @Model.LearnerDetails.ApprenticeLastdateInLearning.Value.ToSfaShortDateString()
+                            @Model.LearnerDetails.Learner.ApprenticeLastdateInLearning.Value.ToSfaShortDateString()
                         </dd>
                     </div>
                 }
@@ -165,14 +165,14 @@
                         @Html.Raw(Model.AddressDetails.AddressDisplay)
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-action="FrameworkAddress" asp-route-backToCheckAnswers="true"> 
+                        <a class="govuk-link" asp-action="FrameworkReprintAddress" asp-route-backToCheckAnswers="true"> 
                             Change<span class="govuk-visually-hidden"> address</span>
                         </a>
                     </dd>
                 </div>
             </dl>
 
-            <form type="post" asp-controller="Search" asp-action="Submit">
+            <form type="post" asp-controller="Search" asp-action="FrameworkReprintSubmit">
                 <button type="submit" class="govuk-button">Continue</button>
             </form>
         </div>

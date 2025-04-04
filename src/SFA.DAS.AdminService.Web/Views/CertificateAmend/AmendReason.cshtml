@@ -1,6 +1,7 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts;
+﻿@using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Api.Types.Enums;
-@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.AmendStandardReprintReasonViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateAmendReasonViewModel
 
 @{
     ViewBag.Heading = "Are you sure this certificate needs amending?";
@@ -66,28 +67,28 @@
                                 <input class="govuk-checkboxes__input" id="reason-apprentice-details" name="reasons" type="checkbox"
                                        value="@AmendReasons.ApprenticeDetails" @(Model.Reasons.Contains(nameof(AmendReasons.ApprenticeDetails)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-details">
-                                    <text>@Model.GetAmendReasonDescription(AmendReasons.ApprenticeDetails)</text>
+                                    <text>@CertificateAmendReasonViewModel.GetAmendReasonDescription(AmendReasons.ApprenticeDetails)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-apprentice-address" name="reasons" type="checkbox"
                                        value="@AmendReasons.ApprenticeAddress" @(Model.Reasons.Contains(nameof(AmendReasons.ApprenticeAddress)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-address">
-                                    <text>@Model.GetAmendReasonDescription(AmendReasons.ApprenticeAddress)</text>
+                                    <text>@CertificateAmendReasonViewModel.GetAmendReasonDescription(AmendReasons.ApprenticeAddress)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-employer-address" name="reasons" type="checkbox"
                                        value="@AmendReasons.EmployerAddress" @(Model.Reasons.Contains(nameof(AmendReasons.EmployerAddress)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-employer-address">
-                                    <text>@Model.GetAmendReasonDescription(AmendReasons.EmployerAddress)</text>
+                                    <text>@CertificateAmendReasonViewModel.GetAmendReasonDescription(AmendReasons.EmployerAddress)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-apprenticeship-details" name="reasons" type="checkbox"
                                        value="@AmendReasons.ApprenticeshipDetails" @(Model.Reasons.Contains(nameof(AmendReasons.ApprenticeshipDetails)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprenticeship-details">
-                                    <text>@Model.GetAmendReasonDescription(AmendReasons.ApprenticeshipDetails)</text>
+                                    <text>@CertificateAmendReasonViewModel.GetAmendReasonDescription(AmendReasons.ApprenticeshipDetails)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">

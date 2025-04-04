@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerNoResultsViewModel
+    public class FrameworkNoResultsViewModel
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -1,6 +1,7 @@
-﻿@using SFA.DAS.AssessorService.Domain.Consts;
+﻿@using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
+@using SFA.DAS.AssessorService.Domain.Consts;
 @using SFA.DAS.AssessorService.Api.Types.Enums;
-@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.StandardReprintReasonViewModel
+@model SFA.DAS.AdminService.Web.ViewModels.CertificateAmend.CertificateReprintReasonViewModel
 
 @{
     ViewBag.Heading = "Are you sure this certificate needs reprinting?";
@@ -45,7 +46,7 @@
 
             @{await Html.RenderPartialAsync("_LearnerSummaryPartial", Model);}
 
-            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="StandardReprintReason">
+            <form class="apprentice-certificate-check-form js-disable-on-submit" type="post" asp-controller="CertificateAmend" asp-action="ReprintReason">
                 @Html.HiddenFor(model => model.Learner.CertificateId)
                 @Html.HiddenFor(model => model.Learner.CertificateReference)
                 @Html.HiddenFor(model => model.Learner.StandardCode)
@@ -77,49 +78,49 @@
                                 <input class="govuk-checkboxes__input" id="reason-delivery-failed" name="reasons" type="checkbox"
                                        value="@ReprintReasons.DeliveryFailed" @(Model.Reasons.Contains(nameof(ReprintReasons.DeliveryFailed)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-delivery-failed">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.DeliveryFailed)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.DeliveryFailed)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-employer-incorrect" name="reasons" type="checkbox"
                                        value="@ReprintReasons.EmployerIncorrect" @(Model.Reasons.Contains(nameof(ReprintReasons.EmployerIncorrect)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-employer-incorrect">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.EmployerIncorrect)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.EmployerIncorrect)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-apprentice-details" name="reasons" type="checkbox"
                                        value="@ReprintReasons.ApprenticeDetails" @(Model.Reasons.Contains(nameof(ReprintReasons.ApprenticeDetails)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-details">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.ApprenticeDetails)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeDetails)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-apprentice-address" name="reasons" type="checkbox"
                                        value="@ReprintReasons.ApprenticeAddress" @(Model.Reasons.Contains(nameof(ReprintReasons.ApprenticeAddress)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-address">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.ApprenticeAddress)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeAddress)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-employer-address" name="reasons" type="checkbox"
                                        value="@ReprintReasons.EmployerAddress" @(Model.Reasons.Contains(nameof(ReprintReasons.EmployerAddress)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-employer-address">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.EmployerAddress)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.EmployerAddress)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-apprenticeship-details" name="reasons" type="checkbox"
                                        value="@ReprintReasons.ApprenticeshipDetails" @(Model.Reasons.Contains(nameof(ReprintReasons.ApprenticeshipDetails)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-apprenticeship-details">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.ApprenticeshipDetails)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeshipDetails)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" id="reason-lost-or-damaged" name="reasons" type="checkbox"
                                        value="@ReprintReasons.LostOrDamaged" @(Model.Reasons.Contains(nameof(ReprintReasons.LostOrDamaged)) ? "checked" : string.Empty)>
                                 <label class="govuk-label govuk-checkboxes__label" for="reason-lost-or-damaged">
-                                    <text>@Model.GetReprintReasonDescription(ReprintReasons.LostOrDamaged)</text>
+                                    <text>@CertificateReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.LostOrDamaged)</text>
                                 </label>
                             </div>
                             <div class="govuk-checkboxes__item">

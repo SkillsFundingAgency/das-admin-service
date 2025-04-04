@@ -3,9 +3,9 @@ using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class StandardReprintReasonViewModelValidator : AbstractValidator<StandardReprintReasonViewModel>
+    public class CertificateReprintReasonViewModelValidator : AbstractValidator<CertificateReprintReasonViewModel>
     {
-        public StandardReprintReasonViewModelValidator()
+        public CertificateReprintReasonViewModelValidator()
         {
             RuleFor(vm => vm.IncidentNumber).NotEmpty().WithMessage("Enter the ticket reference");
 

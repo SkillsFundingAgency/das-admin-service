@@ -77,16 +77,16 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         {
             _staffSearchApiClientMock.Setup(x => x.SearchFrameworkLearners(searchQuery)).ReturnsAsync(results);
         }
-        protected void SetupFrameworkSearchResultsMapping(List<FrameworkLearnerSearchResponse> results, List<FrameworkLearnerSearchResultsViewModel> mappedResults)
+        protected void SetupFrameworkSearchResultsMapping(List<FrameworkLearnerSearchResponse> results, List<FrameworkMultipleResultsViewModel> mappedResults)
         {
-            _mapperMock.Setup(m => m.Map<List<FrameworkLearnerSearchResultsViewModel>>(results)).Returns(mappedResults);
+            _mapperMock.Setup(m => m.Map<List<FrameworkMultipleResultsViewModel>>(results)).Returns(mappedResults);
         }
-        protected List<FrameworkLearnerSearchResultsViewModel> CreateMappedFrameworkResults(int count)
+        protected List<FrameworkMultipleResultsViewModel> CreateMappedFrameworkResults(int count)
         {
-            var mappedResults = new List<FrameworkLearnerSearchResultsViewModel>();
+            var mappedResults = new List<FrameworkMultipleResultsViewModel>();
             for (int i = 0; i < count; i++)
             {
-                mappedResults.Add(new FrameworkLearnerSearchResultsViewModel {  });
+                mappedResults.Add(new FrameworkMultipleResultsViewModel {  });
             }
             return mappedResults;
         }

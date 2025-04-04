@@ -3,9 +3,9 @@ using SFA.DAS.AdminService.Web.ViewModels.Search;
 
 namespace SFA.DAS.AdminService.Web.Validators
 {
-    public class AmendFrameworkReprintReasonViewModelValidator : AbstractValidator<FrameworkLearnerAmendReprintReasonViewModel>
+    public class FrameworkReprintReasonViewModelValidator : AbstractValidator<FrameworkReprintReasonViewModel>
     {
-        public AmendFrameworkReprintReasonViewModelValidator()
+        public FrameworkReprintReasonViewModelValidator()
         {
              RuleFor(vm => vm.TicketNumber)
                 .Cascade(CascadeMode.Stop)

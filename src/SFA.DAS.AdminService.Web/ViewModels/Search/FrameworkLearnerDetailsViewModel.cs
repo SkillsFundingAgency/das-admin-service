@@ -1,29 +1,16 @@
 ﻿using System.Collections.Generic;
-using System;
 using System.Linq;
-using SFA.DAS.AssessorService.Domain.DTOs.Staff;
-using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AdminService.Web.ViewModels.Shared;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerDetailsViewModel
+    public class FrameworkLearnerDetailsViewModel : CertificateHistoryViewModel
     {
-        public Guid Id { get; set; }
-        public string ApprenticeForename { get; set; }
-        public string ApprenticeSurname { get; set; }
-        public DateTime ApprenticeDoB { get; set; }
-        public long? ApprenticeULN { get; set; }
-        public string FrameworkCertificateNumber { get; set; }
-        public string FrameworkName { get; set; }
-        public string PathwayName { get; set; }
-        public string ApprenticeshipLevelName { get; set; }
+        public GetFrameworkLearnerResponse Learner { get; set; }
+
         public List<string> Qualifications { get; set; }
-        public string ProviderName { get; set; }
-        public string EmployerName { get; set; }
-        public DateTime? ApprenticeStartdate { get; set; }
-        public DateTime? ApprenticeLastdateInLearning { get; set; }
-        public DateTime CertificationDate { get; set; }
-        public string BackAction { get; set; }
+
         public string QualificationsDisplay
         {
             get
@@ -32,23 +19,19 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
                 {
                     return string.Empty;
                 }
-
-                if (Qualifications.Count == 1)
+                else if (Qualifications.Count == 1)
                 {
-                    return Qualifications.First();
+                    return Qualifications[0];
                 }
-                else
-                {
-                    return $"<ul class=\"govuk-list govuk-list--bullet\"><li>{string.Join("</li><li>", Qualifications)}</li></ul>";
-                }
+                
+                return $"<ul class=\"govuk-list govuk-list--bullet\"><li>{string.Join("</li><li>", Qualifications)}</li></ul>";
             }
-        } 
-        public string CertificateStatus { get; set; }
-        public DateTime? CertificateStatusDate { get; set; }
-        public string CertificateReference { get; set; }
-        public List<CertificateLogSummary> CertificateLogs{ get; set; }
+        }
+
         public bool ShowDetails { get; set; }
         public int? BatchNumber { get; set; }
+
+        public string ReasonForChange => GetReasonForChange(Learner.CertificatePrintReasonForChange);
 
         public Dictionary<string,string> CertificateHistoryButtonRouteData(bool allLogs)
         {
@@ -56,11 +39,13 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
             {
                 { "allLogs", allLogs.ToString()}
             };
+            
             if (BatchNumber.HasValue)
             {
-                routeValues.Add("frameworkLearnerId", Id.ToString());
+                routeValues.Add("frameworkLearnerId", Learner.Id.ToString());
                 routeValues.Add("batchNumber", BatchNumber.ToString());
             }
+            
             return routeValues;
         }
     }

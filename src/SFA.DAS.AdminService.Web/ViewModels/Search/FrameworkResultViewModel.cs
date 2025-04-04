@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class FrameworkLearnerSummaryViewModel
+    public class FrameworkResultViewModel
     {
         public Guid Id { get; set; }
         public string FrameworkName { get; set; }

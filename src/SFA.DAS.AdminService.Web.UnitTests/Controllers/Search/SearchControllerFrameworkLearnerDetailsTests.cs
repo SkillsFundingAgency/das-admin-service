@@ -27,7 +27,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _fixture = new Fixture().Customize(new AutoMoqCustomization());
         }
 
-        private FrameworkSearchSession CreateSessionModel(List<FrameworkLearnerSummaryViewModel> results, Guid? selectedResult)
+        private FrameworkSearchSession CreateSessionModel(List<FrameworkResultViewModel> results, Guid? selectedResult)
         {
             return new FrameworkSearchSession
             {
@@ -53,7 +53,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [Test]
         public async Task FrameworkLearnerDetails_SelectedResultIsNull_RedirectsToIndex()
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, null);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
@@ -83,7 +83,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [MoqAutoData]
         public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_MapsViewModel(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse, FrameworkLearnerDetailsViewModel frameworkLearnerDetailsViewModel)
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(frameworkLearnerDetailsResponse);
@@ -98,7 +98,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [MoqAutoData]
         public async Task FrameworkLearnerDetails_SessionAndSelectedResultValid_ReturnsCorrectView(GetFrameworkLearnerResponse frameworkLearnerDetailsResponse, FrameworkLearnerDetailsViewModel frameworklearnerDetailsViewModel)
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(frameworkLearnerDetailsResponse);
@@ -112,9 +112,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToMultipleResults()
+        public void FrameworkLearnerDetailsBackAction_FrameworkResultsHasMultipleItems_UpdatesSessionAndRedirectsToFrameworkMultipleResults()
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(3).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(3).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
@@ -122,24 +122,24 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             _sessionServiceMock.Setup(s => s.UpdateFrameworkSearchRequest(It.IsAny<Action<FrameworkSearchSession>>()))
                 .Callback<Action<FrameworkSearchSession>>(action => capturedAction = action);
 
-            var result = await _controller.FrameworkLearnerDetailsBackAction();
+            var result = _controller.FrameworkLearnerDetailsBackAction();
 
             capturedAction.Should().NotBeNull();
             capturedAction(sessionModel);
             sessionModel.SelectedFrameworkLearnerId.Should().BeNull();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
-            redirectToActionResult.ActionName.Should().Be("MultipleResults");
+            redirectToActionResult.ActionName.Should().Be("FrameworkMultipleResults");
         }
 
         [Test]
-        public async Task FrameworkLearnerDetailsBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
+        public void FrameworkLearnerDetailsBackAction_FrameworkResultsHasOneItem_ClearSessionAndRedirectsToIndex()
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
 
-            var result = await _controller.FrameworkLearnerDetailsBackAction();
+            var result = _controller.FrameworkLearnerDetailsBackAction();
 
             _sessionServiceMock.Verify(s => s.ClearFrameworkSearchRequest(), Times.Once);
 
@@ -148,11 +148,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         }
 
         [Test]
-        public async Task FrameworkLearnerDetailsBackAction_SessionIsNull_RedirectsToIndex()
+        public void FrameworkLearnerDetailsBackAction_SessionIsNull_RedirectsToIndex()
         {
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns((FrameworkSearchSession)null);
 
-            var result = await _controller.FrameworkLearnerDetailsBackAction();
+            var result = _controller.FrameworkLearnerDetailsBackAction();
 
             var redirectToActionResult = result.Should().BeOfType<RedirectToActionResult>().Subject;
             redirectToActionResult.ActionName.Should().Be("Index");
@@ -161,7 +161,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [Test]
         public async Task FrameworkLearnerDetails_ApiThrowsException_ReturnsErrorView()
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ThrowsAsync(new Exception("API Error"));
@@ -176,7 +176,7 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
         [Test]
         public async Task FrameworkLearnerDetails_MappingThrowsException_ReturnsErrorView()
         {
-            var results = _fixture.CreateMany<FrameworkLearnerSummaryViewModel>(1).ToList();
+            var results = _fixture.CreateMany<FrameworkResultViewModel>(1).ToList();
             var sessionModel = CreateSessionModel(results, results[0].Id);
             _sessionServiceMock.Setup(s => s.SessionFrameworkSearch).Returns(sessionModel);
             _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(It.IsAny<Guid>(), false)).ReturnsAsync(_fixture.Create<GetFrameworkLearnerResponse>());

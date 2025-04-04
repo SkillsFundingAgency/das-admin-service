@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
 {
-    public class AmendStandardReprintReasonViewModel : LearnerDetailViewModel
+    public class CertificateAmendReasonViewModel : LearnerDetailViewModel
     {
         public string IncidentNumber { get; set; }
         public List<string> Reasons { get; set; }
         public string OtherReason { get; set; }
 
-        public string GetAmendReasonDescription(AmendReasons amendReason)
+        public static string GetAmendReasonDescription(AmendReasons amendReason)
         {
             return amendReason.AsString(EnumFormat.Description);
         }

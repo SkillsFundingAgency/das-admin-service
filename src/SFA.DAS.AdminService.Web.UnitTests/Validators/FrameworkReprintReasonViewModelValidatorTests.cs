@@ -8,20 +8,20 @@ using System.Collections.Generic;
 namespace SFA.DAS.AdminService.Web.UnitTests.Validators
 {
     [TestFixture]
-    public class UpdateReprintReasonViewModelValidatorTests
+    public class FrameworkReprintReasonViewModelValidatorTests
     {
-        private AmendFrameworkReprintReasonViewModelValidator _validator;
+        private FrameworkReprintReasonViewModelValidator _validator;
 
         [SetUp]
         public void Setup()
         {
-            _validator = new AmendFrameworkReprintReasonViewModelValidator();
+            _validator = new FrameworkReprintReasonViewModelValidator();
         }
 
         [Test]
-        public void UpdateReprintReason_ValidModel_NoErrors()
+        public void FrameworkReprintReasonViewModel_ValidModel_NoErrors()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC12345",
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -34,9 +34,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [Test]
         [TestCase(null)]
         [TestCase("")]
-        public void UpdateReprintReason_TicketNumberNullOrEmpty_HasError(string ticketNumber)
+        public void FrameworkReprintReasonViewModel_TicketNumberNullOrEmpty_HasError(string ticketNumber)
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = ticketNumber,
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -48,9 +48,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_TicketNumberExceedsMaxCharacters_HasError()
+        public void FrameworkReprintReasonViewModel_TicketNumberExceedsMaxCharacters_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -69,9 +69,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         [TestCase("ABC123^")]
         [TestCase("ABC123&")]
         [TestCase("ABC123*")]
-        public void UpdateReprintReason_TicketNumberContainsNonAlphanumericCharacters_HasError(string ticketNumber)
+        public void FrameworkReprintReasonViewModel_TicketNumberContainsNonAlphanumericCharacters_HasError(string ticketNumber)
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = ticketNumber,
                 SelectedReprintReasons = new List<string> { "Other", "A", "B" },
@@ -83,9 +83,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_SelectedReprintReasonsEmpty_HasError()
+        public void FrameworkReprintReasonViewModel_SelectedReprintReasonsEmpty_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string>(),
@@ -97,9 +97,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_SelectedReprintReasonsNull_HasError()
+        public void FrameworkReprintReasonViewModel_SelectedReprintReasonsNull_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = null,
@@ -111,9 +111,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_Other_OtherReasonEmpty_HasError()
+        public void FrameworkReprintReasonViewModel_Other_OtherReasonEmpty_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},
@@ -125,9 +125,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_Other_OtherReasonNull_HasError()
+        public void FrameworkReprintReasonViewModel_Other_OtherReasonNull_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},
@@ -139,9 +139,9 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
         }
 
         [Test]
-        public void UpdateReprintReason_Other_OtherReasonExceedsMaxCharacters_HasError()
+        public void FrameworkReprintReasonViewModel_Other_OtherReasonExceedsMaxCharacters_HasError()
         {
-            var vm = new FrameworkLearnerAmendReprintReasonViewModel
+            var vm = new FrameworkReprintReasonViewModel
             {
                 TicketNumber = "ABC1234",
                 SelectedReprintReasons = new List<string> { "Other"},
@@ -151,6 +151,5 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Validators
             result.ShouldHaveValidationErrorFor(x => x.OtherReason)
                 .WithErrorMessage("Details must be 200 characters or fewer");
         }
-        
     }
 }
