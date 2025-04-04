@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
         public List<string> Reasons { get; set; }
         public string OtherReason { get; set; }
 
-        public string GetAmendReasonDescription(AmendReasons amendReason)
+        public static string GetAmendReasonDescription(AmendReasons amendReason)
         {
             return amendReason.AsString(EnumFormat.Description);
         }

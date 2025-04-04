@@ -1,0 +1,73 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@using SFA.DAS.AdminService.Web.ViewModels.Shared
+
+@model List<SFA.DAS.AssessorService.Domain.DTOs.Staff.CertificateLogSummary>
+
+<table class="govuk-table govuk-table--s das-table--responsive">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" scope="col">Date and time</th>
+            <th class="govuk-table__header" scope="col">Action</th>
+            <th class="govuk-table__header" scope="col">User</th>
+            <th class="govuk-table__header" scope="col">Status</th>
+            <th class="govuk-table__header" scope="col">Batch</th>
+            <th class="govuk-table__header" scope="col">Changes</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @foreach (var log in Model)
+    {
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell" data-label="Date and time">@log.EventTime.UtcToTimeZoneTime()</td>
+            <td class="govuk-table__cell" data-label="Action">@log.Action</td>
+            <td class="govuk-table__cell" data-label="By">
+                @log.ActionBy<br />
+                <span class="govuk-body-s">@log.ActionByEmail</span>
+            </td>
+            <td class="govuk-table__cell" data-label="Status">@log.Status</td>
+            <td class="govuk-table__cell" data-label="Batch">@log.BatchNumber</td>
+            <td class="govuk-table__cell" data-label="Change">
+            @foreach (var difference in log.DifferencesToPrevious)
+            {
+                <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
+                    @(difference.Key)
+                </p>
+                <p class="govuk-body-s govuk-!-margin-bottom-3">
+                @if (difference.IsList)
+                {
+                    <ul class="govuk-list govuk-list--bullet">
+                    @foreach (string value in difference.Values)
+                    {
+                        <li>@value</li>
+                    }
+                    </ul>
+                }
+                else
+                {
+                    <span>@difference.Values[0]</span>
+                }
+                </p>
+            }
+            @if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
+            {
+                <div role="button" tabindex="0" class="js-expand-table-row expand-table-row" data-expand-id="@log.EventTime.Ticks">
+                    <i class="arrow arrow-closed">►</i>
+                    <span>@CertificateHistoryViewModel.GetReasonLink(log)</span>
+                </div>
+            }
+            </td>
+        </tr>
+        @if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
+        {
+            <tr class="govuk-table__row js-expandble-cell expandble-cell--hidden expandble-cell" aria-hidden="true">
+                <td class="govuk-table__cell" data-label="Reason for change" colspan="6">
+                    <div class="expandble-cell-content">
+                        <h3 class="govuk-heading-s expandble-cell-content--first-heading">@CertificateHistoryViewModel.GetReasonHeading(log)</h3>
+                        @log.ReasonForChange
+                    </div>
+                </td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>

@@ -18,7 +18,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             certData.LearnerFamilyName = FamilyName;
             certData.FullName = $"{certData.LearnerGivenNames} {certData.LearnerFamilyName}";
 
-            certificate.CertificateData = JsonConvert.SerializeObject(certData);
+            certificate.CertificateData = certData;
             return certificate;
         }
     }

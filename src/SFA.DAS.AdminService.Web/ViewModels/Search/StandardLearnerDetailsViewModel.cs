@@ -4,7 +4,7 @@ using SFA.DAS.AssessorService.Domain.DTOs.Staff;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
-    public class SelectViewModel : LearnerDetailViewModel
+    public class StandardLearnerDetailsViewModel : LearnerDetailViewModel
     {
         public string SearchString { get; set; }
         public int Page { get; set; }
@@ -18,28 +18,5 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
 
         public bool ShowToAdress => Learner.CertificateStatus == CertificateStatus.Submitted ||
                                     CertificateStatus.HasPrintProcessStatus(Learner.CertificateStatus);
-
-        public string GetReasonLink(CertificateLogSummary log)
-        {
-            return log.Action == CertificateActions.ReprintReason || log.Action == CertificateActions.AmendReason
-                ? "Show other reason"
-                : "Show reason for change";
-        }
-
-        public string GetReasonHeading(CertificateLogSummary log)
-        {
-            return log.Action == CertificateActions.ReprintReason || log.Action == CertificateActions.AmendReason
-                ? "Other reason"
-                : "Reason for change";
-        }
-
-        public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
-
-        private string GetReasonForChange(string learnerReasonForChange)
-        {
-            if (string.IsNullOrWhiteSpace(learnerReasonForChange))
-                return "No reason entered";
-            return learnerReasonForChange;
-        }
     }
 }

@@ -4,7 +4,7 @@ using System;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Shared
 {
-    public class LearnerDetailViewModel
+    public class LearnerDetailViewModel : CertificateHistoryViewModel
     {
         public LearnerDetailResult Learner { get; set; }
 
@@ -18,50 +18,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Shared
             }
         }
 
-        public string CertificateStatusDateTitle
-        {
-            get
-            {
-                var dateTitle = "Date ";
-                switch (Learner?.CertificateStatus)
-                {
-                    case "Submitted":
-                    case "ToBeApproved":
-                        dateTitle += "submitted";
-                        break;
-
-                    case "SentToPrinter":
-                        dateTitle += "sent to printer";
-                        break;
-
-                    case "Printed":
-                        dateTitle += "printed";
-                        break;
-
-                    case "NotDelivered":
-                        dateTitle += "delivery attempted";
-                        break;
-
-                    case "Delivered":
-                        dateTitle += "delivered";
-                        break;
-
-                    case "Deleted":
-                        dateTitle += "deleted";
-                        break;
-
-                    case "Reprint":
-                        dateTitle += "reprint requested";
-                        break;
-
-                    default:
-                        dateTitle += Learner?.CertificateStatus?.ToLower();
-                        break;
-                }
-
-                return dateTitle;
-            }
-        }
+        public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
 
         public string CertificateStatusDeliveryTitle
         {

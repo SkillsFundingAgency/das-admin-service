@@ -16,7 +16,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.CertificateAmend
             || Learner.CertificateStatus == CertificateStatus.Printed
             || Learner.CertificateStatus == CertificateStatus.Reprint;
 
-        public string GetReprintReasonDescription(ReprintReasons reprintReason)
+        public static string GetReprintReasonDescription(ReprintReasons reprintReason)
         {
             return reprintReason.AsString(EnumFormat.Description);
         }
