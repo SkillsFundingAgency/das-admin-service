@@ -27,26 +27,29 @@
             <td class="govuk-table__cell" data-label="Status">@log.Status</td>
             <td class="govuk-table__cell" data-label="Batch">@log.BatchNumber</td>
             <td class="govuk-table__cell" data-label="Change">
-            @foreach (var difference in log.DifferencesToPrevious)
+            @if (Model.Count > 1)
             {
-                <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
-                    @(difference.Key)
-                </p>
-                <p class="govuk-body-s govuk-!-margin-bottom-3">
-                @if (difference.IsList)
+                @foreach (var difference in log.DifferencesToPrevious)
                 {
-                    <ul class="govuk-list govuk-list--bullet">
-                    @foreach (string value in difference.Values)
+                    <p class="govuk-body-s govuk-!-font-weight-bold govuk-!-margin-bottom-0">
+                        @(difference.Key)
+                    </p>
+                    <p class="govuk-body-s govuk-!-margin-bottom-3">
+                    @if (difference.IsList)
                     {
-                        <li>@value</li>
+                        <ul class="govuk-list govuk-list--bullet">
+                        @foreach (string value in difference.Values)
+                        {
+                            <li>@value</li>
+                        }
+                        </ul>
                     }
-                    </ul>
+                    else
+                    {
+                        <span>@difference.Values[0]</span>
+                    }
+                    </p>
                 }
-                else
-                {
-                    <span>@difference.Values[0]</span>
-                }
-                </p>
             }
             @if (!string.IsNullOrWhiteSpace(log.ReasonForChange))
             {

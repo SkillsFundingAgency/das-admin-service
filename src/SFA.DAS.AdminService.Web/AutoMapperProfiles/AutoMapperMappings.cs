@@ -78,7 +78,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src =>
                     src.QualificationsAndAwardingBodies == null ? new List<string>() :
                     src.QualificationsAndAwardingBodies.Select(qualification =>
-                        $"{qualification.Name},{qualification.AwardingBody}").ToList()));
+                        $"{qualification.Name}, {qualification.AwardingBody}").ToList()));
             CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
                 .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
             CreateMap<FrameworkSearchSession, FrameworkReprintAddressViewModel>();
