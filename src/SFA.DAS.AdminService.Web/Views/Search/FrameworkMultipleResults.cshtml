@@ -71,7 +71,7 @@
                     <span class="govuk-error-message" asp-validation-for="SelectedResult"></span>
                     @foreach (var result in Model.FrameworkResults)
                     {
-                        var radioId = isFirstResult ? "SelectedFrameworkLearnerId" : $"SelectedResult_{result.Id}";
+                        var radioId = isFirstResult ? "SelectedResult" : $"SelectedResult_{result.Id}";
                         isFirstResult = false;
                         
                         <div class="govuk-radios__item">

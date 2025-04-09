@@ -63,7 +63,9 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
             CreateMap<FrameworkSearchSession, FrameworkMultipleResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
-                .ForMember(dest => dest.DateOfBirth, opt=> opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName.Trim()))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName.Trim()))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
             CreateMap<FrameworkLearnerSearchResponse, FrameworkResultViewModel>();
             CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
