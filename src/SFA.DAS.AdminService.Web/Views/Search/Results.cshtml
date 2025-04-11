@@ -1,5 +1,6 @@
 ﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.StandardLearnerSearchResultsViewModel
 @using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AdminService.Web.Models.Search
 @using SFA.DAS.AssessorService.Domain.Consts;
 
 @{
@@ -75,6 +76,7 @@
                         <a asp-action="Results"
                         asp-controller="Search"
                         asp-route-searchstring="@Model.SearchString"
+                        asp-route-searchtype="@SearchTypes.Standards"
                         asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex - 1)"
                         class="govuk-link previous">
                             <i class="arrow-button icon-left-open">&#xe800;</i>
@@ -88,6 +90,7 @@
                         <a asp-action="Results"
                         asp-controller="Search"
                         asp-route-searchstring="@Model.SearchString"
+                        asp-route-searchtype="@SearchTypes.Standards"
                         asp-route-page="@( Model.StaffSearchResult.StaffSearchItems.PageIndex + 1)"
                         class="govuk-link next">
                             <i class="arrow-button icon-right-open">&#xe801;</i>
