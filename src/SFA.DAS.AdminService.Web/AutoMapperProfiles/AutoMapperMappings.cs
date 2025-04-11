@@ -1,10 +1,19 @@
 ﻿using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
+using SFA.DAS.AdminService.Web.Extensions;
+using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Models.Roatp;
+using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
+using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
+using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
+using SFA.DAS.AssessorService.Api.Types.Models.Staff;
+using SFA.DAS.AssessorService.Domain.Paging;
+using System.Collections.Generic;
+using System.Linq;
 using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
@@ -52,6 +61,41 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
             CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
             CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
+            CreateMap<FrameworkSearchSession, FrameworkMultipleResultsViewModel>();
+            CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName.Trim()))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName.Trim()))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => DateExtensions.ConstructDate(src.Day, src.Month, src.Year)));
+            CreateMap<FrameworkLearnerSearchResponse, FrameworkResultViewModel>();
+            CreateMap<FrameworkSearchSession, SearchInputViewModel>()
+                .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
+                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Day : null))
+                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Month : null))
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                    (int?)src.DateOfBirth.Value.Year : null));
+            CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerDetailsViewModel>()
+                .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src =>
+                    src.QualificationsAndAwardingBodies == null ? new List<string>() :
+                    src.QualificationsAndAwardingBodies.Select(qualification =>
+                        $"{qualification.Name}, {qualification.AwardingBody}").ToList()));
+            CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+            CreateMap<FrameworkSearchSession, FrameworkReprintAddressViewModel>();
+            CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
+
+            CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>()
+                .ConstructUsing(src => new StaffBatchSearchResultViewModel(src));
+            CreateMap<StaffBatchSearchResponse, BatchSearchViewModel<StaffBatchSearchResultViewModel>>()
+                .ForMember(dest => dest.PaginatedList, opt => opt.MapFrom((src, dest, _, context) => new PaginatedList<StaffBatchSearchResultViewModel>(
+                    src.Results.Items.Select(item => context.Mapper.Map<StaffBatchSearchResultViewModel>(item)).ToList(),
+                    src.Results.TotalRecordCount,
+                    src.Results.PageIndex,
+                    src.Results.PageSize
+                )));
         }
     }
 }

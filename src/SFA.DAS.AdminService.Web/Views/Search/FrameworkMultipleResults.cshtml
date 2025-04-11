@@ -1,0 +1,99 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkMultipleResultsViewModel
+@using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AssessorService.Domain.Consts
+
+@{
+    ViewBag.Title = "Framework search results";
+    Layout = "_Layout";
+
+    bool isFirstResult = true;
+}
+
+<a asp-action="Index" asp-controller="Search" 
+    asp-all-route-data="@(new Dictionary<string, string> { 
+    { "FirstName", Model.FirstName }, 
+    { "LastName", Model.LastName }, 
+    { "Day", Model.DateOfBirth.Day.ToString() }, 
+    { "Month", Model.DateOfBirth.Month.ToString() }, 
+    { "Year", Model.DateOfBirth.Year.ToString() } })" 
+    class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-l">
+                <span class="govuk-caption-l">Narrow down your search</span>
+                We've found more than one result
+            </h1>
+            <p class="govuk-body">You searched for:</p>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        First name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FirstName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LastName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date of birth
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.DateOfBirth.ToSfaShortDateString()
+                    </dd>
+                </div>
+            </dl>
+            <p class="govuk-body">We need more information to narrow down your search to one result.</p>
+            <h2 class="govuk-heading-m">We found @Model.FrameworkResultCount certificates</h2>
+
+            <form class="framework-results-form" asp-action="SelectFrameworkLearner" asp-controller="Search" method="post">
+                <input type="hidden" asp-for="FirstName">
+                <input type="hidden" asp-for="LastName">
+                <input type="hidden" asp-for="DateOfBirth">
+                <div class="govuk-form-group" sfa-validation-for="SelectedResult" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            Course name
+                        </legend>
+                        <div class="govuk-hint govuk-fieldset__hint">
+                        Select one course
+                    </div>
+                    <span class="govuk-error-message" asp-validation-for="SelectedResult"></span>
+                    @foreach (var result in Model.FrameworkResults)
+                    {
+                        var radioId = isFirstResult ? "SelectedResult" : $"SelectedResult_{result.Id}";
+                        isFirstResult = false;
+                        
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" type="radio" id="@radioId"
+                                   name="SelectedResult" value="@result.Id">
+                            <label class="govuk-label govuk-radios__label" for="@radioId">
+                                    @($"{result.FrameworkName} ({result.ApprenticeshipLevelName})")
+                            </label>
+                            <div class="govuk-hint govuk-radios__hint">
+                                    @($"Certification Year: {result.CertificationYear}")
+                            </div>
+                        </div>
+                    }
+                    </fieldset>
+                </div>
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

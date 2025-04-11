@@ -25,10 +25,8 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             var result = _result as ViewResult;
             var model = result.Model as CertificateFamilyNameViewModel;
 
-            var certificateData = JsonConvert.DeserializeObject<CertificateData>(Certificate.CertificateData);
-
             model.Id.Should().Be(Certificate.Id);
-            model.FamilyName.Should().Be(certificateData.LearnerFamilyName);            
+            model.FamilyName.Should().Be(Certificate.CertificateData.LearnerFamilyName);            
         }
     }   
 }

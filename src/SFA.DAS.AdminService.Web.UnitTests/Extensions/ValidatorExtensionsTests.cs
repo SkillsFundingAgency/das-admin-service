@@ -11,7 +11,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
             [Test]
             public void When_ValidParameters_Then_ReturnDate()
             {
-                var result = ValidatorExtensions.ConstructDate("01", "02", "2021");
+                var result = DateExtensions.ConstructDate("01", "02", "2021");
 
                 result.Should().NotBeNull();
                 result.Should().HaveValue();
@@ -23,7 +23,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
             [Test]
             public void When_InvalidParameters_Then_ReturnNull()
             {
-                var result = ValidatorExtensions.ConstructDate("31", "02", "2021");
+                var result = DateExtensions.ConstructDate("31", "02", "2021");
 
                 result.Should().BeNull();
             }
@@ -34,7 +34,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
             [Test]
             public void When_ValidParameters_Then_ReturnTrue()
             {
-                var result = ValidatorExtensions.IsValidDate(2021, 2, 1);
+                var result = DateExtensions.IsValidDate(2021, 2, 1);
 
                 result.Should().BeTrue();
             }
@@ -42,7 +42,7 @@ namespace SFA.DAS.AdminService.Web.Tests.Extensions
             [Test]
             public void When_InvalidParameters_Then_ReturnFalse()
             {
-                var result = ValidatorExtensions.IsValidDate(2021, 2, 31);
+                var result = DateExtensions.IsValidDate(2021, 2, 31);
 
                 result.Should().BeFalse();
             }

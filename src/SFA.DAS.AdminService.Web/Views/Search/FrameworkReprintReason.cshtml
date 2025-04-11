@@ -1,0 +1,168 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintReasonViewModel
+@using SFA.DAS.AdminService.Common.Extensions;
+@using SFA.DAS.AdminService.Web.ViewModels.Search
+@using SFA.DAS.AssessorService.Api.Types.Enums
+@using SFA.DAS.AssessorService.Domain.Consts
+
+@{
+    ViewBag.Title = "Are you sure this certificate needs reprinting?";
+    Layout = "_Layout";
+}
+
+<a asp-controller="Search" 
+asp-action="ResetBackToCheckAnswersAndRedirect" 
+asp-route-backActionTarget="@Model.BackAction" 
+class="govuk-back-link">Back</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-l">
+                @ViewBag.Title
+            </h1>
+            <dl class="govuk-summary-list">
+            @if (!string.IsNullOrEmpty(Model.CertificateReference))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Certificate reference
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificateReference
+                    </dd>
+                </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Apprentice name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.ApprenticeName
+                </dd>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.CertificateStatus))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @CertificateStatus.GetDisplayName(@Model.CertificateStatus)
+                    </dd>
+                </div>
+            }
+            @if (Model.CertificatePrintStatusAt.HasValue)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @CertificateStatus.GetStatusDateDisplayName(Model.CertificateStatus)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CertificatePrintStatusAt
+                    </dd>
+                </div>
+            }
+            </dl>
+
+            <form asp-action="FrameworkReprintReason" asp-controller="Search" method="post">
+
+                <div class="govuk-form-group" sfa-validation-for="TicketNumber" sfa-validationerror-class="govuk-form-group--error">
+                    <label class="govuk-label govuk-label--m" asp-for="TicketNumber">Enter the ticket reference number</label>
+                    <span class="govuk-error-message" asp-validation-for="TicketNumber"></span>
+                    <input class="govuk-input" asp-for="TicketNumber" sfa-validation-for="TicketNumber" sfa-validationerror-class="govuk-input--error" id="TicketNumber" />
+                </div>
+
+                <div class="govuk-form-group" sfa-validation-for="SelectedReprintReasons" sfa-validationerror-class="govuk-form-group--error">
+                    <fieldset class="govuk-fieldset">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            Reason for requesting a reprint
+                        </legend>
+                        <div class="govuk-hint govuk-fieldset__hint">
+                            Select all that apply
+                        </div>
+                        <span class="govuk-error-message" asp-validation-for="SelectedReprintReasons"></span>
+                        <div class="govuk-checkboxes" data-module="checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input id="SelectedReprintReasons" class="govuk-checkboxes__input" id="reason-delivery-failed" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.DeliveryFailed" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.DeliveryFailed)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-delivery-failed">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.DeliveryFailed)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-employer-incorrect" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.EmployerIncorrect" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.EmployerIncorrect)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-employer-incorrect">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.EmployerIncorrect)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-apprentice-details" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.ApprenticeDetails" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.ApprenticeDetails)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-details">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeDetails)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-apprentice-address" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.ApprenticeAddress" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.ApprenticeAddress)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-apprentice-address">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeAddress)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-employer-address" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.EmployerAddress" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.EmployerAddress)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-employer-address">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.EmployerAddress)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-apprenticeship-details" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.ApprenticeshipDetails" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.ApprenticeshipDetails)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-apprenticeship-details">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.ApprenticeshipDetails)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-lost-or-damaged" name="SelectedReprintReasons" type="checkbox"
+                                       value="@ReprintReasons.LostOrDamaged" @(Model.SelectedReprintReasons.Contains(nameof(ReprintReasons.LostOrDamaged)) ? "checked" : string.Empty)>
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-lost-or-damaged">
+                                    <text>@FrameworkReprintReasonViewModel.GetReprintReasonDescription(ReprintReasons.LostOrDamaged)</text>
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="reason-other" name="SelectedReprintReasons" type="checkbox"
+                                       value="Other" @(Model.SelectedReprintReasons.Contains("Other") ? "checked" : string.Empty) data-aria-controls="conditional-other">
+                                <label class="govuk-label govuk-checkboxes__label" for="reason-other">
+                                    Other
+                                </label>
+                            </div>
+                            <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="conditional-other">
+                                <div class="govuk-character-count" data-module="character-count" data-maxlength="200">
+                                    <div class="govuk-form-group" sfa-validation-for="OtherReason" sfa-validationerror-class="govuk-form-group--error">
+                                        <label class="govuk-label" asp-for="OtherReason">
+                                            Give details
+                                        </label>
+                                        <span class="govuk-error-message" asp-validation-for="OtherReason"></span>
+                                        <textarea class="govuk-textarea js-character-count" id="OtherReason" name="OtherReason" asp-for="OtherReason" rows="5" aria-describedby="OtherReason-info">@Model.OtherReason</textarea>
+                                        <div id="OtherReason-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                                            You can enter up to 200 characters
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <button type="submit" class="govuk-button">Continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

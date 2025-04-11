@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.AdminService.Common.Extensions;
 using SFA.DAS.AdminService.Web.Infrastructure;
 using SFA.DAS.AdminService.Web.ViewModels.CertificateAmend;
@@ -10,11 +13,6 @@ using SFA.DAS.AssessorService.Api.Types.Enums;
 using SFA.DAS.AssessorService.Api.Types.Models.Certificates;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.AssessorService.Domain.Entities;
-using SFA.DAS.AssessorService.Domain.JsonData;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers
 {
@@ -77,7 +75,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction(nameof(Check), new { viewModel.Learner.CertificateId });
         }
 
-        private AmendReasons? ParseAmendReasons(List<string> reasons)
+        private static AmendReasons? ParseAmendReasons(List<string> reasons)
         {
             var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
 
@@ -129,7 +127,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             return RedirectToAction(nameof(Check), new { viewModel.Learner.CertificateId });
         }
 
-        private ReprintReasons? ParseReprintReasons(List<string> reasons)
+        private static ReprintReasons? ParseReprintReasons(List<string> reasons)
         {
             var reprintReasons = string.Join(",", reasons.Where(p => !p.Equals("Other")).ToList());
             
@@ -213,7 +211,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             int page = 1)
         {
             var certificate = await CertificateApiClient.GetCertificate(certificateId);
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
+            var certData = certificate.CertificateData;
 
             return View(new CertificateAmendConfirmViewModel 
             { 
@@ -238,8 +236,6 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 Username = username
             });
 
-            var certData = JsonConvert.DeserializeObject<CertificateData>(certificate.CertificateData);
-
             var nextScheduledRun = await ScheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
 
             var viewModel = new CertificateReprintConfirmViewModel
@@ -251,7 +247,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 StdCode = stdCode,
                 Uln = uln,
                 Status = certificate.Status,
-                FullName = certData.FullName,
+                FullName = certificate.CertificateData.FullName,
                 Page = page
             };
 

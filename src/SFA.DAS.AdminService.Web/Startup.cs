@@ -123,6 +123,7 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddFluentValidationAutoValidation();
             services.AddFluentValidationClientsideAdapters();
+
             services.AddValidatorsFromAssemblyContaining<Startup>();
 
             services.Configure<RazorViewEngineOptions>(o =>

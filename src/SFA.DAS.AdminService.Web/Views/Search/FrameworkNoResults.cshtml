@@ -1,0 +1,54 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions
+@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkNoResultsViewModel
+
+@{
+    ViewBag.Title = "We could not find a certificate";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l govuk-!-margin-bottom-5">
+                @ViewBag.Title
+            </h1>
+            <p class="govuk-body">You searched for:</p>
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        First name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.FirstName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.LastName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Date of birth
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.DateOfBirth.ToSfaShortDateString()
+                    </dd>
+                </div>
+            </dl>
+            <p class="govuk-body">We could not find a matching certificate using this information.</p>
+
+            <h3 class="govuk-heading-m">What do you want to do next?</h3>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to staff dashboard</a>
+            </p>
+        </div>
+    </div>
+</main>

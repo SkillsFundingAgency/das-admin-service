@@ -1,0 +1,27 @@
+﻿@model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintSubmittedViewModel
+
+@{
+    ViewBag.Title = "Certificate reprint submitted";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    @ViewBag.Title
+                </h1>
+            </div>
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <p class="govuk-body">The reprint will be processed in the next print run, scheduled for @Model.PrintRunDate.</p>
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Search" asp-action="Index">Search for another certificate</a>
+            </p>
+            <p class="govuk-body">
+                <a class="govuk-link" asp-controller="Dashboard" asp-action="Index">Return to staff dashboard</a>
+            </p>
+        </div>
+    </div>
+</main>
