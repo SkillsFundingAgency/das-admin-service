@@ -17,13 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />
+    <!--<DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.6.362" />-->
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <!--<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />-->
     <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="Enums.NET" Version="5.0.0" />
     <PackageReference Include="EPPlus" Version="7.6.0" />
@@ -253,7 +253,7 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+    <!--<PrepareForBuildDependsOn>BundleMinify;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>-->
   </PropertyGroup>
   <PropertyGroup>
     <!-- File with mtime of last successful npm install -->
