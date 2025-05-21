@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using NLog;
-using NLog.Web;
 using System;
 
 namespace SFA.DAS.AdminService.Web
@@ -9,32 +7,15 @@ namespace SFA.DAS.AdminService.Web
     {
         public static void Main(string[] args)
         {
-            var logger = LogManager
-                .Setup()
-                .LoadConfigurationFromFile("nlog.config") 
-                .GetCurrentClassLogger();
+            var builder = WebApplication.CreateBuilder(args);
 
-            try
-            {
-                logger.Info("Starting up host");
-                var builder = WebApplication.CreateBuilder(args);
+            var startup = new Startup(builder.Configuration, builder.Environment);
+            startup.ConfigureServices(builder.Services);
 
-                builder.Host.UseNLog();
+            var app = builder.Build();
+            startup.Configure(app, app.Environment);
 
-                var startup = new Startup(builder.Configuration, builder.Environment);
-                startup.ConfigureServices(builder.Services);
-
-                var app = builder.Build();
-                startup.Configure(app, app.Environment);
-
-                app.Run();
-
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Could not start host");
-                throw;
-            }
+            app.Run();
         }
     }
 }
