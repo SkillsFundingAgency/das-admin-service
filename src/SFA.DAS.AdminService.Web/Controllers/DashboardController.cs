@@ -29,11 +29,13 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             ApplicationReviewStatusCounts applicationReviewStatusCounts;
 
+            _logger.LogInformation("LogInformation");
+
             try
             {
                 applicationReviewStatusCounts = await _applicationApiClient.GetApplicationReviewStatusCounts();
             }
-            catch(Exception ex) when(ex is HttpRequestException || ex is UnsupportedMediaTypeException)
+            catch (Exception ex) when (ex is HttpRequestException || ex is UnsupportedMediaTypeException)
             {
                 _logger.LogError(ex, "Unable to GetApplicationReviewStatusCounts from EPAO Service");
                 // Absorb the exception at this point but make it obvious that something has gone wrong. We don't want to kill the Staff Dashboard so soon!

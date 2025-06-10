@@ -146,7 +146,7 @@ namespace SFA.DAS.AdminService.Web
             {
                 config.AddProfile<AutoMapperMappings>();
             });
-            services.AddApplicationInsightsTelemetry();
+            services.AddOpenTelemetryRegistration(Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]!);
             ConfigureDependencyInjection(services);
         }
 
