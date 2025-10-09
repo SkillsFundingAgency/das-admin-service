@@ -21,7 +21,7 @@ namespace SFA.DAS.AdminService.Settings
         string RoatpFinanceBaseUrl { get; set; }
         string RoatpAssessorBaseUrl { get; set; }
         string RoatpProviderModerationBaseUrl { get; set; }
-
+        string RoatpAdminBaseUrl { get; set; }
         RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
 
         FeatureToggles FeatureToggles { get; set; }

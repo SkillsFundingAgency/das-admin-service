@@ -11,11 +11,14 @@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Staff dashboard</h1>
-        </div>
+<div class="govuk-grid-row padding-bottom-30">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Staff dashboard</h1>
     </div>
+    <div class="govuk-grid-column-full">
+        <p class="govuk-body grey-underline">Manage applications to join APAR.</p>
+    </div>
+</div>
 
     @{
         var roleTagHelper = new RoleTagHelper(HttpContextAccessor, (IAuthorizationService)HttpContextAccessor.HttpContext.RequestServices.GetService(typeof(IAuthorizationService)));
@@ -28,19 +31,16 @@
         @{
             if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayAssessorTeam)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam" id="roatp-gateway-applications">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                RoATP gateway applications
-            </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">New, in progress, clarification, withdraw, remove and the outcome of RoATP gateway applications.</p>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpGatewayBaseUrl">
-                        Go to RoATP gateway applications
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="govuk-grid-column-one-half" 
+       sfa-show-for-roles="@Roles.RoatpGatewayAssessorTeam"
+         id="roatp-gateway-applications">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+            <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpGatewayBaseUrl">
+                Access the gateway
+            </a>
+        </h2>
+            <p class="govuk-body govuk-!-margin-bottom-2">Conduct due diligence and monitor applications.</p>
+    </div>
         <!-- /RoATP gateway assessor -->
 
 @if (sectionsShown % 2 == 0)
@@ -55,16 +55,12 @@
         <!-- RoATP PMO -->
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpFinancialAssessorTeam" id="roatp-financial-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                RoATP financial applications
+                <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpFinanceBaseUrl">
+                    Manage financial applications
+                </a>
             </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">Current, clarification and the outcome of RoATP financial applications.</p>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpFinanceBaseUrl">
-                        Go to RoATP financial applications
-                    </a>
-                </li>
-            </ul>
+            <p class="govuk-body govuk-!-margin-bottom-2">Review new, in progress and approved financial applications.</p>
+
         </div>
         <!-- /RoATP PMO -->
 
@@ -80,17 +76,11 @@
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpAssessorTeam" id="roatp-assessor-applications">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                RoATP assessor applications
+                <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpAssessorBaseUrl">
+                    Manage applications
+                </a>
             </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">New, in progress, moderation, clarification and the outcome of RoATP assessor applications.</p>
-            @* <p class="govuk-body govuk-!-margin-bottom-2">Assess new applications, view current applications and send clarifications.</p> *@
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpAssessorBaseUrl">
-                        Go to RoATP assessor applications
-                    </a>
-                </li>
-            </ul>
+            <p class="govuk-body govuk-!-margin-bottom-2">Review new, in progress and approved applications.</p>
         </div>
         <!-- /RoATP assessor -->
 
@@ -106,16 +96,11 @@
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpApplicationOversightTeam" id="roatp-application-outcomes">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                RoATP application outcomes
+                <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpOversightBaseUrl">
+                    Decide on application outcomes
+                </a>
             </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">Decide upon the overall outcome of RoATP applications.</p>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpOversightBaseUrl">
-                        Go to RoATP application outcomes
-                    </a>
-                </li>
-            </ul>
+            <p class="govuk-body govuk-!-margin-bottom-2">Approve or refuse application outcomes within APAR.</p>
         </div>
         <!-- /RoATP oversight -->
 
@@ -130,25 +115,11 @@
         }
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam" id="register-of-apprenticeship-training-providers">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                Manage the RoATP
+                <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpAdminBaseUrl">
+                    Add or search for a provider
+                </a>
             </h2>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="RoatpHome" asp-action="Index">
-                        Search for an apprenticeship training provider
-                    </a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="AddRoatpOrganisation" asp-action="EnterUkprn">
-                        Add a new apprenticeship training provider
-                    </a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="RoatpAllowedProviders" asp-action="Index">
-                        Add UKPRNs to the allow list
-                    </a>
-                </li>
-            </ul>
+            <p class="govuk-body govuk-!-margin-bottom-2">Search for existing traning providers. Add new providers and UKPRNs to the allow list.</p>
         </div>
 
 @if (sectionsShown % 2 == 0)
@@ -160,25 +131,34 @@
         @{
             if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayTeam)) { sectionsShown++; }
         }
-        <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
-            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                RoATP reporting
-            </h2>
-            <ul class="govuk-list govuk-!-margin-bottom-0">
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="DownloadRoatp" asp-action="Download">
-                        Download list of apprenticeship training providers
-                    </a>
-                </li>
-                <li>
-                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="DownloadRoatp" asp-action="ApplicationDownload">
-                        Download application data
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+            <a class="govuk-link govuk-link--no-visited-state" asp-controller="DownloadRoatp" asp-action="Download">
+                Download training provider data
+            </a>
+        </h2>
+        <p class="govuk-body govuk-!-margin-bottom-2">Review and download a list of training providers.</p>
+    </div>
 
-@if (sectionsShown % 2 == 0)
+    @if (sectionsShown % 2 == 0)
+    {
+        @:</div>
+        @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
+    }
+
+    @{
+        if (roleTagHelper.ShowForRoles(Roles.RoatpGatewayTeam)) { sectionsShown++; }
+    }
+    <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam">
+        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+            <a class="govuk-link govuk-link--no-visited-state" asp-controller="DownloadRoatp" asp-action="ApplicationDownload">
+                Download application data
+            </a>
+        </h2>
+        <p class="govuk-body govuk-!-margin-bottom-2">Review and download application data.</p>
+    </div>
+
+    @if (sectionsShown % 2 == 0)
 {
     @:</div>
     @:<div class="govuk-grid-row govuk-!-margin-bottom-7">
