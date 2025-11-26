@@ -24,6 +24,7 @@ namespace SFA.DAS.AdminService.Settings
         [JsonRequired] public string RoatpGatewayBaseUrl { get; set; }
         [JsonRequired] public string RoatpFinanceBaseUrl { get; set; }
         [JsonRequired] public string RoatpProviderModerationBaseUrl { get; set; }
+        [JsonRequired] public string RoatpAdminBaseUrl { get; set; }
 
         [JsonRequired] public RoatpApiClientConfiguration RoatpApiAuthentication { get; set; }
 
