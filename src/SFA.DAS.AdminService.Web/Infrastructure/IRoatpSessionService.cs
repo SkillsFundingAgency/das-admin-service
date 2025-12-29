@@ -4,9 +4,6 @@
 
     public interface IRoatpSessionService
     {
-        AddOrganisationViewModel GetAddOrganisationDetails();
-        void SetAddOrganisationDetails(AddOrganisationViewModel model);
-        void ClearAddOrganisationDetails();
         OrganisationSearchResultsViewModel GetSearchResults();
         void SetSearchResults(OrganisationSearchResultsViewModel model);
         void ClearSearchResults();

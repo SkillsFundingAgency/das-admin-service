@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
@@ -12,8 +14,6 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Paging;
-using System.Collections.Generic;
-using System.Linq;
 using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
@@ -47,8 +47,6 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.AllPrivilegeTypes, opt => opt.Ignore())
                 .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.Ignore());
 
-            CreateMap<AddOrganisationViewModel, AddOrganisationProviderTypeViewModel>();
-            CreateMap<AddOrganisationViewModel, AddOrganisationTypeViewModel>();
             CreateMap<RoatpApplicationOversightDownloadItem, RoatpOversightOutcomeExportViewModel>();
             CreateMap<UpdateOrganisationLegalNameViewModel, UpdateOrganisationLegalNameRequest>();
             CreateMap<UpdateOrganisationUkprnViewModel, UpdateOrganisationUkprnRequest>();
@@ -69,11 +67,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<FrameworkLearnerSearchResponse, FrameworkResultViewModel>();
             CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
-                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Day : null))
-                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Month : null))
-                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Year : null));
             CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerDetailsViewModel>()
                 .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src))
@@ -82,10 +80,10 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name}, {qualification.AwardingBody}").ToList()));
             CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
-                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
             CreateMap<FrameworkSearchSession, FrameworkReprintAddressViewModel>();
             CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
-                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src => $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
             CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>()
                 .ConstructUsing(src => new StaffBatchSearchResultViewModel(src));
