@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
@@ -48,17 +46,6 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.Ignore());
 
             CreateMap<RoatpApplicationOversightDownloadItem, RoatpOversightOutcomeExportViewModel>();
-            CreateMap<UpdateOrganisationLegalNameViewModel, UpdateOrganisationLegalNameRequest>();
-            CreateMap<UpdateOrganisationUkprnViewModel, UpdateOrganisationUkprnRequest>();
-            CreateMap<UpdateOrganisationCompanyNumberViewModel, UpdateOrganisationCompanyNumberRequest>();
-            CreateMap<UpdateOrganisationStatusViewModel, UpdateOrganisationStatusRequest>();
-            CreateMap<UpdateOrganisationTypeViewModel, UpdateOrganisationTypeRequest>();
-            CreateMap<UpdateOrganisationTradingNameViewModel, UpdateOrganisationTradingNameRequest>();
-            CreateMap<UpdateOrganisationParentCompanyGuaranteeViewModel, UpdateOrganisationParentCompanyGuaranteeRequest>();
-            CreateMap<UpdateOrganisationFinancialTrackRecordViewModel, UpdateOrganisationFinancialTrackRecordRequest>();
-            CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
-            CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
-            CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
             CreateMap<FrameworkSearchSession, FrameworkMultipleResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName.Trim()))
