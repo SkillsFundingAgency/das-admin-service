@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,32 +14,28 @@ using SFA.DAS.AdminService.Web.Helpers;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Services;
 using SFA.DAS.AdminService.Web.ViewModels.Roatp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.Controllers.Roatp
 {
     [Authorize(Roles = Roles.RoatpGatewayTeam)]
+    [Route("")]
     public class DownloadRoatpController : Controller
     {
-        private IRoatpApiClient _apiClient;
-        private IDataTableHelper _dataTableHelper;
-        private ILogger<DownloadRoatpController> _logger;
-        private ICsvExportService _csvExportService;
+        private readonly IRoatpApiClient _apiClient;
+        private readonly IDataTableHelper _dataTableHelper;
+        private readonly ILogger<DownloadRoatpController> _logger;
+        private readonly ICsvExportService _csvExportService;
         private readonly IRoatpApplicationApiClient _applyApiClient;
         private readonly IMapper _mapper;
 
         private const string CompleteRegisterWorksheetName = "Providers";
         private const string AuditHistoryWorksheetName = "Provider history";
         private const string ExcelFileName = "_RegisterOfApprenticeshipTrainingProviders.xlsx";
-        private const string FatFileName = "roatp {0}.xlsx";
-        private const string FatWorksheetName = "RoATP";
 
         public DownloadRoatpController(IRoatpApiClient apiClient, IDataTableHelper dataTableHelper,
             ILogger<DownloadRoatpController> logger, ICsvExportService csvExportService, IRoatpApplicationApiClient applyApiClient, IMapper mapper)
         {
+            ExcelPackage.License.SetNonCommercialOrganization("Department for Education");
             _apiClient = apiClient;
             _dataTableHelper = dataTableHelper;
             _logger = logger;
@@ -70,9 +70,8 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
                 {
                     _logger.LogError("Unable to retrieve audit history data from RoATP API");
                 }
-
-                return File(package.GetAsByteArray(), "application/excel",
-                    $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
+                byte[] fileContent = await package.GetAsByteArrayAsync();
+                return File(fileContent, "application/excel", $"{DateTime.Now.ToString("yyyyMMdd")}{ExcelFileName}");
             }
         }
 
