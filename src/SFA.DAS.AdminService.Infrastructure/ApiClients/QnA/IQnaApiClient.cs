@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using SFA.DAS.QnA.Api.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Http;
+using SFA.DAS.QnA.Api.Types;
 using Answer = SFA.DAS.QnA.Api.Types.Page.Answer;
-using Page = SFA.DAS.QnA.Api.Types.Page.Page;
 using Feedback = SFA.DAS.QnA.Api.Types.Page.Feedback;
+using Page = SFA.DAS.QnA.Api.Types.Page.Page;
 
 namespace SFA.DAS.AdminService.Infrastructure.ApiClients.QnA
 {
@@ -16,7 +15,6 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.QnA
         Task<StartApplicationResponse> StartApplications(StartApplicationRequest startAppRequest);
         Task<T> GetApplicationData<T>(Guid applicationId);
         Task<Dictionary<string, object>> GetApplicationDataDictionary(Guid applicationId);
-        Task<CreateSnapshotResponse> SnapshotApplication(Guid applicationId);
         Task<T> UpdateApplicationData<T>(Guid applicationId, T applicationData);
         Task<Dictionary<string, object>> UpdateApplicationDataDictionary(Guid applicationId, Dictionary<string, object> applicationData);
         Task<Sequence> GetApplicationActiveSequence(Guid applicationId);

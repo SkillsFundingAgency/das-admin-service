@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.Apply;
-using SFA.DAS.AssessorService.Domain.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.AllowedProviders;
+using SFA.DAS.AssessorService.Domain.Entities;
 
 namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
 {
@@ -20,12 +18,6 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
         public RoatpApplicationApiClient(IRoatpApplicationApiClientFactory clientFactory, ILogger<RoatpApplicationApiClient> logger)
             : base(clientFactory.CreateHttpClient(), logger)
         {
-        }
-
-        //@ should be removed as part of snapshot code cleanup APR-2975
-        public async Task<RoatpApply> GetApplication(Guid applicationId)
-        {
-            return await Get<RoatpApply>($"/Application/{applicationId}");
         }
 
         public async Task StartApplicationSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
@@ -44,19 +36,9 @@ namespace SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication
             return await Get<Contact>($"/Application/{applicationId}/Contact");
         }
 
-        public async Task<List<RoatpSequence>> GetRoatpSequences()
-        {
-            return await Get<List<RoatpSequence>>($"/roatp-sequences");
-        }
-
         public async Task StartAssessorReview(Guid applicationId, string reviewer)
         {
             await Post($"/Application/{applicationId}/StartAssessorReview", new { reviewer });
-        }
-
-        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<RoatpApplySequence> sequences)
-        {
-            return await Post<SnapshotApplicationRequest, Guid>($"/Application/Snapshot", new SnapshotApplicationRequest { ApplicationId = applicationId, SnapshotApplicationId = snapshotApplicationId, Sequences = sequences });
         }
 
         public async Task<bool> RemoveClarificationFile(Guid applicationId, string userId, string fileName)
