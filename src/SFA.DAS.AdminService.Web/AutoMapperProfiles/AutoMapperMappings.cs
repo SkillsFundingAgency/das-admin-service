@@ -12,7 +12,7 @@ using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Paging;
-using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
+using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {
@@ -26,8 +26,8 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     .ForMember(dest => dest.ApplicationReferenceNumber, opt => opt.MapFrom(source => source.ApplicationReferenceNumber))
                     .ForMember(dest => dest.ApplicationSubmittedDate, opt => opt.MapFrom(source => source.ApplicationSubmittedDate))
                     .ForMember(dest => dest.OrganisationName, opt => opt.MapFrom(source => source.OrganisationName))
-                    .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed))
-                    .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => (!string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed) ? source.ProviderRouteNameOnRegister : string.Empty))
+                    .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != (int)OrganisationStatus.Removed))
+                    .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => (!string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != (int)OrganisationStatus.Removed) ? source.ProviderRouteNameOnRegister : string.Empty))
                     .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
                     .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber));
 

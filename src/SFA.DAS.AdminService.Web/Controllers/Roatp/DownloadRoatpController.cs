@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp;
+using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication;
 using SFA.DAS.AdminService.Web.Domain;
 using SFA.DAS.AdminService.Web.Helpers;
@@ -50,10 +51,11 @@ namespace SFA.DAS.AdminService.Web.Controllers.Roatp
             using (var package = new ExcelPackage())
             {
                 var completeRegisterWorkSheet = package.Workbook.Worksheets.Add(CompleteRegisterWorksheetName);
-                var registerData = await _apiClient.GetCompleteRegister();
-                if (registerData != null && registerData.Any())
+                GetAllOrganisationsResponse registerData = await _apiClient.GetCompleteRegister();
+                if (registerData != null && registerData.Organisations.Any())
                 {
-                    completeRegisterWorkSheet.Cells.LoadFromDataTable(_dataTableHelper.ToDataTable(registerData), true);
+                    IEnumerable<ProviderRegisterModel> items = registerData.Organisations.Select(r => (ProviderRegisterModel)r).OrderBy(r => r.LegalName);
+                    completeRegisterWorkSheet.Cells.LoadFromCollection(items, true);
                 }
                 else
                 {
