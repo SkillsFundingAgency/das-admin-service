@@ -1,20 +1,18 @@
-﻿using AutoMapper;
-using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types;
 using SFA.DAS.AdminService.Web.Extensions;
 using SFA.DAS.AdminService.Web.Models;
 using SFA.DAS.AdminService.Web.Models.Roatp;
 using SFA.DAS.AdminService.Web.Models.Search;
 using SFA.DAS.AdminService.Web.ViewModels.Register;
-using SFA.DAS.AdminService.Web.ViewModels.Roatp;
 using SFA.DAS.AdminService.Web.ViewModels.Search;
 using SFA.DAS.AssessorService.Api.Types.Models;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Domain.Paging;
-using System.Collections.Generic;
-using System.Linq;
-using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.RoatpApplication.Types.OrganisationStatus;
+using OrganisationStatus = SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types.OrganisationStatus;
 
 namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
 {
@@ -28,8 +26,8 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     .ForMember(dest => dest.ApplicationReferenceNumber, opt => opt.MapFrom(source => source.ApplicationReferenceNumber))
                     .ForMember(dest => dest.ApplicationSubmittedDate, opt => opt.MapFrom(source => source.ApplicationSubmittedDate))
                     .ForMember(dest => dest.OrganisationName, opt => opt.MapFrom(source => source.OrganisationName))
-                    .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed))
-                    .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => (!string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != OrganisationStatus.Removed) ? source.ProviderRouteNameOnRegister : string.Empty))
+                    .ForMember(dest => dest.IsOnRegister, opt => opt.MapFrom(source => !string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != (int)OrganisationStatus.Removed))
+                    .ForMember(dest => dest.ProviderRouteNameOnRegister, opt => opt.MapFrom(source => (!string.IsNullOrWhiteSpace(source.ProviderRouteNameOnRegister) && source.OrganisationStatusId != (int)OrganisationStatus.Removed) ? source.ProviderRouteNameOnRegister : string.Empty))
                     .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
                     .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.CompanyNumber));
 
@@ -47,20 +45,7 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                 .ForMember(dest => dest.AllPrivilegeTypes, opt => opt.Ignore())
                 .ForMember(dest => dest.EndPointAssessorOrganisationId, opt => opt.Ignore());
 
-            CreateMap<AddOrganisationViewModel, AddOrganisationProviderTypeViewModel>();
-            CreateMap<AddOrganisationViewModel, AddOrganisationTypeViewModel>();
             CreateMap<RoatpApplicationOversightDownloadItem, RoatpOversightOutcomeExportViewModel>();
-            CreateMap<UpdateOrganisationLegalNameViewModel, UpdateOrganisationLegalNameRequest>();
-            CreateMap<UpdateOrganisationUkprnViewModel, UpdateOrganisationUkprnRequest>();
-            CreateMap<UpdateOrganisationCompanyNumberViewModel, UpdateOrganisationCompanyNumberRequest>();
-            CreateMap<UpdateOrganisationStatusViewModel, UpdateOrganisationStatusRequest>();
-            CreateMap<UpdateOrganisationTypeViewModel, UpdateOrganisationTypeRequest>();
-            CreateMap<UpdateOrganisationTradingNameViewModel, UpdateOrganisationTradingNameRequest>();
-            CreateMap<UpdateOrganisationParentCompanyGuaranteeViewModel, UpdateOrganisationParentCompanyGuaranteeRequest>();
-            CreateMap<UpdateOrganisationFinancialTrackRecordViewModel, UpdateOrganisationFinancialTrackRecordRequest>();
-            CreateMap<UpdateOrganisationProviderTypeViewModel, UpdateOrganisationProviderTypeRequest>();
-            CreateMap<UpdateOrganisationCharityNumberViewModel, UpdateOrganisationCharityNumberRequest>();
-            CreateMap<UpdateApplicationDeterminedDateViewModel, UpdateOrganisationApplicationDeterminedDateRequest>();
             CreateMap<FrameworkSearchSession, FrameworkMultipleResultsViewModel>();
             CreateMap<SearchInputViewModel, FrameworkLearnerSearchRequest>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName.Trim()))
@@ -69,11 +54,11 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
             CreateMap<FrameworkLearnerSearchResponse, FrameworkResultViewModel>();
             CreateMap<FrameworkSearchSession, SearchInputViewModel>()
                 .ForMember(dest => dest.SearchType, opt => opt.MapFrom(src => SearchTypes.Frameworks))
-                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Day, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Day : null))
-                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Month : null))
-                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ? 
+                .ForMember(dest => dest.Year, opt => opt.MapFrom(src => src.DateOfBirth.HasValue ?
                     (int?)src.DateOfBirth.Value.Year : null));
             CreateMap<GetFrameworkLearnerResponse, FrameworkLearnerDetailsViewModel>()
                 .ForMember(dest => dest.Learner, opt => opt.MapFrom(src => src))
@@ -82,10 +67,10 @@ namespace SFA.DAS.AdminService.Web.AutoMapperProfiles
                     src.QualificationsAndAwardingBodies.Select(qualification =>
                         $"{qualification.Name}, {qualification.AwardingBody}").ToList()));
             CreateMap<FrameworkSearchSession, FrameworkReprintReasonViewModel>()
-                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.FirstName} {src.LastName}"));
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
             CreateMap<FrameworkSearchSession, FrameworkReprintAddressViewModel>();
             CreateMap<GetFrameworkLearnerResponse, FrameworkReprintReasonViewModel>()
-                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src=> $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
+                .ForMember(dest => dest.ApprenticeName, opt => opt.MapFrom(src => $"{src.ApprenticeForename} {src.ApprenticeSurname}"));
 
             CreateMap<StaffBatchSearchResult, StaffBatchSearchResultViewModel>()
                 .ConstructUsing(src => new StaffBatchSearchResultViewModel(src));
