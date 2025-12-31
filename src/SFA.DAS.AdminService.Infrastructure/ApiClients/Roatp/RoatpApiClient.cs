@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.AdminService.Infrastructure.ApiClients.Roatp.Types;
 
@@ -12,12 +11,12 @@ public class RoatpApiClient : RoatpApiClientBase<RoatpApiClient>, IRoatpApiClien
     {
     }
 
-    public async Task<IEnumerable<IDictionary<string, object>>> GetAuditHistory()
+    public async Task<GetAllOrganisationAuditRecordsResponse> GetAuditHistory()
     {
-        string url = $"/api/v1/download/audit";
+        string url = $"/organisations/audit-records";
         _logger.LogInformation("Retrieving RoATP register audit history data from {Url}", url);
 
-        return await Get<List<IDictionary<string, object>>>(url);
+        return await Get<GetAllOrganisationAuditRecordsResponse>(url);
     }
 
     public async Task<GetAllOrganisationsResponse> GetCompleteRegister()
