@@ -21,6 +21,7 @@ public class OrganisationAuditModel
     public string UpdatedAt { get; set; }
     [DisplayName("Who")]
     public string UpdatedBy { get; set; }
+
     public static implicit operator OrganisationAuditModel(OrganisationAuditRecord source)
     {
         return new OrganisationAuditModel
