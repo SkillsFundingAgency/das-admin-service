@@ -30,6 +30,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
 
         public bool ShowDetails { get; set; }
         public int? BatchNumber { get; set; }
+        public string ReturnUrl { get; set; }
 
         public string ReasonForChange => GetReasonForChange(Learner.CertificatePrintReasonForChange);
 
