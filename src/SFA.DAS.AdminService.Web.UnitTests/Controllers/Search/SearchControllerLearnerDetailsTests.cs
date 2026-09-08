@@ -75,5 +75,24 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             var viewResult = result.Should().BeOfType<ViewResult>().Subject;
             viewResult.ViewName.Should().BeNullOrEmpty();
         }
+
+        [Test]
+        public async Task LearnerDetails_WithReturnUrl_SetsReturnUrlOnViewModel()
+        {
+            // Arrange
+            int stdCode = 123;
+            long uln = 456;
+            string returnUrl = "/digital-access/reference/ABC123/certificate-print-request";
+            var learnerDetails = new LearnerDetailResult { Uln = uln, StandardCode = stdCode };
+            _learnerDetailsApiClientMock.Setup(x => x.GetLearnerDetail(stdCode, uln, false)).ReturnsAsync(learnerDetails);
+
+            // Act
+            var result = await _controller.LearnerDetails(stdCode, uln, "test search", 1, false, null, returnUrl);
+
+            // Assert
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var model = viewResult.Model.Should().BeOfType<StandardLearnerDetailsViewModel>().Subject;
+            model.ReturnUrl.Should().Be(returnUrl);
+        }
     }
 }
