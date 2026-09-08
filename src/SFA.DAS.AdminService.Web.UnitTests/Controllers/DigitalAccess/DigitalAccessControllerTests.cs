@@ -1,15 +1,16 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
-using SFA.DAS.AdminService.Web.ViewModels.DigitalAccess;
+using SFA.DAS.AdminService.Common.Models;
 using SFA.DAS.AdminService.Web.Controllers;
 using SFA.DAS.AdminService.Web.Orchestrators;
-using SFA.DAS.AdminService.Common.Models;
+using SFA.DAS.AdminService.Web.ViewModels.DigitalAccess;
+using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.DigitalAccess
 {
@@ -59,6 +60,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.DigitalAccess
 
             // Act
             var controller = new DigitalAccessController(_httpContextAccessorMock.Object, _digitalAccessOrchestratorMock.Object);
+            var urlMock = new Mock<IUrlHelper>();
+            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>()))
+                .Returns((UrlRouteContext ctx) => "/" + ctx.RouteName);
+            controller.Url = urlMock.Object;
             var result = await controller.CertificatePrintRequest(reference);
 
             // Assert
@@ -84,6 +89,10 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.DigitalAccess
 
             // Act
             var controller = new DigitalAccessController(_httpContextAccessorMock.Object, _digitalAccessOrchestratorMock.Object);
+            var urlMock = new Mock<IUrlHelper>();
+            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>()))
+                .Returns((UrlRouteContext ctx) => "/" + ctx.RouteName);
+            controller.Url = urlMock.Object;
             var result = await controller.CertificatePrintRequest(reference);
 
             // Assert
@@ -304,6 +313,11 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.DigitalAccess
 
             // Act
             var controller = new DigitalAccessController(_httpContextAccessorMock.Object, _digitalAccessOrchestratorMock.Object);
+            var urlMock = new Mock<IUrlHelper>();
+            urlMock.Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>()))
+                .Returns((UrlRouteContext ctx) => "/" + ctx.RouteName);
+            controller.Url = urlMock.Object;
+
             var result = await controller.CertificateChangeRequest(reference);
 
             // Assert
