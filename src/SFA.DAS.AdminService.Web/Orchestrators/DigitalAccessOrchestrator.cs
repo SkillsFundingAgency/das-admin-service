@@ -62,9 +62,11 @@ namespace SFA.DAS.AdminService.Web.Orchestrators
 
             var history = new List<UserAccessHistoryItem>();
 
-            if (response.UserActions != null && response.UserActions.Count > 0)
+            var filteredActions = response.UserActions?.Where(u => u.ActionType == ActionType.NotMatched).ToList();
+
+            if (filteredActions != null && filteredActions.Count > 0)
             {
-                foreach (var ua in response.UserActions.OrderByDescending(u => u.ActionTime))
+                foreach (var ua in filteredActions.OrderByDescending(u => u.ActionTime))
                 {
                     var item = new UserAccessHistoryItem
                     {
@@ -77,14 +79,14 @@ namespace SFA.DAS.AdminService.Web.Orchestrators
                     {
                         foreach (var um in ua.UserMatches.OrderBy(u => u.EventTime))
                         {
-                                item.Attempts.Add(new UserAttempt
-                                {
-                                    FormattedEventTime = um.EventTime.ToUkDateTimeString(),
-                                    Uln = um.Uln?.ToString() ?? Constants.DigitalAccessConstants.Unknown,
-                                    CourseName = string.IsNullOrWhiteSpace(um.CourseName) ? Constants.DigitalAccessConstants.Unknown : um.CourseName,
-                                    DateAwarded = um.DateAwarded?.ToString() ?? Constants.DigitalAccessConstants.Unknown,
-                                    ProviderName = string.IsNullOrWhiteSpace(um.ProviderName) ? Constants.DigitalAccessConstants.Unknown : um.ProviderName
-                                });
+                            item.Attempts.Add(new UserAttempt
+                            {
+                                FormattedEventTime = um.EventTime.ToUkDateTimeString(),
+                                Uln = um.Uln?.ToString() ?? Constants.DigitalAccessConstants.Unknown,
+                                CourseName = string.IsNullOrWhiteSpace(um.CourseName) ? Constants.DigitalAccessConstants.Unknown : um.CourseName,
+                                DateAwarded = um.DateAwarded?.ToString() ?? Constants.DigitalAccessConstants.Unknown,
+                                ProviderName = string.IsNullOrWhiteSpace(um.ProviderName) ? Constants.DigitalAccessConstants.Unknown : um.ProviderName
+                            });
                         }
                     }
 
@@ -111,11 +113,13 @@ namespace SFA.DAS.AdminService.Web.Orchestrators
                 }
             }
 
+            var firstAction = filteredActions?.FirstOrDefault();
+
             var vm = new UserNotMatchedViewModel
             {
                 ReferenceNumber = reference,
-                FirstName = response.UserActions?.FirstOrDefault()?.GivenNames,
-                LastName = response.UserActions?.FirstOrDefault()?.FamilyName,
+                FirstName = firstAction?.GivenNames,
+                LastName = firstAction?.FamilyName,
                 History = history,
                 IsUserLocked = response.IsLocked
             };
