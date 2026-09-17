@@ -114,10 +114,14 @@
         <div class="govuk-grid-column-one-half" sfa-show-for-roles="@Roles.RoatpGatewayTeam" id="register-of-apprenticeship-training-providers">
             <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                 <a class="govuk-link govuk-link--no-visited-state" href="@Model.RoatpAdminBaseUrl">
-                    Add or search for a provider
+                    Manage training providers and restricted courses
                 </a>
             </h2>
-            <p class="govuk-body govuk-!-margin-bottom-2">Search for existing traning providers. Add new providers and UKPRNs to the allow list.</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                <li>Add a new training provider or a UKPRN to the allow list</li>
+                <li>Update training provider details, training types and course offering</li>
+                <li>Restrict a course and manage provider delivery</li>
+            </ul>
         </div>
 
 @if (sectionsShown % 2 == 0)
