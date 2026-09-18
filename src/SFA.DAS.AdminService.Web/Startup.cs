@@ -139,6 +139,17 @@ namespace SFA.DAS.AdminService.Web
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
+                opt.Cookie.HttpOnly = true;
+                opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                opt.Cookie.SameSite = SameSiteMode.Strict;
+                opt.Cookie.IsEssential = true;
+            });
+
+            services.Configure<CookieTempDataProviderOptions>(options =>
+            {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             var outerApiConfiguration = Configuration.GetSection(nameof(AdminOuterApiConfiguration))
@@ -151,7 +162,12 @@ namespace SFA.DAS.AdminService.Web
 
             services.AddDistributedCache(ApplicationConfiguration.RedisCacheSettings, _env);
 
-            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Assessors.Staff.AntiForgery", HttpOnly = false });
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder()
+            {
+                Name = ".Assessors.Staff.AntiForgery",
+                HttpOnly = true,
+                SecurePolicy = CookieSecurePolicy.Always
+            });
             services.AddHealthChecks();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddAutoMapper(config =>
