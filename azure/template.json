@@ -72,6 +72,13 @@
         },
         "deployPrivateLinkedScopedResource": {
             "type": "bool"
+        },
+        "cdnUrl": {
+            "type": "string"
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -184,6 +191,10 @@
                                 {
                                     "name": "ConfigNames",
                                     "value": "[variables('configNames')]"
+                                },
+                                {
+                                    "name": "Cdn:Url",
+                                    "value": "[parameters('cdnUrl')]"
                                 }
                             ]
                         }
@@ -204,6 +215,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('keyVaultCertificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },

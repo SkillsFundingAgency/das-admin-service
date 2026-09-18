@@ -1,0 +1,25 @@
+﻿@using SFA.DAS.AdminService.Common.Extensions
+<section aria-label="Service information" class="govuk-service-navigation das-header__navigation">
+    <div class="govuk-width-container">
+        <div class="govuk-service-navigation__container das-header__navigation__container">
+            <div class="das-header__service-user-name-wrap">                
+                <span class="govuk-service-navigation__service-name">
+                    @if (User!.Identity!.IsAuthenticated)
+                    {
+                        <a asp-controller="Dashboard" asp-action="Index" class="govuk-service-navigation__link">
+                        Apprenticeship service admin
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="govuk-service-navigation__link">Apprenticeship service admin</span>
+                    }
+                </span>
+                @if (User!.Identity!.IsAuthenticated)
+                {
+                <p class="das-header__user-name">@User.UserDisplayName()</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
