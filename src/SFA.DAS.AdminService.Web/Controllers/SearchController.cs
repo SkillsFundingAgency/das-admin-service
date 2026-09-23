@@ -153,7 +153,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             string searchString,
             int page = 1,
             bool allLogs = false,
-            int? batchNumber = null)
+            int? batchNumber = null,
+            string returnUrl = null)
         {
             var learner = await _learnerDetailsApiClient.GetLearnerDetail(stdCode, uln, allLogs);
             
@@ -163,7 +164,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 SearchString = searchString,
                 Page = page,
                 ShowDetail = !allLogs,
-                BatchNumber = batchNumber
+                BatchNumber = batchNumber,
+                ReturnUrl = returnUrl
             };
             return View(vm);
         }
@@ -204,7 +206,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FrameworkLearnerDetails(Guid? frameworkLearnerId = null, int? batchNumber = null, bool allLogs = false)
+        public async Task<IActionResult> FrameworkLearnerDetails(Guid? frameworkLearnerId = null, int? batchNumber = null, bool allLogs = false, string returnUrl = null)
         {
             FrameworkSearchSession sessionModel;
             GetFrameworkLearnerResponse frameworkLearnerDetails; 
@@ -226,6 +228,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
             var viewModel = _mapper.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetails); 
             viewModel.ShowDetails = !allLogs;
             viewModel.BatchNumber = batchNumber; 
+            viewModel.ReturnUrl = returnUrl;
 
             return View(viewModel);
         }
