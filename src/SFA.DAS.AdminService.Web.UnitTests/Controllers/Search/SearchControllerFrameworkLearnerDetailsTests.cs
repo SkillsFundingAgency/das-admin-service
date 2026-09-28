@@ -250,5 +250,26 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             resultModel.BatchNumber.Should().Be(batchNumber);
 
         } 
+
+        [Test]
+        public async Task FrameworkLearnerDetails_WithReturnUrl_SetsReturnUrlOnViewModel()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+            var returnUrl = "/digital-access/reference/ABC123/certificate-print-request";
+            var frameworkLearnerDetailsResponse = new GetFrameworkLearnerResponse();
+            var frameworkLearnerDetailsViewModel = new FrameworkLearnerDetailsViewModel();
+
+            _learnerDetailsApiClientMock.Setup(api => api.GetFrameworkLearner(id, false)).ReturnsAsync(frameworkLearnerDetailsResponse);
+            _mapperMock.Setup(m => m.Map<FrameworkLearnerDetailsViewModel>(frameworkLearnerDetailsResponse)).Returns(frameworkLearnerDetailsViewModel);
+
+            // Act
+            var result = await _controller.FrameworkLearnerDetails(id, null, false, returnUrl);
+
+            // Assert
+            var viewResult = result.Should().BeOfType<ViewResult>().Subject;
+            var resultModel = viewResult.Model.Should().BeOfType<FrameworkLearnerDetailsViewModel>().Subject;
+            resultModel.ReturnUrl.Should().Be(returnUrl);
+        }
     }
 }
