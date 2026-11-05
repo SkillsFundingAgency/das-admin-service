@@ -24,7 +24,7 @@ namespace SFA.DAS.AdminService.Web.Validators
                     }
                 });
 
-                When(vm => vm.SelectedGrade != null && vm.SelectedGrade != CertificateGrade.Fail, () =>
+                When(vm => vm.CanRequestReprint && vm.SelectedGrade != null && vm.SelectedGrade != CertificateGrade.Fail, () =>
                 {
                     var addressCannotBeEmpty = "Enter an address";
 
