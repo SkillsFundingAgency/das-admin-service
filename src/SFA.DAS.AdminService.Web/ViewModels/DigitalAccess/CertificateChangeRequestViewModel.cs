@@ -15,5 +15,6 @@ namespace SFA.DAS.AdminService.Web.ViewModels.DigitalAccess
         public long? Uln { get; set; }
         public int? StandardCode { get; set; }
         public string ViewCertificateText => "View certificate";
+        public string? ReturnUrl { get; set; }
     }
 }

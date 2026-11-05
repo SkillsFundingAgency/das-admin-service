@@ -386,6 +386,87 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Orchestrators
         }
 
         [Test]
+        public async Task GetUserNotMatchedViewModel_ExcludesNonNotMatchedActions_FromHistory()
+        {
+            var response = new GetUserAllActivityByCodeQueryResult
+            {
+                IsLocked = false,
+                GovUKIdentifier = "GOV1",
+                EmailAddress = "a@b.com",
+                PhoneNumber = "01234",
+                UserActions = new List<UserAction>
+                {
+                    new UserAction
+                    {
+                        Id = 1,
+                        ActionCode = "REF-NM",
+                        ActionType = ActionType.NotMatched,
+                        ActionTime = DateTime.UtcNow.AddMinutes(-10),
+                        GivenNames = "NM",
+                        FamilyName = "User",
+                        UserMatches = new List<UserMatch>
+                        {
+                            new UserMatch { EventTime = DateTime.UtcNow.AddMinutes(-9), Uln = 111, FamilyName = "User", CertificateType = CertificateType.Standard }
+                        }
+                    },
+                    new UserAction
+                    {
+                        Id = 2,
+                        ActionCode = "REF-RP",
+                        ActionType = ActionType.Reprint,
+                        ActionTime = DateTime.UtcNow,
+                        GivenNames = "RP",
+                        FamilyName = "Requester"
+                    }
+                }
+            };
+
+            _mediatorMock.Setup(m => m.Send(It.IsAny<GetUserAllActivityByCodeQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(response);
+
+            var vm = await _sut.GetUserNotMatchedViewModel("ref-nm");
+
+            vm.Should().NotBeNull();
+            vm.History.Should().HaveCount(1);
+            vm.FirstName.Should().Be("NM");
+            vm.LastName.Should().Be("User");
+        }
+
+        [Test]
+        public async Task GetUserNotMatchedViewModel_IgnoresOnlyNonNotMatchedActions()
+        {
+            var response = new GetUserAllActivityByCodeQueryResult
+            {
+                IsLocked = false,
+                GovUKIdentifier = "GOV2",
+                EmailAddress = "b@c.com",
+                PhoneNumber = "09876",
+                UserActions = new List<UserAction>
+                {
+                    new UserAction
+                    {
+                        Id = 2,
+                        ActionCode = "REF-RP",
+                        ActionType = ActionType.Reprint,
+                        ActionTime = DateTime.UtcNow,
+                        GivenNames = "RP",
+                        FamilyName = "Requester"
+                    }
+                }
+            };
+
+            _mediatorMock.Setup(m => m.Send(It.IsAny<GetUserAllActivityByCodeQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(response);
+
+            var vm = await _sut.GetUserNotMatchedViewModel("ref-rp");
+
+            vm.Should().NotBeNull();
+            vm.History.Should().BeEmpty();
+            vm.FirstName.Should().BeNull();
+            vm.LastName.Should().BeNull();
+        }
+
+        [Test]
         public async Task GetRestoreAccessViewModel_ReturnsNull_WhenMediatorReturnsNull()
         {
             _mediatorMock.Setup(m => m.Send(It.IsAny<GetUserAllActivityByCodeQuery>(), It.IsAny<CancellationToken>()))

@@ -126,6 +126,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 return RedirectToRoute(DigitalAccessReferenceSearchRouteGet);
             }
 
+            vm.ReturnUrl = Url.RouteUrl(CertificateChangeRequestRouteGet, new { referenceNumber = referenceNumber });
+
             return View(vm);
         }
 
@@ -149,6 +151,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             {
                 return RedirectToRoute(DigitalAccessReferenceSearchRouteGet);
             }
+
+            vm.ReturnUrl = Url.RouteUrl(CertificatePrintRequestRouteGet, new { referenceNumber = referenceNumber });
 
             return View(vm);
         }

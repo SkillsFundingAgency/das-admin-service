@@ -10,6 +10,7 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public int Page { get; set; }
         public bool ShowDetail { get; set; }
         public int? BatchNumber { get; set; }
+        public string ReturnUrl { get; set; }
         
         public bool CanRequestReprint => CertificateStatus.CanRequestReprintCertificate(Learner.CertificateStatus);
         public bool CanAmendCertificate => CertificateStatus.CanAmendCertificate(Learner.CertificateStatus);

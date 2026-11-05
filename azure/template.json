@@ -75,6 +75,10 @@
         },
         "cdnUrl": {
             "type": "string"
+        },
+        "vnetRouteAllEnabled": {
+            "type": "bool",
+            "defaultValue": false
         }
     },
     "variables": {
@@ -211,6 +215,9 @@
                     },
                     "certificateThumbprint": {
                         "value": "[if(greater(length(parameters('keyVaultCertificateName')), 0), reference(concat('app-service-certificate-', parameters('utcValue'))).outputs.certificateThumbprint.value, '')]"
+                    },
+                    "vnetRouteAllEnabled": {
+                        "value": "[parameters('vnetRouteAllEnabled')]"
                     }
                 }
             },
