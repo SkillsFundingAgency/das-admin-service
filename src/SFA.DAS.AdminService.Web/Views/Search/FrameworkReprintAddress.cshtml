@@ -2,7 +2,8 @@
 @model SFA.DAS.AdminService.Web.ViewModels.Search.FrameworkReprintAddressViewModel
 
 @{
-    ViewBag.Title = "Add the address that you'd like us to send the certificate to";
+    var heading = "Add the address that you'd like us to send the certificate to";
+    ViewBag.Title = (ViewData.ModelState.IsValid ? "" : "Error: ") + heading;
     Layout = "_Layout";
 }
 
@@ -32,7 +33,7 @@
             <form class="address-form" type="post" asp-controller="Search" asp-action="FrameworkReprintAddress">
 
                 <h1 class="govuk-heading-l">
-                    @ViewBag.Title
+                    @heading
                 </h1>
 
                 <div class="govuk-form-group address-item govuk-!-margin-bottom-3" sfa-validation-for="AddressLine1" sfa-validationerror-class="govuk-form-group--error">

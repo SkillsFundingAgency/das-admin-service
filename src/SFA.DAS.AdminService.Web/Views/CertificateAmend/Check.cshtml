@@ -193,7 +193,7 @@
          @if (Model.SelectedGrade != CertificateGrade.Fail &&
              (Model.CanRequestReprint || Model.SendTo != CertificateSendTo.None || !string.IsNullOrWhiteSpace(Model.AddressLine1)))
          {
-            <h2 class="govuk-heading-m">
+            <h2 class="govuk-heading-m" id="delivery-details">
                 Delivery details
             </h2>
 
