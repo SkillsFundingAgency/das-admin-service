@@ -230,7 +230,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         {
             var username = ContextAccessor.HttpContext.User.UserId();
            
-            var certificate = await CertificateApiClient.UpdateCertificateRequestReprint(new UpdateCertificateRequestReprintCommand
+            var certificate = await CertificateApiClient.ReprintCertificate(new ReprintCertificateCommand
             {
                 CertificateId = certificateId,
                 Username = username

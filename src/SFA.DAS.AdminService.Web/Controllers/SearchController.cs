@@ -393,7 +393,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
 
             var username = _contextAccessor.HttpContext.User.UserId();
 
-            var reprintFrameworkRequest = new ReprintFrameworkCertificateRequest
+            await _certificateApiClient.ReprintFrameworkCertificate(new ReprintFrameworkCertificateCommand
             {
                 FrameworkLearnerId = sessionModel.SelectedFrameworkLearnerId.Value,
                 Username = username,
@@ -406,9 +406,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ContactAddLine3 = sessionModel.TownOrCity,
                 ContactAddLine4 = sessionModel.County,
                 ContactPostcode = sessionModel.Postcode,
-            };
-
-            await _certificateApiClient.ReprintFramework(reprintFrameworkRequest);
+            });
 
             _sessionService.ClearFrameworkSearchRequest();
             
