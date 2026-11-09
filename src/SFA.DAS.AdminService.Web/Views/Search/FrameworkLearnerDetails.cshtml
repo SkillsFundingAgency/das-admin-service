@@ -190,14 +190,14 @@ else
                         </dd>
                     </div>
                 }
-                @if (Model.Learner.CertificatePrintStatusAt.HasValue)
+                @if (Model.CertificateStatusDateValue.HasValue)
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             @CertificateStatus.GetStatusDateDisplayName(Model.Learner.CertificateStatus)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Model.Learner.CertificatePrintStatusAt
+                            @Model.CertificateStatusDateValue
                         </dd>
                     </div>
                 }

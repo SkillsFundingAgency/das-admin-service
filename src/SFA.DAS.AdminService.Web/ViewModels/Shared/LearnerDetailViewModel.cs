@@ -8,15 +8,11 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Shared
     {
         public LearnerDetailResult Learner { get; set; }
 
-        public DateTime CertificateStatusDateValue
-        {
-            get
-            {
-                return CertificateStatus.HasPrintNotificateStatus(Learner.CertificateStatus) && Learner.PrintStatusAt.HasValue
-                    ? Learner.PrintStatusAt.Value
-                    : Learner.LastUpdatedAt ?? default;
-            }
-        }
+        public DateTime? CertificateStatusDateValue => CertificateStatus.GetStatusDate(
+            Learner.CertificateStatus,
+            Learner.PrintRequestedAt,
+            Learner.PrintStatusAt,
+            Learner.LastUpdatedAt);
 
         public string ReasonForChange => GetReasonForChange(Learner.ReasonForChange);
 

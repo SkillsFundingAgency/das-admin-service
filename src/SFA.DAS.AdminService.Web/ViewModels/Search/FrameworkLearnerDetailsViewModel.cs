@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
+using SFA.DAS.AssessorService.Domain.Consts;
 using SFA.DAS.AdminService.Web.ViewModels.Shared;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
@@ -8,6 +10,12 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
     public class FrameworkLearnerDetailsViewModel : CertificateHistoryViewModel
     {
         public GetFrameworkLearnerResponse Learner { get; set; }
+
+        public DateTime? CertificateStatusDateValue => CertificateStatus.GetStatusDate(
+            Learner.CertificateStatus,
+            Learner.CertificatePrintRequestedAt,
+            Learner.CertificatePrintStatusAt,
+            Learner.CertificateLastUpdatedAt);
 
         public List<string> Qualifications { get; set; }
 

@@ -210,14 +210,15 @@ else
                             </dd>
                         </div>
                     }
-                    @if (Model.Learner.CertificateStatus != CertificateStatus.Draft)
+                    @if (Model.Learner.CertificateStatus != CertificateStatus.Draft &&
+                         Model.CertificateStatusDateValue.HasValue)
                     {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 @CertificateStatus.GetStatusDateDisplayName(Model.Learner.CertificateStatus)
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CertificateStatusDateValue.UtcToTimeZoneTime()
+                                @Model.CertificateStatusDateValue.Value.UtcToTimeZoneTime()
                             </dd>
                         </div>
                     }

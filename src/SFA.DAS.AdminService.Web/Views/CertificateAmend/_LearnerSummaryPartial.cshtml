@@ -38,16 +38,19 @@
         </dd>
     </div>
 
-    <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-            @CertificateStatus.GetStatusDateDisplayName(Model.Learner.CertificateStatus)
-        </dt>
-        <dd class="govuk-summary-list__value">
-            @Model.CertificateStatusDateValue
-        </dd>
-        <dd class="govuk-summary-list__actions">
-        </dd>
-    </div>
+    @if (Model.CertificateStatusDateValue.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                @CertificateStatus.GetStatusDateDisplayName(Model.Learner.CertificateStatus)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.CertificateStatusDateValue
+            </dd>
+            <dd class="govuk-summary-list__actions">
+            </dd>
+        </div>
+    }
 
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">

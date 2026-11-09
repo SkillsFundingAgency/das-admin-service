@@ -290,6 +290,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             viewModel.CertificateReference = frameworkLearnerDetails.CertificateReference;
             viewModel.CertificateStatus = frameworkLearnerDetails.CertificateStatus;
             viewModel.CertificatePrintStatusAt = frameworkLearnerDetails.CertificatePrintStatusAt;
+            viewModel.CertificatePrintRequestedAt = frameworkLearnerDetails.CertificatePrintRequestedAt;
+            viewModel.CertificateLastUpdatedAt = frameworkLearnerDetails.CertificateLastUpdatedAt;
 
             return View(viewModel);
         }
