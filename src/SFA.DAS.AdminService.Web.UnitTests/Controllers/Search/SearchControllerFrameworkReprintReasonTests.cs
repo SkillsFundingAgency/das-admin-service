@@ -75,6 +75,8 @@ namespace SFA.DAS.AdminService.Web.UnitTests.Controllers.Home
             model.CertificateReference.Should().Be(frameworkLearnerResponse.CertificateReference);
             model.CertificateStatus.Should().Be(frameworkLearnerResponse.CertificateStatus);
             model.CertificatePrintStatusAt.Should().Be(frameworkLearnerResponse.CertificatePrintStatusAt);
+            model.CertificatePrintRequestedAt.Should().Be(frameworkLearnerResponse.CertificatePrintRequestedAt);
+            model.CertificateLastUpdatedAt.Should().Be(frameworkLearnerResponse.CertificateLastUpdatedAt);
             _mapperMock.Verify(m => m.Map<FrameworkReprintReasonViewModel>(sessionModel), Times.Once);
         }
 

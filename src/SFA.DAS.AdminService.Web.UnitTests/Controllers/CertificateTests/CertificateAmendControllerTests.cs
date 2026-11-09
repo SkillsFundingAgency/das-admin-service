@@ -15,8 +15,11 @@ using SFA.DAS.AssessorService.Api.Types.Models.Staff;
 using SFA.DAS.AssessorService.Api.Types.Models.Standards;
 using SFA.DAS.AssessorService.Application.Api.Client.Clients;
 using SFA.DAS.Testing.AutoFixture;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CertificateStatus = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
@@ -199,6 +202,46 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             });
         }
 
+        [Test]
+        [MoqAutoData]
+        public async Task WhenConfirmReprintIsRejected_RedirectsToCheckWithDeliveryError(
+            CertificateCheckViewModel vm)
+        {
+            // Arrange
+            var fixture = new CertificateAmendControllerTestsFixture()
+                .WithReprintFailure(HttpStatusCode.BadRequest);
+
+            // Act
+            var result = await fixture.ConfirmReprint(vm);
+
+            // Assert
+            fixture.VerifyRedirectToAction(result, "Check", null, new
+            {
+                certificateId = vm.Id,
+                searchString = vm.SearchString,
+                page = vm.Page
+            });
+            fixture.VerifyReprintDeliveryError();
+            fixture.VerifyPrintScheduleWasNotRequested();
+        }
+
+        [Test]
+        [MoqAutoData]
+        public async Task WhenConfirmReprintFailsWithServerError_PropagatesTheError(
+            CertificateCheckViewModel vm)
+        {
+            // Arrange
+            var fixture = new CertificateAmendControllerTestsFixture()
+                .WithReprintFailure(HttpStatusCode.InternalServerError);
+
+            // Act
+            Func<Task> act = () => fixture.ConfirmReprint(vm);
+
+            // Assert
+            await act.Should().ThrowAsync<HttpRequestException>()
+                .Where(exception => exception.StatusCode == HttpStatusCode.InternalServerError);
+        }
+
         public class CertificateAmendControllerTestsFixture
         {
             private readonly Fixture _fixture;
@@ -247,6 +290,31 @@ namespace SFA.DAS.AdminService.Web.Tests.Controllers.CertificateTests
             public IActionResult Check(CertificateCheckViewModel viewModel)
             {
                 return _sut.Check(viewModel);
+            }
+
+            public CertificateAmendControllerTestsFixture WithReprintFailure(HttpStatusCode statusCode)
+            {
+                _certificateApiClient
+                    .Setup(client => client.ReprintCertificate(It.IsAny<ReprintCertificateCommand>()))
+                    .ThrowsAsync(new HttpRequestException("Assessor API error", null, statusCode));
+
+                return this;
+            }
+
+            public Task<IActionResult> ConfirmReprint(CertificateCheckViewModel vm)
+            {
+                return _sut.ConfirmReprint(vm.Id, vm.Uln, vm.StandardCode, vm.SearchString, vm.Page);
+            }
+
+            public void VerifyReprintDeliveryError()
+            {
+                _sut.ModelState["AddressLine1"].Errors.Should()
+                    .ContainSingle(error => error.ErrorMessage == "Check the delivery details before requesting a reprint.");
+            }
+
+            public void VerifyPrintScheduleWasNotRequested()
+            {
+                _scheduleApiClient.Verify(client => client.GetNextScheduledRun(It.IsAny<int>()), Times.Never);
             }
 
             public async Task<IActionResult> AmendReason(CertificateAmendReasonViewModel viewModel)

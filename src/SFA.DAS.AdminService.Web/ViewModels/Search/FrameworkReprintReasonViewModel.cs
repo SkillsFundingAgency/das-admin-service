@@ -4,6 +4,7 @@ using System.Linq;
 using EnumsNET;
 using Microsoft.IdentityModel.Tokens;
 using SFA.DAS.AssessorService.Api.Types.Enums;
+using CertificateStatuses = SFA.DAS.AssessorService.Domain.Consts.CertificateStatus;
 
 namespace SFA.DAS.AdminService.Web.ViewModels.Search
 {
@@ -13,6 +14,14 @@ namespace SFA.DAS.AdminService.Web.ViewModels.Search
         public string ApprenticeName { get; set; }
         public string CertificateStatus { get; set; }
         public DateTime? CertificatePrintStatusAt { get; set; }
+        public DateTime? CertificatePrintRequestedAt { get; set; }
+        public DateTime? CertificateLastUpdatedAt { get; set; }
+
+        public DateTime? CertificateStatusDateValue => CertificateStatuses.GetStatusDate(
+            CertificateStatus,
+            CertificatePrintRequestedAt,
+            CertificatePrintStatusAt,
+            CertificateLastUpdatedAt);
 
         public string TicketNumber { get; set; }
         public List<string> SelectedReprintReasons { get; set; }

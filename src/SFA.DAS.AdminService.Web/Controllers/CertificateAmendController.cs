@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -192,13 +194,29 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpGet]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> ConfirmReprint(Guid certificateId,
             long uln,
             int stdCode,
             string searchString,
             int page = 1)
         {
-            var viewModel = await ReprintCertificate(certificateId, searchString, stdCode, uln, page);
+            Certificate certificate;
+            try
+            {
+                certificate = await CertificateApiClient.ReprintCertificate(new ReprintCertificateCommand
+                {
+                    CertificateId = certificateId,
+                    Username = ContextAccessor.HttpContext.User.UserId()
+                });
+            }
+            catch (HttpRequestException exception) when (exception.StatusCode == HttpStatusCode.BadRequest)
+            {
+                ModelState.AddModelError("AddressLine1", "Check the delivery details before requesting a reprint.");
+                return RedirectToAction(nameof(Check), new { certificateId, searchString, page });
+            }
+
+            var viewModel = await BuildReprintConfirmation(certificate, searchString, stdCode, uln, page);
             return View(viewModel);
         }
 
@@ -226,16 +244,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             });
         }
 
-        private async Task<CertificateReprintConfirmViewModel> ReprintCertificate(Guid certificateId, string searchString, int stdCode, long uln, int page)
+        private async Task<CertificateReprintConfirmViewModel> BuildReprintConfirmation(Certificate certificate, string searchString, int stdCode, long uln, int page)
         {
-            var username = ContextAccessor.HttpContext.User.UserId();
-           
-            var certificate = await CertificateApiClient.UpdateCertificateRequestReprint(new UpdateCertificateRequestReprintCommand
-            {
-                CertificateId = certificateId,
-                Username = username
-            });
-
             var nextScheduledRun = await ScheduleApiClient.GetNextScheduledRun((int)ScheduleType.PrintRun);
 
             var viewModel = new CertificateReprintConfirmViewModel

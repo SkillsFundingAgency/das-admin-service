@@ -52,14 +52,14 @@ class="govuk-back-link">Back</a>
                     </dd>
                 </div>
             }
-            @if (Model.CertificatePrintStatusAt.HasValue)
+            @if (Model.CertificateStatusDateValue.HasValue)
             {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         @CertificateStatus.GetStatusDateDisplayName(Model.CertificateStatus)
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.CertificatePrintStatusAt
+                        @Model.CertificateStatusDateValue
                     </dd>
                 </div>
             }

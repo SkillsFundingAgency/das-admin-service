@@ -21,14 +21,18 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
     public class CertificateCheckViewModelValidatorTests
     {
         [TestCase(CertificateStatus.Draft)]
-        public void WhenCertificateIsNotPrintStatus_ErrorsAreNotDisplayed(string certificateStatus)
+        [TestCase(CertificateStatus.Submitted)]
+        public void WhenCertificateIsNotPrintStatus_ErrorsAreNotDisplayed(
+            string certificateStatus)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
                 .WithCertificateCheckViewModel(new Builder()
                     .CreateNew<CertificateCheckViewModel>()
-                    .With(q => q.SendTo = CertificateSendTo.None)
                     .With(q => q.Status = certificateStatus)
+                    .With(q => q.SelectedGrade = CertificateGrade.Pass)
+                    .With(q => q.SendTo = CertificateSendTo.None)
                     .With(q => q.Name = string.Empty)
+                    .With(q => q.Employer = string.Empty)
                     .With(q => q.AddressLine1 = string.Empty)
                     .With(q => q.City = string.Empty)
                     .With(q => q.Postcode = string.Empty)
@@ -62,18 +66,28 @@ namespace SFA.DAS.AdminService.Web.Tests.Validators
             fixture.Verify(nameof(CertificateCheckViewModel.Option), null, "Add an option", true);
         }
 
-        public void WhenSendToIsEmpty_ErrorIsDisplayed()
+        [TestCase(CertificateStatus.SentToPrinter)]
+        [TestCase(CertificateStatus.Printed)]
+        [TestCase(CertificateStatus.Delivered)]
+        [TestCase(CertificateStatus.NotDelivered)]
+        [TestCase(CertificateStatus.Reprint)]
+        public void WhenSendToIsEmpty_ErrorIsDisplayed(string certificateStatus)
         {
             var fixture = new CertificateCheckViewModelValidatorTestsFixture()
                 .WithCertificateCheckViewModel(new Builder()
-                .CreateNew<CertificateCheckViewModel>()
-                .With(q => q.SendTo = CertificateSendTo.None)
-                .With(q => q.Status = CertificateStatus.Printed)
-                .Build());
+                    .CreateNew<CertificateCheckViewModel>()
+                    .With(q => q.Status = certificateStatus)
+                    .With(q => q.SelectedGrade = CertificateGrade.Pass)
+                    .With(q => q.SendTo = CertificateSendTo.None)
+                    .Build());
 
             fixture.Validate();
 
-            fixture.Verify(nameof(CertificateAddressViewModel.Name), "NotEmptyValidator", "Enter the certificate receiver", true);
+            fixture.Verify(
+                nameof(CertificateCheckViewModel.SendTo),
+                "NotEqualValidator",
+                "Enter the certificate receiver",
+                true);
         }
 
         [TestCase(CertificateSendTo.Employer)]

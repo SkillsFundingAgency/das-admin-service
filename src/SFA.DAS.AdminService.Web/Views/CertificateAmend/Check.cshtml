@@ -190,24 +190,25 @@
                 </div>
             </dl>
 
-    @if (Model.SelectedGrade != CertificateGrade.Fail)
-    {
-            <h2 class="govuk-heading-m">
+         @if (Model.SelectedGrade != CertificateGrade.Fail &&
+             (Model.CanRequestReprint || Model.SendTo != CertificateSendTo.None || !string.IsNullOrWhiteSpace(Model.AddressLine1)))
+         {
+            <h2 class="govuk-heading-m" id="delivery-details">
                 Delivery details
             </h2>
 
-        @if (Model.SendTo == CertificateSendTo.Employer)
-        {
-            <div class="govuk-inset-text">
-                <p class="govuk-body">If you are changing the recipient from employer to apprentice, you need to change the certificate receiver.</p>
-            </div>
-        }
-        else if(Model.SendTo == CertificateSendTo.Apprentice)
-        {
-            <div class="govuk-inset-text">
-                <p class="govuk-body">If you are changing the recipient from apprentice to employer, you need to change the certificate receiver.</p>
-            </div>
-        }
+            @if (Model.SendTo == CertificateSendTo.Employer)
+            {
+                <div class="govuk-inset-text">
+                    <p class="govuk-body">If you are changing the recipient from employer to apprentice, you need to change the certificate receiver.</p>
+                </div>
+            }
+            else if(Model.SendTo == CertificateSendTo.Apprentice)
+            {
+                <div class="govuk-inset-text">
+                    <p class="govuk-body">If you are changing the recipient from apprentice to employer, you need to change the certificate receiver.</p>
+                </div>
+            }
 
             <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row" id="SendTo">

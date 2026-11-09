@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.AssessorService.Api.Types.Enums;
 using System.Linq;
 using System;
+using System.Net;
+using System.Net.Http;
 using SFA.DAS.AssessorService.Api.Types.Models.FrameworkSearch;
 
 namespace SFA.DAS.AdminService.Web.Controllers
@@ -288,6 +290,8 @@ namespace SFA.DAS.AdminService.Web.Controllers
             viewModel.CertificateReference = frameworkLearnerDetails.CertificateReference;
             viewModel.CertificateStatus = frameworkLearnerDetails.CertificateStatus;
             viewModel.CertificatePrintStatusAt = frameworkLearnerDetails.CertificatePrintStatusAt;
+            viewModel.CertificatePrintRequestedAt = frameworkLearnerDetails.CertificatePrintRequestedAt;
+            viewModel.CertificateLastUpdatedAt = frameworkLearnerDetails.CertificateLastUpdatedAt;
 
             return View(viewModel);
         }
@@ -383,6 +387,7 @@ namespace SFA.DAS.AdminService.Web.Controllers
         }
 
         [HttpPost]
+        [ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> FrameworkReprintSubmit()
         {
             var sessionModel = _sessionService.SessionFrameworkSearch;
@@ -392,15 +397,17 @@ namespace SFA.DAS.AdminService.Web.Controllers
             }
 
             var username = _contextAccessor.HttpContext.User.UserId();
+            var frameworkLearner = await _learnerDetailsApiClient.GetFrameworkLearner(
+                sessionModel.SelectedFrameworkLearnerId.Value, false);
 
-            var reprintFrameworkRequest = new ReprintFrameworkCertificateRequest
+            var reprintFrameworkRequest = new ReprintFrameworkCertificateCommand
             {
                 FrameworkLearnerId = sessionModel.SelectedFrameworkLearnerId.Value,
                 Username = username,
                 IncidentNumber = sessionModel.TicketNumber,
                 Reasons = ParseReprintReasons(sessionModel.SelectedReprintReasons),
                 OtherReason = sessionModel.OtherReason,
-                ContactName = $"{sessionModel.FirstName} {sessionModel.LastName}",
+                ContactName = $"{frameworkLearner.ApprenticeForename} {frameworkLearner.ApprenticeSurname}".Trim(),
                 ContactAddLine1 = sessionModel.AddressLine1,
                 ContactAddLine2 = sessionModel.AddressLine2,
                 ContactAddLine3 = sessionModel.TownOrCity,
@@ -408,7 +415,15 @@ namespace SFA.DAS.AdminService.Web.Controllers
                 ContactPostcode = sessionModel.Postcode,
             };
 
-            await _certificateApiClient.ReprintFramework(reprintFrameworkRequest);
+            try
+            {
+                await _certificateApiClient.ReprintFrameworkCertificate(reprintFrameworkRequest);
+            }
+            catch (HttpRequestException exception) when (exception.StatusCode == HttpStatusCode.BadRequest)
+            {
+                ModelState.AddModelError("AddressLine1", "Check the delivery details before requesting a reprint.");
+                return RedirectToAction(nameof(FrameworkReprintAddress), new { backToCheckAnswers = true });
+            }
 
             _sessionService.ClearFrameworkSearchRequest();
             
